@@ -1,5 +1,8 @@
-package com.beanloaf.thoughtsdesktop;
+package com.beanloaf.thoughtsdesktop.objects;
 
+import com.beanloaf.thoughtsdesktop.views.ListView;
+import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -19,7 +22,10 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
     public TagListItem(final MainApplication main, final ListView listView, final String tag) {
         super(tag);
 
-        this.setStyle(TC.LIST_ITEM_CSS);
+        this.setStyle(TC.CSS.LIST_ITEM);
+        this.setOnMouseEntered(e -> this.setStyle(TC.CSS.LIST_ITEM_HOVER));
+        this.setOnMouseExited(e -> this.setStyle(TC.CSS.LIST_ITEM));
+
 
         this.main = main;
         this.listView = listView;

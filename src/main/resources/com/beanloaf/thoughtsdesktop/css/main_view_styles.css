@@ -1,16 +1,26 @@
-.root{
+* {
+    -fx-background: rgb(60, 63 ,65);
+    -fx-text-fill: rgb(209, 209 ,209);
+}
+
+root {
     -fx-font-family: "Lato";
-    -fx-background: rgb(60,63,65);
-    -fx-text-fill: rgb(209,209,209);
+
 }
 
 
+.text {
+    -fx-fill: rgb(209, 209 ,209);
+
+}
+
+
+
+
 .text-field {
-    -fx-text-fill: rgb(209,209,209);
     -fx-text-box-border: transparent;
     -fx-control-inner-background: rgb(60,63,65);
     -fx-prompt-text-fill: #989898;
-
 
 }
 
@@ -20,14 +30,13 @@
 }
 
 
-.text {
-    -fx-fill: rgb(209,209,209);
+.button {
+    -fx-background-color: rgb(78, 80, 82);
 }
 
+.button:hover {
+    -fx-border-color: rgb(41, 163, 211);
 
-.button {
-    -fx-text-fill: rgb(209,209,209);
-    -fx-background-color: rgb(78, 80, 82);
 }
 
 .menu-bar {
@@ -49,4 +58,14 @@
     -fx-font-size: 20;
 
 }
+
+
+.context-menu {
+    -fx-background-color: rgb(60,63,65);
+}
+
+.menu-item {
+    -fx-font-size: 12;
+}
+
 

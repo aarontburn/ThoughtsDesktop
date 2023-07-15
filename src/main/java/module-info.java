@@ -11,9 +11,16 @@ module com.example.thoughtsdesktop {
     requires com.almasb.fxgl.all;
     requires CustomStage;
     requires json.simple;
+    requires java.desktop;
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;
-    exports com.beanloaf.thoughtsdesktop;
     exports com.beanloaf.thoughtsdesktop.changeListener;
     opens com.beanloaf.thoughtsdesktop.changeListener to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.objects;
+    opens com.beanloaf.thoughtsdesktop.objects to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.views;
+    opens com.beanloaf.thoughtsdesktop.views to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.res;
+    opens com.beanloaf.thoughtsdesktop.res to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop;
 }

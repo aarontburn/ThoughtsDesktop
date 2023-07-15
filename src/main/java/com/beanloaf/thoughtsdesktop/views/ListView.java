@@ -1,8 +1,12 @@
-package com.beanloaf.thoughtsdesktop;
+package com.beanloaf.thoughtsdesktop.views;
 
+import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
-import javafx.collections.ObservableList;
+import com.beanloaf.thoughtsdesktop.objects.ListItem;
+import com.beanloaf.thoughtsdesktop.objects.TagListItem;
+import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
@@ -148,6 +152,16 @@ public class ListView implements ThoughtsChangeListener {
             System.err.println("Found invalid file " + filePath.toPath());
         }
         return null;
+    }
+
+    public void newFile() {
+        final ThoughtObject newObject = new ThoughtObject("", "", "");
+        newObject.save();
+        unsortedThoughtList.add(newObject);
+
+        unsortedThoughtList.doClick();
+        ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS, newObject);
+
     }
 
     public void delete(final ThoughtObject obj) {
@@ -324,7 +338,8 @@ public class ListView implements ThoughtsChangeListener {
         }
 
         if (midItem == null || nextItem == null) {
-            return mid;
+
+            return mid + 1;
         }
 
         final int midToTag = tag.compareToIgnoreCase(midItem.getTag());
@@ -345,6 +360,48 @@ public class ListView implements ThoughtsChangeListener {
 
     }
 
+
+    public void validateTag(final ThoughtObject obj) {
+        if (obj == null) {
+            return;
+        }
+
+
+        final String tag = obj.getTag();
+
+        final TagListItem list = obj.getParent();
+
+        if (list != null) {
+            if (!list.getTag().equals(tag)) {
+                // add to new list
+                final TagListItem newList = addTagToTagList(obj);
+                // remove from old list
+                removeTagFromTagList(obj);
+
+                obj.setParent(newList);
+
+            }
+        }
+
+    }
+
+    public void validateItemListTitles() {
+        for (final Node node : itemList.getChildren()) {
+            if (node.getClass() != ListItem.class) continue;
+
+            final ListItem listItem = (ListItem) node;
+
+
+            if (!listItem.getText().equals(listItem.getThoughtObject().getTitle()))
+                listItem.setText(listItem.getThoughtObject().getTitle());
+
+        }
+
+
+
+
+    }
+
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
@@ -352,6 +409,9 @@ public class ListView implements ThoughtsChangeListener {
             case TC.Properties.SORT -> sort((ThoughtObject) eventValue);
             case TC.Properties.SELECTED_TAG -> selectedTag = (TagListItem) eventValue;
             case TC.Properties.DELETE -> delete((ThoughtObject) eventValue);
+            case TC.Properties.NEW_FILE -> newFile();
+            case TC.Properties.VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
+            case TC.Properties.VALIDATE_TITLE -> validateItemListTitles();
         }
 
     }

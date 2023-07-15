@@ -1,6 +1,6 @@
 package com.beanloaf.thoughtsdesktop.changeListener;
 
-import com.beanloaf.thoughtsdesktop.ThoughtObject;
+import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +22,9 @@ public class ThoughtsHelper {
         }
         return instance;
     }
+
+
+    private ThoughtsHelper() {}
 
     public void addListener(final ThoughtsChangeListener listener) {
         if (listener == null) throw new RuntimeException("Listener cannot be null");

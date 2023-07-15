@@ -1,9 +1,10 @@
-package com.beanloaf.thoughtsdesktop;
+package com.beanloaf.thoughtsdesktop.views;
 
+import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -47,6 +48,7 @@ public class TextView implements ThoughtsChangeListener {
             if (obj == null) return;
             obj.setTitle(titleTextField.getText());
             obj.save();
+            ThoughtsHelper.getInstance().fireEvent(TC.Properties.VALIDATE_TITLE);
         });
 
         tagTextField.focusedProperty().addListener((arg0, oldPropertyValue, isFocused) -> {
@@ -54,6 +56,10 @@ public class TextView implements ThoughtsChangeListener {
             if (obj == null) return;
             obj.setTag(tagTextField.getText());
             obj.save();
+
+
+            if (obj.isSorted()) ThoughtsHelper.getInstance().fireEvent(TC.Properties.VALIDATE_TAG, obj);
+
         });
 
         bodyTextField.focusedProperty().addListener((arg0, oldPropertyValue, isFocused) -> {
@@ -70,18 +76,10 @@ public class TextView implements ThoughtsChangeListener {
                 ThoughtsHelper.getInstance().fireEvent(TC.Properties.SORT,
                 ThoughtsHelper.getInstance().getSelectedFile()));
 
-        newFileButton.setOnMouseClicked(e -> {
-            final ThoughtObject newObject = new ThoughtObject("", "", "");
+        newFileButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.NEW_FILE));
 
-            newObject.save();
-
-            main.listView.unsortedThoughtList.doClick();
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.REFRESH);  // TODO: Ditch this and use dynamic lists
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS, newObject);
-
-        });
-
-        deleteButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.DELETE,
+        deleteButton.setOnMouseClicked(e ->
+                ThoughtsHelper.getInstance().fireEvent(TC.Properties.DELETE,
                 ThoughtsHelper.getInstance().getSelectedFile()));
     }
 

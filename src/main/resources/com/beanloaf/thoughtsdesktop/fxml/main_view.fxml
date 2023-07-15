@@ -34,11 +34,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
@@ -50,54 +47,16 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@thoughts_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@../css/main_view_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <MenuBar VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
+    <MenuBar fx:id="menuBar" styleClass="menu-item" VBox.vgrow="NEVER" />
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="371.0" prefWidth="627.0" VBox.vgrow="ALWAYS">
       <children>
             <SplitPane dividerPositions="0.33" layoutX="215.0" layoutY="36.0" prefHeight="322.0" prefWidth="640.0" styleClass="main-split-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <SplitPane fx:id="listViewContainer" dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <SplitPane fx:id="listViewContainer" dividerPositions="0.5" layoutY="34.0" prefHeight="1042.0" prefWidth="629.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
                            <items>
                               <ScrollPane prefHeight="200.0" prefWidth="200.0" style="-fx-fit-to-height: true; -fx-fit-to-width: true;">
                                  <content>
@@ -115,37 +74,62 @@
                               </ScrollPane>
                            </items>
                         </SplitPane>
+                        <TextField layoutX="65.0" layoutY="14.0" promptText="Search for..." AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </TextField>
                      </children>
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                      <children>
-                        <AnchorPane prefHeight="110.0" prefWidth="1252.0" AnchorPane.bottomAnchor="955.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane prefHeight="110.0" prefWidth="1252.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Logged in as: &lt;name&gt;" wrappingWidth="1311.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
-                                 <font>
-                                    <Font name="Lato Regular" size="20.0" />
-                                 </font>
-                              </Text>
-                              <Button layoutX="16.0" layoutY="50.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="267.0" text="Push">
-                                 <font>
-                                    <Font name="Lato Regular" size="20.0" />
-                                 </font>
-                              </Button>
-                              <Text layoutX="301.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="0 files not pushed." AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="300.0" AnchorPane.rightAnchor="830.0" AnchorPane.topAnchor="60.0">
-                                 <font>
-                                    <Font name="Lato Regular" size="15.0" />
-                                 </font>
-                              </Text>
-                              <Button layoutX="626.0" layoutY="49.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="291.0" text="Pull">
-                                 <font>
-                                    <Font name="Lato Regular" size="20.0" />
-                                 </font>
-                              </Button>
-                              <Text layoutX="954.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="0 files can be pulled." AnchorPane.bottomAnchor="21.0" AnchorPane.leftAnchor="954.0" AnchorPane.rightAnchor="164.11001586914062" AnchorPane.topAnchor="60.0">
-                                 <font>
-                                    <Font name="Lato Regular" size="15.0" />
-                                 </font>
-                              </Text>
+                              <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="380.0" minWidth="10.0" prefWidth="380.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="90.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="380.0" minWidth="10.0" prefWidth="400.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="90.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="39.0" prefWidth="267.0" text="Push" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="Lato Regular" size="20.0" />
+                                       </font>
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="39.0" prefWidth="291.0" text="Pull" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="Lato Regular" size="20.0" />
+                                       </font>
+                                       <GridPane.margin>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <TextField editable="false" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: -fx-control-inner-background;" text="0 files not pushed." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField editable="false" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: -fx-control-inner-background;" text="0 files can be pulled." GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </TextField>
+                                    <TextField editable="false" focusTraversable="false" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" style="-fx-background-color: -fx-control-inner-background;" text="Logged in as: &lt;name&gt;">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </GridPane>
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutY="98.0" prefHeight="855.0" prefWidth="1281.0" AnchorPane.bottomAnchor="98.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="98.0">
@@ -155,17 +139,17 @@
                                     <Font name="Lato Regular" size="50.0" />
                                  </font>
                               </TextField>
-                              <TextField fx:id="tagTextField" promptText="&lt;untagged&gt;" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="142.0">
+                              <TextField fx:id="tagTextField" promptText="&lt;untagged&gt;" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="130.0">
                                  <font>
                                     <Font name="Lato Regular" size="30.0" />
                                  </font>
                               </TextField>
-                              <TextArea fx:id="bodyTextField" prefHeight="200.0" prefWidth="200.0" promptText="&lt;description&gt;" styleClass="text-field" stylesheets="@thoughts_styles.css" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="258.0">
+                              <TextArea fx:id="bodyTextField" prefHeight="200.0" prefWidth="200.0" promptText="&lt;description&gt;" styleClass="text-field" stylesheets="@../css/main_view_styles.css" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="240.0">
                                  <font>
                                     <Font name="Lato Regular" size="25.0" />
                                  </font>
                               </TextArea>
-                              <Text fx:id="dateText" fill="WHITE" layoutX="14.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Created on: mm/dd/yyyy at hh:mm:ss" wrappingWidth="1303.8034057617188" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="220.0">
+                              <Text fx:id="dateText" fill="WHITE" layoutX="14.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text" text="Created on: mm/dd/yyyy at hh:mm:ss" wrappingWidth="1303.8034057617188" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="200.0">
                                  <font>
                                     <Font name="Lato Regular" size="20.0" />
                                  </font>

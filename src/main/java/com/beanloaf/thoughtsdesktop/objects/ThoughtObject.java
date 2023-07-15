@@ -1,4 +1,4 @@
-package com.beanloaf.thoughtsdesktop;
+package com.beanloaf.thoughtsdesktop.objects;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 
+import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
 
 public class ThoughtObject implements Comparable<ThoughtObject> {
@@ -87,6 +88,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
 
         try {
             new File(this.dir).mkdir();
+
 
             file.createNewFile();
 
