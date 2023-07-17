@@ -38,9 +38,9 @@ public class ListView implements ThoughtsChangeListener {
 
         ThoughtsHelper.getInstance().addListener(this);
 
-        this.tagList = (VBox) main.getNodeByID("tagList");
-        this.itemList = (VBox) main.getNodeByID("itemList");
-        this.listViewContainer = (SplitPane) main.getNodeByID("listViewContainer");
+        this.tagList = (VBox) main.findNodeByID("tagList");
+        this.itemList = (VBox) main.findNodeByID("itemList");
+        this.listViewContainer = (SplitPane) main.findNodeByID("listViewContainer");
 
 
 

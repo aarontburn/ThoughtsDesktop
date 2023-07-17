@@ -22,22 +22,26 @@ public class TextView implements ThoughtsChangeListener {
 
 
     private final Button sortButton, newFileButton, deleteButton;
+    private final Button pullButton, pushButton;
 
     public TextView(final MainApplication main) {
         this.main = main;
 
         ThoughtsHelper.getInstance().addListener(this);
 
-        titleTextField = (TextField) main.getNodeByID("titleTextField");
-        tagTextField = (TextField) main.getNodeByID("tagTextField");
-        dateText = (Text) main.getNodeByID("dateText");
-        bodyTextField = (TextArea) main.getNodeByID("bodyTextField");
+        titleTextField = (TextField) main.findNodeByID("titleTextField");
+        tagTextField = (TextField) main.findNodeByID("tagTextField");
+        dateText = (Text) main.findNodeByID("dateText");
+        bodyTextField = (TextArea) main.findNodeByID("bodyTextField");
 
 
-        sortButton = (Button) main.getNodeByID("sortButton");
-        newFileButton = (Button) main.getNodeByID("newFileButton");
-        deleteButton = (Button) main.getNodeByID("deleteButton");
+        sortButton = (Button) main.findNodeByID("sortButton");
+        newFileButton = (Button) main.findNodeByID("newFileButton");
+        deleteButton = (Button) main.findNodeByID("deleteButton");
 
+
+        pullButton = (Button) main.findNodeByID("pullButton");
+        pushButton = (Button) main.findNodeByID("pushButton");
         attachEvents();
 
     }
@@ -81,6 +85,10 @@ public class TextView implements ThoughtsChangeListener {
         deleteButton.setOnMouseClicked(e ->
                 ThoughtsHelper.getInstance().fireEvent(TC.Properties.DELETE,
                 ThoughtsHelper.getInstance().getSelectedFile()));
+
+        pushButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH));
+
+        pullButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL));
     }
 
     private void setTextFields(ThoughtObject obj) {

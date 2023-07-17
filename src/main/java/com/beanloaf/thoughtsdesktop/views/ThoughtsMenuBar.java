@@ -20,7 +20,7 @@ public class ThoughtsMenuBar {
 
     public ThoughtsMenuBar(final MainApplication main) {
         this.main = main;
-        menuBar = (MenuBar) main.getNodeByID("menuBar");
+        menuBar = (MenuBar) main.findNodeByID("menuBar");
 
 
         setMenuOperations();
@@ -54,8 +54,7 @@ public class ThoughtsMenuBar {
         final Map<String, Runnable> toolOptions = new LinkedHashMap<>();
         toolOptions.put("Export", () -> {
         });
-        toolOptions.put("Settings", () -> {
-        });
+        toolOptions.put("Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, TC.Properties.OPEN_SETTINGS));
         menuMap.put("Tools", toolOptions);
 
 

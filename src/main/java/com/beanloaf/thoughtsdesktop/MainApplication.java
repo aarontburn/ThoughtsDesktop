@@ -1,8 +1,13 @@
 package com.beanloaf.thoughtsdesktop;
 
+import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
+import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.views.ListView;
+import com.beanloaf.thoughtsdesktop.views.SettingsView;
 import com.beanloaf.thoughtsdesktop.views.ThoughtsMenuBar;
 import com.beanloaf.thoughtsdesktop.views.TextView;
+import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -11,14 +16,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class MainApplication extends Application  {
+public class MainApplication extends Application implements ThoughtsChangeListener {
+
+
+    private Scene scene;
 
 
     public ListView listView;
     public TextView textView;
     private ThoughtsMenuBar menuBar;
+    public FirebaseHandler firebaseHandler;
 
-    private Scene scene;
 
     public static void main(final String[] args) {
         launch();
@@ -36,19 +44,24 @@ public class MainApplication extends Application  {
         stage.setScene(scene);
         stage.show();
 
+
+        ThoughtsHelper.getInstance().addListener(this);
         menuBar = new ThoughtsMenuBar(this);
         listView = new ListView(this);
         textView = new TextView(this);
 
+
         startup();
+
+        firebaseHandler = new FirebaseHandler(this);
     }
 
     private void startup() {
         listView.unsortedThoughtList.doClick();
     }
 
-    public Node getNodeByID(final String id) {
-        if (id.charAt(0) == '#') throw new RuntimeException("ID's cannot start with #");
+    public Node findNodeByID(final String id) {
+        if (id.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
 
         return scene.lookup("#" + id);
 
@@ -56,5 +69,10 @@ public class MainApplication extends Application  {
     }
 
 
-
+    @Override
+    public void eventFired(final String eventName, final Object eventValue) {
+        switch (eventName) {
+            case TC.Properties.OPEN_SETTINGS -> SettingsView.getInstance(this);
+        }
+    }
 }

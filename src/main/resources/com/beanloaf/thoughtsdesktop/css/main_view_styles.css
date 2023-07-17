@@ -1,11 +1,11 @@
 * {
     -fx-background: rgb(60, 63 ,65);
     -fx-text-fill: rgb(209, 209 ,209);
+
 }
 
 root {
     -fx-font-family: "Lato";
-
 }
 
 
@@ -15,9 +15,8 @@ root {
 }
 
 
-
-
 .text-field {
+
     -fx-text-box-border: transparent;
     -fx-control-inner-background: rgb(60,63,65);
     -fx-prompt-text-fill: #989898;

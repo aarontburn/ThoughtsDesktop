@@ -12,6 +12,8 @@ module com.example.thoughtsdesktop {
     requires CustomStage;
     requires json.simple;
     requires java.desktop;
+    requires com.google.common;
+    requires org.apache.commons.codec;
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.changeListener;
