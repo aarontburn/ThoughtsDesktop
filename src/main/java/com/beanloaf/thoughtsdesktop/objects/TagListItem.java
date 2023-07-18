@@ -70,6 +70,8 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
         return this.taggedObjects;
     }
 
+
+
     public TagListItem add(final ThoughtObject obj) {
         if (!this.taggedObjects.contains(obj)) {
             this.taggedObjects.add(obj);

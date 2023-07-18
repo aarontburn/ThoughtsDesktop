@@ -10,15 +10,11 @@ import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.VBox;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static com.beanloaf.thoughtsdesktop.res.TC.Tools.readFileContents;
 
 public class ListView implements ThoughtsChangeListener {
 
@@ -32,7 +28,6 @@ public class ListView implements ThoughtsChangeListener {
     private TagListItem selectedTag;
 
 
-
     public ListView(final MainApplication main) {
         this.main = main;
 
@@ -43,17 +38,12 @@ public class ListView implements ThoughtsChangeListener {
         this.listViewContainer = (SplitPane) main.findNodeByID("listViewContainer");
 
 
-
-
-        this.listViewContainer.lookupAll(".split-pane-divider").forEach(div ->  {
+        this.listViewContainer.lookupAll(".split-pane-divider").forEach(div -> {
             div.setMouseTransparent(true);
             div.setStyle("-fx-background-color: transparent;");
         });
 
 
-
-
-        
         unsortedThoughtList = new TagListItem(main, this, "Unsorted");
         sortedThoughtList = new TagListItem(main, this, "Sorted");
 
@@ -62,6 +52,7 @@ public class ListView implements ThoughtsChangeListener {
     }
 
     public void refreshThoughtList() {
+
         final long startTime = System.currentTimeMillis();
 
         TC.Paths.STORAGE_PATH.mkdir();
@@ -77,16 +68,16 @@ public class ListView implements ThoughtsChangeListener {
         thoughtListByTag.clear();
         tagList.getChildren().clear();
 
+        if (unsortedFiles == null) throw new RuntimeException("unsortedFiles is null");
+        if (sortedFiles == null) throw new RuntimeException("sortedFiles is null");
 
 
         for (final File file : unsortedFiles) {
             final ThoughtObject content = readFileContents(file, false);
 
-            if (content != null) {
-                unsortedThoughtList.add(content);
-            }
-        }
+            if (content != null) unsortedThoughtList.add(content);
 
+        }
 
         for (final File file : sortedFiles) {
             final ThoughtObject content = readFileContents(file, true);
@@ -94,7 +85,6 @@ public class ListView implements ThoughtsChangeListener {
             if (content != null) {
                 sortedThoughtList.add(content);
                 final String tag = content.getTag();
-
 
                 TagListItem list = thoughtListByTag.get(tag);
                 if (list == null) { // tag doesn't exist in list yet
@@ -107,20 +97,11 @@ public class ListView implements ThoughtsChangeListener {
 
         }
 
-
-
         tagList.getChildren().add(unsortedThoughtList);
-
         tagList.getChildren().add(sortedThoughtList);
-
-
-
-
-
 
         final List<String> set = new ArrayList<>(thoughtListByTag.keySet());
         set.sort(String.CASE_INSENSITIVE_ORDER);
-
 
         for (final String key : set) {
             tagList.getChildren().add(thoughtListByTag.get(key));
@@ -136,23 +117,7 @@ public class ListView implements ThoughtsChangeListener {
 
     }
 
-    public ThoughtObject readFileContents(final File filePath, final boolean isSorted) {
-        try {
-            final String jsonString = new String(Files.readAllBytes(filePath.toPath()));
-            final JSONObject data = (JSONObject) JSONValue.parse(jsonString);
 
-            return new ThoughtObject(isSorted,
-                    data.get("title").toString().trim(),
-                    data.get("date").toString().trim(),
-                    data.get("tag").toString().trim(),
-                    data.get("body").toString().trim(),
-                    filePath);
-
-        } catch (Exception e) {
-            System.err.println("Found invalid file " + filePath.toPath());
-        }
-        return null;
-    }
 
     public void newFile() {
         final ThoughtObject newObject = new ThoughtObject("", "", "");
@@ -184,7 +149,6 @@ public class ListView implements ThoughtsChangeListener {
 
             ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS,
                     unsortedThoughtList.size() - 1 >= 0 ? unsortedThoughtList.get(index) : null);
-
 
 
         } else {    // object is sorted
@@ -398,8 +362,6 @@ public class ListView implements ThoughtsChangeListener {
         }
 
 
-
-
     }
 
     @Override
@@ -412,6 +374,15 @@ public class ListView implements ThoughtsChangeListener {
             case TC.Properties.NEW_FILE -> newFile();
             case TC.Properties.VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
             case TC.Properties.VALIDATE_TITLE -> validateItemListTitles();
+            case TC.Properties.REVALIDATE_THOUGHT_LIST -> {
+                for (final ThoughtObject obj : unsortedThoughtList.getList()) {
+                    obj.save();
+                }
+
+                for (final ThoughtObject obj : sortedThoughtList.getList()) {
+                    obj.save();
+                }
+            }
         }
 
     }

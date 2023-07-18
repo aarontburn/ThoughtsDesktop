@@ -8,6 +8,7 @@ import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.google.common.io.BaseEncoding;
 
+import javafx.application.Platform;
 import org.apache.commons.codec.binary.Base32;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -22,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.beanloaf.thoughtsdesktop.res.TC.Tools.readFileContents;
 
 public class FirebaseHandler implements ThoughtsChangeListener {
 
@@ -40,12 +43,14 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     private List<ThoughtObject> cloudThoughtsList;
 
-
     public FirebaseHandler(final MainApplication main) {
         this.main = main;
         ThoughtsHelper.getInstance().addListener(this);
-        checkUserFile();
 
+    }
+
+    public void startup() {
+        checkUserFile();
     }
 
 
@@ -77,7 +82,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         }
 
 
-
     }
 
 
@@ -86,12 +90,14 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             registerURL();
             refreshItems();
 
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.LOG_IN_SUCCESS, user);
+
+            Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.LOG_IN_SUCCESS, user));
+
         }
 
     }
 
-    public void signOut() {
+    private void signOut() {
         user = null;
         isOnline = false;
         cloudThoughtsList = null;
@@ -120,9 +126,15 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
 
-    private void refreshItems() {
+    public void reconnectToDatabase() {
+        if (refreshItems() == null) {
+            checkUserFile();
+        }
+    }
+
+    private Boolean refreshItems() {
         if (!isOnline) {
-            return;
+            return false;
         }
         cloudThoughtsList = new ArrayList<>();
 
@@ -135,8 +147,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
             if (responseCode != 200) {
                 if (responseCode == 401) {
-                    System.err.println("Invalid credentials at refreshItems()");
-                    return;
+                    return null;
+
                 } else {
                     throw new RuntimeException("Failed : HTTP error code : "
                             + connection.getResponseCode());
@@ -156,6 +168,11 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                     .parse(new StringReader(responseBuilder.toString()));
 
 
+            if (json == null) { // This probably means there isn't a location in the db yet for this person, prob brand new
+                return false;
+            }
+
+
             final Base32 b32 = new Base32();
 
             for (final Object path : json.keySet()) {
@@ -166,13 +183,17 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 final String date = new String(b32.decode((String) ((JSONObject) json.get(path)).get("Date")));
                 final String body = new String(b32.decode(((String) ((JSONObject) json.get(path)).get("Body"))
                         .replace("\\n", "\n").replace("\\t", "\t")));
-                cloudThoughtsList.add(new ThoughtObject(true, title, date, tag, body, new File(filePath)));
+                cloudThoughtsList.add(new ThoughtObject(true, false, title, date, tag, body, new File(filePath)));
 
             }
             connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+        refreshPushPullLabels();
+        return true;
 
 
     }
@@ -196,7 +217,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             return false;
         }
 
-        refreshItems();
+        reconnectToDatabase();
         for (final ThoughtObject obj : cloudThoughtsList) {
             obj.save();
         }
@@ -212,16 +233,17 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             return false;
         }
 
+        reconnectToDatabase();
+
         new Thread(() -> {
             try {
-                final File[] sortedFileDirectory = TC.Paths.SORTED_DIRECTORY_PATH.listFiles();
-                for (final File file : Objects.requireNonNull(sortedFileDirectory)) {
-                    final ThoughtObject tObj = this.main.listView.readFileContents(file, true);
-                    if (tObj != null) {
-                        addEntryIntoDatabase(tObj);
-                    }
+                for (final ThoughtObject obj : main.listView.sortedThoughtList.getList()) {
+                    if (obj != null && !obj.isLocalOnly()) addEntryIntoDatabase(obj);
+
                 }
                 refreshItems();
+                System.out.println("Finished pushing files");
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -234,6 +256,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             System.out.println("Not connected to the internet!");
             return;
         }
+
 
         try {
             final String path = obj.getFile().replace(".json", "").replace(" ", "_");
@@ -271,6 +294,38 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+    }
+
+    public void removeEntryFromDatabase(final ThoughtObject obj) {
+        if (!isConnectedToDatabase()) {
+            System.out.println("Not connected to the internet!");
+            return;
+        }
+
+        reconnectToDatabase();
+
+        new Thread(() -> {
+            try {
+                final String path = obj.getFile().replace(".json", "").replace(" ", "_");
+                final URL url = new URL(DATABASE_URL + user.localId() + "/" + BaseEncoding.base32().encode(path.getBytes()).replace("=", "") + ".json?auth=" + user.idToken());
+                final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("DELETE");
+
+                // Check if the DELETE request was successful
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    System.out.println("Database entry deleted successfully.");
+                } else {
+                    System.out.println("Failed to delete database entry.");
+                }
+
+                connection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            refreshItems();
+        }).start();
 
 
     }
@@ -322,8 +377,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             textContent.put("email", email);
             textContent.put("password", password != null && password.isEmpty() ? password : AuthHandler.sp(password, false));
 
-            final JSONObject objJson = new JSONObject(textContent);
-            fWriter.write(objJson.toString().getBytes());
+            fWriter.write(new JSONObject(textContent).toString().getBytes());
 
 
         } catch (Exception e) {
@@ -332,21 +386,45 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     }
 
-    @Override
-    public void eventFired(final String eventName, final Object eventValue) {
-        switch (eventName) {
-            case TC.Properties.PULL -> pull();
-            case TC.Properties.PUSH -> push();
-            case TC.Properties.LOG_IN_USER -> {
-                final String[] info = (String[]) eventValue;
-                signInUser(info[0], info[1]);
 
-            }
-            case TC.Properties.SIGN_OUT -> signOut();
-        }
+    public void refreshPushPullLabels() {
+        final int numToPull = Math.max(this.cloudThoughtsList.size() - this.main.listView.sortedThoughtList.size(), 0);
+        final int numToPush = Math.max(main.listView.sortedThoughtList.size() - this.cloudThoughtsList.size(), 0);
+
+
+
+        Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL_PUSH_NUM, new Integer[]
+                {numToPull, numToPush}));
+
     }
 
 
+    @Override
+    public void eventFired(final String eventName, final Object eventValue) {
+        switch (eventName) {
+            case TC.Properties.PULL -> Platform.runLater(this::pull);
+            case TC.Properties.PUSH -> Platform.runLater(this::push);
+            case TC.Properties.LOG_IN_USER -> {
+                final String[] info = (String[]) eventValue;
+                if (signInUser(info[0], info[1])) start();
+
+            }
+            case TC.Properties.REGISTER_NEW_USER -> {
+                final String[] info = (String[]) eventValue;
+
+                if (registerNewUser(info[0], info[1], info[2])) start();
+
+
+            }
+
+            case TC.Properties.SIGN_OUT -> signOut();
+            case TC.Properties.REFRESH -> refreshItems();
+            case TC.Properties.REMOVE_FROM_DATABASE, TC.Properties.DELETE ->
+                    removeEntryFromDatabase((ThoughtObject) eventValue);
+
+
+        }
+    }
 
 
 }

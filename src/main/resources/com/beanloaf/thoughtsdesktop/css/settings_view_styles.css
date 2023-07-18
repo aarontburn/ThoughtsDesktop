@@ -18,6 +18,7 @@ root {
 }
 
 .label {
+    -fx-font-family: "Lato";
     -fx-font-size: 18;
 
 }

@@ -17,33 +17,37 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
 
 
     public String dir;
-    private String file;
+    private final String file;
 
 
     private String title;
-
     private String tag;
-
     private String body;
+    private final String date;
 
-    private String date;
 
     private boolean isSorted;
+    private boolean isLocalOnly;
+
+
 
     private TagListItem parent; // parent is only set for sorted objects
 
 
-    public ThoughtObject(final boolean isSorted,
+
+
+    public ThoughtObject(final boolean isSorted, final Boolean isLocalOnly,
                          final String title,
                          final String date,
                          final String tag,
                          final String body,
                          final File file) {
 
+        this.isLocalOnly = isLocalOnly == null ? false : isLocalOnly;
         this.isSorted = isSorted;
         this.title = title;
         this.tag = tag;
-        this.date = date;
+        this.date = date == null ? getDisplayDateTime() : date;
         this.body = body;
         this.file = file == null ? null : file.getName();
         this.dir = isSorted ? TC.Paths.SORTED_DIRECTORY_PATH.toString() : TC.Paths.UNSORTED_DIRECTORY_PATH.toString();
@@ -98,6 +102,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
                 data.put("date", this.date);
                 data.put("tag", this.tag);
                 data.put("body", this.body);
+                data.put("localOnly", this.isLocalOnly);
                 fWriter.write(new JSONObject(data).toString().getBytes());
 
 
@@ -125,23 +130,17 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
 
 
         switch (path[path.length - 1]) {
-            case "unsorted": // unsorted -> sorted
+            case "unsorted" -> { // unsorted -> sorted
                 this.dir = this.dir.replace("unsorted", "sorted");
-
                 f.renameTo(new File(this.dir, this.file));
                 this.isSorted = true;
-
-                break;
-            case "sorted": // sorted -> unsorted
+            }
+            case "sorted" -> { // sorted -> unsorted
                 this.dir = this.dir.replace("sorted", "unsorted");
                 f.renameTo(new File(this.dir, this.file));
-
                 this.isSorted = false;
-
-                break;
-            default:
-                throw new RuntimeException("Attempting to sort an invalid file path..." + this.dir);
-
+            }
+            default -> throw new RuntimeException("Attempting to sort an invalid file path..." + this.dir);
         }
 
 
@@ -207,6 +206,14 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
 
     public boolean isSorted() {
         return this.isSorted;
+    }
+
+    public boolean isLocalOnly() {
+        return isLocalOnly;
+    }
+
+    public void setLocalOnly(final boolean isLocal) {
+        this.isLocalOnly = isLocal;
     }
 
 

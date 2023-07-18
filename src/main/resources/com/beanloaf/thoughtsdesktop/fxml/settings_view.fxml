@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/settings_view_styles.css" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1">
+<TabPane fx:id="settingsTabbedPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/settings_view_styles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <tabs>
     <Tab text="General">
          <content>
@@ -48,8 +48,17 @@
                         </AnchorPane>
                         <AnchorPane>
                            <children>
+                              <Label layoutX="72.0" layoutY="3.0" text="Cloud (Need to be logged in)" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="3.0" />
+                              <Line endX="646.0" layoutX="238.0" layoutY="22.0" startX="38.0" stroke="#b9b9b9" />
+                           </children>
+                           <padding>
+                              <Insets bottom="4.0" top="4.0" />
+                           </padding>
+                        </AnchorPane>
+                        <AnchorPane>
+                           <children>
                               <CheckBox mnemonicParsing="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="0.0" />
-                              <Label layoutX="72.0" layoutY="3.0" text="Pull on open" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="72.0" AnchorPane.topAnchor="3.0" />
+                              <Label layoutX="72.0" layoutY="3.0" text="Pull on startup" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="72.0" AnchorPane.topAnchor="3.0" />
                            </children>
                            <padding>
                               <Insets bottom="4.0" top="4.0" />
@@ -61,7 +70,7 @@
                         <AnchorPane>
                            <children>
                               <CheckBox mnemonicParsing="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="0.0" />
-                              <Label layoutX="72.0" layoutY="3.0" text="Push on close" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="72.0" AnchorPane.topAnchor="3.0" />
+                              <Label layoutX="72.0" layoutY="3.0" text="Push on exit" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="72.0" AnchorPane.topAnchor="3.0" />
                            </children>
                            <padding>
                               <Insets bottom="4.0" top="4.0" />
@@ -69,6 +78,50 @@
                            <VBox.margin>
                               <Insets left="64.0" />
                            </VBox.margin>
+                        </AnchorPane>
+                        <AnchorPane>
+                           <children>
+                              <Label layoutX="72.0" layoutY="3.0" text="Text" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="3.0" />
+                              <Line endX="646.0" layoutX="238.0" layoutY="22.0" startX="-149.0" stroke="#b9b9b9" />
+                           </children>
+                           <padding>
+                              <Insets bottom="4.0" top="4.0" />
+                           </padding>
+                        </AnchorPane>
+                        <AnchorPane>
+                           <children>
+                              <CheckBox mnemonicParsing="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="0.0" />
+                              <Label layoutX="72.0" layoutY="3.0" text="Match Brace" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="72.0" AnchorPane.topAnchor="3.0" />
+                           </children>
+                           <padding>
+                              <Insets bottom="4.0" top="4.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets left="64.0" />
+                           </VBox.margin>
+                        </AnchorPane>
+                        <AnchorPane>
+                           <children>
+                              <Label layoutX="72.0" layoutY="3.0" text="Developer" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="3.0" />
+                              <Line endX="646.0" layoutX="238.0" layoutY="22.0" startX="-103.0" stroke="#b9b9b9" />
+                           </children>
+                           <padding>
+                              <Insets bottom="4.0" top="4.0" />
+                           </padding>
+                        </AnchorPane>
+                        <AnchorPane>
+                           <padding>
+                              <Insets bottom="4.0" top="4.0" />
+                           </padding>
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                           <VBox.margin>
+                              <Insets left="64.0" />
+                           </VBox.margin>
+                           <children>
+                              <Button fx:id="revalidateButton" mnemonicParsing="false" text="Revalidate" AnchorPane.bottomAnchor="4.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="4.0" />
+                           </children>
                         </AnchorPane>
                      </children>
                      <padding>

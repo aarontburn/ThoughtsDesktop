@@ -9,10 +9,7 @@ import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -37,12 +34,22 @@ public class SettingsView implements ThoughtsChangeListener {
         return instance;
     }
 
+
     private Stage settingsWindow;
     private Scene scene;
     private MainApplication main;
 
 
-    /*      Layout Components       */
+
+    private TabPane settingsTabbedPane;
+    /*      General Settings Layout         */
+    private Button revalidateButton;
+
+
+
+    /*      ----------------                */
+
+    /*      Cloud Layout Components         */
     // Login/Register Layout
     private AnchorPane loginRegisterLayout;
     private Button loginLayoutButton, registerLayoutButton;
@@ -117,8 +124,16 @@ public class SettingsView implements ThoughtsChangeListener {
 
     }
 
+    public void setSelectedTab(final int index) {
+        settingsTabbedPane.getSelectionModel().select(index);
 
-    public Node findNodeByID(final String id) {
+
+
+    }
+
+
+
+    private Node findNodeByID(final String id) {
         if (id.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
 
         return scene.lookup("#" + id);
@@ -127,6 +142,11 @@ public class SettingsView implements ThoughtsChangeListener {
     }
 
     private void findNodes() {
+        settingsTabbedPane = (TabPane) findNodeByID("settingsTabbedPane");
+
+        // General Settings
+        revalidateButton = (Button) findNodeByID("revalidateButton");
+
 
         // Login/Register Layout
         loginRegisterLayout = (AnchorPane) findNodeByID("loginRegisterLayout");
@@ -162,6 +182,11 @@ public class SettingsView implements ThoughtsChangeListener {
     }
 
     private void attachEvents() {
+        // General Settings
+        revalidateButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.REVALIDATE_THOUGHT_LIST));
+
+
+
         // Login/Register Layout
         loginLayoutButton.setOnMouseClicked(e -> swapLayouts(loginLayout));
         registerLayoutButton.setOnMouseClicked(e -> swapLayouts(registerLayout));
@@ -179,10 +204,27 @@ public class SettingsView implements ThoughtsChangeListener {
         // Register Layout
         registerBackButton.setOnMouseClicked(e -> swapLayouts(loginRegisterLayout));
         registerButton.setOnMouseClicked(e -> {
+            final String name = registerNameInput.getText();
+            final String email = registerEmailInput.getText();
+            final String password = registerPasswordInput.getText();
+            final String reenterPassword = registerReenterPasswordInput.getText();
+
+
+
+            if (!password.equals(reenterPassword)) {
+                System.err.println("Passwords do not match");
+
+                return;
+            }
+
+
+            // TODO: Email and password validation
+            ThoughtsHelper.getInstance().fireEvent(TC.Properties.REGISTER_NEW_USER, new String[]{name, email, password});
+
         });
 
         // Info Layout
-        infoSignOutButton.setOnMouseClicked(e -> {});
+        infoSignOutButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.SIGN_OUT));
 
 
     }
@@ -215,6 +257,7 @@ public class SettingsView implements ThoughtsChangeListener {
 
 
             }
+            case TC.Properties.SIGN_OUT -> swapLayouts(loginRegisterLayout);
         }
 
 

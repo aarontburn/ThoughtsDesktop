@@ -36,6 +36,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
     @Override
     public void start(final Stage stage) throws IOException {
+
         final FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("fxml/main_view.fxml"));
         final Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
         this.scene = scene;
@@ -54,6 +55,9 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         startup();
 
         firebaseHandler = new FirebaseHandler(this);
+
+        new Thread(() -> firebaseHandler.startup()).start();
+
     }
 
     private void startup() {
@@ -73,6 +77,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
             case TC.Properties.OPEN_SETTINGS -> SettingsView.getInstance(this);
+            case TC.Properties.OPEN_CLOUD_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(1);
         }
     }
 }
