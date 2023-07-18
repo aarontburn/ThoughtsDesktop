@@ -60,7 +60,7 @@ public class ThoughtsMenuBar {
 
         /* Cloud*/
         final Map<String, Runnable> cloudOptions = new LinkedHashMap<>();
-        cloudOptions.put("Push Files", () -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH));
+        cloudOptions.put("Push Files", () -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH_ALL));
         cloudOptions.put("Pull Files", () -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL));
         cloudOptions.put(null, null);
         cloudOptions.put("Cloud Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, TC.Properties.OPEN_CLOUD_SETTINGS));

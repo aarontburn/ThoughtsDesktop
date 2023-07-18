@@ -81,11 +81,11 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         return this.parent;
     }
 
-    public void save() {
+    public Boolean save() {
         System.out.println("Saving " + this.title);
 
         if (file == null) {
-            return;
+            return null;
         }
 
         final File file = new File(this.dir, this.file);
@@ -93,8 +93,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         try {
             new File(this.dir).mkdir();
 
-
-            file.createNewFile();
+            if (file.createNewFile()) return false;
 
             try (FileOutputStream fWriter = new FileOutputStream(file)) {
                 final ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<>();
@@ -105,7 +104,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
                 data.put("localOnly", this.isLocalOnly);
                 fWriter.write(new JSONObject(data).toString().getBytes());
 
-
+                return true;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -116,6 +115,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
             e.printStackTrace();
         }
 
+        return false;
 
     }
 

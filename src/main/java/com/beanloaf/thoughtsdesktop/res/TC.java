@@ -40,7 +40,8 @@ public class TC {
         public static final String VALIDATE_TITLE = "validate title";
         public static final String OPEN_SETTINGS = "open settings";
         public static final String OPEN_CLOUD_SETTINGS = "open cloud settings";
-        public static final String PUSH = "push";
+        public static final String PUSH_ALL = "push";
+        public static final String PUSH_FILE = "push file";
         public static final String PULL = "pull";
         public static final String REGISTER_NEW_USER = "register new user";
         public static final String LOG_IN_USER = "log in user";

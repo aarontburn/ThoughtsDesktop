@@ -3,7 +3,6 @@ package com.beanloaf.thoughtsdesktop.objects;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
 
 public class ListItem extends Button {
 
@@ -17,6 +16,7 @@ public class ListItem extends Button {
         this.setStyle(TC.CSS.LIST_ITEM);
         this.setOnMouseEntered(e -> this.setStyle(TC.CSS.LIST_ITEM_HOVER));
         this.setOnMouseExited(e -> this.setStyle(TC.CSS.LIST_ITEM));
+        this.setWrapText(true);
 
         this.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS, obj));
 

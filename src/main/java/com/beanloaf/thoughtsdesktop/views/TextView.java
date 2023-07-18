@@ -27,7 +27,7 @@ public class TextView implements ThoughtsChangeListener {
 
 
     private final Button sortButton, newFileButton, deleteButton;
-    private final Button pullButton, pushButton;
+    private final Button pullButton, pushAllButton, pushFileButton;
 
     private final Label cloudHeaderDisplayName, cloudHeaderNumPull, cloudHeaderNumPush;
     private final GridPane cloudHeader;
@@ -52,8 +52,8 @@ public class TextView implements ThoughtsChangeListener {
 
 
         pullButton = (Button) main.findNodeByID("pullButton");
-        pushButton = (Button) main.findNodeByID("pushButton");
-
+        pushAllButton = (Button) main.findNodeByID("pushAllButton");
+        pushFileButton = (Button) main.findNodeByID("pushFileButton");
 
         cloudHeader = (GridPane) main.findNodeByID("cloudHeader");
         cloudHeaderDisplayName = (Label) main.findNodeByID("cloudHeaderDisplayName");
@@ -122,7 +122,16 @@ public class TextView implements ThoughtsChangeListener {
                 ThoughtsHelper.getInstance().fireEvent(TC.Properties.DELETE,
                         ThoughtsHelper.getInstance().getSelectedFile()));
 
-        pushButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH));
+        pushAllButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH_ALL));
+
+        pushFileButton.setVisible(false);
+        pushFileButton.setOnMouseClicked(e -> {
+            final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
+            if (obj == null || !obj.isSorted() || obj.isLocalOnly()) return;
+
+            ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH_FILE, obj);
+        });
+
 
         pullButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL));
 
@@ -172,8 +181,15 @@ public class TextView implements ThoughtsChangeListener {
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
             case TC.Properties.SET_TEXT_FIELDS -> {
-                ThoughtsHelper.getInstance().setSelectedFile((ThoughtObject) eventValue);
-                setTextFields((ThoughtObject) eventValue);
+                final ThoughtObject obj = (ThoughtObject) eventValue;
+
+
+                ThoughtsHelper.getInstance().setSelectedFile(obj);
+                setTextFields(obj);
+                pushFileButton.setVisible(obj.isSorted());
+
+
+
             }
             case TC.Properties.LOG_IN_SUCCESS -> {
                 final ThoughtUser user = (ThoughtUser) eventValue;

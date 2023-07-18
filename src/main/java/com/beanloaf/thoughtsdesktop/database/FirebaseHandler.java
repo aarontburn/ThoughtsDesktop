@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
-import static com.beanloaf.thoughtsdesktop.res.TC.Tools.readFileContents;
 
 public class FirebaseHandler implements ThoughtsChangeListener {
 
@@ -219,7 +216,17 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
         reconnectToDatabase();
         for (final ThoughtObject obj : cloudThoughtsList) {
-            obj.save();
+            final ThoughtObject listObj = main.listView.sortedThoughtList.getByFile(obj.getFile());
+
+            if (listObj != null) { // already exists
+                listObj.setTitle(obj.getTitle());
+                listObj.setTag(obj.getTag());
+                listObj.setBody(obj.getBody());
+                listObj.save();
+            } else {
+                obj.save();
+
+            }
         }
 
         ThoughtsHelper.getInstance().fireEvent(TC.Properties.REFRESH);
@@ -315,7 +322,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
                 // Check if the DELETE request was successful
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    System.out.println("Database entry deleted successfully.");
+                    System.out.println("Removed \"" + obj.getTitle() + "\" from database.");
                 } else {
                     System.out.println("Failed to delete database entry.");
                 }
@@ -417,7 +424,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
             case TC.Properties.PULL -> Platform.runLater(this::pull);
-            case TC.Properties.PUSH -> Platform.runLater(this::push);
+            case TC.Properties.PUSH_ALL -> Platform.runLater(this::push);
             case TC.Properties.LOG_IN_USER -> {
                 final String[] info = (String[]) eventValue;
                 if (signInUser(info[0], info[1])) start();
@@ -435,7 +442,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             case TC.Properties.REFRESH -> refreshItems();
             case TC.Properties.REMOVE_FROM_DATABASE, TC.Properties.DELETE ->
                     removeEntryFromDatabase((ThoughtObject) eventValue);
-
+            case TC.Properties.PUSH_FILE -> addEntryIntoDatabase((ThoughtObject) eventValue);
 
         }
     }

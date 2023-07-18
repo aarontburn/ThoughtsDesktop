@@ -25,7 +25,7 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
         this.setStyle(TC.CSS.LIST_ITEM);
         this.setOnMouseEntered(e -> this.setStyle(TC.CSS.LIST_ITEM_HOVER));
         this.setOnMouseExited(e -> this.setStyle(TC.CSS.LIST_ITEM));
-
+        this.setWrapText(true);
 
         this.main = main;
         this.listView = listView;
@@ -34,9 +34,10 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
         this.setOnMouseClicked(e -> doClick());
 
 
+
     }
 
-    public void doClick(){
+    public void doClick() {
         ThoughtsHelper.getInstance().targetEvent(ListView.class, TC.Properties.SELECTED_TAG, this);
 
         final ObservableList<Node> children = listView.itemList.getChildren();
@@ -71,7 +72,6 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
     }
 
 
-
     public TagListItem add(final ThoughtObject obj) {
         if (!this.taggedObjects.contains(obj)) {
             this.taggedObjects.add(obj);
@@ -94,6 +94,14 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
 
     }
 
+    public ThoughtObject getByFile(final String file) {
+        for (final ThoughtObject obj : taggedObjects) {
+            if (obj.getFile().equals(file)) return obj;
+        }
+        return null;
+
+    }
+
     public int size() {
         return this.taggedObjects.size();
     }
@@ -105,6 +113,7 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
     public boolean contains(final ThoughtObject obj) {
         return this.taggedObjects.contains(obj);
     }
+
 
     public TagListItem clear() {
         this.taggedObjects.clear();
