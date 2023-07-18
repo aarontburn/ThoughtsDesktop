@@ -102,8 +102,8 @@
                         </AnchorPane>
                         <AnchorPane>
                            <children>
-                              <Label layoutX="72.0" layoutY="3.0" text="Developer" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="3.0" />
-                              <Line endX="646.0" layoutX="238.0" layoutY="22.0" startX="-103.0" stroke="#b9b9b9" />
+                              <Label layoutX="72.0" layoutY="3.0" text="Developer Tools" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="3.0" />
+                              <Line endX="646.0" layoutX="238.0" layoutY="22.0" startX="-60.0" stroke="#b9b9b9" />
                            </children>
                            <padding>
                               <Insets bottom="4.0" top="4.0" />

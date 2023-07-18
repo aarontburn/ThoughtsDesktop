@@ -389,12 +389,26 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     public void refreshPushPullLabels() {
         final int numToPull = Math.max(this.cloudThoughtsList.size() - this.main.listView.sortedThoughtList.size(), 0);
-        final int numToPush = Math.max(main.listView.sortedThoughtList.size() - this.cloudThoughtsList.size(), 0);
 
 
 
-        Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL_PUSH_NUM, new Integer[]
-                {numToPull, numToPush}));
+        int numLocal = 0;
+        for (final ThoughtObject obj : main.listView.sortedThoughtList.getList()) {
+
+            if (obj.isLocalOnly()) {
+                numLocal++;
+            }
+        }
+
+
+
+
+        final int numToPush = Math.max((main.listView.sortedThoughtList.size() - numLocal)- this.cloudThoughtsList.size(), 0);
+
+
+        final Integer[] l = new Integer[]{numToPull, numToPush};
+
+        Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL_PUSH_NUM, l));
 
     }
 

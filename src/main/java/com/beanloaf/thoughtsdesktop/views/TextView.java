@@ -33,7 +33,7 @@ public class TextView implements ThoughtsChangeListener {
     private final GridPane cloudHeader;
 
 
-    private final CheckBox localOnlyCheckBox;
+    private final CheckBox localOnlyCheckBox, lockTitleCheckBox, lockTagCheckBox, lockBodyCheckBox;
 
     public TextView(final MainApplication main) {
         this.main = main;
@@ -62,10 +62,9 @@ public class TextView implements ThoughtsChangeListener {
 
 
         localOnlyCheckBox = (CheckBox) main.findNodeByID("localOnlyCheckBox");
-
-
-
-
+        lockTitleCheckBox = (CheckBox) main.findNodeByID("lockTitleCheckBox");
+        lockTagCheckBox = (CheckBox) main.findNodeByID("lockTagCheckBox");
+        lockBodyCheckBox = (CheckBox) main.findNodeByID("lockBodyCheckBox");
 
 
         attachEvents();
@@ -105,7 +104,19 @@ public class TextView implements ThoughtsChangeListener {
                 ThoughtsHelper.getInstance().fireEvent(TC.Properties.SORT,
                         ThoughtsHelper.getInstance().getSelectedFile()));
 
-        newFileButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.NEW_FILE));
+        newFileButton.setOnMouseClicked(e -> {
+            final boolean isTitleLocked = lockTitleCheckBox.selectedProperty().get();
+            final boolean isTagLocked = lockTagCheckBox.selectedProperty().get();
+            final boolean isBodyLocked = lockBodyCheckBox.selectedProperty().get();
+
+
+            ThoughtsHelper.getInstance().fireEvent(TC.Properties.NEW_FILE,
+                    new Object[]{
+                            ThoughtsHelper.getInstance().getSelectedFile(),
+                            isTitleLocked,
+                            isTagLocked,
+                            isBodyLocked});
+        });
 
         deleteButton.setOnMouseClicked(e ->
                 ThoughtsHelper.getInstance().fireEvent(TC.Properties.DELETE,
@@ -122,7 +133,8 @@ public class TextView implements ThoughtsChangeListener {
             obj.setLocalOnly(isChecked);
             obj.save();
 
-            if (obj.isSorted() && obj.isLocalOnly()) ThoughtsHelper.getInstance().fireEvent(TC.Properties.REMOVE_FROM_DATABASE, obj);
+            if (obj.isSorted() && obj.isLocalOnly())
+                ThoughtsHelper.getInstance().fireEvent(TC.Properties.REMOVE_FROM_DATABASE, obj);
             ThoughtsHelper.getInstance().targetEvent(FirebaseHandler.class, TC.Properties.REFRESH);
 
 

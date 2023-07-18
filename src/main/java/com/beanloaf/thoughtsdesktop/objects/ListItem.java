@@ -3,6 +3,7 @@ package com.beanloaf.thoughtsdesktop.objects;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 
 public class ListItem extends Button {
 

@@ -2,11 +2,11 @@ Todo:
     -   Trashcan that auto deletes after a week or so
     -   Match brace
     -   New line lists (after putting a "-", new lines will auto add one and indent)
-    -   Local-only files
-    -   Locked title/tag/body
+    -   Local-only files (kinda done)
     -   Settings
     -   Saving window positions etc to json
     -   Finish search bar
+    -   Keybinds
 
 
 

@@ -119,8 +119,11 @@ public class ListView implements ThoughtsChangeListener {
 
 
 
-    public void newFile() {
-        final ThoughtObject newObject = new ThoughtObject("", "", "");
+    public void newFile(final ThoughtObject obj, final boolean titleLocked, final boolean tagLocked, final boolean bodyLocked) {
+        final ThoughtObject newObject = new ThoughtObject(
+                titleLocked ? obj.getTitle() : "",
+                tagLocked ? obj.getTag() : "",
+                bodyLocked ? obj.getBody() : "");
         newObject.save();
         unsortedThoughtList.add(newObject);
 
@@ -128,6 +131,9 @@ public class ListView implements ThoughtsChangeListener {
         ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS, newObject);
 
     }
+
+
+
 
     public void delete(final ThoughtObject obj) {
 
@@ -371,7 +377,11 @@ public class ListView implements ThoughtsChangeListener {
             case TC.Properties.SORT -> sort((ThoughtObject) eventValue);
             case TC.Properties.SELECTED_TAG -> selectedTag = (TagListItem) eventValue;
             case TC.Properties.DELETE -> delete((ThoughtObject) eventValue);
-            case TC.Properties.NEW_FILE -> newFile();
+            case TC.Properties.NEW_FILE -> {
+                final Object[] data = (Object[]) eventValue;
+
+                newFile((ThoughtObject) data[0], (boolean) data[1], (boolean) data[2], (boolean) data[3]);
+            }
             case TC.Properties.VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
             case TC.Properties.VALIDATE_TITLE -> validateItemListTitles();
             case TC.Properties.REVALIDATE_THOUGHT_LIST -> {
