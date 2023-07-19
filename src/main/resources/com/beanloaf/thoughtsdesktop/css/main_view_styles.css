@@ -58,9 +58,18 @@ root {
     -fx-max-width: 100000;
 }
 
+.listViewItem .button {
+    -fx-border-color: rgb(95, 95, 95);
+}
+
+.listViewItem .button:hover {
+    -fx-border-color: rgb(41, 163, 211);
+}
+
+
+
 .file-button {
     -fx-font-size: 20;
-
 }
 
 

@@ -5,7 +5,7 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
-import com.beanloaf.thoughtsdesktop.res.TC;
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -183,27 +183,27 @@ public class SettingsView implements ThoughtsChangeListener {
 
     private void attachEvents() {
         // General Settings
-        revalidateButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.REVALIDATE_THOUGHT_LIST));
+        revalidateButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REVALIDATE_THOUGHT_LIST));
 
 
 
         // Login/Register Layout
-        loginLayoutButton.setOnMouseClicked(e -> swapLayouts(loginLayout));
-        registerLayoutButton.setOnMouseClicked(e -> swapLayouts(registerLayout));
+        loginLayoutButton.setOnAction(e -> swapLayouts(loginLayout));
+        registerLayoutButton.setOnAction(e -> swapLayouts(registerLayout));
 
         // Login Layout
-        loginBackButton.setOnMouseClicked(e -> swapLayouts(loginRegisterLayout));
-        loginButton.setOnMouseClicked(e -> {
+        loginBackButton.setOnAction(e -> swapLayouts(loginRegisterLayout));
+        loginButton.setOnAction(e -> {
             final String email = loginEmailInput.getText();
             final String password = loginPasswordInput.getText();
 
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.LOG_IN_USER, new String[]{email, password});
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.LOG_IN_USER, new String[]{email, password});
 
         });
 
         // Register Layout
-        registerBackButton.setOnMouseClicked(e -> swapLayouts(loginRegisterLayout));
-        registerButton.setOnMouseClicked(e -> {
+        registerBackButton.setOnAction(e -> swapLayouts(loginRegisterLayout));
+        registerButton.setOnAction(e -> {
             final String name = registerNameInput.getText();
             final String email = registerEmailInput.getText();
             final String password = registerPasswordInput.getText();
@@ -219,12 +219,12 @@ public class SettingsView implements ThoughtsChangeListener {
 
 
             // TODO: Email and password validation
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.REGISTER_NEW_USER, new String[]{name, email, password});
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.REGISTER_NEW_USER, new String[]{name, email, password});
 
         });
 
         // Info Layout
-        infoSignOutButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.SIGN_OUT));
+        infoSignOutButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.SIGN_OUT));
 
 
     }
@@ -248,7 +248,7 @@ public class SettingsView implements ThoughtsChangeListener {
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case TC.Properties.LOG_IN_SUCCESS -> {
+            case Properties.Data.LOG_IN_SUCCESS -> {
                 if (eventValue == null) throw new IllegalArgumentException("User must be passed in with LOG_IN_SUCCESS property");
 
                 setUserInfo((ThoughtUser) eventValue);
@@ -257,7 +257,7 @@ public class SettingsView implements ThoughtsChangeListener {
 
 
             }
-            case TC.Properties.SIGN_OUT -> swapLayouts(loginRegisterLayout);
+            case Properties.Actions.SIGN_OUT -> swapLayouts(loginRegisterLayout);
         }
 
 

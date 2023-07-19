@@ -5,11 +5,14 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
+import com.beanloaf.thoughtsdesktop.views.TextView;
 import com.google.common.io.BaseEncoding;
 
 import javafx.application.Platform;
 import org.apache.commons.codec.binary.Base32;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -38,7 +41,11 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     private boolean isOnline;
 
-    private List<ThoughtObject> cloudThoughtsList;
+    private final List<ThoughtObject> cloudThoughtsList = new ArrayList<>();
+
+
+    private boolean isPushing;
+    private boolean isPulling;
 
     public FirebaseHandler(final MainApplication main) {
         this.main = main;
@@ -52,8 +59,10 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
 
     private void checkUserFile() {
+        System.out.println("Checking user file...");
+
         try {
-            final BufferedReader bufferedReader = new BufferedReader(new FileReader("user.json"));
+            final BufferedReader bufferedReader = new BufferedReader(new FileReader(TC.Directories.LOGIN_PATH));
             final StringBuilder stringBuilder = new StringBuilder();
             String line = bufferedReader.readLine();
 
@@ -83,21 +92,19 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
 
     public void start() {
-        if (isConnectedToDatabase()) {
-            registerURL();
-            refreshItems();
-
-
-            Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.LOG_IN_SUCCESS, user));
-
-        }
-
+        new Thread(() -> {
+            if (isConnectedToDatabase()) {
+                registerURL();
+                refreshItems();
+                Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.LOG_IN_SUCCESS, user));
+            }
+        }).start();
     }
 
     private void signOut() {
         user = null;
         isOnline = false;
-        cloudThoughtsList = null;
+        cloudThoughtsList.clear();
     }
 
     public boolean isConnectedToDatabase() {
@@ -108,8 +115,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     public boolean isConnectedToInternet() {
         try {
             // Checks to see if the pc is connected to the internet
-            final URL url = new URL("https://www.google.com");
-            final URLConnection connection = url.openConnection();
+            final URLConnection connection = new URL("https://www.google.com").openConnection();
             connection.connect();
             isOnline = true;
 
@@ -133,7 +139,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         if (!isOnline) {
             return false;
         }
-        cloudThoughtsList = new ArrayList<>();
+        cloudThoughtsList.clear();
 
         try {
             final HttpURLConnection connection = (HttpURLConnection) new URL(apiURL).openConnection();
@@ -142,8 +148,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
             final int responseCode = connection.getResponseCode();
 
-            if (responseCode != 200) {
-                if (responseCode == 401) {
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                if (responseCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     return null;
 
                 } else {
@@ -197,9 +203,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     private void registerURL() {
         try {
-            if (user == null) {
+            if (user == null)
                 throw new IllegalArgumentException("User cannot be null when registering URL.");
-            }
 
             apiURL = DATABASE_URL + user.localId() + ".json?auth=" + user.idToken();
 
@@ -210,45 +215,69 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
     public boolean pull() {
-        if (cloudThoughtsList == null || cloudThoughtsList.size() == 0) {
+        if (isPulling || cloudThoughtsList.size() == 0) {
             return false;
         }
 
-        reconnectToDatabase();
-        for (final ThoughtObject obj : cloudThoughtsList) {
-            final ThoughtObject listObj = main.listView.sortedThoughtList.getByFile(obj.getFile());
+        ThoughtsHelper.getInstance().targetEvent(TextView.class, Properties.Data.PULL_IN_PROGRESS, true);
+        isPulling = true;
+        new Thread(() -> {
+            reconnectToDatabase();
+            for (final ThoughtObject obj : cloudThoughtsList) {
+                final ThoughtObject listObj = main.listView.sortedThoughtList.getByFile(obj.getFile());
 
-            if (listObj != null) { // already exists
-                listObj.setTitle(obj.getTitle());
-                listObj.setTag(obj.getTag());
-                listObj.setBody(obj.getBody());
-                listObj.save();
-            } else {
-                obj.save();
 
+
+                if (listObj != null) { // already exists
+                    listObj.setTitle(obj.getTitle());
+                    listObj.setTag(obj.getTag());
+                    listObj.setBody(obj.getBody());
+                    listObj.save();
+
+                } else {
+                    obj.save();
+
+                }
             }
-        }
 
-        ThoughtsHelper.getInstance().fireEvent(TC.Properties.REFRESH);
+            Platform.runLater(() -> {
+                ThoughtsHelper.getInstance().targetEvent(TextView.class, Properties.Data.PULL_IN_PROGRESS, false);
+                isPulling = false;
+                ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH);
+            });
+
+        }).start();
+
+
 
         return true;
     }
 
     public boolean push() {
+        if (isPushing) return false;
+
         if (!isConnectedToDatabase()) {
             System.out.println("Not connected to the internet!");
             return false;
         }
 
-        reconnectToDatabase();
+
+        ThoughtsHelper.getInstance().targetEvent(TextView.class, Properties.Data.PUSH_IN_PROGRESS, true);
+        isPushing = true;
+
 
         new Thread(() -> {
             try {
+                reconnectToDatabase();
+
                 for (final ThoughtObject obj : main.listView.sortedThoughtList.getList()) {
                     if (obj != null && !obj.isLocalOnly()) addEntryIntoDatabase(obj);
-
                 }
+
                 refreshItems();
+
+                Platform.runLater(() -> ThoughtsHelper.getInstance().targetEvent(TextView.class, Properties.Data.PUSH_IN_PROGRESS, false));
+                isPushing = false;
                 System.out.println("Finished pushing files");
 
             } catch (Exception e) {
@@ -258,12 +287,12 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         return true;
     }
 
+    // This should be ran inside a thread
     private void addEntryIntoDatabase(final ThoughtObject obj) {
         if (!isConnectedToDatabase()) {
             System.out.println("Not connected to the internet!");
             return;
         }
-
 
         try {
             final String path = obj.getFile().replace(".json", "").replace(" ", "_");
@@ -274,7 +303,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                     BaseEncoding.base32().encode(obj.getDate().getBytes()),
                     BaseEncoding.base32().encode(obj.getTag().getBytes()),
                     BaseEncoding.base32().encode(obj.getTitle().replace("\n", "\\\\n")
-                            .replace("\t", "\\\\t").getBytes()));
+                            .replace("\t", "\\\\t").getBytes()));;
+
 
             final HttpURLConnection connection = (HttpURLConnection) new URL(apiURL).openConnection();
             connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
@@ -290,13 +320,10 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
             final int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                System.out.println("Data successfully inserted to the database.");
+                System.out.println("\"" + obj.getTitle() + "\" successfully inserted to the database.");
             } else {
-                System.out.println("Failed to insert data to the database. Response code: " + responseCode);
+                System.out.println("Failed to insert \"" + obj.getTitle() + "\" to the database. Response code: " + responseCode);
             }
-
-            refreshItems();
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -305,16 +332,18 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     }
 
+
     public void removeEntryFromDatabase(final ThoughtObject obj) {
         if (!isConnectedToDatabase()) {
             System.out.println("Not connected to the internet!");
             return;
         }
 
-        reconnectToDatabase();
 
         new Thread(() -> {
             try {
+                reconnectToDatabase();
+
                 final String path = obj.getFile().replace(".json", "").replace(" ", "_");
                 final URL url = new URL(DATABASE_URL + user.localId() + "/" + BaseEncoding.base32().encode(path.getBytes()).replace("=", "") + ".json?auth=" + user.idToken());
                 final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -377,7 +406,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     private void saveLoginInformation(final String email, final String password) {
         System.out.println("Saving login info");
-        try (FileOutputStream fWriter = new FileOutputStream("user.json")) {
+        try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.LOGIN_PATH)) {
 
             final Map<String, String> textContent = new HashMap<>();
 
@@ -398,7 +427,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         final int numToPull = Math.max(this.cloudThoughtsList.size() - this.main.listView.sortedThoughtList.size(), 0);
 
 
-
         int numLocal = 0;
         for (final ThoughtObject obj : main.listView.sortedThoughtList.getList()) {
 
@@ -407,15 +435,15 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             }
         }
 
+        final int numToPush = Math.max((main.listView.sortedThoughtList.size() - numLocal) - this.cloudThoughtsList.size(), 0);
 
 
+        final Map<String, Integer> map = new HashMap<>();
+        map.put("pull", numToPull);
+        map.put("push", numToPush);
 
-        final int numToPush = Math.max((main.listView.sortedThoughtList.size() - numLocal)- this.cloudThoughtsList.size(), 0);
 
-
-        final Integer[] l = new Integer[]{numToPull, numToPush};
-
-        Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL_PUSH_NUM, l));
+        Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.PULL_PUSH_NUM, map));
 
     }
 
@@ -423,14 +451,14 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case TC.Properties.PULL -> Platform.runLater(this::pull);
-            case TC.Properties.PUSH_ALL -> Platform.runLater(this::push);
-            case TC.Properties.LOG_IN_USER -> {
+            case Properties.Actions.PULL -> Platform.runLater(this::pull);
+            case Properties.Actions.PUSH_ALL -> Platform.runLater(this::push);
+            case Properties.Data.LOG_IN_USER -> {
                 final String[] info = (String[]) eventValue;
                 if (signInUser(info[0], info[1])) start();
 
             }
-            case TC.Properties.REGISTER_NEW_USER -> {
+            case Properties.Data.REGISTER_NEW_USER -> {
                 final String[] info = (String[]) eventValue;
 
                 if (registerNewUser(info[0], info[1], info[2])) start();
@@ -438,11 +466,11 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
             }
 
-            case TC.Properties.SIGN_OUT -> signOut();
-            case TC.Properties.REFRESH -> refreshItems();
-            case TC.Properties.REMOVE_FROM_DATABASE, TC.Properties.DELETE ->
+            case Properties.Actions.SIGN_OUT -> signOut();
+            case Properties.Actions.REFRESH -> refreshItems();
+            case Properties.Data.REMOVE_FROM_DATABASE, Properties.Data.DELETE ->
                     removeEntryFromDatabase((ThoughtObject) eventValue);
-            case TC.Properties.PUSH_FILE -> addEntryIntoDatabase((ThoughtObject) eventValue);
+            case Properties.Data.PUSH_FILE -> addEntryIntoDatabase((ThoughtObject) eventValue);
 
         }
     }

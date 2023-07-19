@@ -6,14 +6,14 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class TextView implements ThoughtsChangeListener {
 
@@ -29,8 +29,11 @@ public class TextView implements ThoughtsChangeListener {
     private final Button sortButton, newFileButton, deleteButton;
     private final Button pullButton, pushAllButton, pushFileButton;
 
-    private final Label cloudHeaderDisplayName, cloudHeaderNumPull, cloudHeaderNumPush;
+
+
+    private final Label cloudHeaderDisplayName;
     private final GridPane cloudHeader;
+    private final ProgressIndicator pushProgressIndicator, pullProgressIndicator;
 
 
     private final CheckBox localOnlyCheckBox, lockTitleCheckBox, lockTagCheckBox, lockBodyCheckBox;
@@ -57,9 +60,8 @@ public class TextView implements ThoughtsChangeListener {
 
         cloudHeader = (GridPane) main.findNodeByID("cloudHeader");
         cloudHeaderDisplayName = (Label) main.findNodeByID("cloudHeaderDisplayName");
-        cloudHeaderNumPull = (Label) main.findNodeByID("cloudHeaderNumPull");
-        cloudHeaderNumPush = (Label) main.findNodeByID("cloudHeaderNumPush");
-
+        pushProgressIndicator = (ProgressIndicator) main.findNodeByID("pushProgressIndicator");
+        pullProgressIndicator = (ProgressIndicator) main.findNodeByID("pullProgressIndicator");
 
         localOnlyCheckBox = (CheckBox) main.findNodeByID("localOnlyCheckBox");
         lockTitleCheckBox = (CheckBox) main.findNodeByID("lockTitleCheckBox");
@@ -77,7 +79,7 @@ public class TextView implements ThoughtsChangeListener {
             if (obj == null) return;
             obj.setTitle(titleTextField.getText());
             obj.save();
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.VALIDATE_TITLE);
+            ThoughtsHelper.getInstance().fireEvent(Properties.Actions.VALIDATE_TITLE);
         });
 
 
@@ -88,7 +90,7 @@ public class TextView implements ThoughtsChangeListener {
             obj.save();
 
 
-            if (obj.isSorted()) ThoughtsHelper.getInstance().fireEvent(TC.Properties.VALIDATE_TAG, obj);
+            if (obj.isSorted()) ThoughtsHelper.getInstance().fireEvent(Properties.Data.VALIDATE_TAG, obj);
 
         });
 
@@ -100,17 +102,17 @@ public class TextView implements ThoughtsChangeListener {
         });
 
 
-        sortButton.setOnMouseClicked(e ->
-                ThoughtsHelper.getInstance().fireEvent(TC.Properties.SORT,
+        sortButton.setOnAction(e ->
+                ThoughtsHelper.getInstance().fireEvent(Properties.Data.SORT,
                         ThoughtsHelper.getInstance().getSelectedFile()));
 
-        newFileButton.setOnMouseClicked(e -> {
+        newFileButton.setOnAction(e -> {
             final boolean isTitleLocked = lockTitleCheckBox.selectedProperty().get();
             final boolean isTagLocked = lockTagCheckBox.selectedProperty().get();
             final boolean isBodyLocked = lockBodyCheckBox.selectedProperty().get();
 
 
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.NEW_FILE,
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.NEW_FILE,
                     new Object[]{
                             ThoughtsHelper.getInstance().getSelectedFile(),
                             isTitleLocked,
@@ -118,24 +120,31 @@ public class TextView implements ThoughtsChangeListener {
                             isBodyLocked});
         });
 
-        deleteButton.setOnMouseClicked(e ->
-                ThoughtsHelper.getInstance().fireEvent(TC.Properties.DELETE,
+
+
+        deleteButton.setOnAction(e ->
+                ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE,
                         ThoughtsHelper.getInstance().getSelectedFile()));
 
-        pushAllButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH_ALL));
+        pushAllButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
 
         pushFileButton.setVisible(false);
-        pushFileButton.setOnMouseClicked(e -> {
+        pushFileButton.setOnAction(e -> {
             final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
             if (obj == null || !obj.isSorted() || obj.isLocalOnly()) return;
 
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH_FILE, obj);
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.PUSH_FILE, obj);
         });
 
 
-        pullButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL));
+        pullButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
 
         localOnlyCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) -> {
+            if (ThoughtsHelper.getInstance().isChangingTextFields) {
+                return;
+            }
+
+
             final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
             if (obj == null) return;
 
@@ -143,14 +152,19 @@ public class TextView implements ThoughtsChangeListener {
             obj.save();
 
             if (obj.isSorted() && obj.isLocalOnly())
-                ThoughtsHelper.getInstance().fireEvent(TC.Properties.REMOVE_FROM_DATABASE, obj);
-            ThoughtsHelper.getInstance().targetEvent(FirebaseHandler.class, TC.Properties.REFRESH);
+                ThoughtsHelper.getInstance().targetEvent(FirebaseHandler.class, Properties.Data.REMOVE_FROM_DATABASE, obj);
+            else {
+                ThoughtsHelper.getInstance().targetEvent(FirebaseHandler.class, Properties.Actions.REFRESH);
 
+            }
+
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.CHECKBOX_PRESSED, isChecked);
 
         });
     }
 
     private void setTextFields(ThoughtObject obj) {
+        ThoughtsHelper.getInstance().isChangingTextFields = true;
         if (obj == null) {
             obj = new ThoughtObject(false, false,
                     "Thoughts",
@@ -174,15 +188,15 @@ public class TextView implements ThoughtsChangeListener {
 
         localOnlyCheckBox.selectedProperty().set(obj.isLocalOnly());
 
-
+        ThoughtsHelper.getInstance().isChangingTextFields = false;
     }
 
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case TC.Properties.SET_TEXT_FIELDS -> {
+            case Properties.Data.SET_TEXT_FIELDS -> {
                 final ThoughtObject obj = (ThoughtObject) eventValue;
-
+                if (obj == null) return;
 
                 ThoughtsHelper.getInstance().setSelectedFile(obj);
                 setTextFields(obj);
@@ -191,26 +205,31 @@ public class TextView implements ThoughtsChangeListener {
 
 
             }
-            case TC.Properties.LOG_IN_SUCCESS -> {
+            case Properties.Data.LOG_IN_SUCCESS -> {
                 final ThoughtUser user = (ThoughtUser) eventValue;
+                if (user == null) return;
+
                 this.cloudHeaderDisplayName.setText("Logged in as: " + user.displayName());
                 this.cloudHeader.setDisable(false);
 
 
             }
-            case TC.Properties.SIGN_OUT -> {
+            case Properties.Actions.SIGN_OUT -> {
                 this.cloudHeaderDisplayName.setText("Not logged in.");
                 this.cloudHeader.setDisable(true);
             }
 
-            case TC.Properties.PULL_PUSH_NUM -> {
-                final Integer[] pushPull = (Integer[]) eventValue;
+            case Properties.Data.PULL_PUSH_NUM -> {
+                final Map<String, Integer> map = (HashMap<String, Integer>) eventValue;
 
-                cloudHeaderNumPull.setText(pushPull[0] + " files can be pulled.");
-                cloudHeaderNumPush.setText(pushPull[1] + " files not pushed.");
+                pushAllButton.setText("Push All (" + map.get("push") + ")");
+                pullButton.setText("Pull (" + map.get("pull") + ")");
 
 
             }
+            case Properties.Actions.NEW_FILE_BUTTON_PRESS -> newFileButton.fire();
+            case Properties.Data.PUSH_IN_PROGRESS -> pushProgressIndicator.setVisible((boolean) eventValue);
+            case Properties.Data.PULL_IN_PROGRESS -> pullProgressIndicator.setVisible((boolean) eventValue);
         }
 
 

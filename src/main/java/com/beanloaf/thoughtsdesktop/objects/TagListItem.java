@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.objects;
 
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.views.ListView;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.res.TC;
@@ -7,11 +8,12 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TagListItem extends Button implements Comparable<TagListItem> {
+public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
     private final List<ThoughtObject> taggedObjects = new ArrayList<>();
 
@@ -19,38 +21,43 @@ public class TagListItem extends Button implements Comparable<TagListItem> {
     public final ListView listView;
     private final String tag;
 
-    public TagListItem(final MainApplication main, final ListView listView, final String tag) {
-        super(tag);
+    private final Button button;
 
-        this.setStyle(TC.CSS.LIST_ITEM);
-        this.setOnMouseEntered(e -> this.setStyle(TC.CSS.LIST_ITEM_HOVER));
-        this.setOnMouseExited(e -> this.setStyle(TC.CSS.LIST_ITEM));
-        this.setWrapText(true);
+    public TagListItem(final MainApplication main, final ListView listView, final String tag) {
+        super();
+        this.getStyleClass().add("listViewItem");
 
         this.main = main;
         this.listView = listView;
         this.tag = tag;
 
-        this.setOnMouseClicked(e -> doClick());
+
+        button = new Button(tag);
+        button.setOnAction(e -> {
+            ThoughtsHelper.getInstance().targetEvent(ListView.class, Properties.Data.SELECTED_TAG_ITEM, this);
+
+            final ObservableList<Node> children = listView.itemList.getChildren();
+
+            children.clear();
+
+            for (final ThoughtObject obj : taggedObjects) {
+                final ListItem listItem = new ListItem(obj);
+                children.add(listItem);
+
+            }
+
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, get(0));
+        });
+
+        this.getChildren().add(TC.Tools.setAnchor(button, 0.0, 0.0, 0.0, 0.0));
 
 
 
     }
 
     public void doClick() {
-        ThoughtsHelper.getInstance().targetEvent(ListView.class, TC.Properties.SELECTED_TAG, this);
+        button.fire();
 
-        final ObservableList<Node> children = listView.itemList.getChildren();
-
-        children.clear();
-
-        for (final ThoughtObject obj : taggedObjects) {
-            final ListItem listItem = new ListItem(obj);
-            children.add(listItem);
-
-        }
-
-        ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS, get(0));
     }
 
     public String getTag() {

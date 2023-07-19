@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
@@ -25,7 +26,8 @@ public class ListView implements ThoughtsChangeListener {
 
     public final TagListItem unsortedThoughtList, sortedThoughtList;
     public final Map<String, TagListItem> thoughtListByTag = new HashMap<>();
-    private TagListItem selectedTag;
+    private TagListItem selectedTagItem;
+    private ListItem selectedListItem;
 
 
     public ListView(final MainApplication main) {
@@ -55,13 +57,13 @@ public class ListView implements ThoughtsChangeListener {
 
         final long startTime = System.currentTimeMillis();
 
-        TC.Paths.STORAGE_PATH.mkdir();
-        TC.Paths.UNSORTED_DIRECTORY_PATH.mkdir();
-        TC.Paths.SORTED_DIRECTORY_PATH.mkdir();
+        TC.Directories.STORAGE_PATH.mkdir();
+        TC.Directories.UNSORTED_DIRECTORY_PATH.mkdir();
+        TC.Directories.SORTED_DIRECTORY_PATH.mkdir();
 
 
-        final File[] unsortedFiles = TC.Paths.UNSORTED_DIRECTORY_PATH.listFiles();
-        final File[] sortedFiles = TC.Paths.SORTED_DIRECTORY_PATH.listFiles();
+        final File[] unsortedFiles = TC.Directories.UNSORTED_DIRECTORY_PATH.listFiles();
+        final File[] sortedFiles = TC.Directories.SORTED_DIRECTORY_PATH.listFiles();
 
         unsortedThoughtList.clear();
         sortedThoughtList.clear();
@@ -128,7 +130,7 @@ public class ListView implements ThoughtsChangeListener {
         unsortedThoughtList.add(newObject);
 
         unsortedThoughtList.doClick();
-        ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS, newObject);
+        ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, newObject);
 
     }
 
@@ -153,7 +155,7 @@ public class ListView implements ThoughtsChangeListener {
                 index = unsortedThoughtList.size() - 1;
             }
 
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS,
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS,
                     unsortedThoughtList.size() - 1 >= 0 ? unsortedThoughtList.get(index) : null);
 
 
@@ -168,15 +170,15 @@ public class ListView implements ThoughtsChangeListener {
             removeTagFromTagList(obj);
 
 
-            if (index > 0 && index < selectedTag.size()) {
+            if (index > 0 && index < selectedTagItem.size()) {
                 index--;
-            } else if (index >= selectedTag.size()) {
-                index = selectedTag.size() - 1;
+            } else if (index >= selectedTagItem.size()) {
+                index = selectedTagItem.size() - 1;
             }
 
 
-            ThoughtsHelper.getInstance().fireEvent(TC.Properties.SET_TEXT_FIELDS,
-                    selectedTag.size() - 1 >= 0 ? selectedTag.get(index) : null);
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS,
+                    selectedTagItem.size() - 1 >= 0 ? selectedTagItem.get(index) : null);
 
         }
 
@@ -373,18 +375,18 @@ public class ListView implements ThoughtsChangeListener {
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case TC.Properties.REFRESH -> refreshThoughtList();
-            case TC.Properties.SORT -> sort((ThoughtObject) eventValue);
-            case TC.Properties.SELECTED_TAG -> selectedTag = (TagListItem) eventValue;
-            case TC.Properties.DELETE -> delete((ThoughtObject) eventValue);
-            case TC.Properties.NEW_FILE -> {
+            case Properties.Actions.REFRESH -> refreshThoughtList();
+            case Properties.Data.SORT -> sort((ThoughtObject) eventValue);
+            case Properties.Data.SELECTED_TAG_ITEM -> selectedTagItem = (TagListItem) eventValue;
+            case Properties.Data.DELETE -> delete((ThoughtObject) eventValue);
+            case Properties.Data.NEW_FILE -> {
                 final Object[] data = (Object[]) eventValue;
 
                 newFile((ThoughtObject) data[0], (boolean) data[1], (boolean) data[2], (boolean) data[3]);
             }
-            case TC.Properties.VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
-            case TC.Properties.VALIDATE_TITLE -> validateItemListTitles();
-            case TC.Properties.REVALIDATE_THOUGHT_LIST -> {
+            case Properties.Data.VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
+            case Properties.Actions.VALIDATE_TITLE -> validateItemListTitles();
+            case Properties.Actions.REVALIDATE_THOUGHT_LIST -> {
                 for (final ThoughtObject obj : unsortedThoughtList.getList()) {
                     obj.save();
                 }
@@ -392,6 +394,19 @@ public class ListView implements ThoughtsChangeListener {
                 for (final ThoughtObject obj : sortedThoughtList.getList()) {
                     obj.save();
                 }
+            }
+            case Properties.Data.SELECTED_LIST_ITEM -> {
+                final ListItem listItem = (ListItem) eventValue;
+                if (listItem == null) return;
+
+                this.selectedListItem = listItem;
+            }
+            case Properties.Data.CHECKBOX_PRESSED -> {
+                if (selectedListItem == null) return;
+
+                this.selectedListItem.setLocal((boolean) eventValue);
+
+
             }
         }
 

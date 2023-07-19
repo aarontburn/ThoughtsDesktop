@@ -2,7 +2,7 @@ package com.beanloaf.thoughtsdesktop.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
-import com.beanloaf.thoughtsdesktop.res.TC;
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -33,17 +33,17 @@ public class ThoughtsMenuBar {
 
         /* File */
         final Map<String, Runnable> fileOptions = new LinkedHashMap<>();
-        fileOptions.put("New File", () -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.NEW_FILE));
+        fileOptions.put("New File", () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.NEW_FILE_BUTTON_PRESS));
 
         fileOptions.put("Sort File", () ->
-                ThoughtsHelper.getInstance().fireEvent(TC.Properties.SORT,
+                ThoughtsHelper.getInstance().fireEvent(Properties.Data.SORT,
                 ThoughtsHelper.getInstance().getSelectedFile()));
 
         fileOptions.put("Delete File", () ->
-                ThoughtsHelper.getInstance().fireEvent(TC.Properties.DELETE,
+                ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE,
                 ThoughtsHelper.getInstance().getSelectedFile()));
 
-        fileOptions.put("Refresh", () -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.REFRESH));
+        fileOptions.put("Refresh", () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH));
         fileOptions.put(null, null);
         fileOptions.put("Exit", () -> {
         });
@@ -54,16 +54,16 @@ public class ThoughtsMenuBar {
         final Map<String, Runnable> toolOptions = new LinkedHashMap<>();
         toolOptions.put("Export", () -> {
         });
-        toolOptions.put("Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, TC.Properties.OPEN_SETTINGS));
+        toolOptions.put("Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, Properties.Actions.OPEN_SETTINGS));
         menuMap.put("Tools", toolOptions);
 
 
         /* Cloud*/
         final Map<String, Runnable> cloudOptions = new LinkedHashMap<>();
-        cloudOptions.put("Push Files", () -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PUSH_ALL));
-        cloudOptions.put("Pull Files", () -> ThoughtsHelper.getInstance().fireEvent(TC.Properties.PULL));
+        cloudOptions.put("Push Files", () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
+        cloudOptions.put("Pull Files", () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
         cloudOptions.put(null, null);
-        cloudOptions.put("Cloud Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, TC.Properties.OPEN_CLOUD_SETTINGS));
+        cloudOptions.put("Cloud Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, Properties.Actions.OPEN_CLOUD_SETTINGS));
         menuMap.put("Cloud", cloudOptions);
 
 
@@ -71,7 +71,7 @@ public class ThoughtsMenuBar {
         final Map<String, Runnable> helpOptions = new LinkedHashMap<>();
         helpOptions.put("Credits", () -> {
         });
-        helpOptions.put("test", () -> {
+        helpOptions.put("test", () -> {ThoughtsHelper.getInstance().fireEvent(Properties.Actions.TEST);
         });
         helpOptions.put("GitHub", () -> {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {

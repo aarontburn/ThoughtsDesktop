@@ -1,6 +1,8 @@
 package com.beanloaf.thoughtsdesktop.res;
 
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import javafx.scene.Node;
+import javafx.scene.layout.AnchorPane;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -29,48 +31,39 @@ public class TC {
 
     }
 
-    public static class Properties {
-        public static final String SET_TEXT_FIELDS = "set text fields";
-        public static final String REFRESH = "refresh";
-        public static final String SORT = "sort";
-        public static final String SELECTED_TAG = "selected tag";
-        public static final String DELETE = "delete";
-        public static final String NEW_FILE = "new file";
-        public static final String VALIDATE_TAG = "validate tag";
-        public static final String VALIDATE_TITLE = "validate title";
-        public static final String OPEN_SETTINGS = "open settings";
-        public static final String OPEN_CLOUD_SETTINGS = "open cloud settings";
-        public static final String PUSH_ALL = "push";
-        public static final String PUSH_FILE = "push file";
-        public static final String PULL = "pull";
-        public static final String REGISTER_NEW_USER = "register new user";
-        public static final String LOG_IN_USER = "log in user";
-        public static final String LOG_IN_SUCCESS = "log in success";
-        public static final String SIGN_OUT = "sign out";
-        public static final String PULL_PUSH_NUM = "push pull num";
-        public static final String REMOVE_FROM_DATABASE = "remove from database";
-        public static final String REVALIDATE_THOUGHT_LIST = "validate thought list";
-        public static final String FILE_MODIFIED = "file modified";
 
+    public static class Directories {
 
-    }
-
-
-    public static class Paths {
-        public static final File STORAGE_PATH = new File("C:/Users/ACA/IdeaProjects/ThoughtsDesktop/storage/"); // TODO: This is build only.
+        public static final File STORAGE_PATH = new File(System.getProperty("user.dir") + "/storage/");
         public static final File UNSORTED_DIRECTORY_PATH = new File(STORAGE_PATH, "/unsorted/");
         public static final File SORTED_DIRECTORY_PATH = new File(STORAGE_PATH, "/sorted/");
-        public static final File LOGIN_PATH = new File("/");
+        public static final File LOGIN_PATH = new File(STORAGE_PATH, "user.json");
     }
 
 
 
     public static class Tools {
 
+        public static Node setAnchor(final Node node, final Double top, final Double bottom, final Double left, final Double right) {
+            AnchorPane.setTopAnchor(node, top);
+            AnchorPane.setBottomAnchor(node, bottom);
+            AnchorPane.setLeftAnchor(node, left);
+            AnchorPane.setRightAnchor(node, right);
+
+
+            return node;
+
+
+        }
+
         public static ThoughtObject readFileContents(final File filePath, final boolean isSorted) {
             try {
                 final String jsonString = new String(Files.readAllBytes(filePath.toPath()));
                 final JSONObject data = (JSONObject) JSONValue.parse(jsonString);
+
+                if (data == null) {
+                    return null;
+                }
 
                 final Boolean localOnly = data.get("localOnly") == null ? null : (boolean) data.get("localOnly");
                 final String title = data.get("title") == null ? "" : data.get("title").toString().trim();
@@ -82,6 +75,8 @@ public class TC {
                 return new ThoughtObject(isSorted, localOnly, title, date, tag, body, filePath);
 
             } catch (Exception e) {
+                System.out.println(filePath);
+
                 e.printStackTrace();
             }
             return null;

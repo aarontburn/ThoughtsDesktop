@@ -2,6 +2,7 @@ package com.beanloaf.thoughtsdesktop.changeListener;
 
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ public class ThoughtsHelper {
 
 
     private ThoughtObject selectedFile;
+
+    public boolean isChangingTextFields;
 
 
     public static ThoughtsHelper getInstance() {
@@ -48,6 +51,9 @@ public class ThoughtsHelper {
     public void fireEvent(final String eventName, final Object eventValue) {
         if (eventName == null) throw new IllegalArgumentException("eventName cannot be null");
 
+        properArguments(eventName, eventValue);
+
+
         for (final Class<?> key : listeners.keySet()) {
             listeners.get(key).eventFired(eventName, eventValue);
         }
@@ -58,6 +64,9 @@ public class ThoughtsHelper {
         if (eventName == null) {
             throw new IllegalArgumentException("eventName cannot be null.");
         }
+
+        properArguments(eventName, eventValue);
+
 
         final ThoughtsChangeListener listener = listeners.get(className);
 
@@ -79,5 +88,30 @@ public class ThoughtsHelper {
 
     public void setSelectedFile(final ThoughtObject selectedFile) {
         this.selectedFile = selectedFile;
+    }
+
+
+    private void properArguments(final String eventName, final Object eventValue) {
+        if (belongsToClass(eventName, Properties.Data.class) && eventValue == null) {
+            throw new IllegalArgumentException("Properties from the Properties.Data class cannot have a null payload");
+        }
+
+        if (belongsToClass(eventName, Properties.Actions.class) && eventValue != null) {
+            throw new IllegalArgumentException("Properties from the Properties.Action class cannot have a payload.");
+        }
+    }
+
+    private static boolean belongsToClass(final String input, final Class<?> inputClass) {
+        try {
+            final Field[] fields = inputClass.getDeclaredFields();
+            for (Field field : fields) {
+                if (field.getType() == String.class && field.get(null).equals(input)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

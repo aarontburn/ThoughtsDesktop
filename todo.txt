@@ -11,6 +11,11 @@ Todo:
 
 
 
+    -   Decoraters:
+        - Local only
+        - Pinned file
+
+
 
 
 

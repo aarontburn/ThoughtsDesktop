@@ -41,4 +41,5 @@ build/
 
 
 storage/
-user.json
+storage/user.json
+test.json

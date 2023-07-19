@@ -30,10 +30,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
     private boolean isLocalOnly;
 
 
-
     private TagListItem parent; // parent is only set for sorted objects
-
-
 
 
     public ThoughtObject(final boolean isSorted, final Boolean isLocalOnly,
@@ -50,15 +47,16 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         this.date = date == null ? getDisplayDateTime() : date;
         this.body = body;
         this.file = file == null ? null : file.getName();
-        this.dir = isSorted ? TC.Paths.SORTED_DIRECTORY_PATH.toString() : TC.Paths.UNSORTED_DIRECTORY_PATH.toString();
+        this.dir = isSorted ? TC.Directories.SORTED_DIRECTORY_PATH.toString() : TC.Directories.UNSORTED_DIRECTORY_PATH.toString();
     }
 
 
     /**
      * This constructor is used when generating BRAND NEW ThoughtObjects, not registering pre-existing ones.
-     * @param title     The initial title
-     * @param tag       The initial tag
-     * @param body      The initial body
+     *
+     * @param title The initial title
+     * @param tag   The initial tag
+     * @param body  The initial body
      */
     public ThoughtObject(final String title,
                          final String tag,
@@ -70,7 +68,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         this.date = getDisplayDateTime();
         this.body = body;
         this.file = createFileName();
-        this.dir = isSorted ? TC.Paths.SORTED_DIRECTORY_PATH.toString() : TC.Paths.UNSORTED_DIRECTORY_PATH.toString();
+        this.dir = isSorted ? TC.Directories.SORTED_DIRECTORY_PATH.toString() : TC.Directories.UNSORTED_DIRECTORY_PATH.toString();
     }
 
     public void setParent(final TagListItem parent) {
@@ -82,18 +80,20 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
     }
 
     public Boolean save() {
-        System.out.println("Saving " + this.title);
-
         if (file == null) {
             return null;
         }
 
         final File file = new File(this.dir, this.file);
 
+
+
+        if (this.file.equals("07-18-2023 19-35-28.json")) System.out.println(this);
+
         try {
             new File(this.dir).mkdir();
 
-            if (file.createNewFile()) return false;
+            file.createNewFile();
 
             try (FileOutputStream fWriter = new FileOutputStream(file)) {
                 final ConcurrentHashMap<String, Object> data = new ConcurrentHashMap<>();
