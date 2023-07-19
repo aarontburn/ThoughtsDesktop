@@ -46,7 +46,8 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
             }
 
-            ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, get(0));
+            if (get(0) != null)
+                ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, get(0));
         });
 
         this.getChildren().add(TC.Tools.setAnchor(button, 0.0, 0.0, 0.0, 0.0));

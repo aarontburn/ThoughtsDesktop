@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import org.apache.commons.codec.binary.Base32;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 
 
@@ -166,7 +167,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             }
             responseReader.close();
 
-
             final JSONObject json = (JSONObject) new JSONParser()
                     .parse(new StringReader(responseBuilder.toString()));
 
@@ -179,12 +179,15 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             final Base32 b32 = new Base32();
 
             for (final Object path : json.keySet()) {
-                final String filePath = new String(b32.decode((String) path))
-                        .replace("_", " ") + ".json";
-                final String title = new String(b32.decode((String) ((JSONObject) json.get(path)).get("Title")));
-                final String tag = new String(b32.decode((String) ((JSONObject) json.get(path)).get("Tag")));
-                final String date = new String(b32.decode((String) ((JSONObject) json.get(path)).get("Date")));
-                final String body = new String(b32.decode(((String) ((JSONObject) json.get(path)).get("Body"))
+
+                final String payload = json.get(path).toString();
+                final JSONObject data = (JSONObject) JSONValue.parse(new StringReader(payload.substring(0, payload.length() - 1)));
+
+                final String filePath = new String(b32.decode((String) path)).replace("_", " ") + ".json";
+                final String title = new String(b32.decode((String) data.get("Title")));
+                final String tag = new String(b32.decode((String) data.get("Tag")));
+                final String date = new String(b32.decode((String) data.get("Date")));
+                final String body = new String(b32.decode(((String) data.get("Body"))
                         .replace("\\n", "\n").replace("\\t", "\t")));
                 cloudThoughtsList.add(new ThoughtObject(true, false, title, date, tag, body, new File(filePath)));
 
@@ -254,6 +257,12 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
     public boolean push() {
+        return push(main.listView.sortedThoughtList.getList().toArray(new ThoughtObject[0]));
+    }
+
+
+
+    private boolean push(final ThoughtObject[] objList) {
         if (isPushing) return false;
 
         if (!isConnectedToDatabase()) {
@@ -270,8 +279,32 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             try {
                 reconnectToDatabase();
 
-                for (final ThoughtObject obj : main.listView.sortedThoughtList.getList()) {
-                    if (obj != null && !obj.isLocalOnly()) addEntryIntoDatabase(obj);
+                final JSONObject batchPayload = new JSONObject();
+                for (final ThoughtObject obj : objList) {
+                    if (obj != null && !obj.isLocalOnly()) {
+                        final String[] payload =  convertThoughtObjectToJson(obj);
+                        batchPayload.put(payload[0], payload[1]);
+
+                    }
+                }
+
+                final HttpURLConnection connection = (HttpURLConnection) new URL(apiURL).openConnection();
+                connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Authorization", "Bearer " + user.idToken());
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+
+                final OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
+                writer.write(batchPayload.toString());
+                writer.flush();
+                writer.close();
+
+                final int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    System.out.println("Successfully inserted all files to the database.");
+                } else {
+                    System.out.println("Failed to insert all files to the database. Response code: " + responseCode);
                 }
 
                 refreshItems();
@@ -295,16 +328,9 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         }
 
         try {
-            final String path = obj.getFile().replace(".json", "").replace(" ", "_");
+            final String json = convertThoughtObjectToJson(obj)[1];
 
-            final String json = String.format("{\"%s\": { \"Body\": \"%s\", \"Date\": \"%s\", \"Tag\": \"%s\", \"Title\": \"%s\"}}",
-                    BaseEncoding.base32().encode(path.getBytes()).replace("=", ""),
-                    BaseEncoding.base32().encode(obj.getBody().getBytes()),
-                    BaseEncoding.base32().encode(obj.getDate().getBytes()),
-                    BaseEncoding.base32().encode(obj.getTag().getBytes()),
-                    BaseEncoding.base32().encode(obj.getTitle().replace("\n", "\\\\n")
-                            .replace("\t", "\\\\t").getBytes()));;
-
+            System.out.println(json);
 
             final HttpURLConnection connection = (HttpURLConnection) new URL(apiURL).openConnection();
             connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
@@ -332,6 +358,20 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     }
 
+
+
+    private String[] convertThoughtObjectToJson(final ThoughtObject obj) {
+        final String path = obj.getFile().replace(".json", "").replace(" ", "_");
+
+        final String json = String.format("{\"Body\": \"%s\", \"Date\": \"%s\", \"Tag\": \"%s\", \"Title\": \"%s\"}}",
+                BaseEncoding.base32().encode(obj.getBody().getBytes()),
+                BaseEncoding.base32().encode(obj.getDate().getBytes()),
+                BaseEncoding.base32().encode(obj.getTag().getBytes()),
+                BaseEncoding.base32().encode(obj.getTitle().replace("\n", "\\\\n")
+                        .replace("\t", "\\\\t").getBytes()));
+
+        return new String[]{BaseEncoding.base32().encode(path.getBytes()).replace("=", ""), json};
+    }
 
     public void removeEntryFromDatabase(final ThoughtObject obj) {
         if (!isConnectedToDatabase()) {
@@ -470,7 +510,11 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             case Properties.Actions.REFRESH -> refreshItems();
             case Properties.Data.REMOVE_FROM_DATABASE, Properties.Data.DELETE ->
                     removeEntryFromDatabase((ThoughtObject) eventValue);
-            case Properties.Data.PUSH_FILE -> addEntryIntoDatabase((ThoughtObject) eventValue);
+            case Properties.Data.PUSH_FILE -> push(new ThoughtObject[]{(ThoughtObject) eventValue});
+            case Properties.Actions.TEST -> {
+
+
+            }
 
         }
     }
