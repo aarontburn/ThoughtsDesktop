@@ -1,13 +1,24 @@
 package com.beanloaf.thoughtsdesktop.objects;
 
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.setAnchor;
+
 public class ListItem extends AnchorPane {
+
+    public enum Decorators {
+        LOCAL_ONLY,
+        IN_DATABASE
+
+    }
+
 
     private final ThoughtObject obj;
 
@@ -16,7 +27,9 @@ public class ListItem extends AnchorPane {
 
 
     // Decorators:
-    final Text localOnlyDecorator;
+    public final DecoratorText localOnlyDecorator, inDatabaseDecorator;
+    private final List<DecoratorText> decorators = new ArrayList<>();
+
 
 
     public ListItem(final ThoughtObject obj) {
@@ -30,16 +43,19 @@ public class ListItem extends AnchorPane {
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.SELECTED_LIST_ITEM, this);
         });
 
-        this.getChildren().add(TC.Tools.setAnchor(button, 0.0, 0.0, 0.0, 0.0));
+        this.getChildren().add(setAnchor(button, 0.0, 0.0, 0.0, 0.0));
 
 
-        localOnlyDecorator = new Text("L");
-        localOnlyDecorator.setStyle("-fx-fill: #B2B2B2; -fx-font-size: 20;");
-        this.getChildren().add(TC.Tools.setAnchor(localOnlyDecorator, 0.0, null, 8.0, null));
+        localOnlyDecorator = new DecoratorText("L");
+        this.getChildren().add(localOnlyDecorator);
+
+        inDatabaseDecorator = new DecoratorText("U"); // TODO: find a better symbol for this
+        this.getChildren().add(inDatabaseDecorator);
 
 
-        setLocal(obj.isLocalOnly());
 
+        localOnlyDecorator.setVisible(obj.isLocalOnly());
+        inDatabaseDecorator.setVisible(obj.isInDatabase());
 
     }
 
@@ -56,9 +72,36 @@ public class ListItem extends AnchorPane {
         button.setText(text);
     }
 
-    public void setLocal(final boolean isLocal) {
-        localOnlyDecorator.setVisible(isLocal);
 
+    public void setDecorator(final Decorators decorator, final boolean visible) {
+        for (final DecoratorText d : decorators) {
+            d.setVisible(false);
+        }
+
+
+        switch (decorator) {
+            case LOCAL_ONLY -> localOnlyDecorator.setVisible(visible);
+            case IN_DATABASE -> inDatabaseDecorator.setVisible(visible);
+            default -> throw new IllegalArgumentException("Illegal enum inputted.");
+        }
+
+    }
+
+
+
+
+
+
+
+    public class DecoratorText extends Text {
+
+        public DecoratorText(final String text) {
+            super(text);
+            this.setStyle("-fx-fill: #B2B2B2; -fx-font-size: 16;");
+            setAnchor(this, 0.0, null, 4.0, null);
+
+            decorators.add(this);
+        }
 
     }
 

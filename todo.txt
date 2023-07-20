@@ -8,6 +8,8 @@ Todo:
     -   Finish search bar
     -   Keybinds
 
+    - Figure out how to deal with conflicting filenames
+
 
 
 

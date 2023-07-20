@@ -1,7 +1,9 @@
 package com.beanloaf.thoughtsdesktop.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.changeListener.DatabaseSnapshot;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
@@ -15,7 +17,7 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 import java.util.*;
 
-import static com.beanloaf.thoughtsdesktop.res.TC.Tools.readFileContents;
+import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.readFileContents;
 
 public class ListView implements ThoughtsChangeListener {
 
@@ -120,7 +122,6 @@ public class ListView implements ThoughtsChangeListener {
     }
 
 
-
     public void newFile(final ThoughtObject obj, final boolean titleLocked, final boolean tagLocked, final boolean bodyLocked) {
         final ThoughtObject newObject = new ThoughtObject(
                 titleLocked ? obj.getTitle() : "",
@@ -133,8 +134,6 @@ public class ListView implements ThoughtsChangeListener {
         ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, newObject);
 
     }
-
-
 
 
     public void delete(final ThoughtObject obj) {
@@ -222,6 +221,9 @@ public class ListView implements ThoughtsChangeListener {
             unsortedThoughtList.add(obj);
 
             removeTagFromTagList(obj);
+
+
+            ThoughtsHelper.getInstance().targetEvent(FirebaseHandler.class, Properties.Data.REMOVE_FROM_DATABASE, obj);
         }
 
 
@@ -236,6 +238,9 @@ public class ListView implements ThoughtsChangeListener {
             }
 
         }
+
+        ThoughtsHelper.getInstance().targetEvent(FirebaseHandler.class, Properties.Actions.REFRESH_PUSH_PULL_LABELS);
+
 
     }
 
@@ -357,15 +362,25 @@ public class ListView implements ThoughtsChangeListener {
 
     }
 
-    public void validateItemListTitles() {
+    public void validateItemList() {
         for (final Node node : itemList.getChildren()) {
             if (node.getClass() != ListItem.class) continue;
 
             final ListItem listItem = (ListItem) node;
 
-
-            if (!listItem.getText().equals(listItem.getThoughtObject().getTitle()))
+            if (!listItem.getText().equals(listItem.getThoughtObject().getTitle())) {
                 listItem.setText(listItem.getThoughtObject().getTitle());
+            }
+
+
+            if (listItem.inDatabaseDecorator.isVisible() != listItem.getThoughtObject().isInDatabase()){
+                listItem.setDecorator(ListItem.Decorators.IN_DATABASE, listItem.getThoughtObject().isInDatabase());
+            }
+
+            if (listItem.localOnlyDecorator.isVisible() != listItem.getThoughtObject().isLocalOnly()){
+                listItem.setDecorator(ListItem.Decorators.LOCAL_ONLY, listItem.getThoughtObject().isLocalOnly());
+            }
+
 
         }
 
@@ -375,7 +390,10 @@ public class ListView implements ThoughtsChangeListener {
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case Properties.Actions.REFRESH -> refreshThoughtList();
+            case Properties.Actions.REFRESH -> {
+                refreshThoughtList();
+                selectedTagItem.doClick();
+            }
             case Properties.Data.SORT -> sort((ThoughtObject) eventValue);
             case Properties.Data.SELECTED_TAG_ITEM -> selectedTagItem = (TagListItem) eventValue;
             case Properties.Data.DELETE -> delete((ThoughtObject) eventValue);
@@ -385,7 +403,7 @@ public class ListView implements ThoughtsChangeListener {
                 newFile((ThoughtObject) data[0], (boolean) data[1], (boolean) data[2], (boolean) data[3]);
             }
             case Properties.Data.VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
-            case Properties.Actions.VALIDATE_TITLE -> validateItemListTitles();
+            case Properties.Actions.VALIDATE_ITEM_LIST -> validateItemList();
             case Properties.Actions.REVALIDATE_THOUGHT_LIST -> {
                 for (final ThoughtObject obj : unsortedThoughtList.getList()) {
                     obj.save();
@@ -403,11 +421,21 @@ public class ListView implements ThoughtsChangeListener {
             }
             case Properties.Data.CHECKBOX_PRESSED -> {
                 if (selectedListItem == null) return;
-
-                this.selectedListItem.setLocal((boolean) eventValue);
-
-
+                this.selectedListItem.setDecorator(ListItem.Decorators.LOCAL_ONLY, (boolean) eventValue);
             }
+            case Properties.Data.SET_IN_DATABASE_DECORATORS -> new Thread(() -> {
+                final DatabaseSnapshot snapshot = (DatabaseSnapshot) eventValue;
+
+                final List<ThoughtObject> objectsInDatabase = snapshot.findObjectsInDatabase(sortedThoughtList.getList(), true);
+
+                System.out.println(snapshot.findObjectsInDatabase(sortedThoughtList.getList(), false).toString());
+
+                for (final ThoughtObject obj : sortedThoughtList.getList()) {
+                    obj.setInDatabase(objectsInDatabase.contains(obj));
+                }
+
+                validateItemList();
+            }).start();
         }
 
     }

@@ -42,47 +42,7 @@ public class TC {
 
 
 
-    public static class Tools {
 
-        public static Node setAnchor(final Node node, final Double top, final Double bottom, final Double left, final Double right) {
-            AnchorPane.setTopAnchor(node, top);
-            AnchorPane.setBottomAnchor(node, bottom);
-            AnchorPane.setLeftAnchor(node, left);
-            AnchorPane.setRightAnchor(node, right);
-
-
-            return node;
-
-
-        }
-
-        public static ThoughtObject readFileContents(final File filePath, final boolean isSorted) {
-            try {
-                final String jsonString = new String(Files.readAllBytes(filePath.toPath()));
-                final JSONObject data = (JSONObject) JSONValue.parse(jsonString);
-
-                if (data == null) {
-                    return null;
-                }
-
-                final Boolean localOnly = data.get("localOnly") == null ? null : (boolean) data.get("localOnly");
-                final String title = data.get("title") == null ? "" : data.get("title").toString().trim();
-                final String date = data.get("date") == null ? null : data.get("date").toString().trim();
-                final String tag = data.get("tag") == null ? "" : data.get("tag").toString().trim();
-                final String body = data.get("body") == null ? "" : data.get("body").toString().trim();
-
-
-                return new ThoughtObject(isSorted, localOnly, title, date, tag, body, filePath);
-
-            } catch (Exception e) {
-                System.out.println(filePath);
-
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-    }
 
 
 

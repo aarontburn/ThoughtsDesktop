@@ -6,7 +6,7 @@ public class Properties {
      */
     public static class Actions {
         public static final String REFRESH = "refresh";
-        public static final String VALIDATE_TITLE = "validate title";
+        public static final String VALIDATE_ITEM_LIST = "validate title";
         public static final String OPEN_SETTINGS = "open settings";
         public static final String OPEN_CLOUD_SETTINGS = "open cloud settings";
         public static final String PUSH_ALL = "push";
@@ -15,6 +15,7 @@ public class Properties {
         public static final String REVALIDATE_THOUGHT_LIST = "validate thought list";
         public static final String NEW_FILE_BUTTON_PRESS = "new file button press";
         public static final String TEST = "test";
+        public static final String REFRESH_PUSH_PULL_LABELS = "set push pull labels";
 
 
 
@@ -42,6 +43,8 @@ public class Properties {
         public static final String CHECKBOX_PRESSED = "checkbox pressed";
         public static final String PUSH_IN_PROGRESS = "push in progress";
         public static final String PULL_IN_PROGRESS = "pull in progress";
+        public static final String SET_IN_DATABASE_DECORATORS = "set in database decorators";
+
 
 
 

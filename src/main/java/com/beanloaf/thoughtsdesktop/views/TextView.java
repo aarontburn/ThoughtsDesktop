@@ -79,7 +79,7 @@ public class TextView implements ThoughtsChangeListener {
             if (obj == null) return;
             obj.setTitle(titleTextField.getText());
             obj.save();
-            ThoughtsHelper.getInstance().fireEvent(Properties.Actions.VALIDATE_TITLE);
+            ThoughtsHelper.getInstance().fireEvent(Properties.Actions.VALIDATE_ITEM_LIST);
         });
 
 
@@ -164,7 +164,10 @@ public class TextView implements ThoughtsChangeListener {
     }
 
     private void setTextFields(ThoughtObject obj) {
+
+
         ThoughtsHelper.getInstance().isChangingTextFields = true;
+
         if (obj == null) {
             obj = new ThoughtObject(false, false,
                     "Thoughts",
@@ -195,13 +198,15 @@ public class TextView implements ThoughtsChangeListener {
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
             case Properties.Data.SET_TEXT_FIELDS -> {
-                final ThoughtObject obj = (ThoughtObject) eventValue;
-                if (obj == null) return;
+                ThoughtObject obj = null;
+
+                if (eventValue.getClass() == ThoughtObject.class) {
+                    obj = (ThoughtObject) eventValue;
+                    pushFileButton.setVisible(obj.isSorted());
+                }
 
                 ThoughtsHelper.getInstance().setSelectedFile(obj);
                 setTextFields(obj);
-                pushFileButton.setVisible(obj.isSorted());
-
 
 
             }

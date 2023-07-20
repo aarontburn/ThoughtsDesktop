@@ -3,7 +3,6 @@ package com.beanloaf.thoughtsdesktop.objects;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.views.ListView;
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -12,6 +11,8 @@ import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.setAnchor;
 
 public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
@@ -34,6 +35,8 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
         button = new Button(tag);
         button.setOnAction(e -> {
+            taggedObjects.sort(ThoughtObject::compareTo);
+
             ThoughtsHelper.getInstance().targetEvent(ListView.class, Properties.Data.SELECTED_TAG_ITEM, this);
 
             final ObservableList<Node> children = listView.itemList.getChildren();
@@ -46,12 +49,12 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
             }
 
-            if (get(0) != null)
-                ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, get(0));
+            final ThoughtObject firstObj = get(0);
+
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, firstObj == null ? new Object() : firstObj);
         });
 
-        this.getChildren().add(TC.Tools.setAnchor(button, 0.0, 0.0, 0.0, 0.0));
-
+        this.getChildren().add(setAnchor(button, 0.0, 0.0, 0.0, 0.0));
 
 
     }

@@ -28,6 +28,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
 
     private boolean isSorted;
     private boolean isLocalOnly;
+    private boolean isInDatabase;
 
 
     private TagListItem parent; // parent is only set for sorted objects
@@ -85,10 +86,6 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         }
 
         final File file = new File(this.dir, this.file);
-
-
-
-        if (this.file.equals("07-18-2023 19-35-28.json")) System.out.println(this);
 
         try {
             new File(this.dir).mkdir();
@@ -180,7 +177,6 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
             return this.tag;
         }
 
-
         return TC.DEFAULT_TAG;
     }
 
@@ -211,10 +207,19 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
     public boolean isLocalOnly() {
         return isLocalOnly;
     }
-
     public void setLocalOnly(final boolean isLocal) {
         this.isLocalOnly = isLocal;
     }
+
+    public boolean isInDatabase() {
+        return this.isInDatabase;
+    }
+
+    public void setInDatabase(final boolean isInDatabase) {
+        this.isInDatabase = isInDatabase;
+    }
+
+
 
 
     private String getDisplayDateTime() {
