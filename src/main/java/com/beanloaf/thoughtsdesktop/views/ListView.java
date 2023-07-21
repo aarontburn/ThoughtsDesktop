@@ -428,8 +428,6 @@ public class ListView implements ThoughtsChangeListener {
 
                 final List<ThoughtObject> objectsInDatabase = snapshot.findObjectsInDatabase(sortedThoughtList.getList(), true);
 
-                System.out.println(snapshot.findObjectsInDatabase(sortedThoughtList.getList(), false).toString());
-
                 for (final ThoughtObject obj : sortedThoughtList.getList()) {
                     obj.setInDatabase(objectsInDatabase.contains(obj));
                 }

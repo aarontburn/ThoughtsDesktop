@@ -140,12 +140,12 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         }
     }
 
+
+    // This should be ran inside a thread.
     private Boolean refreshItems() {
-        if (!isOnline) {
+        if (!isConnectedToDatabase()) {
             return false;
         }
-
-
 
         databaseSnapshot.clear();
 
@@ -469,12 +469,11 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             }
 
             case SIGN_OUT -> signOut();
-            case REFRESH -> refreshItems();
+            case REFRESH -> new Thread(() -> refreshItems()).start();
             case REMOVE_FROM_DATABASE, Properties.Data.DELETE ->
                     removeEntryFromDatabase((ThoughtObject) eventValue);
             case PUSH_FILE -> push(new ThoughtObject[]{(ThoughtObject) eventValue});
             case TEST -> {
-
 
             }
             case REFRESH_PUSH_PULL_LABELS -> {

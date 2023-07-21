@@ -240,7 +240,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
 
     @Override
     public String toString() {
-        return "[Title: " + title + " Tag: " + tag + " Body: " + body + " Date/Time: " + date + " File: " + file + "]";
+        return "[Title: " + getTitle() + " Tag: " + getTag() + " Body: " + getBody() + " Date/Time: " + getDate() + " File: " + getFile() + "]";
     }
 
     @Override
@@ -253,12 +253,13 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         }
 
         final ThoughtObject that = (ThoughtObject) obj;
+
         return Objects.equals(dir, that.dir)
-                && Objects.equals(file, that.file)
-                && Objects.equals(title, that.title)
-                && Objects.equals(tag, that.tag)
-                && Objects.equals(body, that.body)
-                && Objects.equals(date, that.date);
+                && Objects.equals(getFile(), that.getFile())
+                && Objects.equals(getTitle(), that.getTitle())
+                && Objects.equals(getTag(), that.getTag())
+                && Objects.equals(getBody(), that.getBody())
+                && Objects.equals(getDate(), that.getDate());
     }
 
     @Override

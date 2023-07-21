@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,11 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
     private final String tag;
 
     private final Button button;
+    private final List<DecoratorText> decorators = new ArrayList<>();
+
+
+    public final DecoratorText pinnedDecorator;
+
 
     public TagListItem(final MainApplication main, final ListView listView, final String tag) {
         super();
@@ -55,6 +61,26 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
         });
 
         this.getChildren().add(setAnchor(button, 0.0, 0.0, 0.0, 0.0));
+
+
+        pinnedDecorator = new DecoratorText("P");
+        this.getChildren().add(pinnedDecorator);
+
+        pinnedDecorator.setVisible(false);
+
+        this.setOnMouseEntered(e -> {
+            pinnedDecorator.setVisible(true);
+        });
+
+        this.setOnMouseExited(e -> {
+            pinnedDecorator.setVisible(false);
+
+        });
+
+
+
+
+
 
 
     }
@@ -139,6 +165,19 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
     @Override
     public int compareTo(final TagListItem tagListItem) {
         return this.getTag().compareToIgnoreCase(tagListItem.getTag());
+    }
+
+
+    public class DecoratorText extends Text {
+
+        public DecoratorText(final String text) {
+            super(text);
+            this.setStyle("-fx-fill: #B2B2B2; -fx-font-size: 16;");
+            setAnchor(this, 0.0, null, 4.0, null);
+
+            decorators.add(this);
+        }
+
     }
 
 }

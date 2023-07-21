@@ -13,25 +13,20 @@ public class DatabaseSnapshot {
     }
 
 
-
-
     /**
-     *
      * This checks if the Thought is in the database, meaning it needs to have IDENTICAL fields. If any of the fields
-     *      is not equal, it will not add it to the database.
+     * is not equal, it will not add it to the database.
+     * <p>
+     * NOTE: This will ignore any objects that are local only (obj.isLocalOnly()).
+     * This means that the provided lists will only deal with files that are eligible to be put into the database.
      *
-     *      NOTE: This will ignore any objects that are local only (obj.isLocalOnly()).
-     *          This means that the provided lists will only deal with files that are eligible to be put into the database.
-     *
-     *
-     * @param otherList The list to compare to, most likely main.listview.sortedThoughtList();
-     * @param inDatabase Boolean; if true, will return a list of objects that are present in both the database and in the other list.
+     * @param otherList  The list to compare to, most likely main.listview.sortedThoughtList();
+     * @param searchMode Boolean; if true, will return a list of objects that are present in both the database and in the other list.
      *                   If false, will return a list of objects that are NOT in the database but in the other list.
-     *
-     * @return A list of items that ARE PRESENT in the database
+     * @return A list of items that ARE PRESENT in the database or a list of items that are NOT in the database
      */
-    public List<ThoughtObject> findObjectsInDatabase(final List<ThoughtObject> otherList, final boolean inDatabase) {
-        final List<ThoughtObject> databaseList = new ArrayList<>();
+    public List<ThoughtObject> findObjectsInDatabase(final List<ThoughtObject> otherList, final boolean searchMode) {
+        final List<ThoughtObject> inDatabaseList = new ArrayList<>();
         final List<ThoughtObject> notInDatabaseList = new ArrayList<>();
 
         for (final ThoughtObject obj : otherList) {
@@ -39,28 +34,17 @@ public class DatabaseSnapshot {
             if (obj.isLocalOnly()) continue;
 
 
-            if (this.databaseList.containsValue(obj)) {
-                databaseList.add(obj);
+            if (this.databaseList.get(obj.getFile()) != null) {
+                inDatabaseList.add(obj);
             } else {
-                System.out.println("Local: "+ obj);
                 notInDatabaseList.add(obj);
             }
 
         }
 
-
-        for (final ThoughtObject obj : getList()) {
-            if (obj.getTitle().equals("11156")) {
-                System.out.println("In database: " + obj);
-            }
-        }
-
-        return inDatabase ? databaseList : notInDatabaseList;
+        return searchMode ? inDatabaseList : notInDatabaseList;
 
     }
-
-
-
 
 
     public void add(final ThoughtObject obj) {
@@ -78,7 +62,6 @@ public class DatabaseSnapshot {
     public List<ThoughtObject> getList() {
         return new ArrayList<>(databaseList.values());
     }
-
 
 
 }
