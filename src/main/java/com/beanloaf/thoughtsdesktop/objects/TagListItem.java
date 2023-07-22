@@ -42,11 +42,10 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
         button = new Button(tag);
         button.setOnAction(e -> {
 
-
-
             taggedObjects.sort(ThoughtObject::compareTo);
 
             ThoughtsHelper.getInstance().targetEvent(ListView.class, Properties.Data.SELECTED_TAG_ITEM, this);
+            this.getStyleClass().add("tagListSelected");
 
 
             final ObservableList<Node> children = listView.itemList.getChildren();

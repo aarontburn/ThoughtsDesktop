@@ -17,6 +17,8 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 import java.util.*;
 
+import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
+import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Data.*;
 import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.readFileContents;
 
 public class ListView implements ThoughtsChangeListener {
@@ -97,6 +99,10 @@ public class ListView implements ThoughtsChangeListener {
                 }
                 list.add(content);
                 content.setParent(list);
+
+
+
+
             }
 
         }
@@ -108,7 +114,13 @@ public class ListView implements ThoughtsChangeListener {
         set.sort(String.CASE_INSENSITIVE_ORDER);
 
         for (final String key : set) {
-            tagList.getChildren().add(thoughtListByTag.get(key));
+            final TagListItem tagListItem = thoughtListByTag.get(key);
+
+
+            tagList.getChildren().add(tagListItem);
+
+
+
 
         }
 
@@ -390,14 +402,13 @@ public class ListView implements ThoughtsChangeListener {
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case Properties.Actions.REFRESH -> {
+            case REFRESH -> {
                 refreshThoughtList();
                 selectedTagItem.doClick();
+
             }
-            case Properties.Data.SORT -> sort((ThoughtObject) eventValue);
-            case Properties.Data.SELECTED_TAG_ITEM -> {
-
-
+            case SORT -> sort((ThoughtObject) eventValue);
+            case SELECTED_TAG_ITEM -> {
                 selectedTagItem = (TagListItem) eventValue;
 
                 for (final Node node : tagList.getChildren()) {
@@ -406,20 +417,18 @@ public class ListView implements ThoughtsChangeListener {
                     node.getStyleClass().remove("tagListSelected");
                 }
 
-                selectedTagItem.getStyleClass().add("tagListSelected");
-
 
 
             }
-            case Properties.Data.DELETE -> delete((ThoughtObject) eventValue);
-            case Properties.Data.NEW_FILE -> {
+            case DELETE -> delete((ThoughtObject) eventValue);
+            case NEW_FILE -> {
                 final Object[] data = (Object[]) eventValue;
 
                 newFile((ThoughtObject) data[0], (boolean) data[1], (boolean) data[2], (boolean) data[3]);
             }
-            case Properties.Data.VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
-            case Properties.Actions.VALIDATE_ITEM_LIST -> validateItemList();
-            case Properties.Actions.REVALIDATE_THOUGHT_LIST -> {
+            case VALIDATE_TAG -> validateTag((ThoughtObject) eventValue);
+            case VALIDATE_ITEM_LIST -> validateItemList();
+            case REVALIDATE_THOUGHT_LIST -> {
                 for (final ThoughtObject obj : unsortedThoughtList.getList()) {
                     obj.save();
                 }
@@ -428,7 +437,7 @@ public class ListView implements ThoughtsChangeListener {
                     obj.save();
                 }
             }
-            case Properties.Data.SELECTED_LIST_ITEM -> {
+            case SELECTED_LIST_ITEM -> {
 
                 this.selectedListItem = (ListItem) eventValue;
 
@@ -443,11 +452,11 @@ public class ListView implements ThoughtsChangeListener {
                 selectedListItem.getStyleClass().add("itemListSelected");
 
             }
-            case Properties.Data.CHECKBOX_PRESSED -> {
+            case CHECKBOX_PRESSED -> {
                 if (selectedListItem == null) return;
                 this.selectedListItem.setDecorator(ListItem.Decorators.LOCAL_ONLY, (boolean) eventValue);
             }
-            case Properties.Data.SET_IN_DATABASE_DECORATORS -> new Thread(() -> {
+            case SET_IN_DATABASE_DECORATORS -> new Thread(() -> {
                 final DatabaseSnapshot snapshot = (DatabaseSnapshot) eventValue;
 
                 final List<ThoughtObject> objectsInDatabase = snapshot.findObjectsInDatabase(sortedThoughtList.getList());
