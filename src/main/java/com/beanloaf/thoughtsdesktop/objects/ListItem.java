@@ -34,7 +34,7 @@ public class ListItem extends AnchorPane {
 
     public ListItem(final ThoughtObject obj) {
         super();
-        this.getStyleClass().add("listViewItem");
+        this.getStyleClass().add("itemList");
         this.obj = obj;
 
         button = new Button(obj.getTitle());
@@ -57,6 +57,10 @@ public class ListItem extends AnchorPane {
         localOnlyDecorator.setVisible(obj.isLocalOnly());
         inDatabaseDecorator.setVisible(obj.isInDatabase());
 
+    }
+
+    public void doClick() {
+        button.fire();
     }
 
     public ThoughtObject getThoughtObject() {

@@ -395,7 +395,22 @@ public class ListView implements ThoughtsChangeListener {
                 selectedTagItem.doClick();
             }
             case Properties.Data.SORT -> sort((ThoughtObject) eventValue);
-            case Properties.Data.SELECTED_TAG_ITEM -> selectedTagItem = (TagListItem) eventValue;
+            case Properties.Data.SELECTED_TAG_ITEM -> {
+
+
+                selectedTagItem = (TagListItem) eventValue;
+
+                for (final Node node : tagList.getChildren()) {
+                    if (node.getClass() != TagListItem.class) continue;
+
+                    node.getStyleClass().remove("tagListSelected");
+                }
+
+                selectedTagItem.getStyleClass().add("tagListSelected");
+
+
+
+            }
             case Properties.Data.DELETE -> delete((ThoughtObject) eventValue);
             case Properties.Data.NEW_FILE -> {
                 final Object[] data = (Object[]) eventValue;
@@ -414,10 +429,19 @@ public class ListView implements ThoughtsChangeListener {
                 }
             }
             case Properties.Data.SELECTED_LIST_ITEM -> {
-                final ListItem listItem = (ListItem) eventValue;
-                if (listItem == null) return;
 
-                this.selectedListItem = listItem;
+                this.selectedListItem = (ListItem) eventValue;
+
+
+                for (final Node node : itemList.getChildren()) {
+                    if (node.getClass() != ListItem.class) continue;
+
+                    node.getStyleClass().remove("itemListSelected");
+                }
+
+
+                selectedListItem.getStyleClass().add("itemListSelected");
+
             }
             case Properties.Data.CHECKBOX_PRESSED -> {
                 if (selectedListItem == null) return;
@@ -426,7 +450,7 @@ public class ListView implements ThoughtsChangeListener {
             case Properties.Data.SET_IN_DATABASE_DECORATORS -> new Thread(() -> {
                 final DatabaseSnapshot snapshot = (DatabaseSnapshot) eventValue;
 
-                final List<ThoughtObject> objectsInDatabase = snapshot.findObjectsInDatabase(sortedThoughtList.getList(), true);
+                final List<ThoughtObject> objectsInDatabase = snapshot.findObjectsInDatabase(sortedThoughtList.getList());
 
                 for (final ThoughtObject obj : sortedThoughtList.getList()) {
                     obj.setInDatabase(objectsInDatabase.contains(obj));

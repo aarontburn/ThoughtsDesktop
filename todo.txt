@@ -7,13 +7,17 @@ Todo:
     -   Saving window positions etc to json
     -   Finish search bar
     -   Keybinds
+    -   Figure out how to deal with conflicting filenames
+    -   Replace data structures in TagListItem with LinkedHashMap/HashMap for faster lookup
+    -   Multi-tags
+    -   Implement timer to auto-refresh the database every min or so
 
-    - Figure out how to deal with conflicting filenames
 
 
 
 
-    -   Decoraters:
+
+    -   Decorators:
         - Local only
         - Pinned file
 

@@ -32,7 +32,7 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
     public TagListItem(final MainApplication main, final ListView listView, final String tag) {
         super();
-        this.getStyleClass().add("listViewItem");
+        this.getStyleClass().add("tagList");
 
         this.main = main;
         this.listView = listView;
@@ -41,23 +41,35 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
         button = new Button(tag);
         button.setOnAction(e -> {
+
+
+
             taggedObjects.sort(ThoughtObject::compareTo);
 
             ThoughtsHelper.getInstance().targetEvent(ListView.class, Properties.Data.SELECTED_TAG_ITEM, this);
+
 
             final ObservableList<Node> children = listView.itemList.getChildren();
 
             children.clear();
 
-            for (final ThoughtObject obj : taggedObjects) {
-                final ListItem listItem = new ListItem(obj);
-                children.add(listItem);
+            ListItem firstObj = null;
 
+            for (int i = 0; i < taggedObjects.size(); i++) {
+
+                final ListItem listItem = new ListItem(taggedObjects.get(i));
+                if (i == 0) firstObj = listItem;
+
+                children.add(listItem);
             }
 
-            final ThoughtObject firstObj = get(0);
 
-            ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, firstObj == null ? new Object() : firstObj);
+            if (firstObj != null) {
+                firstObj.doClick();
+            } else {
+                ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, new Object());
+            }
+
         });
 
         this.getChildren().add(setAnchor(button, 0.0, 0.0, 0.0, 0.0));
@@ -68,22 +80,28 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
         pinnedDecorator.setVisible(false);
 
-        this.setOnMouseEntered(e -> {
-            pinnedDecorator.setVisible(true);
-        });
-
-        this.setOnMouseExited(e -> {
-            pinnedDecorator.setVisible(false);
-
-        });
-
-
-
-
-
-
+        this.setOnMouseEntered(e -> showDecorators());
+        this.setOnMouseExited(e -> hideInactiveDecorators());
 
     }
+
+    private void showDecorators() {
+        for (final DecoratorText decorator : decorators) {
+            decorator.setVisible(true);
+        }
+    }
+
+    private void hideInactiveDecorators() {
+
+        for (final DecoratorText decorator : decorators) {
+            if (!decorator.isActive()) decorator.setVisible(false);
+        }
+
+    }
+
+
+
+
 
     public void doClick() {
         button.fire();
@@ -170,12 +188,27 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
     public class DecoratorText extends Text {
 
+        private boolean isActive;
+
         public DecoratorText(final String text) {
             super(text);
             this.setStyle("-fx-fill: #B2B2B2; -fx-font-size: 16;");
             setAnchor(this, 0.0, null, 4.0, null);
-
             decorators.add(this);
+
+
+            this.setOnMouseClicked(e -> setActive(!isActive()));
+
+        }
+
+
+
+        public boolean isActive() {
+            return this.isActive;
+        }
+
+        public void setActive(final boolean isActive) {
+            this.isActive = isActive;
         }
 
     }

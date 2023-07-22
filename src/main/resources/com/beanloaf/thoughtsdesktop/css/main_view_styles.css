@@ -34,14 +34,7 @@ root {
 }
 
 
-.button {
-    -fx-background-color: rgb(78, 80, 82);
-}
 
-.button:hover {
-    -fx-border-color: rgb(41, 163, 211);
-
-}
 
 .menu-bar {
     -fx-background-color: rgb(60,63,65);
@@ -51,27 +44,6 @@ root {
 .split-pane {
     -fx-border-color: rgb(60,63,65);
 }
-
-
-.listViewItem {
-    -fx-font-size: 22;
-    -fx-max-width: 100000;
-}
-
-.listViewItem .button {
-    -fx-border-color: rgb(95, 95, 95);
-}
-
-.listViewItem .button:hover {
-    -fx-border-color: rgb(41, 163, 211);
-}
-
-
-
-.file-button {
-    -fx-font-size: 20;
-}
-
 
 
 .text-area .scroll-bar:vertical, .scroll-bar:vertical {
@@ -113,6 +85,76 @@ root {
 
 .menu-item {
     -fx-font-size: 12;
+}
+
+
+
+
+
+.main-buttons {
+    -fx-font-size: 20;
+    -fx-background-color: rgb(78, 80, 82);
+}
+
+.main-buttons:hover {
+    -fx-border-color: rgb(41, 163, 211);
+}
+
+
+.small-main-buttons {
+    -fx-font-size: 18;
+    -fx-background-color: rgb(78, 80, 82);
+}
+
+
+
+
+
+
+
+.tagList {
+    -fx-font-size: 22;
+    -fx-max-width: 100000;
+}
+
+.tagList > .button {
+    -fx-border-color: rgb(95, 95, 95);
+    -fx-background-color: rgb(78, 80, 82);
+}
+
+.tagList > .button:hover {
+    -fx-border-color: rgb(41, 163, 211);
+}
+
+
+.tagListSelected > .button {
+    -fx-background-color: rgb(101, 101, 101);
+}
+
+
+
+
+
+
+
+.itemList {
+    -fx-font-size: 22;
+    -fx-max-width: 100000;
+}
+
+.itemList > .button {
+    -fx-border-color: rgb(95, 95, 95);
+    -fx-background-color: rgb(78, 80, 82);
+
+}
+
+.itemList > .button:hover {
+    -fx-border-color: rgb(41, 163, 211);
+}
+
+.itemListSelected > .button {
+    -fx-background-color: rgb(101, 101, 101);
+
 }
 
 

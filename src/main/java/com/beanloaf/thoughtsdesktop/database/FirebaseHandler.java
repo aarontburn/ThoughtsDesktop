@@ -141,7 +141,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
 
-    // This should be ran inside a thread.
+    // This should be run inside a thread.
     private Boolean refreshItems() {
         if (!isConnectedToDatabase()) {
             return false;
@@ -349,6 +349,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             return;
         }
 
+        if (!obj.isSorted()) return;
+
 
         obj.setInDatabase(false);
 
@@ -436,9 +438,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
 
     public void refreshPushPullLabels() {
-        final int numToPull = Math.max(this.databaseSnapshot.size() - this.main.listView.sortedThoughtList.size(), 0);
-
-        final int numToPush = databaseSnapshot.findObjectsInDatabase(main.listView.sortedThoughtList.getList(), false).size();
+        final int numToPull = databaseSnapshot.findObjectsNotOnLocal(main.listView.sortedThoughtList.getList()).size();
+        final int numToPush = databaseSnapshot.findObjectsNotInDatabase(main.listView.sortedThoughtList.getList()).size();
 
         final Map<String, Integer> map = new HashMap<>();
         map.put("pull", numToPull);
