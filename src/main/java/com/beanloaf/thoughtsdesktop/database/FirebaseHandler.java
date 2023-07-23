@@ -24,6 +24,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
 import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Data.*;
@@ -48,6 +50,9 @@ public class FirebaseHandler implements ThoughtsChangeListener {
      *  This holds a snapshot of what's in the database at the time of refresh.
      */
     private final DatabaseSnapshot databaseSnapshot = new DatabaseSnapshot();
+
+
+    private final Timer autoRefreshTimer = new Timer();
 
 
     private boolean isPushing;
@@ -97,12 +102,23 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
 
-    public void start() {
+    private void start() {
         new Thread(() -> {
             if (isConnectedToDatabase()) {
                 registerURL();
-                refreshItems();
-                Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.LOG_IN_SUCCESS, user));
+
+                autoRefreshTimer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        refreshItems();
+                    }
+                }, 0, 60000);
+
+
+
+                Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(LOG_IN_SUCCESS, user));
+
+
             }
         }).start();
     }
@@ -110,15 +126,16 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     private void signOut() {
         user = null;
         isOnline = false;
+        autoRefreshTimer.cancel();
         databaseSnapshot.clear();
     }
 
-    public boolean isConnectedToDatabase() {
+    private boolean isConnectedToDatabase() {
         return isConnectedToInternet() && user != null;
 
     }
 
-    public boolean isConnectedToInternet() {
+    private boolean isConnectedToInternet() {
         try {
             // Checks to see if the pc is connected to the internet
             final URLConnection connection = new URL("https://www.google.com").openConnection();
@@ -134,7 +151,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
 
-    public void reconnectToDatabase() {
+    private void reconnectToDatabase() {
         if (refreshItems() == null) {
             checkUserFile();
         }
@@ -228,7 +245,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     }
 
-    public boolean pull() {
+    private boolean pull() {
         if (isPulling || databaseSnapshot.size() == 0) {
             return false;
         }
@@ -265,7 +282,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         return true;
     }
 
-    public boolean push() {
+    private boolean push() {
         return push(main.listView.sortedThoughtList.getList().toArray(new ThoughtObject[0]));
     }
 
@@ -343,7 +360,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         return new String[]{BaseEncoding.base32().encode(path.getBytes()).replace("=", ""), json};
     }
 
-    public void removeEntryFromDatabase(final ThoughtObject obj) {
+    private void removeEntryFromDatabase(final ThoughtObject obj) {
         if (!isConnectedToDatabase()) {
             System.out.println("Not connected to the internet!");
             return;
@@ -380,7 +397,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     }
 
-    public boolean signInUser(final String email, final String password) {
+    private boolean signInUser(final String email, final String password) {
         if (!isConnectedToInternet()) {
             System.err.println("Not connected to the internet.");
             return false;
@@ -399,7 +416,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
 
-    public boolean registerNewUser(final String displayName, final String email, final String password) {
+    private boolean registerNewUser(final String displayName, final String email, final String password) {
         if (!isConnectedToInternet()) {
             System.err.println("Not connected to the internet.");
             return false;

@@ -10,8 +10,12 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.objects.ListItem;
 import com.beanloaf.thoughtsdesktop.objects.TagListItem;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -33,6 +37,8 @@ public class ListView implements ThoughtsChangeListener {
     private TagListItem selectedTagItem;
     private ListItem selectedListItem;
 
+    private final TextField searchBar;
+
 
     public ListView(final MainApplication main) {
         this.main = main;
@@ -50,14 +56,24 @@ public class ListView implements ThoughtsChangeListener {
         });
 
 
+        this.searchBar = (TextField) main.findNodeByID("searchBar");
+
         unsortedThoughtList = new TagListItem(main, this, "Unsorted");
         sortedThoughtList = new TagListItem(main, this, "Sorted");
+
+
+
+
+        searchBar.setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.ENTER)) searchFor(searchBar.getText());
+        });
+
 
 
         refreshThoughtList();
     }
 
-    public void refreshThoughtList() {
+    private void refreshThoughtList() {
 
         final long startTime = System.currentTimeMillis();
 
@@ -100,9 +116,6 @@ public class ListView implements ThoughtsChangeListener {
                 list.add(content);
                 content.setParent(list);
 
-
-
-
             }
 
         }
@@ -116,11 +129,7 @@ public class ListView implements ThoughtsChangeListener {
         for (final String key : set) {
             final TagListItem tagListItem = thoughtListByTag.get(key);
 
-
             tagList.getChildren().add(tagListItem);
-
-
-
 
         }
 
@@ -134,7 +143,52 @@ public class ListView implements ThoughtsChangeListener {
     }
 
 
-    public void newFile(final ThoughtObject obj, final boolean titleLocked, final boolean tagLocked, final boolean bodyLocked) {
+    private void searchFor(final String searchText) {
+        final long startTime = System.currentTimeMillis();
+
+
+        final List<ThoughtObject> allThoughtsList = new ArrayList<>();
+        allThoughtsList.addAll(unsortedThoughtList.getList());
+        allThoughtsList.addAll(sortedThoughtList.getList());
+
+        final List<ThoughtObject> thoughtsWithSearchText = new ArrayList<>();
+
+        for (final ThoughtObject obj : allThoughtsList) {
+            if (obj.getTitle().contains(searchText)
+                    || obj.getTag().contains(searchText)
+                    || obj.getDate().contains(searchText)
+                    || obj.getBody().contains(searchText)) {
+
+                thoughtsWithSearchText.add(obj);
+            }
+
+        }
+
+        System.out.println(thoughtsWithSearchText);
+
+
+        for (final Node node : tagList.getChildren()) {
+            if (node.getClass() != TagListItem.class) continue;
+
+            final TagListItem tagListItem = (TagListItem) node;
+
+            for (final ThoughtObject obj : thoughtsWithSearchText) {
+                if (tagListItem.getTag().equals(obj.getTag())) {
+
+
+                }
+
+
+            }
+
+        }
+
+        System.out.println("Search time: " + (System.currentTimeMillis() - startTime) + "ms");
+
+
+    }
+
+    private void newFile(final ThoughtObject obj, final boolean titleLocked, final boolean tagLocked, final boolean bodyLocked) {
         final ThoughtObject newObject = new ThoughtObject(
                 titleLocked ? obj.getTitle() : "",
                 tagLocked ? obj.getTag() : "",
@@ -148,7 +202,7 @@ public class ListView implements ThoughtsChangeListener {
     }
 
 
-    public void delete(final ThoughtObject obj) {
+    private void delete(final ThoughtObject obj) {
 
         if (obj == null) {
             return;
@@ -210,7 +264,7 @@ public class ListView implements ThoughtsChangeListener {
     }
 
 
-    public void sort(final ThoughtObject obj) {
+    private void sort(final ThoughtObject obj) {
         if (obj == null) {
             return;
         }
@@ -350,7 +404,7 @@ public class ListView implements ThoughtsChangeListener {
     }
 
 
-    public void validateTag(final ThoughtObject obj) {
+    private void validateTag(final ThoughtObject obj) {
         if (obj == null) {
             return;
         }
@@ -374,7 +428,7 @@ public class ListView implements ThoughtsChangeListener {
 
     }
 
-    public void validateItemList() {
+    private void validateItemList() {
         for (final Node node : itemList.getChildren()) {
             if (node.getClass() != ListItem.class) continue;
 
@@ -404,7 +458,21 @@ public class ListView implements ThoughtsChangeListener {
         switch (eventName) {
             case REFRESH -> {
                 refreshThoughtList();
-                selectedTagItem.doClick();
+
+
+                for (final Node node : tagList.getChildren()) {
+                    if (node.getClass() != TagListItem.class) continue;
+
+                    final TagListItem tagListItem = (TagListItem) node;
+
+                    if (selectedTagItem.equals(tagListItem)) {
+                        selectedTagItem = tagListItem;
+                        selectedTagItem.doClick();
+                        break;
+                    }
+
+                }
+
 
             }
             case SORT -> sort((ThoughtObject) eventValue);

@@ -31,7 +31,8 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
     private boolean isInDatabase;
 
 
-    private TagListItem parent; // parent is only set for sorted objects
+
+    private TagListItem parent; // parent is only set for sorted objects (null for unsorted)
 
 
     public ThoughtObject(final boolean isSorted, final Boolean isLocalOnly,
@@ -41,7 +42,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
                          final String body,
                          final File file) {
 
-        this.isLocalOnly = isLocalOnly == null ? false : isLocalOnly;
+        this.isLocalOnly = isLocalOnly != null && isLocalOnly;
         this.isSorted = isSorted;
         this.title = title;
         this.tag = tag;
