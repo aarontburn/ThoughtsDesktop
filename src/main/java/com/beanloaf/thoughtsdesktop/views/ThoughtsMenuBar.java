@@ -70,10 +70,6 @@ public class ThoughtsMenuBar {
         /* Help */
         final Map<String, Runnable> helpOptions = new LinkedHashMap<>();
         helpOptions.put("Credits", () -> {
-        });
-        helpOptions.put("test", () -> {ThoughtsHelper.getInstance().fireEvent(Properties.Actions.TEST);
-        });
-        helpOptions.put("GitHub", () -> {
             if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                 try {
                     Desktop.getDesktop().browse(new URI("https://github.com/beanloaf/ThoughtsDesktop"));
@@ -82,6 +78,8 @@ public class ThoughtsMenuBar {
                 }
             }
         });
+        helpOptions.put("test", () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.TEST));
+
         menuMap.put("Help", helpOptions);
 
         createMenuUI(menuMap);

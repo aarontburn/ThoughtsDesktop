@@ -9,9 +9,13 @@ import com.beanloaf.thoughtsdesktop.views.SettingsView;
 import com.beanloaf.thoughtsdesktop.views.ThoughtsMenuBar;
 import com.beanloaf.thoughtsdesktop.views.TextView;
 import javafx.application.Application;
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCharacterCombination;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -31,7 +35,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public static void main(final String[] args) {
         launch();
     }
-
 
 
     @Override
@@ -57,6 +60,35 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         firebaseHandler = new FirebaseHandler(this);
 
         new Thread(() -> firebaseHandler.startup()).start();
+
+        setKeybindings();
+
+
+    }
+
+    private void setKeybindings() {
+        final ObservableMap<KeyCombination, Runnable> keybindings = scene.getAccelerators();
+
+        keybindings.put(new KeyCharacterCombination(KeyCode.Q.getChar(), KeyCombination.CONTROL_DOWN),
+                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.SORT,
+                        ThoughtsHelper.getInstance().getSelectedFile()));
+
+        keybindings.put(new KeyCharacterCombination(KeyCode.D.getChar(), KeyCombination.CONTROL_DOWN),
+                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE,
+                        ThoughtsHelper.getInstance().getSelectedFile()));
+
+        keybindings.put(new KeyCharacterCombination(KeyCode.N.getChar(), KeyCombination.CONTROL_DOWN),
+                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.NEW_FILE_BUTTON_PRESS));
+
+        keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
+                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
+
+        keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN),
+                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
+
+        keybindings.put(new KeyCharacterCombination(KeyCode.F5.getChar()),
+                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH));
+
 
     }
 

@@ -9,7 +9,6 @@ Todo:
     -   Figure out how to deal with conflicting filenames
     -   Replace data structures in TagListItem with LinkedHashMap/HashMap for faster lookup
     -   Multi-tags
-    -   Implement timer to auto-refresh the database every min or so
     -   Encrypt database entries based on userID (and maybe the file name as well?)
     -   Code blocks?
 

@@ -47,7 +47,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
 
     /**
-     *  This holds a snapshot of what's in the database at the time of refresh.
+     * This holds a snapshot of what's in the database at the time of refresh.
      */
     private final DatabaseSnapshot databaseSnapshot = new DatabaseSnapshot();
 
@@ -110,10 +110,13 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 autoRefreshTimer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        refreshItems();
+
+                        if (refreshItems() == null) {
+                            checkUserFile();
+                            refreshItems();
+                        }
                     }
                 }, 0, 60000);
-
 
 
                 Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(LOG_IN_SUCCESS, user));
@@ -219,7 +222,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             connection.disconnect();
 
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -278,14 +280,12 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         }).start();
 
 
-
         return true;
     }
 
     private boolean push() {
         return push(main.listView.sortedThoughtList.getList().toArray(new ThoughtObject[0]));
     }
-
 
 
     private boolean push(final ThoughtObject[] objList) {
@@ -308,7 +308,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 final JSONObject batchPayload = new JSONObject();
                 for (final ThoughtObject obj : objList) {
                     if (obj != null && !obj.isLocalOnly()) {
-                        final String[] payload =  convertThoughtObjectToJson(obj);
+                        final String[] payload = convertThoughtObjectToJson(obj);
                         batchPayload.put(payload[0], payload[1]);
 
                     }
@@ -488,8 +488,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
             case SIGN_OUT -> signOut();
             case REFRESH -> new Thread(() -> refreshItems()).start();
-            case REMOVE_FROM_DATABASE, Properties.Data.DELETE ->
-                    removeEntryFromDatabase((ThoughtObject) eventValue);
+            case REMOVE_FROM_DATABASE -> removeEntryFromDatabase((ThoughtObject) eventValue);
             case PUSH_FILE -> push(new ThoughtObject[]{(ThoughtObject) eventValue});
             case TEST -> {
 

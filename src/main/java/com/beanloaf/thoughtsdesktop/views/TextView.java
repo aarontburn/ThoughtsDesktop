@@ -34,8 +34,7 @@ public class TextView implements ThoughtsChangeListener {
 
 
     private final Button sortButton, newFileButton, deleteButton;
-    private final Button pullButton, pushAllButton, pushFileButton;
-
+    private final Button pullButton, pushAllButton, pushFileButton, deleteLocalButton;
 
 
     private final Label cloudHeaderDisplayName;
@@ -59,6 +58,7 @@ public class TextView implements ThoughtsChangeListener {
         sortButton = (Button) main.findNodeByID("sortButton");
         newFileButton = (Button) main.findNodeByID("newFileButton");
         deleteButton = (Button) main.findNodeByID("deleteButton");
+        deleteLocalButton = (Button) main.findNodeByID("deleteLocalButton");
 
 
         pullButton = (Button) main.findNodeByID("pullButton");
@@ -135,8 +135,16 @@ public class TextView implements ThoughtsChangeListener {
         });
 
 
+        deleteButton.setOnAction(e -> {
+            final ThoughtObject objToDelete = ThoughtsHelper.getInstance().getSelectedFile();
 
-        deleteButton.setOnAction(e ->
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE, objToDelete);
+            ThoughtsHelper.getInstance().fireEvent(Properties.Data.REMOVE_FROM_DATABASE, objToDelete);
+
+        });
+
+        deleteLocalButton.setVisible(false);
+        deleteLocalButton.setOnAction(e ->
                 ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE,
                         ThoughtsHelper.getInstance().getSelectedFile()));
 
@@ -217,6 +225,7 @@ public class TextView implements ThoughtsChangeListener {
                 if (eventValue.getClass() == ThoughtObject.class) {
                     obj = (ThoughtObject) eventValue;
                     pushFileButton.setVisible(obj.isSorted());
+                    deleteLocalButton.setVisible(obj.isSorted());
                 }
 
                 ThoughtsHelper.getInstance().setSelectedFile(obj);
