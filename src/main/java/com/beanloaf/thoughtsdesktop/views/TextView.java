@@ -9,9 +9,16 @@ import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.robot.Robot;
 import javafx.scene.text.Text;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,6 +89,10 @@ public class TextView implements ThoughtsChangeListener {
             ThoughtsHelper.getInstance().fireEvent(Properties.Actions.VALIDATE_ITEM_LIST);
         });
 
+        titleTextField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) new Robot().keyPress(KeyCode.TAB);
+        });
+
 
         tagTextField.focusedProperty().addListener((arg0, oldPropertyValue, isFocused) -> {
             final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
@@ -91,7 +102,10 @@ public class TextView implements ThoughtsChangeListener {
 
 
             if (obj.isSorted()) ThoughtsHelper.getInstance().fireEvent(Properties.Data.VALIDATE_TAG, obj);
+        });
 
+        tagTextField.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ENTER) new Robot().keyPress(KeyCode.TAB);
         });
 
         bodyTextField.focusedProperty().addListener((arg0, oldPropertyValue, isFocused) -> {
