@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.views.ListView;
 import com.beanloaf.thoughtsdesktop.views.SettingsView;
 import com.beanloaf.thoughtsdesktop.views.ThoughtsMenuBar;
@@ -17,6 +18,7 @@ import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -30,6 +32,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public TextView textView;
     private ThoughtsMenuBar menuBar;
     public FirebaseHandler firebaseHandler;
+    public SettingsHandler settingsHandler;
 
 
     public static void main(final String[] args) {
@@ -39,14 +42,34 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
     @Override
     public void start(final Stage stage) throws IOException {
+        settingsHandler = new SettingsHandler();
+
 
         final FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("fxml/main_view.fxml"));
-        final Scene scene = new Scene(fxmlLoader.load(), 1920, 1080);
+        final Scene scene = new Scene(fxmlLoader.load(),
+                (Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_WIDTH),
+                (Double)  settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_HEIGHT));
         this.scene = scene;
 
         stage.setTitle("Thoughts");
         stage.setScene(scene);
+
+        stage.setX((Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_X));
+        stage.setY((Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_Y));
+
+        stage.setMaximized((Boolean) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_MAXIMIZED));
+
         stage.show();
+
+        scene.getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> {
+            settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_X, stage.getX());
+            settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_Y, stage.getY());
+
+            settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_WIDTH, stage.getWidth());
+            settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_HEIGHT, stage.getHeight());
+
+            settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_MAXIMIZED, stage.isMaximized());
+        });
 
 
         ThoughtsHelper.getInstance().addListener(this);

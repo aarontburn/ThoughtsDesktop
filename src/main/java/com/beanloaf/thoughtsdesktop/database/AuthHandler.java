@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.database;
 
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.google.common.io.BaseEncoding;
 
 import org.apache.commons.codec.binary.Base32;
@@ -72,7 +73,7 @@ public final class AuthHandler {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.logException(e);
         }
 
         return null;
@@ -128,7 +129,7 @@ public final class AuthHandler {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.logException(e);
         }
 
         return null;
@@ -167,7 +168,7 @@ public final class AuthHandler {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.logException(e);
         }
         return "";
     }
@@ -194,9 +195,9 @@ public final class AuthHandler {
             // Check the response code
             final int responseCode = connection.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) {
-                System.out.println("Password reset email sent successfully!");
+                Logger.log("Password reset email sent successfully!");
             } else {
-                System.out.println("Failed to send password reset email. Response code: " + responseCode);
+                Logger.log("Failed to send password reset email. Response code: " + responseCode);
                 return false;
             }
 
@@ -204,7 +205,7 @@ public final class AuthHandler {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.logException(e);
 
         }
 

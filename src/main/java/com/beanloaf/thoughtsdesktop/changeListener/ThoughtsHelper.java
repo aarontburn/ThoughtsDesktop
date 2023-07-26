@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.changeListener;
 
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
@@ -10,7 +11,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ThoughtsHelper {
@@ -111,7 +111,7 @@ public class ThoughtsHelper {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.logException(e);
         }
         return false;
     }
@@ -130,8 +130,7 @@ public class ThoughtsHelper {
 
     public static ThoughtObject readFileContents(final File filePath, final boolean isSorted) {
         try {
-            final String jsonString = new String(Files.readAllBytes(filePath.toPath()));
-            final JSONObject data = (JSONObject) JSONValue.parse(jsonString);
+            final JSONObject data = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(filePath.toPath())));
 
             if (data == null) {
                 return null;
@@ -147,9 +146,8 @@ public class ThoughtsHelper {
             return new ThoughtObject(isSorted, localOnly, title, date, tag, body, filePath);
 
         } catch (Exception e) {
-            System.out.println(filePath);
+            Logger.logException(e);
 
-            e.printStackTrace();
         }
         return null;
     }

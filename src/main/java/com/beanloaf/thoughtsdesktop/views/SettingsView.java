@@ -6,6 +6,8 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -40,9 +42,9 @@ public class SettingsView implements ThoughtsChangeListener {
     private MainApplication main;
 
 
-
     private TabPane settingsTabbedPane;
     /*      General Settings Layout         */
+    private CheckBox lightThemeCheckBox, pullOnStartupCheckBox, pushOnExitCheckBox, matchBraceCheckBox;
     private Button revalidateButton;
 
 
@@ -118,7 +120,7 @@ public class SettingsView implements ThoughtsChangeListener {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.logException(e);
         }
 
 
@@ -128,9 +130,7 @@ public class SettingsView implements ThoughtsChangeListener {
         settingsTabbedPane.getSelectionModel().select(index);
 
 
-
     }
-
 
 
     private Node findNodeByID(final String id) {
@@ -147,6 +147,17 @@ public class SettingsView implements ThoughtsChangeListener {
         // General Settings
         revalidateButton = (Button) findNodeByID("revalidateButton");
 
+        lightThemeCheckBox = (CheckBox) findNodeByID("lightThemeCheckBox");
+        lightThemeCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.LIGHT_THEME));
+
+        pullOnStartupCheckBox = (CheckBox) findNodeByID("pullOnStartupCheckBox");
+        pullOnStartupCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PULL_ON_STARTUP));
+
+        pushOnExitCheckBox = (CheckBox) findNodeByID("pushOnExitCheckBox");
+        pushOnExitCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PUSH_ON_EXIT));
+
+        matchBraceCheckBox = (CheckBox) findNodeByID("matchBraceCheckBox");
+        matchBraceCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.MATCH_BRACE));
 
         // Login/Register Layout
         loginRegisterLayout = (AnchorPane) findNodeByID("loginRegisterLayout");
@@ -185,6 +196,17 @@ public class SettingsView implements ThoughtsChangeListener {
         // General Settings
         revalidateButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REVALIDATE_THOUGHT_LIST));
 
+        lightThemeCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) ->
+                main.settingsHandler.changeSetting(SettingsHandler.Settings.LIGHT_THEME, isChecked));
+
+        pullOnStartupCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) ->
+                main.settingsHandler.changeSetting(SettingsHandler.Settings.PULL_ON_STARTUP, isChecked));
+
+        pushOnExitCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) ->
+                main.settingsHandler.changeSetting(SettingsHandler.Settings.PUSH_ON_EXIT, isChecked));
+
+        matchBraceCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) ->
+                main.settingsHandler.changeSetting(SettingsHandler.Settings.MATCH_BRACE, isChecked));
 
 
         // Login/Register Layout
@@ -208,7 +230,6 @@ public class SettingsView implements ThoughtsChangeListener {
             final String email = registerEmailInput.getText();
             final String password = registerPasswordInput.getText();
             final String reenterPassword = registerReenterPasswordInput.getText();
-
 
 
             if (!password.equals(reenterPassword)) {
@@ -249,7 +270,8 @@ public class SettingsView implements ThoughtsChangeListener {
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
             case Properties.Data.LOG_IN_SUCCESS -> {
-                if (eventValue == null) throw new IllegalArgumentException("User must be passed in with LOG_IN_SUCCESS property");
+                if (eventValue == null)
+                    throw new IllegalArgumentException("User must be passed in with LOG_IN_SUCCESS property");
 
                 setUserInfo((ThoughtUser) eventValue);
 

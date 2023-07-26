@@ -4,14 +4,13 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.DatabaseSnapshot;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.objects.ListItem;
 import com.beanloaf.thoughtsdesktop.objects.TagListItem;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -19,7 +18,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
 import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Data.*;
@@ -27,30 +29,27 @@ import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.readFil
 
 public class ListView implements ThoughtsChangeListener {
 
-    private final MainApplication main;
 
     public final VBox tagList, itemList;
-    private final SplitPane listViewContainer; // houses both the tagList and itemList
 
     public final TagListItem unsortedThoughtList, sortedThoughtList;
     public final Map<String, TagListItem> thoughtListByTag = new HashMap<>();
     private TagListItem selectedTagItem;
     private ListItem selectedListItem;
-
     private final TextField searchBar;
 
 
-    public ListView(final MainApplication main) {
-        this.main = main;
 
+    public ListView(final MainApplication main) {
         ThoughtsHelper.getInstance().addListener(this);
 
         this.tagList = (VBox) main.findNodeByID("tagList");
         this.itemList = (VBox) main.findNodeByID("itemList");
-        this.listViewContainer = (SplitPane) main.findNodeByID("listViewContainer");
 
 
-        this.listViewContainer.lookupAll(".split-pane-divider").forEach(div -> {
+        final SplitPane listViewContainer = (SplitPane) main.findNodeByID("listViewContainer");
+
+        listViewContainer.lookupAll(".split-pane-divider").forEach(div -> {
             div.setMouseTransparent(true);
             div.setStyle("-fx-background-color: transparent;");
         });
@@ -58,8 +57,8 @@ public class ListView implements ThoughtsChangeListener {
 
         this.searchBar = (TextField) main.findNodeByID("searchBar");
 
-        unsortedThoughtList = new TagListItem(main, this, "Unsorted");
-        sortedThoughtList = new TagListItem(main, this, "Sorted");
+        unsortedThoughtList = new TagListItem(this, "Unsorted");
+        sortedThoughtList = new TagListItem(this, "Sorted");
 
 
 
@@ -110,7 +109,7 @@ public class ListView implements ThoughtsChangeListener {
 
                 TagListItem list = thoughtListByTag.get(tag);
                 if (list == null) { // tag doesn't exist in list yet
-                    list = new TagListItem(main, this, tag);
+                    list = new TagListItem(this, tag);
                     thoughtListByTag.put(tag, list);
                 }
                 list.add(content);
@@ -138,18 +137,34 @@ public class ListView implements ThoughtsChangeListener {
         sortedThoughtList.getList().sort(ThoughtObject::compareTo);
 
 
-        System.out.println("Total refresh time: " + (System.currentTimeMillis() - startTime) + "ms");
+        Logger.log("Total refresh time: " + (System.currentTimeMillis() - startTime) + "ms");
 
     }
 
 
+
     private void searchFor(final String searchText) {
+
+
+        if (searchText.isEmpty()) {
+            tagList.getChildren().clear();
+
+            refreshThoughtList();
+            return;
+
+        }
+
         final long startTime = System.currentTimeMillis();
 
 
         final List<ThoughtObject> allThoughtsList = new ArrayList<>();
         allThoughtsList.addAll(unsortedThoughtList.getList());
         allThoughtsList.addAll(sortedThoughtList.getList());
+
+
+
+        final TagListItem unsortedSearch = new TagListItem(this, "Unsorted");
+        final TagListItem sortedSearch = new TagListItem(this, "Sorted");
 
         final List<ThoughtObject> thoughtsWithSearchText = new ArrayList<>();
 
@@ -160,22 +175,12 @@ public class ListView implements ThoughtsChangeListener {
                     || obj.getBody().contains(searchText)) {
 
                 thoughtsWithSearchText.add(obj);
-            }
 
-        }
-
-        System.out.println(thoughtsWithSearchText);
-
-
-        for (final Node node : tagList.getChildren()) {
-            if (node.getClass() != TagListItem.class) continue;
-
-            final TagListItem tagListItem = (TagListItem) node;
-
-            for (final ThoughtObject obj : thoughtsWithSearchText) {
-                if (tagListItem.getTag().equals(obj.getTag())) {
-
-
+                if (obj.isSorted()) {
+                    sortedSearch.add(obj);
+                }
+                else {
+                    unsortedSearch.add(obj);
                 }
 
 
@@ -183,7 +188,39 @@ public class ListView implements ThoughtsChangeListener {
 
         }
 
-        System.out.println("Search time: " + (System.currentTimeMillis() - startTime) + "ms");
+        tagList.getChildren().clear();
+
+        tagList.getChildren().add(unsortedSearch);
+        tagList.getChildren().add(sortedSearch);
+
+
+        final Map<String, TagListItem> searchTagListItemList = new HashMap<>();
+
+        for (final ThoughtObject obj : thoughtsWithSearchText) {
+            final String tag = obj.getTag();
+
+
+            TagListItem list = searchTagListItemList.get(tag);
+            if (list == null) { // tag doesn't exist in list yet
+                list = new TagListItem(this, tag);
+                searchTagListItemList.put(tag, list);
+            }
+            list.add(obj);
+
+        }
+
+        final List<String> set = new ArrayList<>(searchTagListItemList.keySet());
+        set.sort(String.CASE_INSENSITIVE_ORDER);
+
+        for (final String key : set) {
+            final TagListItem tagListItem = searchTagListItemList.get(key);
+
+            tagList.getChildren().add(tagListItem);
+
+        }
+
+
+        Logger.log("Search time: " + (System.currentTimeMillis() - startTime) + "ms");
 
 
     }
@@ -207,7 +244,7 @@ public class ListView implements ThoughtsChangeListener {
         if (obj == null) {
             return;
         }
-        System.out.println("Deleting " + obj.getTitle());
+        Logger.log("Deleting " + obj.getTitle());
 
         if (!obj.isSorted()) { // object is unsorted
             int index = unsortedThoughtList.indexOf(obj);
@@ -270,7 +307,7 @@ public class ListView implements ThoughtsChangeListener {
         }
 
 
-        System.out.println((obj.isSorted() ? "Unsorting " : "Sorting ") + obj.getTitle());
+        Logger.log((obj.isSorted() ? "Unsorting " : "Sorting ") + obj.getTitle());
 
         obj.sort();
 
@@ -332,7 +369,7 @@ public class ListView implements ThoughtsChangeListener {
         TagListItem list = thoughtListByTag.get(tag);
 
         if (list == null) { // tag doesn't exist in list yet
-            list = new TagListItem(main, this, tag);
+            list = new TagListItem(this, tag);
             thoughtListByTag.put(tag, list);
 
             tagList.getChildren().add(getAlphaIndex(list), list);

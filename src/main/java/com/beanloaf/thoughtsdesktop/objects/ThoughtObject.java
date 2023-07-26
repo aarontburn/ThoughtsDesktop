@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
 
@@ -105,12 +106,12 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
                 return true;
 
             } catch (IOException e) {
-                e.printStackTrace();
+                Logger.logException(e);
             }
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.logException(e);
         }
 
         return false;

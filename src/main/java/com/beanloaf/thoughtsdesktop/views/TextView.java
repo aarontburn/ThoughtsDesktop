@@ -8,9 +8,10 @@ import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -18,7 +19,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.robot.Robot;
 import javafx.scene.text.Text;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 

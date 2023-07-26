@@ -2,7 +2,6 @@ package com.beanloaf.thoughtsdesktop.objects;
 
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.views.ListView;
-import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -19,7 +18,6 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
     private final List<ThoughtObject> taggedObjects = new ArrayList<>();
 
-    private final MainApplication main;
     public final ListView listView;
     private final String tag;
 
@@ -30,11 +28,10 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
     public final DecoratorText pinnedDecorator;
 
 
-    public TagListItem(final MainApplication main, final ListView listView, final String tag) {
+    public TagListItem(final ListView listView, final String tag) {
         super();
         this.getStyleClass().add("tagList");
 
-        this.main = main;
         this.listView = listView;
         this.tag = tag;
 

@@ -3,6 +3,7 @@ package com.beanloaf.thoughtsdesktop.views;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -74,7 +75,7 @@ public class ThoughtsMenuBar {
                 try {
                     Desktop.getDesktop().browse(new URI("https://github.com/beanloaf/ThoughtsDesktop"));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.logException(e);
                 }
             }
         });
