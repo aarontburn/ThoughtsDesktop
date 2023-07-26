@@ -25,8 +25,9 @@ public class SettingsHandler {
         WINDOW_HEIGHT("windowHeight", 1080),
         WINDOW_X("windowX", 0.0),
         WINDOW_Y("windowY", 0.0),
-        WINDOW_MAXIMIZED("windowMaximized", false);
-
+        WINDOW_MAXIMIZED("windowMaximized", false),
+        DATABASE_REFRESH_RATE("databaseRefreshRate", 1)
+        ;
 
         private final String name;
         private final Object defaultState;
@@ -147,8 +148,12 @@ public class SettingsHandler {
         if (returnValue == null) returnValue = setting.defaultState;
 
 
-        if (returnValue instanceof Double || returnValue instanceof Long || returnValue instanceof Integer) {
+        if (returnValue instanceof Double) {
             return (Double) returnValue;
+        } else if (returnValue instanceof Long) {
+            return (Long) returnValue;
+        } else if (returnValue instanceof Integer) {
+            return ((Long) returnValue).intValue();
         }
 
 

@@ -8,13 +8,22 @@ import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.StringConverter;
 
 public class SettingsView implements ThoughtsChangeListener {
 
@@ -45,6 +54,7 @@ public class SettingsView implements ThoughtsChangeListener {
     private TabPane settingsTabbedPane;
     /*      General Settings Layout         */
     private CheckBox lightThemeCheckBox, pullOnStartupCheckBox, pushOnExitCheckBox, matchBraceCheckBox;
+    private Spinner<Integer> refreshSpinner;
     private Button revalidateButton;
 
 
@@ -153,6 +163,10 @@ public class SettingsView implements ThoughtsChangeListener {
         pullOnStartupCheckBox = (CheckBox) findNodeByID("pullOnStartupCheckBox");
         pullOnStartupCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PULL_ON_STARTUP));
 
+        refreshSpinner = (Spinner<Integer>) findNodeByID("refreshSpinner");
+        refreshSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9));
+
+
         pushOnExitCheckBox = (CheckBox) findNodeByID("pushOnExitCheckBox");
         pushOnExitCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PUSH_ON_EXIT));
 
@@ -207,6 +221,12 @@ public class SettingsView implements ThoughtsChangeListener {
 
         matchBraceCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) ->
                 main.settingsHandler.changeSetting(SettingsHandler.Settings.MATCH_BRACE, isChecked));
+
+
+        refreshSpinner.getValueFactory().setValue(((Long) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE)).intValue());
+        refreshSpinner.valueProperty().addListener((observableValue, integer, newValue) -> {
+            main.settingsHandler.changeSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE, newValue);
+        });
 
 
         // Login/Register Layout

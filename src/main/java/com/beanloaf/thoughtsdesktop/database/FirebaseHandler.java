@@ -108,6 +108,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             if (isConnectedToDatabase()) {
                 registerURL();
 
+
+                // TODO: Adjust refresh rate based on whatevers in the settingshandler
                 autoRefreshTimer.scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
@@ -118,7 +120,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                         }
                     }
                 }, 0, 60000);
-
 
                 Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(LOG_IN_SUCCESS, user));
 

@@ -61,6 +61,21 @@ root {
 
 }
 
+.spinner .increment-arrow-button {
+    -fx-padding: 1 2 1 2; /*caspian.css values are 4 8 4 8 */
+}
+.spinner .decrement-arrow-button {
+    -fx-padding: 1 2 1 2; /*caspian.css values are 3 8 6 8 */
+}
+
+
+.spinner .increment-arrow-button .increment-arrow {
+    -fx-padding: 2 3 2 3;    /*caspian.css values are 2 4 2 4 */
+}
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-padding: 2 3 2 3; /*caspian.css values are 2 4 2 4 */
+}
+
 
 
 
