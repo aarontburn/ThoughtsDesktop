@@ -223,7 +223,7 @@ public class SettingsView implements ThoughtsChangeListener {
                 main.settingsHandler.changeSetting(SettingsHandler.Settings.MATCH_BRACE, isChecked));
 
 
-        refreshSpinner.getValueFactory().setValue(((Long) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE)).intValue());
+        refreshSpinner.getValueFactory().setValue((Integer) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE));
         refreshSpinner.valueProperty().addListener((observableValue, integer, newValue) -> {
             main.settingsHandler.changeSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE, newValue);
         });

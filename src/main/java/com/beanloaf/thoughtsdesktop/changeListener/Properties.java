@@ -16,6 +16,7 @@ public class Properties {
         public static final String NEW_FILE_BUTTON_PRESS = "new file button press";
         public static final String TEST = "test";
         public static final String REFRESH_PUSH_PULL_LABELS = "set push pull labels";
+        public static final String DATABASE_REFRESH_RATE = "database refresh rate";
 
 
 

@@ -1,5 +1,7 @@
 package com.beanloaf.thoughtsdesktop.handlers;
 
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -120,7 +122,9 @@ public class SettingsHandler {
 
 
                 for (final Settings key : settingPropertyList.keySet()) {
-                    data.put(key.getName(), settingPropertyList.get(key) == null ? key.defaultState : settingPropertyList.get(key));
+                    final Object setting = settingPropertyList.get(key);
+
+                    data.put(key.getName(), setting == null ? key.defaultState : setting);
                 }
 
 
@@ -136,7 +140,15 @@ public class SettingsHandler {
 
 
     public void changeSetting(final Settings setting, final Object newValue) {
+        Logger.log("Setting modified: " + setting.getName() + ": " + newValue);
         settingPropertyList.put(setting, newValue);
+
+
+        if (setting == Settings.DATABASE_REFRESH_RATE) {
+            ThoughtsHelper.getInstance().fireEvent(Properties.Actions.DATABASE_REFRESH_RATE);
+        }
+
+
         saveSettingsFile();
 
     }
@@ -151,9 +163,9 @@ public class SettingsHandler {
         if (returnValue instanceof Double) {
             return (Double) returnValue;
         } else if (returnValue instanceof Long) {
-            return (Long) returnValue;
-        } else if (returnValue instanceof Integer) {
             return ((Long) returnValue).intValue();
+        } else if (returnValue instanceof Integer) {
+            return (Integer) returnValue;
         }
 
 
