@@ -8,8 +8,7 @@ import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -23,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.StringConverter;
 
 public class SettingsView implements ThoughtsChangeListener {
 
@@ -43,6 +41,14 @@ public class SettingsView implements ThoughtsChangeListener {
             instance.settingsWindow.setAlwaysOnTop(false);
         }
         return instance;
+    }
+
+    public static boolean isInstanceActive() {
+        return instance != null;
+    }
+
+    public static void closeWindow() {
+        Platform.exit();
     }
 
 
@@ -135,6 +141,8 @@ public class SettingsView implements ThoughtsChangeListener {
 
 
     }
+
+
 
     public void setSelectedTab(final int index) {
         settingsTabbedPane.getSelectionModel().select(index);

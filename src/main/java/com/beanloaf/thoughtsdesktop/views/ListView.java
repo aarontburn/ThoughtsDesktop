@@ -11,6 +11,7 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.objects.ListItem;
 import com.beanloaf.thoughtsdesktop.objects.TagListItem;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -29,6 +30,8 @@ import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.readFil
 
 public class ListView implements ThoughtsChangeListener {
 
+    private final MainApplication main;
+
 
     public final VBox tagList, itemList;
 
@@ -41,6 +44,8 @@ public class ListView implements ThoughtsChangeListener {
 
 
     public ListView(final MainApplication main) {
+        this.main = main;
+
         ThoughtsHelper.getInstance().addListener(this);
 
         this.tagList = (VBox) main.findNodeByID("tagList");
@@ -169,10 +174,10 @@ public class ListView implements ThoughtsChangeListener {
         final List<ThoughtObject> thoughtsWithSearchText = new ArrayList<>();
 
         for (final ThoughtObject obj : allThoughtsList) {
-            if (obj.getTitle().contains(searchText)
-                    || obj.getTag().contains(searchText)
-                    || obj.getDate().contains(searchText)
-                    || obj.getBody().contains(searchText)) {
+            if (obj.getTitle().toLowerCase().contains(searchText.toLowerCase())
+                    || obj.getTag().toLowerCase().contains(searchText.toLowerCase())
+                    || obj.getDate().toLowerCase().contains(searchText.toLowerCase())
+                    || obj.getBody().toLowerCase().contains(searchText.toLowerCase())) {
 
                 thoughtsWithSearchText.add(obj);
 
@@ -258,7 +263,7 @@ public class ListView implements ThoughtsChangeListener {
             }
 
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS,
-                    unsortedThoughtList.size() - 1 >= 0 ? unsortedThoughtList.get(index) : null);
+                    unsortedThoughtList.size() - 1 >= 0 ? unsortedThoughtList.get(index) : new Object());
 
 
         } else {    // object is sorted
@@ -280,9 +285,13 @@ public class ListView implements ThoughtsChangeListener {
 
 
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS,
-                    selectedTagItem.size() - 1 >= 0 ? selectedTagItem.get(index) : null);
+                    selectedTagItem.size() - 1 >= 0 ? selectedTagItem.get(index) : new Object());
+
 
         }
+
+        ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH_PUSH_PULL_LABELS);
+
 
         obj.delete();
 
@@ -561,17 +570,18 @@ public class ListView implements ThoughtsChangeListener {
                 if (selectedListItem == null) return;
                 this.selectedListItem.setDecorator(ListItem.Decorators.LOCAL_ONLY, (boolean) eventValue);
             }
-            case SET_IN_DATABASE_DECORATORS -> new Thread(() -> {
-                final DatabaseSnapshot snapshot = (DatabaseSnapshot) eventValue;
+            case SET_IN_DATABASE_DECORATORS -> Platform.runLater(() -> {
+                final DatabaseSnapshot snapshot = main.firebaseHandler.databaseSnapshot;
 
                 final List<ThoughtObject> objectsInDatabase = snapshot.findObjectsInDatabase(sortedThoughtList.getList());
 
                 for (final ThoughtObject obj : sortedThoughtList.getList()) {
                     obj.setInDatabase(objectsInDatabase.contains(obj));
+
                 }
 
                 validateItemList();
-            }).start();
+            });
         }
 
     }

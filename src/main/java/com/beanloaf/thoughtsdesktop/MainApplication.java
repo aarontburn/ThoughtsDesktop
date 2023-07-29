@@ -69,6 +69,12 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_HEIGHT, stage.getHeight());
 
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_MAXIMIZED, stage.isMaximized());
+
+
+            if (SettingsView.isInstanceActive()) SettingsView.closeWindow();
+
+
+
         });
 
 

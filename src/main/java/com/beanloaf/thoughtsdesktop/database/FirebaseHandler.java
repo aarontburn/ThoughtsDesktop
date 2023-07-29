@@ -26,8 +26,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
 import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Data.*;
@@ -51,25 +53,13 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     /**
      * This holds a snapshot of what's in the database at the time of refresh.
      */
-    private final DatabaseSnapshot databaseSnapshot = new DatabaseSnapshot();
-
-
-    private Timer autoRefreshTimer = new Timer();
-    private boolean isTimerCanceled = true;
+    public final DatabaseSnapshot databaseSnapshot = new DatabaseSnapshot();
 
 
     private boolean eventInProgress;
 
-    private final TimerTask databaseRefresh = new TimerTask() {
-        @Override
-        public void run() {
-
-            if (refreshItems() == null) {
-                checkUserFile();
-                refreshItems();
-            }
-        }
-    };
+    private ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> scheduledTask;
 
 
     public FirebaseHandler(final MainApplication main) {
@@ -122,6 +112,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 registerURL();
 
                 setAutoRefresh();
+
+
                 Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(LOG_IN_SUCCESS, user));
 
 
@@ -131,29 +123,27 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
     private void setAutoRefresh() {
-        // TODO: This doesn't work.
+        Logger.log("Changing database refresh rate to: " + main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE) + " minutes");
 
-        final int refreshRate = (Integer) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE);
-        final long refreshRateMillis = refreshRate * 60000L;
-
-        Logger.log("Changing database refresh rate to: " + refreshRateMillis + " ms.");
-
-        if (isTimerCanceled) {
-            autoRefreshTimer = new Timer();
-            isTimerCanceled = false;
-        } else {
-            autoRefreshTimer.cancel();
-            autoRefreshTimer = new Timer();
+        if (scheduledTask != null) {
+            scheduledTask.cancel(true);
         }
 
-        autoRefreshTimer.scheduleAtFixedRate(databaseRefresh, 0, refreshRateMillis);
+        if (scheduler == null || scheduler.isShutdown()) {
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+        }
+
+        scheduledTask = scheduler.scheduleAtFixedRate(
+                () -> refreshItems(),
+                0,
+                (Integer) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE),
+                TimeUnit.MINUTES);
     }
 
     private void signOut() {
         user = null;
         isOnline = false;
 
-        autoRefreshTimer.cancel();
         databaseSnapshot.clear();
 
         eventInProgress = false;
@@ -258,7 +248,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         }
         eventInProgress = false;
 
-        Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(SET_IN_DATABASE_DECORATORS, databaseSnapshot));
+        Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(SET_IN_DATABASE_DECORATORS));
 
         refreshPushPullLabels();
         return true;

@@ -17,6 +17,7 @@ public class Properties {
         public static final String TEST = "test";
         public static final String REFRESH_PUSH_PULL_LABELS = "set push pull labels";
         public static final String DATABASE_REFRESH_RATE = "database refresh rate";
+        public static final String SET_IN_DATABASE_DECORATORS = "set in database decorators";
 
 
 
@@ -44,7 +45,6 @@ public class Properties {
         public static final String CHECKBOX_PRESSED = "checkbox pressed";
         public static final String PUSH_IN_PROGRESS = "push in progress";
         public static final String PULL_IN_PROGRESS = "pull in progress";
-        public static final String SET_IN_DATABASE_DECORATORS = "set in database decorators";
 
 
 

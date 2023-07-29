@@ -2,10 +2,6 @@ Todo:
     -   Trashcan that auto deletes after a week or so
     -   Match brace
     -   New line lists (after putting a "-", new lines will auto add one and indent)
-    -   Settings
-    -   Saving window positions etc to json
-    -   Finish search bar
-    -   Keybinds
     -   Figure out how to deal with conflicting filenames
     -   Replace data structures in TagListItem with LinkedHashMap/HashMap for faster lookup
     -   Multi-tags
@@ -27,3 +23,4 @@ Todo:
 
 Future:
     Add a calendar that can sync with the notepad
+    Home screen

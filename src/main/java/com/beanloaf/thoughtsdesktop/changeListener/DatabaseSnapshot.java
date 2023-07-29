@@ -29,8 +29,10 @@ public class DatabaseSnapshot {
         for (final ThoughtObject obj : otherList) {
             if (obj.isLocalOnly()) continue;
 
-            if (this.databaseList.get(obj.getFile()) != null) {
-                inDatabaseList.add(obj);
+            final ThoughtObject databaseObj = this.databaseList.get(obj.getFile());
+
+            if (databaseObj != null) {
+                inDatabaseList.add(databaseObj);
             }
 
         }
@@ -56,7 +58,9 @@ public class DatabaseSnapshot {
 
             if (obj.isLocalOnly()) continue;
 
-            if (this.databaseList.get(obj.getFile()) == null) {
+            final ThoughtObject databaseObj = this.databaseList.get(obj.getFile());
+
+            if (databaseObj == null || !databaseObj.equals(obj) ) {
                 notInDatabaseList.add(obj);
 
             }
@@ -78,10 +82,19 @@ public class DatabaseSnapshot {
     public List<ThoughtObject> findObjectsNotOnLocal(final List<ThoughtObject> localList) {
         final List<ThoughtObject> notOnLocalList = new ArrayList<>();
 
-        for (final ThoughtObject obj : getList()) {
 
-            if (!localList.contains(obj)) {
-                notOnLocalList.add(obj);
+        final Map<String, ThoughtObject> localMap = new HashMap<>();
+
+        for (final ThoughtObject obj : localList) {
+            localMap.put(obj.getFile(), obj);
+
+        }
+
+
+
+        for (final String fileName : databaseList.keySet()) {
+            if (!localMap.containsKey(fileName)) {
+                notOnLocalList.add(databaseList.get(fileName));
 
             }
         }

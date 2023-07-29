@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 
+import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
@@ -73,6 +75,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         this.file = createFileName();
         this.dir = isSorted ? TC.Directories.SORTED_DIRECTORY_PATH.toString() : TC.Directories.UNSORTED_DIRECTORY_PATH.toString();
     }
+    
 
     public void setParent(final TagListItem parent) {
         this.parent = parent;
@@ -103,6 +106,10 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
                 data.put("localOnly", this.isLocalOnly);
                 fWriter.write(new JSONObject(data).toString().getBytes());
 
+                ThoughtsHelper.getInstance().fireEvent(Properties.Actions.SET_IN_DATABASE_DECORATORS);
+                ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH_PUSH_PULL_LABELS);
+
+
                 return true;
 
             } catch (IOException e) {
@@ -113,6 +120,8 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         } catch (Exception e) {
             Logger.logException(e);
         }
+
+
 
         return false;
 
@@ -273,4 +282,6 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
     public int compareTo(final ThoughtObject thoughtObject) {
         return this.title.compareToIgnoreCase(thoughtObject.getTitle());
     }
+
+
 }

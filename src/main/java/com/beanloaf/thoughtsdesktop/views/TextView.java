@@ -34,7 +34,7 @@ public class TextView implements ThoughtsChangeListener {
 
 
     private final Button sortButton, newFileButton, deleteButton;
-    private final Button pullButton, pushAllButton, pushFileButton, deleteLocalButton;
+    private final Button pullButton, pushAllButton, pushFileButton, deleteLocalButton, saveButton;
 
 
     private final Label cloudHeaderDisplayName;
@@ -59,6 +59,7 @@ public class TextView implements ThoughtsChangeListener {
         newFileButton = (Button) main.findNodeByID("newFileButton");
         deleteButton = (Button) main.findNodeByID("deleteButton");
         deleteLocalButton = (Button) main.findNodeByID("deleteLocalButton");
+        saveButton = (Button) main.findNodeByID("saveButton");
 
 
         pullButton = (Button) main.findNodeByID("pullButton");
@@ -156,6 +157,12 @@ public class TextView implements ThoughtsChangeListener {
             if (obj == null || !obj.isSorted() || obj.isLocalOnly()) return;
 
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.PUSH_FILE, obj);
+        });
+
+        saveButton.setOnAction(e -> {
+            final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
+            if (obj == null) return;
+            obj.save();
         });
 
 

@@ -9,6 +9,11 @@ public class Logger {
     // TODO: dump log output to a visual console or file
 
     public static void log(final Object text) {
+        if (text instanceof Exception) {
+            logException((Exception) text);
+            return;
+        }
+
         System.out.println(getTimeStamp() + text.toString());
 
     }

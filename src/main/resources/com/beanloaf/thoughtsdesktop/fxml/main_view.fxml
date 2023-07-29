@@ -113,18 +113,17 @@
                            <children>
                               <GridPane fx:id="cloudHeader" prefHeight="58.0" prefWidth="1281.0" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columnConstraints>
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="325.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="500.0" minWidth="10.0" prefWidth="500.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="325.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="591.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="325.0" />
                                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <AnchorPane GridPane.columnIndex="2">
+                                    <AnchorPane GridPane.columnIndex="1">
                                        <GridPane.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </GridPane.margin>
@@ -140,7 +139,7 @@
                                           <ProgressIndicator fx:id="pushProgressIndicator" layoutX="83.0" layoutY="8.0" visible="false" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="8.0" />
                                        </children>
                                     </AnchorPane>
-                                    <AnchorPane GridPane.columnIndex="4">
+                                    <AnchorPane GridPane.columnIndex="3">
                                        <GridPane.margin>
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </GridPane.margin>
@@ -241,6 +240,18 @@
                                        </styleClass>
                                     </Button>
                                     <Button fx:id="deleteLocalButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Delete Local" GridPane.columnIndex="2">
+                                       <font>
+                                          <Font name="Lato Regular" size="16.0" />
+                                       </font>
+                                       <styleClass>
+                                          <String fx:value="main-buttons" />
+                                          <String fx:value="small-main-buttons" />
+                                       </styleClass>
+                                       <GridPane.margin>
+                                          <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                                       </GridPane.margin>
+                                    </Button>
+                                    <Button fx:id="saveButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Force Save" GridPane.columnIndex="3">
                                        <font>
                                           <Font name="Lato Regular" size="16.0" />
                                        </font>
