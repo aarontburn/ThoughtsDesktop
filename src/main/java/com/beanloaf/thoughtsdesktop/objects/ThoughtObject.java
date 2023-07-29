@@ -75,7 +75,7 @@ public class ThoughtObject implements Comparable<ThoughtObject> {
         this.file = createFileName();
         this.dir = isSorted ? TC.Directories.SORTED_DIRECTORY_PATH.toString() : TC.Directories.UNSORTED_DIRECTORY_PATH.toString();
     }
-    
+
 
     public void setParent(final TagListItem parent) {
         this.parent = parent;
