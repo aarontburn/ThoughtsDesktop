@@ -59,7 +59,7 @@
                         <AnchorPane>
                            <children>
                               <Label layoutX="86.0" layoutY="8.0" text="Database refresh rate (minutes)" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="86.0" AnchorPane.topAnchor="8.0" />
-                              <Spinner fx:id="refreshSpinner" editable="true" layoutX="14.0" layoutY="31.0" prefHeight="38.0" prefWidth="49.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="0.0" />
+                              <Spinner fx:id="refreshSpinner" layoutX="14.0" layoutY="31.0" prefHeight="38.0" prefWidth="49.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="0.0" />
                            </children>
                            <padding>
                               <Insets bottom="4.0" top="4.0" />

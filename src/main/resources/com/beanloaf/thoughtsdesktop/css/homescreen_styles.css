@@ -1,8 +1,8 @@
 * {
     -fx-background: rgb(60, 63 ,65);
     -fx-text-fill: rgb(209, 209 ,209);
-
 }
+
 
 .label {
     -fx-font-family: Lato;
@@ -10,7 +10,6 @@
 
 .text-field {
     -fx-background-color: rgb(106, 112, 116);
-
 
 }
 
@@ -23,3 +22,4 @@
 .button {
     -fx-background-color: rgb(106, 112, 116);
 }
+
