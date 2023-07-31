@@ -12,6 +12,7 @@ import com.beanloaf.thoughtsdesktop.objects.ListItem;
 import com.beanloaf.thoughtsdesktop.objects.TagListItem;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -42,7 +43,6 @@ public class ListView implements ThoughtsChangeListener {
     private final TextField searchBar;
 
 
-
     public ListView(final MainApplication main) {
         this.main = main;
 
@@ -66,12 +66,9 @@ public class ListView implements ThoughtsChangeListener {
         sortedThoughtList = new TagListItem(this, "Sorted");
 
 
-
-
         searchBar.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.ENTER)) searchFor(searchBar.getText());
         });
-
 
 
         refreshThoughtList();
@@ -147,7 +144,6 @@ public class ListView implements ThoughtsChangeListener {
     }
 
 
-
     private void searchFor(final String searchText) {
 
 
@@ -167,7 +163,6 @@ public class ListView implements ThoughtsChangeListener {
         allThoughtsList.addAll(sortedThoughtList.getList());
 
 
-
         final TagListItem unsortedSearch = new TagListItem(this, "Unsorted");
         final TagListItem sortedSearch = new TagListItem(this, "Sorted");
 
@@ -183,8 +178,7 @@ public class ListView implements ThoughtsChangeListener {
 
                 if (obj.isSorted()) {
                     sortedSearch.add(obj);
-                }
-                else {
+                } else {
                     unsortedSearch.add(obj);
                 }
 
@@ -251,8 +245,26 @@ public class ListView implements ThoughtsChangeListener {
         }
         Logger.log("Deleting " + obj.getTitle());
 
+
+        Node nodeToRemove = null;
+        final ObservableList<Node> children = itemList.getChildrenUnmodifiable();
+        int index = -1;
+
+        for (int i = 0; i < children.size(); i++) {
+            final Node node = children.get(i);
+            if (node.getClass() != ListItem.class) continue;
+
+            final ListItem listItem = (ListItem) node;
+
+            if (listItem.getThoughtObject().equals(obj)) {
+                index = i;
+                nodeToRemove = node;
+                break;
+            }
+        }
+
+
         if (!obj.isSorted()) { // object is unsorted
-            int index = unsortedThoughtList.indexOf(obj);
 
             unsortedThoughtList.remove(obj);
 
@@ -263,19 +275,11 @@ public class ListView implements ThoughtsChangeListener {
             }
 
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS,
-                    unsortedThoughtList.size() - 1 >= 0 ? unsortedThoughtList.get(index) : new Object());
-
+                    index >= 0 && unsortedThoughtList.size() > 0 ? unsortedThoughtList.get(index) : new Object());
 
         } else {    // object is sorted
-            final TagListItem list = obj.getParent();
-
-            if (list == null) return;
-
-            int index = list.indexOf(obj);
-
             sortedThoughtList.remove(obj);
             removeTagFromTagList(obj);
-
 
             if (index > 0 && index < selectedTagItem.size()) {
                 index--;
@@ -283,9 +287,8 @@ public class ListView implements ThoughtsChangeListener {
                 index = selectedTagItem.size() - 1;
             }
 
-
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS,
-                    selectedTagItem.size() - 1 >= 0 ? selectedTagItem.get(index) : new Object());
+                    index >= 0 && selectedTagItem.size() > 0 ? selectedTagItem.get(index) : new Object());
 
 
         }
@@ -295,17 +298,8 @@ public class ListView implements ThoughtsChangeListener {
 
         obj.delete();
 
-        for (final Node node : itemList.getChildren()) {
-            if (node.getClass() != ListItem.class) continue;
+        if (nodeToRemove != null) itemList.getChildren().remove(nodeToRemove);
 
-            final ListItem listItem = (ListItem) node;
-
-            if (listItem.getThoughtObject().equals(obj)) {
-                itemList.getChildren().remove(node);
-                break;
-            }
-
-        }
 
     }
 
@@ -485,11 +479,11 @@ public class ListView implements ThoughtsChangeListener {
             }
 
 
-            if (listItem.inDatabaseDecorator.isVisible() != listItem.getThoughtObject().isInDatabase()){
+            if (listItem.inDatabaseDecorator.isVisible() != listItem.getThoughtObject().isInDatabase()) {
                 listItem.setDecorator(ListItem.Decorators.IN_DATABASE, listItem.getThoughtObject().isInDatabase());
             }
 
-            if (listItem.localOnlyDecorator.isVisible() != listItem.getThoughtObject().isLocalOnly()){
+            if (listItem.localOnlyDecorator.isVisible() != listItem.getThoughtObject().isLocalOnly()) {
                 listItem.setDecorator(ListItem.Decorators.LOCAL_ONLY, listItem.getThoughtObject().isLocalOnly());
             }
 
@@ -530,7 +524,6 @@ public class ListView implements ThoughtsChangeListener {
 
                     node.getStyleClass().remove("tagListSelected");
                 }
-
 
 
             }

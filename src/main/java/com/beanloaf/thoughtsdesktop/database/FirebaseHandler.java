@@ -123,8 +123,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
     private void setAutoRefresh() {
-        Logger.log("Changing database refresh rate to: " + main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE) + " minutes");
-
         if (scheduledTask != null) {
             scheduledTask.cancel(true);
         }
@@ -401,7 +399,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("DELETE");
 
-                // Check if the DELETE request was successful
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     Logger.log("Removed \"" + obj.getTitle() + "\" from database.");
                 } else {

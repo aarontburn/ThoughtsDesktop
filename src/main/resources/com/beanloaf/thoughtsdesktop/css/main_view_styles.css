@@ -23,6 +23,14 @@ root {
 
 }
 
+.enlarged-body-label {
+    -fx-font-family: "Lato";
+    -fx-background-color: rgb(60, 63 ,65);
+    -fx-font-size: 20;
+
+
+}
+
 
 .cloud-label {
     -fx-font-size: 20;
@@ -61,7 +69,8 @@ root {
 
 .scroll-bar {
     -fx-focus-color: transparent;
-    -fx-background-insets: -1.4, 0, 1, 2;
+    -fx-pref-width: 8;
+
 }
 
 
@@ -72,10 +81,8 @@ root {
     -fx-padding: 0 0 0 0;
 }
 
-
 .thumb {
     -fx-background-color: rgb(60, 63 ,65);
-
 }
 
 
@@ -102,7 +109,7 @@ root {
 
 
 .small-main-buttons {
-    -fx-font-size: 18;
+    -fx-font-size: 15;
     -fx-background-color: rgb(78, 80, 82);
 }
 

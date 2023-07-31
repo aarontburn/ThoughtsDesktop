@@ -115,6 +115,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN),
                 () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
 
+        // TODO: this doesn't trigger
         keybindings.put(new KeyCharacterCombination(KeyCode.F5.getChar()),
                 () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH));
 

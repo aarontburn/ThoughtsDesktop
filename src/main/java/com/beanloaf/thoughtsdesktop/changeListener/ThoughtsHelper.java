@@ -140,7 +140,7 @@ public class ThoughtsHelper {
             final String title = data.get("title") == null ? "" : data.get("title").toString().trim();
             final String date = data.get("date") == null ? null : data.get("date").toString().trim();
             final String tag = data.get("tag") == null ? "" : data.get("tag").toString().trim();
-            final String body = data.get("body") == null ? "" : data.get("body").toString().trim();
+            final String body = data.get("body") == null ? "" : data.get("body").toString();
 
 
             return new ThoughtObject(isSorted, localOnly, title, date, tag, body, filePath);

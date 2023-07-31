@@ -8,6 +8,7 @@ import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -15,6 +16,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.robot.Robot;
 import javafx.scene.text.Text;
@@ -28,66 +30,103 @@ public class TextView implements ThoughtsChangeListener {
     private final MainApplication main;
 
 
-    private final TextField titleTextField, tagTextField;
-    private final TextArea bodyTextField;
-    private final Text dateText;
-
-
-    private final Button sortButton, newFileButton, deleteButton;
-    private final Button pullButton, pushAllButton, pushFileButton, deleteLocalButton, saveButton;
-
-
+    /*  Cloud Header    */
     private final Label cloudHeaderDisplayName;
     private final GridPane cloudHeader;
     private final ProgressIndicator pushProgressIndicator, pullProgressIndicator;
+    private final Button pullButton, pushAllButton;
+
+    /* ---------------  */
 
 
+    /*  Text Fields    */
+    private final TextField titleTextField, tagTextField;
+    private final TextArea bodyTextField;
+    private final Text dateText;
+    private final AnchorPane bodyAnchorPane;
+    private final Label enlargeBodyButton;
+    private final GridPane enlargedBodyHeader;
+    private final Label enlargeBodyTitle, enlargeBodyTag, enlargeBodyDate;
+    /* ---------------  */
+
+
+    /*  Button Toolbar  */
     private final CheckBox localOnlyCheckBox, lockTitleCheckBox, lockTagCheckBox, lockBodyCheckBox;
+    private final Button pushFileButton, deleteLocalButton, forceSaveButton;
+    private final Button sortButton, newFileButton, deleteButton;
+
+    /* ---------------  */
+
 
     public TextView(final MainApplication main) {
         this.main = main;
 
         ThoughtsHelper.getInstance().addListener(this);
 
-        titleTextField = (TextField) main.findNodeByID("titleTextField");
-        tagTextField = (TextField) main.findNodeByID("tagTextField");
-        dateText = (Text) main.findNodeByID("dateText");
-        bodyTextField = (TextArea) main.findNodeByID("bodyTextField");
+
+        /*  Text Fields    */
+        titleTextField = (TextField) findNodeById("titleTextField");
+        tagTextField = (TextField) findNodeById("tagTextField");
+        dateText = (Text) findNodeById("dateText");
+        bodyTextField = (TextArea) findNodeById("bodyTextField");
+        bodyAnchorPane = (AnchorPane) findNodeById("bodyAnchorPane");
+        enlargeBodyButton = (Label) findNodeById("enlargeBodyButton");
+        enlargedBodyHeader = (GridPane) findNodeById("enlargedBodyHeader");
+
+        enlargeBodyTitle = (Label) findNodeById("enlargeBodyTitle");
+        enlargeBodyTag = (Label) findNodeById("enlargeBodyTag");
+        enlargeBodyDate = (Label) findNodeById("enlargeBodyDate");
+
+        /* ---------------  */
 
 
-        sortButton = (Button) main.findNodeByID("sortButton");
-        newFileButton = (Button) main.findNodeByID("newFileButton");
-        deleteButton = (Button) main.findNodeByID("deleteButton");
-        deleteLocalButton = (Button) main.findNodeByID("deleteLocalButton");
-        saveButton = (Button) main.findNodeByID("saveButton");
+        /*  Button Toolbar  */
+        sortButton = (Button) findNodeById("sortButton");
+        newFileButton = (Button) findNodeById("newFileButton");
+        deleteButton = (Button) findNodeById("deleteButton");
+
+        deleteLocalButton = (Button) findNodeById("deleteLocalButton");
+        forceSaveButton = (Button) findNodeById("forceSaveButton");
+        pushFileButton = (Button) findNodeById("pushFileButton");
+
+        localOnlyCheckBox = (CheckBox) findNodeById("localOnlyCheckBox");
+        lockTitleCheckBox = (CheckBox) findNodeById("lockTitleCheckBox");
+        lockTagCheckBox = (CheckBox) findNodeById("lockTagCheckBox");
+        lockBodyCheckBox = (CheckBox) findNodeById("lockBodyCheckBox");
+        /* ---------------  */
 
 
-        pullButton = (Button) main.findNodeByID("pullButton");
-        pushAllButton = (Button) main.findNodeByID("pushAllButton");
-        pushFileButton = (Button) main.findNodeByID("pushFileButton");
+        /*  Cloud Header    */
+        pullButton = (Button) findNodeById("pullButton");
+        pushAllButton = (Button) findNodeById("pushAllButton");
 
-        cloudHeader = (GridPane) main.findNodeByID("cloudHeader");
-        cloudHeaderDisplayName = (Label) main.findNodeByID("cloudHeaderDisplayName");
-        pushProgressIndicator = (ProgressIndicator) main.findNodeByID("pushProgressIndicator");
-        pullProgressIndicator = (ProgressIndicator) main.findNodeByID("pullProgressIndicator");
-
-        localOnlyCheckBox = (CheckBox) main.findNodeByID("localOnlyCheckBox");
-        lockTitleCheckBox = (CheckBox) main.findNodeByID("lockTitleCheckBox");
-        lockTagCheckBox = (CheckBox) main.findNodeByID("lockTagCheckBox");
-        lockBodyCheckBox = (CheckBox) main.findNodeByID("lockBodyCheckBox");
+        cloudHeader = (GridPane) findNodeById("cloudHeader");
+        cloudHeaderDisplayName = (Label) findNodeById("cloudHeaderDisplayName");
+        pushProgressIndicator = (ProgressIndicator) findNodeById("pushProgressIndicator");
+        pullProgressIndicator = (ProgressIndicator) findNodeById("pullProgressIndicator");
+        /* ---------------  */
 
 
-        attachEvents();
+        attachTextFieldEvents();
+        attachButtonToolbarEvents();
+        attachCloudHeaderEvents();
 
     }
 
-    private void attachEvents() {
+    private Node findNodeById(final String nodeID) {
+        return main.findNodeByID(nodeID);
+    }
+
+
+    private void attachTextFieldEvents() {
         titleTextField.focusedProperty().addListener((arg0, oldPropertyValue, isFocused) -> {
             final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
             if (obj == null) return;
             obj.setTitle(titleTextField.getText());
             obj.save();
             ThoughtsHelper.getInstance().fireEvent(Properties.Actions.VALIDATE_ITEM_LIST);
+
+            enlargeBodyTitle.setText("Title: " + obj.getTitle());
         });
 
         titleTextField.setOnKeyPressed(e -> {
@@ -101,8 +140,10 @@ public class TextView implements ThoughtsChangeListener {
             obj.setTag(tagTextField.getText());
             obj.save();
 
+            enlargeBodyTag.setText("Tag: " + obj.getTag());
 
             if (obj.isSorted()) ThoughtsHelper.getInstance().fireEvent(Properties.Data.VALIDATE_TAG, obj);
+
         });
 
         tagTextField.setOnKeyPressed(e -> {
@@ -116,7 +157,20 @@ public class TextView implements ThoughtsChangeListener {
             obj.save();
         });
 
+        enlargedBodyHeader.setVisible(false);
+        enlargeBodyButton.setOnMouseClicked(e -> {
+            enlargeBodyButton.requestFocus();
+            final boolean notEnlarged = AnchorPane.getTopAnchor(bodyAnchorPane) == 240.0;
+            AnchorPane.setTopAnchor(bodyAnchorPane, notEnlarged ? 16.0 : 240.0);
+            enlargeBodyButton.setText(notEnlarged ? "↙" : "↗");
+            enlargedBodyHeader.setVisible(notEnlarged);
+            AnchorPane.setTopAnchor(bodyTextField, notEnlarged ? 32.0 : 0.0);
+        });
 
+
+    }
+
+    private void attachButtonToolbarEvents() {
         sortButton.setOnAction(e ->
                 ThoughtsHelper.getInstance().fireEvent(Properties.Data.SORT,
                         ThoughtsHelper.getInstance().getSelectedFile()));
@@ -149,8 +203,6 @@ public class TextView implements ThoughtsChangeListener {
                 ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE,
                         ThoughtsHelper.getInstance().getSelectedFile()));
 
-        pushAllButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
-
         pushFileButton.setVisible(false);
         pushFileButton.setOnAction(e -> {
             final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
@@ -159,14 +211,11 @@ public class TextView implements ThoughtsChangeListener {
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.PUSH_FILE, obj);
         });
 
-        saveButton.setOnAction(e -> {
+        forceSaveButton.setOnAction(e -> {
             final ThoughtObject obj = ThoughtsHelper.getInstance().getSelectedFile();
             if (obj == null) return;
             obj.save();
         });
-
-
-        pullButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
 
         localOnlyCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) -> {
             if (ThoughtsHelper.getInstance().isChangingTextFields) {
@@ -190,6 +239,13 @@ public class TextView implements ThoughtsChangeListener {
             ThoughtsHelper.getInstance().fireEvent(Properties.Data.CHECKBOX_PRESSED, isChecked);
 
         });
+
+    }
+
+    private void attachCloudHeaderEvents() {
+        pushAllButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
+        pullButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
+
     }
 
     private void setTextFields(ThoughtObject obj) {
@@ -213,12 +269,23 @@ public class TextView implements ThoughtsChangeListener {
         tagTextField.setDisable(disabledFields);
         bodyTextField.setDisable(disabledFields);
 
-        titleTextField.setText(obj.getTitle().equals(TC.DEFAULT_TITLE) ? "" : obj.getTitle());
-        tagTextField.setText(obj.getTag().equals(TC.DEFAULT_TAG) ? "" : obj.getTag());
-        dateText.setText(!disabledFields ? "Created on: " + obj.getDate() : " ");
-        bodyTextField.setText(obj.getBody().equals(TC.DEFAULT_BODY) ? "" : obj.getBody());
+
+        final String title = obj.getTitle().equals(TC.DEFAULT_TITLE) ? "" : obj.getTitle();
+        final String tag = obj.getTag().equals(TC.DEFAULT_TAG) ? "" : obj.getTag();
+        final String date = !disabledFields ? "Created on: " + obj.getDate() : " ";
+        final String body = obj.getBody().equals(TC.DEFAULT_BODY) ? "" : obj.getBody();
+
+        titleTextField.setText(title);
+        tagTextField.setText(tag);
+        dateText.setText(date);
+        bodyTextField.setText(body);
 
         localOnlyCheckBox.selectedProperty().set(obj.isLocalOnly());
+
+        enlargeBodyTitle.setText("Title: " + obj.getTitle());
+        enlargeBodyTag.setText("Tag: " + obj.getTag());
+        enlargeBodyDate.setText(!disabledFields ? "" + obj.getDate() : " ");
+
 
         ThoughtsHelper.getInstance().isChangingTextFields = false;
     }
