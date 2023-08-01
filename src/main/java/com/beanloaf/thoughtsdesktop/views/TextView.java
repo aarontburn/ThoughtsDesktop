@@ -243,6 +243,11 @@ public class TextView implements ThoughtsChangeListener {
     }
 
     private void attachCloudHeaderEvents() {
+        if (main.firebaseHandler.user != null) {
+            this.cloudHeaderDisplayName.setText("Logged in as: " + main.firebaseHandler.user.displayName());
+            this.cloudHeader.setDisable(false);
+        }
+
         pushAllButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
         pullButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
 

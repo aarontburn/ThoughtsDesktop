@@ -107,23 +107,22 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
 
     private void start() {
-        new Thread(() -> {
-            if (isConnectedToDatabase()) {
-                registerURL();
+        if (isConnectedToDatabase()) {
+            registerURL();
 
-                setAutoRefresh();
-
-
-                Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(LOG_IN_SUCCESS, user));
+            setAutoRefresh();
 
 
-            }
-        }).start();
+            Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(LOG_IN_SUCCESS, user));
+
+
+        }
 
     }
 
     private void setAutoRefresh() {
         if (scheduledTask != null) {
+            scheduler.shutdownNow();
             scheduledTask.cancel(true);
         }
 
@@ -136,6 +135,10 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 0,
                 (Integer) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE),
                 TimeUnit.MINUTES);
+    }
+
+    public void stopRefresh() {
+        scheduler.shutdownNow();
     }
 
     private void signOut() {

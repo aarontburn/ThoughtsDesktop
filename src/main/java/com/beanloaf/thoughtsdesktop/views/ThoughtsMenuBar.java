@@ -4,10 +4,8 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.event.Event;
+import javafx.scene.control.*;
 
 import java.awt.Desktop;
 import java.net.URI;
@@ -18,10 +16,18 @@ public class ThoughtsMenuBar {
 
     private final MainApplication main;
     private final MenuBar menuBar;
+    private final Label homeButton;
 
     public ThoughtsMenuBar(final MainApplication main) {
         this.main = main;
         menuBar = (MenuBar) main.findNodeByID("menuBar");
+
+        homeButton = (Label) main.findNodeByID("homeButton");
+
+        homeButton.setOnMouseClicked(e -> {
+            main.homeView.swapLayouts(HomeView.Layouts.HOME);
+
+        });
 
 
         setMenuOperations();

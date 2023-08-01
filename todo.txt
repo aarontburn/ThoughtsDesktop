@@ -7,6 +7,8 @@ Todo:
     -   Multi-tags
     -   Encrypt database entries based on userID (and maybe the file name as well?)
     -   Code blocks?
+    -   Set minimum window size
+
 
 
 

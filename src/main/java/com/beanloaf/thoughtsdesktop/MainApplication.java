@@ -6,23 +6,16 @@ import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import com.beanloaf.thoughtsdesktop.views.ListView;
-import com.beanloaf.thoughtsdesktop.views.SettingsView;
-import com.beanloaf.thoughtsdesktop.views.ThoughtsMenuBar;
-import com.beanloaf.thoughtsdesktop.views.TextView;
+import com.beanloaf.thoughtsdesktop.views.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -41,10 +34,11 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public FirebaseHandler firebaseHandler;
     public SettingsHandler settingsHandler;
 
-    private Label homeNotesButton;
-    private AnchorPane homeRoot;
 
-    private VBox notepadFXML;
+
+    public HomeView homeView;
+
+
 
 
     public static void main(final String[] args) {
@@ -61,6 +55,8 @@ public class MainApplication extends Application implements ThoughtsChangeListen
                 new FXMLLoader(MainApplication.class.getResource("fxml/homescreen.fxml")).load(),
                 (Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_WIDTH),
                 (Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_HEIGHT));
+
+
         this.scene = scene;
         this.stage = stage;
 
@@ -69,12 +65,14 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
         stage.setX((Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_X));
         stage.setY((Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_Y));
-
         stage.setMaximized((Boolean) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_MAXIMIZED));
 
         stage.show();
 
         scene.getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> {
+            homeView.clock.stop();
+            firebaseHandler.stopRefresh();
+
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_X, stage.getX());
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_Y, stage.getY());
 
@@ -86,44 +84,20 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
             if (SettingsView.isInstanceActive()) SettingsView.closeWindow();
 
-
         });
 
-        homeRoot = (AnchorPane) findNodeByID("homeRoot");
-        homeNotesButton = (Label) findNodeByID("homeNotesButton");
-        notepadFXML = (VBox) findNodeByID("notepadFXML");
-        notepadFXML.setVisible(false);
+
+        ThoughtsHelper.getInstance().addListener(this);
+
+        menuBar = new ThoughtsMenuBar(this);
+        firebaseHandler = new FirebaseHandler(this);
+        new Thread(() -> firebaseHandler.startup()).start();
 
 
-        homeNotesButton.setOnMouseClicked(e -> {
-
-            ThoughtsHelper.getInstance().addListener(this);
-
-            new Thread(() -> Platform.runLater(() -> {
-                try {
-
-                    menuBar = new ThoughtsMenuBar(this);
-                    listView = new ListView(this);
-                    textView = new TextView(this);
+        homeView = new HomeView(this);
 
 
-                    startup();
-
-                    firebaseHandler = new FirebaseHandler(this);
-
-                    new Thread(() -> firebaseHandler.startup()).start();
-
-                    homeRoot.setVisible(false);
-                    notepadFXML.setVisible(true);
-
-                    setKeybindings();
-                } catch (Exception error) {
-                    Logger.logException(error);
-                }
-
-            })).start();
-
-        });
+        setKeybindings();
 
 
     }
@@ -155,7 +129,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
     }
 
-    private void startup() {
+    public void startup() {
         listView.unsortedThoughtList.doClick();
     }
 
@@ -163,9 +137,9 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         if (id.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
 
         return this.scene.lookup("#" + id);
-
-
     }
+
+
 
 
     @Override
