@@ -1,0 +1,26 @@
+* {
+    -fx-background: rgb(60, 63 ,65);
+    -fx-text-fill: rgb(209, 209 ,209);
+
+}
+
+.menu-bar {
+    -fx-background-color: rgb(60,63,65);
+}
+
+.context-menu {
+    -fx-background-color: rgb(60,63,65);
+}
+
+.menu-item {
+    -fx-font-size: 12;
+}
+
+.label {
+    -fx-font-family: Lato;
+}
+
+.calendar_day > .label {
+    -fx-font-size: 15;
+    -fx-padding: 0 0 0 12;
+}

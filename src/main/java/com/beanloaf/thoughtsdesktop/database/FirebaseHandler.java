@@ -130,8 +130,16 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             scheduler = Executors.newSingleThreadScheduledExecutor();
         }
 
+
         scheduledTask = scheduler.scheduleAtFixedRate(
-                () -> refreshItems(),
+                () -> {
+                    try {
+                        refreshItems();
+                    } catch (Exception e) {
+                        Logger.log(e);
+                    }
+
+                },
                 0,
                 (Integer) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE),
                 TimeUnit.MINUTES);
@@ -476,6 +484,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
 
     public void refreshPushPullLabels() {
+        if (main.listView == null) return;
+
         final int numToPull = databaseSnapshot.findObjectsNotOnLocal(main.listView.sortedThoughtList.getList()).size();
         final int numToPush = databaseSnapshot.findObjectsNotInDatabase(main.listView.sortedThoughtList.getList()).size();
 

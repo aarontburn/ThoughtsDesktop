@@ -59,7 +59,10 @@
          <menus>
             <Menu mnemonicParsing="false">
                <graphic>
-                  <Label fx:id="homeButton" text="Home" />
+                  <Label fx:id="homeButton" style="-fx-font-size: 32';" text="Home">
+                     <font>
+                        <Font size="15.0" />
+                     </font></Label>
                </graphic>
             </Menu>
          </menus></MenuBar>
@@ -77,12 +80,7 @@
                                        <children>
                                           <AnchorPane fx:id="testButton" styleClass="tagList">
                                              <children>
-                                                <Button mnemonicParsing="false" text="Button" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                <Text fill="#a1a1a1" layoutX="291.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="L" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="0.0">
-                                                   <font>
-                                                      <Font name="Lato Regular" size="25.0" />
-                                                   </font>
-                                                </Text>
+                                                <Button mnemonicParsing="false" text="Unsorted" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                        </children>
@@ -95,12 +93,7 @@
                                        <children>
                                           <AnchorPane fx:id="testButton1" styleClass="itemList">
                                              <children>
-                                                <Button mnemonicParsing="false" styleClass="listViewItem" text="Button" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                <Text fill="#a1a1a1" layoutX="291.0" layoutY="21.0" strokeType="OUTSIDE" strokeWidth="0.0" text="L" AnchorPane.leftAnchor="8.0" AnchorPane.topAnchor="0.0">
-                                                   <font>
-                                                      <Font name="Lato Regular" size="25.0" />
-                                                   </font>
-                                                </Text>
+                                                <Button mnemonicParsing="false" styleClass="listViewItem" text="Test List Item" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                        </children>

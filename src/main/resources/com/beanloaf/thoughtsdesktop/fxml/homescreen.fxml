@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <fx:include fx:id="notepadFXML" source="main_view.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <fx:include fx:id="calendarFXML" source="calendar_view.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="homeRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3C3F41;" stylesheets="@../css/homescreen_styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -28,18 +30,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <AnchorPane style="-fx-border-color: red;">
-                     <children>
-                        <VBox alignment="CENTER" layoutX="4.0" layoutY="526.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="60.0" prefWidth="138.0" AnchorPane.bottomAnchor="499.0" AnchorPane.leftAnchor="4.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="526.0">
-                           <children>
-                              <Button fx:id="homeNotesButton" alignment="CENTER" mnemonicParsing="false" text="Notes" textOverrun="CLIP">
-                                 <font>
-                                    <Font name="Lato Regular" size="31.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </VBox>
-                     </children></AnchorPane>
+                  <AnchorPane />
                   <AnchorPane prefHeight="200.0" prefWidth="960.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                      <children>
                         <Label fx:id="homeUserLabel" alignment="CENTER" layoutY="420.0" prefHeight="27.0" prefWidth="960.0" text="Welcome back, &lt;user&gt;." AnchorPane.bottomAnchor="626.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="420.0">
@@ -57,55 +48,55 @@
                               <Font name="Lato Regular" size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="homeTimeLabel" alignment="CENTER" layoutY="564.0" prefHeight="69.0" prefWidth="960.0" text="9:28:53 PM" AnchorPane.bottomAnchor="447.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="564.0">
+                        <Label fx:id="homeTimeLabel" alignment="CENTER" layoutY="564.0" prefHeight="69.0" prefWidth="960.0" text="11:59:59 PM" AnchorPane.bottomAnchor="447.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="564.0">
                            <font>
                               <Font name="Lato Regular" size="42.0" />
                            </font>
                         </Label>
-                        <Label fx:id="homeMilitaryTimeLabel" alignment="CENTER" layoutY="623.0" prefHeight="34.0" prefWidth="960.0" text="21:29:53" AnchorPane.bottomAnchor="423.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="623.0">
+                        <Label fx:id="homeMilitaryTimeLabel" alignment="CENTER" layoutY="623.0" prefHeight="34.0" prefWidth="960.0" text="23:59:59" AnchorPane.bottomAnchor="423.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="623.0">
                            <font>
                               <Font name="Lato Regular" size="24.0" />
                            </font>
                         </Label>
-                        <GridPane gridLinesVisible="true" layoutY="886.0" prefHeight="194.0" prefWidth="960.0" styleClass="regular-schedule" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" />
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6" />
-                           </children>
-                        </GridPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: blue;" GridPane.columnIndex="2">
-                     <children>
-                        <VBox alignment="CENTER" layoutX="162.0" layoutY="538.0" prefHeight="60.0" prefWidth="138.0" AnchorPane.bottomAnchor="509.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="510.0">
-                           <children>
-                              <Button fx:id="homeNotesButton1" alignment="CENTER" mnemonicParsing="false" text="Calendar" textOverrun="CLIP">
-                                 <font>
-                                    <Font name="Lato Regular" size="31.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </VBox>
-                     </children></AnchorPane>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
                </children>
             </GridPane>
+            <HBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
+               <children>
+                  <Label fx:id="homeNotesButton" text="Notes">
+                     <font>
+                        <Font size="31.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets right="36.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="homeCalendarButton" text="Calendar">
+                     <font>
+                        <Font size="31.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="8.0" right="8.0" />
+                     </HBox.margin>
+                  </Label>
+                  <Label fx:id="homeSettingsButton" text="Settings">
+                     <font>
+                        <Font size="31.0" />
+                     </font>
+                     <HBox.margin>
+                        <Insets left="36.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets left="36.0" right="36.0" />
+               </padding>
+            </HBox>
          </children>
       </AnchorPane>
    </children>

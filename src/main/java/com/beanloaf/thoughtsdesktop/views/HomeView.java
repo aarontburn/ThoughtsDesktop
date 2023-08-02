@@ -4,7 +4,6 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -16,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
@@ -39,8 +37,8 @@ public class HomeView implements ThoughtsChangeListener {
     public Clock clock;
 
     private final AnchorPane homeRoot;
-    private final VBox notepadFXML;
-    private final Button homeNotesButton;
+    private final VBox notepadFXML, calendarFXML;
+    private final Label homeNotesButton, homeCalendarButton, homeSettingsButton;
 
 
     private final Label homeUserLabel, homeDateLabel, homeShortDateLabel, homeTimeLabel, homeMilitaryTimeLabel;
@@ -53,12 +51,14 @@ public class HomeView implements ThoughtsChangeListener {
 
 
         homeRoot = (AnchorPane) findNodeByID("homeRoot");
-        homeNotesButton = (Button) findNodeByID("homeNotesButton");
+        homeNotesButton = (Label) findNodeByID("homeNotesButton");
+        homeSettingsButton = (Label) findNodeByID("homeSettingsButton");
+        homeCalendarButton = (Label) findNodeByID("homeCalendarButton");
+
+
+
         notepadFXML = (VBox) findNodeByID("notepadFXML");
-        notepadFXML.setVisible(false);
-
-
-        homeNotesButton.setOnMouseClicked(e -> swapLayouts(Layouts.NOTES));
+        calendarFXML = (VBox) findNodeByID("calendarFXML");
 
 
         homeUserLabel = (Label) findNodeByID("homeUserLabel");
@@ -67,16 +67,27 @@ public class HomeView implements ThoughtsChangeListener {
         homeTimeLabel = (Label) findNodeByID("homeTimeLabel");
         homeMilitaryTimeLabel = (Label) findNodeByID("homeMilitaryTimeLabel");
 
+
+        attachEvents();
         start();
+
+    }
+
+    private void attachEvents() {
+        homeSettingsButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, Properties.Actions.OPEN_HOME_SETTINGS));
+        homeCalendarButton.setOnMouseClicked(e -> swapLayouts(Layouts.CALENDAR));
+
+        notepadFXML.setVisible(false);
+        calendarFXML.setVisible(false);
+
+        homeNotesButton.setOnMouseClicked(e -> swapLayouts(Layouts.NOTES));
 
     }
 
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case Properties.Data.LOG_IN_SUCCESS -> {
-                homeUserLabel.setText("Welcome back, " + ((ThoughtUser) eventValue).displayName() + ".");
-            }
+            case Properties.Data.LOG_IN_SUCCESS -> homeUserLabel.setText("Welcome back, " + ((ThoughtUser) eventValue).displayName() + ".");
         }
     }
 
@@ -100,6 +111,7 @@ public class HomeView implements ThoughtsChangeListener {
         final Date date = new Date();
 
         final Calendar cal = Calendar.getInstance();
+
         cal.setTime(date);
         final int day = cal.get(Calendar.DATE);
 
@@ -127,26 +139,36 @@ public class HomeView implements ThoughtsChangeListener {
     public void swapLayouts(final Layouts layout) {
         switch (layout) {
             case NOTES -> {
+                if (main.textView == null) main.textView = new TextView(main);
                 if (main.listView == null) {
                     main.listView = new ListView(main);
                     main.startup();
                 }
-                if (main.textView == null) main.textView = new TextView(main);
-
 
                 homeRoot.setVisible(false);
+                calendarFXML.setVisible(false);
                 notepadFXML.setVisible(true);
             }
             case HOME -> {
+
+                // We could turn off the clock here to save resources, but it probably doesn't save too much.
+
                 homeRoot.setVisible(true);
                 notepadFXML.setVisible(false);
+                calendarFXML.setVisible(false);
+
             }
 
             case CALENDAR -> {
+                if (main.calendarView == null) main.calendarView = new CalendarView(main);
 
+                homeRoot.setVisible(false);
+                notepadFXML.setVisible(false);
+
+                calendarFXML.setVisible(true);
             }
 
-            default -> throw new IllegalArgumentException("Not sure how you got here. Illegal enum passed" + layout);
+            default -> throw new IllegalArgumentException("Not sure how you got here. Illegal enum passed: " + layout);
 
         }
 
@@ -172,10 +194,6 @@ public class HomeView implements ThoughtsChangeListener {
 
         private void updateAndDisplayTime() {
             Platform.runLater(() -> {
-
-
-
-
                 final LocalTime currentTime = LocalTime.now();
 
                 homeTimeLabel.setText(currentTime.format(standardTimeFormatter));

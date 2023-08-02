@@ -7,7 +7,9 @@ public class Properties {
     public static class Actions {
         public static final String REFRESH = "refresh";
         public static final String VALIDATE_ITEM_LIST = "validate title";
-        public static final String OPEN_SETTINGS = "open settings";
+        public static final String OPEN_HOME_SETTINGS = "open home settings";
+        public static final String OPEN_NOTES_SETTINGS = "open notes settings";
+        public static final String OPEN_CALENDAR_SETTINGS = "open calendar settings";
         public static final String OPEN_CLOUD_SETTINGS = "open cloud settings";
         public static final String PUSH_ALL = "push";
         public static final String PULL = "pull";

@@ -19,7 +19,8 @@ Todo:
         - Local only
         - Pinned file
 
-
+Calendar:
+    -   Setting to choose to end week with Sunday or Saturday
 
 
 

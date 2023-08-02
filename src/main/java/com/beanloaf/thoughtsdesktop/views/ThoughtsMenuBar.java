@@ -4,7 +4,6 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import javafx.event.Event;
 import javafx.scene.control.*;
 
 import java.awt.Desktop;
@@ -61,7 +60,7 @@ public class ThoughtsMenuBar {
         final Map<String, Runnable> toolOptions = new LinkedHashMap<>();
         toolOptions.put("Export", () -> {
         });
-        toolOptions.put("Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, Properties.Actions.OPEN_SETTINGS));
+        toolOptions.put("Settings", () -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, Properties.Actions.OPEN_NOTES_SETTINGS));
         menuMap.put("Tools", toolOptions);
 
 

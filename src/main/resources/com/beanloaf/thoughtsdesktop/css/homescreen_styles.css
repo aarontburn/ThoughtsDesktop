@@ -20,3 +20,16 @@
 
 }
 
+
+.context-menu {
+    -fx-background-color: rgb(60,63,65);
+}
+
+.menu-item {
+    -fx-font-size: 12;
+}
+
+.menu-bar {
+    -fx-background-color: rgb(60,63,65);
+
+}

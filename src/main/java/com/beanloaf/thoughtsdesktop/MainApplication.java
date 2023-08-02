@@ -4,11 +4,9 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.views.*;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,6 +18,8 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+
+import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
 
 public class MainApplication extends Application implements ThoughtsChangeListener {
 
@@ -37,6 +37,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
 
     public HomeView homeView;
+    public CalendarView calendarView;
 
 
 
@@ -145,8 +146,10 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case Properties.Actions.OPEN_SETTINGS -> SettingsView.getInstance(this);
-            case Properties.Actions.OPEN_CLOUD_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(1);
+            case OPEN_HOME_SETTINGS -> SettingsView.getInstance(this);
+            case OPEN_NOTES_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(1);
+            case OPEN_CALENDAR_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(2);
+            case OPEN_CLOUD_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(3);
         }
     }
 }
