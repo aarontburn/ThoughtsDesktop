@@ -28,9 +28,8 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     private Stage stage;
 
 
-    public ListView listView;
-    public TextView textView;
-    private ThoughtsMenuBar menuBar;
+
+    private NotesMenuBar menuBar;
     public FirebaseHandler firebaseHandler;
     public SettingsHandler settingsHandler;
 
@@ -38,7 +37,9 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
     public HomeView homeView;
     public CalendarView calendarView;
-
+    public ListView listView;
+    public TextView textView;
+    public GlobalHeaderView globalHeaderView;
 
 
 
@@ -88,11 +89,15 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         });
 
 
+        globalHeaderView = new GlobalHeaderView(this);
+
+
         ThoughtsHelper.getInstance().addListener(this);
 
-        menuBar = new ThoughtsMenuBar(this);
+        menuBar = new NotesMenuBar(this);
         firebaseHandler = new FirebaseHandler(this);
         new Thread(() -> firebaseHandler.startup()).start();
+
 
 
         homeView = new HomeView(this);

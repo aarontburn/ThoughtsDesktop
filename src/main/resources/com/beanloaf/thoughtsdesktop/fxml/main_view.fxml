@@ -38,7 +38,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
@@ -55,17 +54,8 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@../css/main_view_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <MenuBar fx:id="menuBar" styleClass="menu-item" VBox.vgrow="NEVER">
-         <menus>
-            <Menu mnemonicParsing="false">
-               <graphic>
-                  <Label fx:id="homeButton" style="-fx-font-size: 32';" text="Home">
-                     <font>
-                        <Font size="15.0" />
-                     </font></Label>
-               </graphic>
-            </Menu>
-         </menus></MenuBar>
+      <fx:include source="global_header.fxml" />
+    <MenuBar fx:id="notesMenuBar" styleClass="menu-item" />
     <AnchorPane prefHeight="371.0" prefWidth="627.0" VBox.vgrow="ALWAYS">
       <children>
             <SplitPane dividerPositions="0.33" layoutX="215.0" layoutY="36.0" prefHeight="322.0" prefWidth="640.0" styleClass="main-split-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

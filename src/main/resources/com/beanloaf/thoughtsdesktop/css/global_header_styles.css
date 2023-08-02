@@ -1,0 +1,17 @@
+* {
+    -fx-background: rgb(60, 63 ,65);
+    -fx-text-fill: rgb(209, 209 ,209);
+
+}
+
+
+
+.bar {
+    -fx-background: rgb(60, 63 ,65);
+
+}
+
+.label {
+    -fx-font-size: 18;
+
+}

@@ -29,9 +29,7 @@ import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
 import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Data.*;
 import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.readFileContents;
 
-public class ListView implements ThoughtsChangeListener {
-
-    private final MainApplication main;
+public class ListView extends ThoughtsView implements ThoughtsChangeListener {
 
 
     public final VBox tagList, itemList;
@@ -44,7 +42,7 @@ public class ListView implements ThoughtsChangeListener {
 
 
     public ListView(final MainApplication main) {
-        this.main = main;
+        super(main);
 
         ThoughtsHelper.getInstance().addListener(this);
 
@@ -52,15 +50,14 @@ public class ListView implements ThoughtsChangeListener {
         this.itemList = (VBox) main.findNodeByID("itemList");
 
 
-        final SplitPane listViewContainer = (SplitPane) main.findNodeByID("listViewContainer");
+        final SplitPane listViewContainer = (SplitPane) findNodeByID("listViewContainer");
 
         listViewContainer.lookupAll(".split-pane-divider").forEach(div -> {
             div.setMouseTransparent(true);
             div.setStyle("-fx-background-color: transparent;");
         });
 
-
-        this.searchBar = (TextField) main.findNodeByID("searchBar");
+        this.searchBar = (TextField) findNodeByID("searchBar");
 
         unsortedThoughtList = new TagListItem(this, "Unsorted");
         sortedThoughtList = new TagListItem(this, "Sorted");

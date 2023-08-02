@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -38,8 +39,6 @@ public class HomeView implements ThoughtsChangeListener {
 
     private final AnchorPane homeRoot;
     private final VBox notepadFXML, calendarFXML;
-    private final Label homeNotesButton, homeCalendarButton, homeSettingsButton;
-
 
     private final Label homeUserLabel, homeDateLabel, homeShortDateLabel, homeTimeLabel, homeMilitaryTimeLabel;
 
@@ -51,11 +50,6 @@ public class HomeView implements ThoughtsChangeListener {
 
 
         homeRoot = (AnchorPane) findNodeByID("homeRoot");
-        homeNotesButton = (Label) findNodeByID("homeNotesButton");
-        homeSettingsButton = (Label) findNodeByID("homeSettingsButton");
-        homeCalendarButton = (Label) findNodeByID("homeCalendarButton");
-
-
 
         notepadFXML = (VBox) findNodeByID("notepadFXML");
         calendarFXML = (VBox) findNodeByID("calendarFXML");
@@ -74,13 +68,10 @@ public class HomeView implements ThoughtsChangeListener {
     }
 
     private void attachEvents() {
-        homeSettingsButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, Properties.Actions.OPEN_HOME_SETTINGS));
-        homeCalendarButton.setOnMouseClicked(e -> swapLayouts(Layouts.CALENDAR));
 
         notepadFXML.setVisible(false);
         calendarFXML.setVisible(false);
 
-        homeNotesButton.setOnMouseClicked(e -> swapLayouts(Layouts.NOTES));
 
     }
 
@@ -137,8 +128,11 @@ public class HomeView implements ThoughtsChangeListener {
     }
 
     public void swapLayouts(final Layouts layout) {
+        Logger.log("here");
+
         switch (layout) {
             case NOTES -> {
+
                 if (main.textView == null) main.textView = new TextView(main);
                 if (main.listView == null) {
                     main.listView = new ListView(main);

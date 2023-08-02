@@ -11,22 +11,14 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ThoughtsMenuBar {
+public class NotesMenuBar {
 
     private final MainApplication main;
-    private final MenuBar menuBar;
-    private final Label homeButton;
+    private final MenuBar notesMenuBar;
 
-    public ThoughtsMenuBar(final MainApplication main) {
+    public NotesMenuBar(final MainApplication main) {
         this.main = main;
-        menuBar = (MenuBar) main.findNodeByID("menuBar");
-
-        homeButton = (Label) main.findNodeByID("homeButton");
-
-        homeButton.setOnMouseClicked(e -> {
-            main.homeView.swapLayouts(HomeView.Layouts.HOME);
-
-        });
+        notesMenuBar = (MenuBar) main.findNodeByID("notesMenuBar");
 
 
         setMenuOperations();
@@ -105,7 +97,7 @@ public class ThoughtsMenuBar {
                 menuItem.setOnAction(event -> menuMap.get(menuName).get(menuOption).run());
                 menu.getItems().add(menuItem);
             }
-            menuBar.getMenus().add(menu);
+            notesMenuBar.getMenus().add(menu);
         }
 
 

@@ -4,22 +4,17 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 
-public class CalendarView {
-
-    private final MainApplication main;
+public class CalendarView extends ThoughtsView {
 
     private Label calendarHomeButton;
 
     public CalendarView(final MainApplication main) {
-        this.main = main;
+        super(main);
 
-        calendarHomeButton = (Label) findNodeById("calendarHomeButton");
+        calendarHomeButton = (Label) findNodeByID("calendarHomeButton");
         calendarHomeButton.setOnMouseClicked(e -> main.homeView.swapLayouts(HomeView.Layouts.HOME));
 
     }
 
-    private Node findNodeById(final String nodeID) {
-        return main.findNodeByID(nodeID);
-    }
 
 }

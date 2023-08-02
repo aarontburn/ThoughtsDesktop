@@ -10,7 +10,6 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -23,7 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public class SettingsView implements ThoughtsChangeListener {
+public class SettingsView extends ThoughtsView implements ThoughtsChangeListener {
 
     private static SettingsView instance;
 
@@ -54,8 +53,6 @@ public class SettingsView implements ThoughtsChangeListener {
 
     private Stage settingsWindow;
     private Scene scene;
-    private MainApplication main;
-
 
     private TabPane settingsTabbedPane;
     /*      General Settings Layout         */
@@ -100,9 +97,9 @@ public class SettingsView implements ThoughtsChangeListener {
 
 
     private SettingsView(final MainApplication main) {
+        super(main);
 
         try {
-            this.main = main;
 
             ThoughtsHelper.getInstance().addListener(this);
 
@@ -150,14 +147,6 @@ public class SettingsView implements ThoughtsChangeListener {
 
     }
 
-
-    private Node findNodeByID(final String id) {
-        if (id.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
-
-        return scene.lookup("#" + id);
-
-
-    }
 
     private void findNodes() {
         settingsTabbedPane = (TabPane) findNodeByID("settingsTabbedPane");

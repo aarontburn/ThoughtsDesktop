@@ -43,10 +43,6 @@ root {
 
 
 
-.menu-bar {
-    -fx-background-color: rgb(60,63,65);
-
-}
 
 .split-pane {
     -fx-border-color: rgb(60,63,65);
@@ -85,6 +81,13 @@ root {
 }
 
 
+
+
+.menu-bar {
+    -fx-background-color: rgb(60,63,65);
+}
+
+
 .context-menu {
     -fx-background-color: rgb(60,63,65);
 }
@@ -92,8 +95,6 @@ root {
 .menu-item {
     -fx-font-size: 12;
 }
-
-
 
 
 

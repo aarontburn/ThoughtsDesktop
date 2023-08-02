@@ -8,7 +8,6 @@ import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -24,10 +23,8 @@ import javafx.scene.text.Text;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TextView implements ThoughtsChangeListener {
+public class TextView extends ThoughtsView implements ThoughtsChangeListener {
 
-
-    private final MainApplication main;
 
 
     /*  Cloud Header    */
@@ -59,51 +56,51 @@ public class TextView implements ThoughtsChangeListener {
 
 
     public TextView(final MainApplication main) {
-        this.main = main;
+        super(main);
 
         ThoughtsHelper.getInstance().addListener(this);
 
 
         /*  Text Fields    */
-        titleTextField = (TextField) findNodeById("titleTextField");
-        tagTextField = (TextField) findNodeById("tagTextField");
-        dateText = (Text) findNodeById("dateText");
-        bodyTextField = (TextArea) findNodeById("bodyTextField");
-        bodyAnchorPane = (AnchorPane) findNodeById("bodyAnchorPane");
-        enlargeBodyButton = (Label) findNodeById("enlargeBodyButton");
-        enlargedBodyHeader = (GridPane) findNodeById("enlargedBodyHeader");
+        titleTextField = (TextField) findNodeByID("titleTextField");
+        tagTextField = (TextField) findNodeByID("tagTextField");
+        dateText = (Text) findNodeByID("dateText");
+        bodyTextField = (TextArea) findNodeByID("bodyTextField");
+        bodyAnchorPane = (AnchorPane) findNodeByID("bodyAnchorPane");
+        enlargeBodyButton = (Label) findNodeByID("enlargeBodyButton");
+        enlargedBodyHeader = (GridPane) findNodeByID("enlargedBodyHeader");
 
-        enlargeBodyTitle = (Label) findNodeById("enlargeBodyTitle");
-        enlargeBodyTag = (Label) findNodeById("enlargeBodyTag");
-        enlargeBodyDate = (Label) findNodeById("enlargeBodyDate");
+        enlargeBodyTitle = (Label) findNodeByID("enlargeBodyTitle");
+        enlargeBodyTag = (Label) findNodeByID("enlargeBodyTag");
+        enlargeBodyDate = (Label) findNodeByID("enlargeBodyDate");
 
         /* ---------------  */
 
 
         /*  Button Toolbar  */
-        sortButton = (Button) findNodeById("sortButton");
-        newFileButton = (Button) findNodeById("newFileButton");
-        deleteButton = (Button) findNodeById("deleteButton");
+        sortButton = (Button) findNodeByID("sortButton");
+        newFileButton = (Button) findNodeByID("newFileButton");
+        deleteButton = (Button) findNodeByID("deleteButton");
 
-        deleteLocalButton = (Button) findNodeById("deleteLocalButton");
-        forceSaveButton = (Button) findNodeById("forceSaveButton");
-        pushFileButton = (Button) findNodeById("pushFileButton");
+        deleteLocalButton = (Button) findNodeByID("deleteLocalButton");
+        forceSaveButton = (Button) findNodeByID("forceSaveButton");
+        pushFileButton = (Button) findNodeByID("pushFileButton");
 
-        localOnlyCheckBox = (CheckBox) findNodeById("localOnlyCheckBox");
-        lockTitleCheckBox = (CheckBox) findNodeById("lockTitleCheckBox");
-        lockTagCheckBox = (CheckBox) findNodeById("lockTagCheckBox");
-        lockBodyCheckBox = (CheckBox) findNodeById("lockBodyCheckBox");
+        localOnlyCheckBox = (CheckBox) findNodeByID("localOnlyCheckBox");
+        lockTitleCheckBox = (CheckBox) findNodeByID("lockTitleCheckBox");
+        lockTagCheckBox = (CheckBox) findNodeByID("lockTagCheckBox");
+        lockBodyCheckBox = (CheckBox) findNodeByID("lockBodyCheckBox");
         /* ---------------  */
 
 
         /*  Cloud Header    */
-        pullButton = (Button) findNodeById("pullButton");
-        pushAllButton = (Button) findNodeById("pushAllButton");
+        pullButton = (Button) findNodeByID("pullButton");
+        pushAllButton = (Button) findNodeByID("pushAllButton");
 
-        cloudHeader = (GridPane) findNodeById("cloudHeader");
-        cloudHeaderDisplayName = (Label) findNodeById("cloudHeaderDisplayName");
-        pushProgressIndicator = (ProgressIndicator) findNodeById("pushProgressIndicator");
-        pullProgressIndicator = (ProgressIndicator) findNodeById("pullProgressIndicator");
+        cloudHeader = (GridPane) findNodeByID("cloudHeader");
+        cloudHeaderDisplayName = (Label) findNodeByID("cloudHeaderDisplayName");
+        pushProgressIndicator = (ProgressIndicator) findNodeByID("pushProgressIndicator");
+        pullProgressIndicator = (ProgressIndicator) findNodeByID("pullProgressIndicator");
         /* ---------------  */
 
 
@@ -111,10 +108,6 @@ public class TextView implements ThoughtsChangeListener {
         attachButtonToolbarEvents();
         attachCloudHeaderEvents();
 
-    }
-
-    private Node findNodeById(final String nodeID) {
-        return main.findNodeByID(nodeID);
     }
 
 
