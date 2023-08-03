@@ -79,6 +79,14 @@
                         </AnchorPane>
                      </children>
                   </GridPane>
+                  <Label layoutX="6.0" layoutY="14.0" text="August, 2023" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="34.0" />
+                     </font>
+                     <padding>
+                        <Insets left="16.0" right="16.0" top="4.0" />
+                     </padding>
+                  </Label>
                </children>
             </AnchorPane>
         </items>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -11,12 +12,24 @@
          <children>
             <Label fx:id="headerUserName" alignment="CENTER" prefHeight="42.0" prefWidth="124.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <Label fx:id="headerDateTime" alignment="CENTER_RIGHT" contentDisplay="TOP" layoutX="1023.0" layoutY="7.0" prefHeight="42.0" prefWidth="260.0" styleClass="menu-item" text="12/25/2023, 11:59:59 PM" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="0.0" />
-            <HBox alignment="CENTER" layoutX="16.0" spacing="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="0.0">
+            <HBox alignment="CENTER" layoutX="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label fx:id="headerHomeButton" text="Home" />
-                  <Label fx:id="headerNotesButton" text="Notes" />
-                  <Label fx:id="headerCalendarButton" text="Calendar" />
-                  <Label fx:id="headerSettingsButton" text="Settings" />
+                  <Label fx:id="headerHomeButton" text="Home">
+                     <padding>
+                        <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+                     </padding></Label>
+                  <Label fx:id="headerNotesButton" text="Notes">
+                     <padding>
+                        <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+                     </padding></Label>
+                  <Label fx:id="headerCalendarButton" text="Calendar">
+                     <padding>
+                        <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+                     </padding></Label>
+                  <Label fx:id="headerSettingsButton" text="Settings">
+                     <padding>
+                        <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+                     </padding></Label>
                </children>
             </HBox>
          </children>
