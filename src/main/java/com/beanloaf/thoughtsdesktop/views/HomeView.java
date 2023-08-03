@@ -3,6 +3,7 @@ package com.beanloaf.thoughtsdesktop.views;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.controllers.GlobalHeaderController;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.application.Platform;
@@ -42,11 +43,17 @@ public class HomeView implements ThoughtsChangeListener {
 
     private final Label homeUserLabel, homeDateLabel, homeShortDateLabel, homeTimeLabel, homeMilitaryTimeLabel;
 
+    private final GlobalHeaderController headerController;
+
 
     public HomeView(final MainApplication main) {
         this.main = main;
 
         ThoughtsHelper.getInstance().addListener(this);
+
+        headerController = (GlobalHeaderController) ThoughtsHelper.getInstance().getController(GlobalHeaderController.class);
+
+
 
 
         homeRoot = (AnchorPane) findNodeByID("homeRoot");
@@ -78,7 +85,21 @@ public class HomeView implements ThoughtsChangeListener {
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case Properties.Data.LOG_IN_SUCCESS -> homeUserLabel.setText("Welcome back, " + ((ThoughtUser) eventValue).displayName() + ".");
+            case Properties.Data.LOG_IN_SUCCESS -> {
+                final ThoughtUser user = (ThoughtUser) eventValue;
+
+                if (user == null) {
+                    throw new IllegalArgumentException("User cannot be null.");
+                }
+
+                homeUserLabel.setText("Welcome back, " + user.displayName() + ".");
+                headerController.setUserDisplayName(user.displayName());
+            }
+            case Properties.Actions.SIGN_OUT -> {
+                homeUserLabel.setText("");
+                headerController.setUserDisplayName("");
+
+            }
         }
     }
 
@@ -128,8 +149,6 @@ public class HomeView implements ThoughtsChangeListener {
     }
 
     public void swapLayouts(final Layouts layout) {
-        Logger.log("here");
-
         switch (layout) {
             case NOTES -> {
 
@@ -194,6 +213,8 @@ public class HomeView implements ThoughtsChangeListener {
                 homeMilitaryTimeLabel.setText(currentTime.format(militaryTimeFormatter));
                 homeDateLabel.setText(getFullDate());
                 homeShortDateLabel.setText("(" + getShortDate() + ")");
+
+                headerController.setDateTime(getShortDate(), currentTime.format(standardTimeFormatter) );
 
             });
         }

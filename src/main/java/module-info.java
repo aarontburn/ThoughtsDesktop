@@ -25,4 +25,6 @@ module com.example.thoughtsdesktop {
     exports com.beanloaf.thoughtsdesktop.res;
     opens com.beanloaf.thoughtsdesktop.res to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop;
+    exports com.beanloaf.thoughtsdesktop.controllers;
+    opens com.beanloaf.thoughtsdesktop.controllers to javafx.fxml;
 }

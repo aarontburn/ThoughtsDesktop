@@ -5,7 +5,12 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import com.beanloaf.thoughtsdesktop.views.*;
+import com.beanloaf.thoughtsdesktop.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.views.HomeView;
+import com.beanloaf.thoughtsdesktop.views.ListView;
+import com.beanloaf.thoughtsdesktop.views.NotesMenuBar;
+import com.beanloaf.thoughtsdesktop.views.SettingsView;
+import com.beanloaf.thoughtsdesktop.views.TextView;
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
@@ -39,9 +44,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public CalendarView calendarView;
     public ListView listView;
     public TextView textView;
-    public GlobalHeaderView globalHeaderView;
-
-
 
     public static void main(final String[] args) {
         launch();
@@ -51,10 +53,11 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     @Override
     public void start(final Stage stage) throws IOException {
         settingsHandler = new SettingsHandler();
+        ThoughtsHelper.getInstance().addListener(this);
 
 
         final Scene scene = new Scene(
-                new FXMLLoader(MainApplication.class.getResource("fxml/homescreen.fxml")).load(),
+                new FXMLLoader(MainApplication.class.getResource("fxml/home_screen.fxml")).load(),
                 (Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_WIDTH),
                 (Double) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_HEIGHT));
 
@@ -88,11 +91,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
         });
 
-
-        globalHeaderView = new GlobalHeaderView(this);
-
-
-        ThoughtsHelper.getInstance().addListener(this);
 
         menuBar = new NotesMenuBar(this);
         firebaseHandler = new FirebaseHandler(this);

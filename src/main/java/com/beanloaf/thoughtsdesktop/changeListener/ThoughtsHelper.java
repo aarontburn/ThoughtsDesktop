@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.changeListener;
 
+import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
 import javafx.scene.Node;
@@ -28,6 +29,7 @@ public class ThoughtsHelper {
     }
 
     private final Map<Class<?>, ThoughtsChangeListener> listeners = new HashMap<>();
+    private final Map<Class<?>, Object> controllers = new HashMap<>();
 
 
     private ThoughtObject selectedFile;
@@ -78,6 +80,8 @@ public class ThoughtsHelper {
         listener.eventFired(eventName, eventValue);
 
     }
+
+
 
     public void targetEvent(final Class<?> className, final String eventName) {
         targetEvent(className, eventName, null);
@@ -150,6 +154,19 @@ public class ThoughtsHelper {
 
         }
         return null;
+    }
+
+
+    public MainApplication getMain() {
+        return (MainApplication) this.listeners.get(MainApplication.class);
+    }
+
+    public void addController(final Object controller) {
+        this.controllers.put(controller.getClass(), controller);
+    }
+
+    public Object getController(final Class<?> controllerClass) {
+        return this.controllers.get(controllerClass);
     }
 
 

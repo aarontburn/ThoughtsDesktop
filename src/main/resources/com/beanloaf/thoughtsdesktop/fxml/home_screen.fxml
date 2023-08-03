@@ -7,15 +7,16 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@../css/home_screen_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="42.0">
          <children>
             <fx:include fx:id="notepadFXML" source="main_view.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <fx:include fx:id="calendarFXML" source="calendar_view.fxml" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="homeRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3C3F41;" stylesheets="@../css/homescreen_styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane fx:id="homeRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" style="-fx-background-color: #3C3F41;" stylesheets="@../css/home_screen_styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="42.0">
          <children>
             <GridPane layoutX="612.0" layoutY="462.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
@@ -30,27 +31,27 @@
                   <AnchorPane />
                   <AnchorPane prefHeight="200.0" prefWidth="960.0" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                      <children>
-                        <Label fx:id="homeUserLabel" alignment="CENTER" layoutY="420.0" prefHeight="27.0" prefWidth="960.0" text="Welcome back, &lt;user&gt;." AnchorPane.bottomAnchor="626.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="420.0">
+                        <Label fx:id="homeUserLabel" alignment="CENTER" layoutY="377.0" prefHeight="27.0" prefWidth="960.0" text="Welcome back, &lt;user&gt;." AnchorPane.bottomAnchor="627.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="377.0">
                            <font>
                               <Font name="Lato Regular" size="21.0" />
                            </font>
                         </Label>
-                        <Label fx:id="homeDateLabel" alignment="CENTER" layoutY="454.0" prefHeight="34.0" prefWidth="960.0" text="Friday, July 30th, 2023" AnchorPane.bottomAnchor="592.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="454.0">
+                        <Label fx:id="homeDateLabel" alignment="CENTER" layoutX="6.0" layoutY="411.0" prefHeight="34.0" prefWidth="960.0" text="Monday, December 25th, 2023" AnchorPane.bottomAnchor="593.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="411.0">
                            <font>
                               <Font name="Lato Regular" size="27.0" />
                            </font>
                         </Label>
-                        <Label fx:id="homeShortDateLabel" alignment="CENTER" layoutY="488.0" prefHeight="34.0" prefWidth="960.0" text="(07/30/2023)" AnchorPane.bottomAnchor="558.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="488.0">
+                        <Label fx:id="homeShortDateLabel" alignment="CENTER" layoutY="445.0" prefHeight="34.0" prefWidth="960.0" text="(12/24/2023)" AnchorPane.bottomAnchor="559.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="445.0">
                            <font>
                               <Font name="Lato Regular" size="24.0" />
                            </font>
                         </Label>
-                        <Label fx:id="homeTimeLabel" alignment="CENTER" layoutY="564.0" prefHeight="69.0" prefWidth="960.0" text="11:59:59 PM" AnchorPane.bottomAnchor="447.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="564.0">
+                        <Label fx:id="homeTimeLabel" alignment="CENTER" layoutY="499.0" prefHeight="81.0" prefWidth="960.0" text="11:59:59 PM" AnchorPane.bottomAnchor="458.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="499.0">
                            <font>
                               <Font name="Lato Regular" size="42.0" />
                            </font>
                         </Label>
-                        <Label fx:id="homeMilitaryTimeLabel" alignment="CENTER" layoutY="623.0" prefHeight="34.0" prefWidth="960.0" text="23:59:59" AnchorPane.bottomAnchor="423.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="623.0">
+                        <Label fx:id="homeMilitaryTimeLabel" alignment="CENTER" layoutX="14.0" layoutY="563.0" prefHeight="34.0" prefWidth="960.0" text="23:59:59" AnchorPane.bottomAnchor="441.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="563.0">
                            <font>
                               <Font name="Lato Regular" size="24.0" />
                            </font>
@@ -60,8 +61,8 @@
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" />
                </children>
             </GridPane>
-            <fx:include fx:id="test" source="global_header.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
+      <fx:include fx:id="test" source="global_header.fxml" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>

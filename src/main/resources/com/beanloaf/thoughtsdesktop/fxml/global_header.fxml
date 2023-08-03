@@ -3,18 +3,23 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="42.0" prefWidth="1080.0" styleClass="bar" stylesheets="@../css/global_header_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox stylesheets="@../css/global_header_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.beanloaf.thoughtsdesktop.controllers.GlobalHeaderController">
    <children>
-      <Label alignment="CENTER" prefHeight="42.0" prefWidth="124.0" text="beanloaf" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Label alignment="CENTER_RIGHT" contentDisplay="TOP" layoutX="1023.0" layoutY="7.0" prefHeight="42.0" prefWidth="212.0" styleClass="menu-item" text="8/1/2023, 11:59:59 PM" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="0.0" />
-      <HBox alignment="CENTER" layoutX="16.0" spacing="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane prefHeight="42.0" prefWidth="1080.0" styleClass="bar" stylesheets="@../css/global_header_styles.css">
          <children>
-            <Label fx:id="headerHomeButton" text="Home" />
-            <Label fx:id="headerNotesButton" text="Notes" />
-            <Label fx:id="headerCalendarButton" text="Calendar" />
-            <Label fx:id="headerSettingsButton" text="Settings" />
+            <Label fx:id="headerUserName" alignment="CENTER" prefHeight="42.0" prefWidth="124.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <Label fx:id="headerDateTime" alignment="CENTER_RIGHT" contentDisplay="TOP" layoutX="1023.0" layoutY="7.0" prefHeight="42.0" prefWidth="260.0" styleClass="menu-item" text="12/25/2023, 11:59:59 PM" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="0.0" />
+            <HBox alignment="CENTER" layoutX="16.0" spacing="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label fx:id="headerHomeButton" text="Home" />
+                  <Label fx:id="headerNotesButton" text="Notes" />
+                  <Label fx:id="headerCalendarButton" text="Calendar" />
+                  <Label fx:id="headerSettingsButton" text="Settings" />
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </AnchorPane>
    </children>
-</AnchorPane>
+</VBox>

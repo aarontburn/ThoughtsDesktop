@@ -54,7 +54,6 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@../css/main_view_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-      <fx:include source="global_header.fxml" />
     <MenuBar fx:id="notesMenuBar" styleClass="menu-item" />
     <AnchorPane prefHeight="371.0" prefWidth="627.0" VBox.vgrow="ALWAYS">
       <children>

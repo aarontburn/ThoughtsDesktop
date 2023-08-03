@@ -107,6 +107,8 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
             final Scene scene = new Scene(fxmlLoader.load(), 900, 600);
             this.scene = scene;
 
+            setScene(scene);
+
             this.settingsWindow = new Stage();
             this.settingsWindow.setResizable(false);
             settingsWindow.setTitle("Thoughts - Settings");

@@ -14,7 +14,7 @@ public class Logger {
             return;
         }
 
-        System.out.println(getTimeStamp() + text.toString());
+        System.out.println(getTimeStamp() + (text == null ? "null" : text.toString()));
 
     }
 
