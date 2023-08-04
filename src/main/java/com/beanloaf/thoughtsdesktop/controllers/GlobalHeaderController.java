@@ -3,13 +3,14 @@ package com.beanloaf.thoughtsdesktop.controllers;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.views.HomeView;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class GlobalHeaderController {
 
-    private MainApplication main;
+    private final MainApplication main;
 
     @FXML
     private Label headerCalendarButton;
@@ -30,17 +31,17 @@ public class GlobalHeaderController {
     private Label headerDateTime;
 
 
+    public GlobalHeaderController() {
+        this.main = ThoughtsHelper.getInstance().getMain();
+        ThoughtsHelper.getInstance().addController(this);
+    }
+
+
 
 
     @FXML
     public void initialize() {
-
-        this.main = ThoughtsHelper.getInstance().getMain();
-        ThoughtsHelper.getInstance().addController(this);
-
-
         headerHomeButton.setOnMouseClicked(e -> main.homeView.swapLayouts(HomeView.Layouts.HOME));
-
         headerCalendarButton.setOnMouseClicked(e -> main.homeView.swapLayouts(HomeView.Layouts.CALENDAR));
         headerNotesButton.setOnMouseClicked(e -> main.homeView.swapLayouts(HomeView.Layouts.NOTES));
         headerSettingsButton.setOnMouseClicked(e -> ThoughtsHelper.getInstance().targetEvent(MainApplication.class, Properties.Actions.OPEN_HOME_SETTINGS));

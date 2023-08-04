@@ -20,7 +20,18 @@
     -fx-font-family: Lato;
 }
 
-.calendar_day > .label {
+.calendar-day {
+    -fx-background-color: gray;
+    -fx-border-color: black;
+}
+
+.events {
+    -fx-font-size: 15;
+    -fx-padding: 12 0 0 12;
+}
+
+
+.calendar-day > .label {
     -fx-font-size: 15;
     -fx-padding: 0 0 0 12;
 }

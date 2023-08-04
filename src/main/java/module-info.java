@@ -27,4 +27,6 @@ module com.example.thoughtsdesktop {
     exports com.beanloaf.thoughtsdesktop;
     exports com.beanloaf.thoughtsdesktop.controllers;
     opens com.beanloaf.thoughtsdesktop.controllers to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.objects.calendar;
+    opens com.beanloaf.thoughtsdesktop.objects.calendar to javafx.fxml;
 }
