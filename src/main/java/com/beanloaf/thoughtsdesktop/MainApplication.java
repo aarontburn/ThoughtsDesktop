@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.views.CalendarView;
 import com.beanloaf.thoughtsdesktop.views.HomeView;
@@ -12,6 +13,8 @@ import com.beanloaf.thoughtsdesktop.views.NotesMenuBar;
 import com.beanloaf.thoughtsdesktop.views.SettingsView;
 import com.beanloaf.thoughtsdesktop.views.TextView;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -90,6 +93,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             if (SettingsView.isInstanceActive()) SettingsView.closeWindow();
 
         });
+
 
 
         menuBar = new NotesMenuBar(this);

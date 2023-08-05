@@ -35,3 +35,14 @@
     -fx-font-size: 15;
     -fx-padding: 0 0 0 12;
 }
+
+.scroll-bar:vertical > .decrement-button > .decrement-arrow {
+    -fx-padding: 0 0 0 0;
+}
+.scroll-bar:vertical > .increment-button > .increment-arrow {
+    -fx-padding: 0 0 0 0;
+}
+
+.thumb {
+    -fx-background-color: rgb(60, 63 ,65);
+}
