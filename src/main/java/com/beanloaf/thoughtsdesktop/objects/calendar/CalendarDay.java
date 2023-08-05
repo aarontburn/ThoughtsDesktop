@@ -7,7 +7,9 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Skin;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.*;
@@ -18,12 +20,8 @@ public class CalendarDay extends AnchorPane {
 
     private final List<DayEvent> eventList = new ArrayList<>();
 
-    private boolean isReady = false;
 
-    private final List<Runnable> unreadyQueue = new ArrayList<>();
-
-
-    public CalendarDay(final int dayNum) {
+    public CalendarDay(final Integer dayNum) {
         super();
 
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
@@ -31,7 +29,14 @@ public class CalendarDay extends AnchorPane {
 
 
         final ScrollPane scrollPane = new ScrollPane();
+        scrollPane.getStyleClass().add("calendar-day");
+        scrollPane.getStyleClass().add("edge-to-edge");
+        scrollPane.fitToWidthProperty().set(true);
 
+        scrollPane.skinProperty().addListener((observableValue, skin, t1) -> {
+            StackPane stackPane = (StackPane) scrollPane.lookup("ScrollPane .viewport");
+            stackPane.setCache(false);
+        });
         this.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 0.0, 0.0, 0.0, 0.0));
 
 
@@ -40,81 +45,13 @@ public class CalendarDay extends AnchorPane {
         eventContainer.setMinHeight(0);
         scrollPane.setContent(eventContainer);
 
-        this.getChildren().add(ThoughtsHelper.setAnchor(new Label(Integer.toString(dayNum)), 0.0, null, null, 8.0));
 
-
-//        eventContainer.heightProperty().addListener((observableValue, number, newValue) -> {
-//            if (!isReady) {
-//                isReady = true;
-//
-//                for (final Runnable runnable : unreadyQueue) {
-//                    runnable.run();
-//                }
-//            }
-//
-//            double height = eventContainer.getPadding().getTop();
-//
-//            final Queue<DayEvent> notVisibleEvents = new LinkedList<>();
-//
-//            for (final DayEvent event : eventList) {
-//                if (event.isEventVisible()) {
-//                    height += event.getHeight() == 0.0 ? DayEvent.DEFAULT_HEIGHT : event.getHeight();
-//
-//                } else {
-//                    notVisibleEvents.add(event);
-//                }
-//            }
-//
-//            if (height >= newValue.doubleValue() && eventContainer.getChildren().size() > 0) {
-//                while (height >= newValue.doubleValue()) {
-//                    final DayEvent removedItem = (DayEvent) eventContainer.getChildren().remove(eventContainer.getChildren().size() - 1);
-//                    removedItem.setEventVisibility(false);
-//                    height -= DayEvent.DEFAULT_HEIGHT;
-//                }
-//
-//            } else {
-//                while (notVisibleEvents.size() > 0 && height > 0 && height + DayEvent.DEFAULT_HEIGHT < newValue.doubleValue()) {
-//                    final DayEvent eventToAdd = notVisibleEvents.remove();
-//                    eventToAdd.setEventVisibility(true);
-//                    eventContainer.getChildren().add(eventToAdd);
-//
-//                    height += DayEvent.DEFAULT_HEIGHT;
-//
-//
-//                }
-//            }
-//
-//        });
+        this.getChildren().add(ThoughtsHelper.setAnchor(new Label(dayNum != null ? Integer.toString(dayNum) : "☺"), 4.0, null, null, 10.0));
 
 
     }
 
     public void addEvent(final String eventName) {
-//        if (!isReady) {
-//            unreadyQueue.add(() -> addEvent(eventName));
-//            return;
-//        }
-//
-//        final DayEvent eventLabel = new DayEvent(eventName);
-//
-//        double height = eventContainer.getPadding().getTop();
-//
-//        for (final DayEvent event : eventList) {
-//            if (event.isEventVisible()) {
-//                height += event.getHeight() == 0.0 ? DayEvent.DEFAULT_HEIGHT : event.getHeight();
-//            }
-//        }
-//
-//        eventList.add(eventLabel);
-//
-//        if (height > 0 && height + DayEvent.DEFAULT_HEIGHT < eventContainer.getHeight()) {
-//            eventLabel.setEventVisibility(true);
-//            eventContainer.getChildren().add(eventLabel);
-//
-//        } else {
-//            eventLabel.setEventVisibility(false);
-//        }
-
         final DayEvent eventLabel = new DayEvent(eventName);
         eventList.add(eventLabel);
 

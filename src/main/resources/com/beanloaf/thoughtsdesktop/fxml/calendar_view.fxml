@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -37,39 +39,102 @@
                         <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <AnchorPane prefHeight="689.0" prefWidth="625.0" styleClass="calendar-day">
+                        <AnchorPane prefHeight="689.0" prefWidth="625.0" styleClass="calendar-day" visible="false">
                            <children>
-                              <VBox nodeOrientation="LEFT_TO_RIGHT" prefHeight="89.0" prefWidth="552.0" styleClass="events" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <Label minHeight="0.0" minWidth="0.0" text="6:30 PM Meet with Group 342" wrapText="true">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets />
-                                       </VBox.margin>
+                              <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0" stylesheets="@../css/calendar_view_styles.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <content>
+                                    <VBox nodeOrientation="LEFT_TO_RIGHT" styleClass="events">
+                                       <children>
+                                          <Label maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" text="6:30 PM Meet with Group 342" wrapText="true">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                             <padding>
+                                                <Insets bottom="4.0" top="4.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label maxWidth="1.7976931348623157E308" minHeight="0.0" text="Event 2" VBox.vgrow="NEVER">
+                                             <font>
+                                                <Font size="17.0" />
+                                             </font>
+                                             <padding>
+                                                <Insets bottom="4.0" top="4.0" />
+                                             </padding>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3" VBox.vgrow="ALWAYS">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label minHeight="0.0" text="Event 3">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
                                        <padding>
-                                          <Insets bottom="4.0" top="4.0" />
+                                          <Insets bottom="32.0" top="32.0" />
                                        </padding>
-                                    </Label>
-                                    <Label minHeight="0.0" text="Event 2" VBox.vgrow="NEVER">
-                                       <font>
-                                          <Font size="17.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets bottom="4.0" top="4.0" />
-                                       </padding>
-                                    </Label>
-                                    <Label minHeight="0.0" text="Event 3" VBox.vgrow="ALWAYS">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="32.0" top="32.0" />
-                                 </padding>
-                              </VBox>
+                                    </VBox>
+                                 </content>
+                                 <styleClass>
+                                    <String fx:value="calendar-day" />
+                                    <String fx:value="edge-to-edge" />
+                                 </styleClass>
+                              </ScrollPane>
                               <Label minHeight="0.0" minWidth="0.0" text="1" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font name="Lato Regular" size="20.0" />

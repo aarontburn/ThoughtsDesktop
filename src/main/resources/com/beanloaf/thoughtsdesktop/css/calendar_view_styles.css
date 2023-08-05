@@ -20,9 +20,27 @@
     -fx-font-family: Lato;
 }
 
+
+
+.split-pane {
+    -fx-border-color: rgb(60,63,65);
+}
+
+
 .calendar-day {
-    -fx-background-color: gray;
     -fx-border-color: black;
+    -fx-border-width: 0.6;
+
+
+}
+
+.calendar-day > .viewport{
+    -fx-background-color: rgb(94, 94, 94);
+}
+
+.calendar-day > .label {
+    -fx-font-size: 15;
+    -fx-padding: 0 0 0 12;
 }
 
 .events {
@@ -31,18 +49,30 @@
 }
 
 
-.calendar-day > .label {
-    -fx-font-size: 15;
-    -fx-padding: 0 0 0 12;
+.scroll-bar:vertical > .decrement-button > .decrement-arrow,
+.scroll-bar:vertical > .increment-button > .increment-arrow {
+    -fx-padding: 0 0 0 8;
 }
 
-.scroll-bar:vertical > .decrement-button > .decrement-arrow {
+.scroll-bar:vertical > .decrement-button,
+.scroll-bar:vertical > .increment-button {
+
     -fx-padding: 0 0 0 0;
 }
-.scroll-bar:vertical > .increment-button > .increment-arrow {
-    -fx-padding: 0 0 0 0;
-}
+
+
+
 
 .thumb {
     -fx-background-color: rgb(60, 63 ,65);
+    -fx-padding: 0 0 0 0;
+
+
 }
+
+.scroll-bar:vertical .track {
+    -fx-background-color: rgb(94, 94, 94)rgb(94, 94, 94);
+
+}
+
+
