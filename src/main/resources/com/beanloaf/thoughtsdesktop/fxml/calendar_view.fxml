@@ -37,6 +37,7 @@
                       <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <AnchorPane prefHeight="689.0" prefWidth="625.0" styleClass="calendar-day" visible="false">
@@ -144,14 +145,28 @@
                         </AnchorPane>
                      </children>
                   </GridPane>
-                  <Label layoutX="6.0" layoutY="14.0" text="August, 2023" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <font>
-                        <Font size="34.0" />
-                     </font>
-                     <padding>
-                        <Insets left="16.0" right="16.0" top="4.0" />
-                     </padding>
-                  </Label>
+                  <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label fx:id="calendarMonthYearLabel" text="September, 2023">
+                           <font>
+                              <Font size="34.0" />
+                           </font>
+                           <padding>
+                              <Insets left="16.0" right="16.0" top="4.0" />
+                           </padding>
+                        </Label>
+                        <Label fx:id="calendarNextMonthButton" layoutX="364.0" text="↓" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="calendarPrevMonthButton" layoutX="305.0" text="↑" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font size="36.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
                </children>
             </AnchorPane>
         </items>

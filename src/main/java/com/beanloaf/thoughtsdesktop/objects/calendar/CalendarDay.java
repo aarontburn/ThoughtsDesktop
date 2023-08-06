@@ -12,17 +12,26 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.time.Month;
 import java.util.*;
 
 public class CalendarDay extends AnchorPane {
+
+
+    private final Month month;
+    private final Integer day;
 
     private final VBox eventContainer;
 
     private final List<DayEvent> eventList = new ArrayList<>();
 
 
-    public CalendarDay(final Integer dayNum) {
+    public CalendarDay(final Month month, final Integer day) {
         super();
+
+        this.month = month;
+        this.day = day;
+
 
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
         this.getStyleClass().add("calendar-day");
@@ -46,9 +55,13 @@ public class CalendarDay extends AnchorPane {
         scrollPane.setContent(eventContainer);
 
 
-        this.getChildren().add(ThoughtsHelper.setAnchor(new Label(dayNum != null ? Integer.toString(dayNum) : "☺"), 4.0, null, null, 10.0));
+        this.getChildren().add(ThoughtsHelper.setAnchor(new Label(day != null ? Integer.toString(day) : ""), 4.0, null, null, 10.0));
 
 
+    }
+
+    public Integer getDay() {
+        return this.day;
     }
 
     public void addEvent(final String eventName) {
@@ -62,6 +75,15 @@ public class CalendarDay extends AnchorPane {
     public void removeEvent(final String eventName) {
 
 
+    }
+
+    public DayEvent[] getEvents() {
+        return eventList.toArray(new DayEvent[0]);
+    }
+
+    @Override
+    public String toString() {
+        return this.month + " : " + this.day + " : " + eventList.size();
     }
 
 
