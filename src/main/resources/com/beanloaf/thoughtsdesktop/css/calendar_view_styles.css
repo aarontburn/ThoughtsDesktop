@@ -21,20 +21,23 @@
 }
 
 
-
 .split-pane {
     -fx-border-color: rgb(60,63,65);
+}
+
+
+.event-box {
+    -fx-font-size: 15;
+    -fx-padding: 0 0 0 12;
 }
 
 
 .calendar-day {
     -fx-border-color: black;
     -fx-border-width: 0.6;
-
-
 }
 
-.calendar-day > .viewport{
+.calendar-day > .viewport {
     -fx-background-color: rgb(94, 94, 94);
 }
 
@@ -43,9 +46,19 @@
     -fx-padding: 0 0 0 12;
 }
 
+
+.selected-label {
+    -fx-border-color: red;
+    -fx-padding: -1;
+}
+
 .events {
     -fx-font-size: 15;
-    -fx-padding: 12 0 0 12;
+    -fx-padding: 12 0 12 12;
+}
+
+#calendarNewEventButton {
+    -fx-background-color: rgb(78, 80, 82);
 }
 
 
@@ -74,5 +87,58 @@
     -fx-background-color: rgb(94, 94, 94)rgb(94, 94, 94);
 
 }
+
+
+.new-event-window {
+    -fx-background-color: rgba(64, 68, 71, 0.8);
+    -fx-border-color: white;
+
+}
+
+.text-field {
+
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: rgb(97, 97, 97);
+    -fx-prompt-text-fill: rgb(209, 209 ,209);
+    -fx-font-size: 15;
+
+}
+
+
+
+.date-picker-popup > .month-year-pane {
+    -fx-base: #1d1d1d ;
+    -fx-mark-highlight-color: -fx-light-text-color ;
+}
+
+
+
+.date-picker-popup .cell:focused {
+	-fx-background-color: rgb(109, 138, 150);
+	-fx-text-fill: black;
+}
+
+.date-picker-popup {
+    -fx-background-color: rgb(60, 63 ,65);
+}
+
+.date-picker-popup > * > .today {
+    -fx-background-color: rgb(70, 70, 70);
+}
+
+.date-picker-popup .month-year-pane .label {
+	-fx-text-fill: white;
+}
+
+.date-picker-popup > * > .day-name-cell {
+    -fx-background-color: rgb(60, 63 ,65);
+
+}
+
+.toggle-button {
+    -fx-text-fill: black;
+    -fx-font-size: 12;
+}
+
 
 

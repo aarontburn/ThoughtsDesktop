@@ -26,6 +26,17 @@ public class Logger {
     }
 
     private static String getTimeStamp() {
-        return "[" + new SimpleDateFormat("yyyy/MM/dd | HH:mm:ss").format(Calendar.getInstance().getTime()) + "] ";
+        return "[" + new SimpleDateFormat("yyyy/MM/dd | HH:mm:ss").format(Calendar.getInstance().getTime()) + " " + getCallerMethodName() + "] ";
+    }
+
+    private static String getCallerMethodName() {
+        final StackTraceElement e = Thread.currentThread().getStackTrace()[4];
+
+        final String classPath = e.getClassName();
+
+        final String[] splitClassName = classPath.split("\\.");
+        final String simpleClassName = splitClassName[splitClassName.length - 1];
+
+        return "{@" + simpleClassName + " -> " + e.getMethodName() + "()}";
     }
 }

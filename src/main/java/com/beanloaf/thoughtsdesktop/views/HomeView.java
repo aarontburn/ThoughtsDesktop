@@ -122,21 +122,10 @@ public class HomeView implements ThoughtsChangeListener {
     private String getFullDate() {
         final Date date = new Date();
 
-        final Calendar cal = Calendar.getInstance();
+        final int day = Calendar.getInstance().get(Calendar.DATE);
 
-        cal.setTime(date);
-        final int day = cal.get(Calendar.DATE);
 
-        if (!((day > 10) && (day < 19))) {
-            return switch (day % 10) {
-                case 1 -> new SimpleDateFormat("EEEE, MMMM d'st', yyyy").format(date);
-                case 2 -> new SimpleDateFormat("EEEE, MMMM d'nd', yyyy").format(date);
-                case 3 -> new SimpleDateFormat("EEEE, MMMM d'rd', yyyy").format(date);
-                default -> new SimpleDateFormat("EEEE, MMMM d'th', yyyy").format(date);
-            };
-        }
-
-        return new SimpleDateFormat("EEEE, MMMM d'th', yyyy").format(date);
+        return new SimpleDateFormat("EEEE, MMMM d'" + ThoughtsHelper.getNumberSuffix(day) + "', yyyy").format(date);
     }
 
     private String getShortDate() {

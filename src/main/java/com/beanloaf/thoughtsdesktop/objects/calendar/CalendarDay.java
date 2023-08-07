@@ -1,36 +1,36 @@
 package com.beanloaf.thoughtsdesktop.objects.calendar;
 
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import com.beanloaf.thoughtsdesktop.views.CalendarView;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Skin;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
 public class CalendarDay extends AnchorPane {
 
+    final CalendarView view;
 
-    private final Month month;
-    private final Integer day;
+    private final LocalDate date;
 
     private final VBox eventContainer;
 
     private final List<DayEvent> eventList = new ArrayList<>();
 
 
-    public CalendarDay(final Month month, final Integer day) {
+    public CalendarDay(final Integer year, final Month month, final Integer day, final CalendarView view) {
         super();
+        this.view = view;
 
-        this.month = month;
-        this.day = day;
+
+        date = day == null ? null : LocalDate.of(year, month, day);
 
 
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
@@ -52,20 +52,48 @@ public class CalendarDay extends AnchorPane {
         eventContainer = new VBox();
         eventContainer.getStyleClass().add("events");
         eventContainer.setMinHeight(0);
+
+
+        // Triggers when a day event is clicked
+        this.setOnMouseClicked(e -> {
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                view.populateEventBox(this);
+
+                final Node node = (Node) e.getTarget();
+
+                if (node.getId() != null && node.getId().equals(DayEvent.ID)) return;
+
+
+
+            }
+
+
+        });
+
         scrollPane.setContent(eventContainer);
 
 
-        this.getChildren().add(ThoughtsHelper.setAnchor(new Label(day != null ? Integer.toString(day) : ""), 4.0, null, null, 10.0));
+
+        final Label dateLabel = new Label(day != null ? Integer.toString(day) : "");
+        this.getChildren().add(ThoughtsHelper.setAnchor(dateLabel, 4.0, null, null, 10.0));
 
 
     }
 
     public Integer getDay() {
-        return this.day;
+        return this.date.getDayOfMonth();
+    }
+
+    public Month getMonth() {
+        return this.date.getMonth();
+    }
+
+    public Integer getYear() {
+        return this.date.getYear();
     }
 
     public void addEvent(final String eventName) {
-        final DayEvent eventLabel = new DayEvent(eventName);
+        final DayEvent eventLabel = new DayEvent(eventName, view);
         eventList.add(eventLabel);
 
         eventContainer.getChildren().add(eventLabel);
@@ -81,10 +109,6 @@ public class CalendarDay extends AnchorPane {
         return eventList.toArray(new DayEvent[0]);
     }
 
-    @Override
-    public String toString() {
-        return this.month + " : " + this.day + " : " + eventList.size();
-    }
 
 
 }

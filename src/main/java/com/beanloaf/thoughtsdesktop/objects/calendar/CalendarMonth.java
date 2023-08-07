@@ -14,7 +14,7 @@ public class CalendarMonth {
     private final LocalDate monthInfo;
 
 
-    private Map<Integer, CalendarDay> monthMap = new HashMap<>();
+    private final Map<Integer, CalendarDay> monthMap = new HashMap<>();
 
     private int daysWithEvents;
 

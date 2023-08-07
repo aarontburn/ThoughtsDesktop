@@ -1,31 +1,47 @@
 package com.beanloaf.thoughtsdesktop.objects.calendar;
 
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.views.CalendarView;
+import javafx.collections.ListChangeListener;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 public class DayEvent extends Label {
 
-    public final static double DEFAULT_HEIGHT = 19;
+    public final static String ID = "dayEvent";
+
+    private final CalendarView view;
 
     private String eventName;
 
 
+
+
     // TODO: Generate unique eventID
 
-    private boolean isEventVisible;
-
-    public DayEvent(final String eventName) {
-        this(eventName, true);
+    public DayEvent(final DayEvent dayEvent, final CalendarView view) {
+        this(dayEvent.getEventName(), view);
     }
 
 
-    public DayEvent(final String eventName, final boolean isVisible) {
+    public DayEvent(final String eventName, final CalendarView view) {
         super(eventName);
-        this.isEventVisible = isVisible;
+        this.view = view;
+
 
         this.setMaxWidth(Double.MAX_VALUE);
         this.eventName = eventName;
-        this.setOnMouseClicked(e -> Logger.log("Event \"" + eventName + "\" was pressed."));
+        this.setId(ID);
+
+        this.getChildren().addListener((ListChangeListener<Node>) change -> {
+            getChildren().get(0).setId(ID);
+        });
+
+        this.setOnMouseClicked(e -> {
+            view.selectEvent(this);
+
+            Logger.log("Event \"" + eventName + "\" was pressed.");
+        });
 
     }
 
@@ -34,13 +50,8 @@ public class DayEvent extends Label {
     }
 
 
-    public boolean isEventVisible() {
-        return this.isEventVisible;
-    }
 
-    public void setEventVisibility(final boolean isVisible) {
-        this.isEventVisible = isVisible;
-    }
+
 
 
 }

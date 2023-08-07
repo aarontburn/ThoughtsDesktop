@@ -3,6 +3,7 @@ package com.beanloaf.thoughtsdesktop.changeListener;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import com.google.common.base.CaseFormat;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import org.json.simple.JSONObject;
@@ -11,6 +12,7 @@ import org.json.simple.JSONValue;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -157,6 +159,8 @@ public class ThoughtsHelper {
     }
 
 
+
+
     public MainApplication getMain() {
         return (MainApplication) this.listeners.get(MainApplication.class);
     }
@@ -169,5 +173,24 @@ public class ThoughtsHelper {
         return this.controllers.get(controllerClass);
     }
 
+
+
+    public static String toCamelCase(final String s) {
+        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, s);
+    }
+
+    public static String getNumberSuffix(final int num) {
+        if (!((num > 10) && (num < 19))) {
+            return switch (num % 10) {
+                case 1 -> "st";
+                case 2 -> "nd";
+                case 3 -> "rd";
+                default -> "th";
+            };
+        }
+
+        return "th";
+
+    }
 
 }

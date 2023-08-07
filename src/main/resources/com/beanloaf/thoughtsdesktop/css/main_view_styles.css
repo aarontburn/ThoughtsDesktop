@@ -49,7 +49,7 @@ root {
 }
 
 
-.text-area .scroll-bar:vertical, .scroll-bar:vertical {
+.text-area .scroll-bar:vertical {
     -fx-background-color: rgb(60, 63 ,65);
 
 }
