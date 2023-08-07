@@ -6,16 +6,14 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarDay;
 import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.objects.calendar.DayEvent;
-import com.google.common.base.CaseFormat;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
 
@@ -42,16 +40,19 @@ public class CalendarView extends ThoughtsView {
     /*  New Event Input */
     private final TextField calendarEventTitleInput;
     private final DatePicker calendarDatePicker;
-    private final TextField calendarFromHourInput, calendarFromMinutesInput;
+    private final TextField calendarFromHourInput, calendarFromMinuteInput;
     private final TextField calendarToHourInput, calendarToMinuteInput;
     private final TextArea calendarEventDescriptionInput;
 
     private final ToggleButton calendarFromAMToggle, calendarFromPMToggle;
     private final ToggleButton calendarToAMToggle, calendarToPMToggle;
+    private final Button calendarSaveEventButton;
 
 
     private CalendarDay selectedDay;
     private DayEvent selectedEvent;
+
+    private boolean buildingMonth;
 
 
     public CalendarView(final MainApplication main) {
@@ -73,7 +74,7 @@ public class CalendarView extends ThoughtsView {
         calendarEventTitleInput = (TextField) findNodeByID("calendarEventTitleInput");
         calendarDatePicker = (DatePicker) findNodeByID("calendarDatePicker");
         calendarFromHourInput = (TextField) findNodeByID("calendarFromHourInput");
-        calendarFromMinutesInput = (TextField) findNodeByID("calendarFromMinutesInput");
+        calendarFromMinuteInput = (TextField) findNodeByID("calendarFromMinuteInput");
         calendarToHourInput = (TextField) findNodeByID("calendarToHourInput");
         calendarToMinuteInput = (TextField) findNodeByID("calendarToMinuteInput");
         calendarEventDescriptionInput = (TextArea) findNodeByID("calendarEventDescriptionInput");
@@ -84,6 +85,8 @@ public class CalendarView extends ThoughtsView {
         calendarToAMToggle = (ToggleButton) findNodeByID("calendarToAMToggle");
         calendarToPMToggle = (ToggleButton) findNodeByID("calendarToPMToggle");
 
+        calendarSaveEventButton = (Button) findNodeByID("calendarSaveEventButton");
+
 
         attachEvents();
         currentMonth = new CalendarMonth(LocalDate.now().getMonth());
@@ -91,14 +94,21 @@ public class CalendarView extends ThoughtsView {
         createCalendarGUI();
 
 
-        int testDay = 0;
-        for (int i = 1; i < 500; i++) {
-            testDay++;
+        // registerEvents();
 
-            if (testDay > currentMonth.getMonthLength()) testDay = 1;
-            addEvent(testDay, "test " + i);
 
+        final CalendarDay today = currentMonth.getDay(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+
+        if (today == null) {
+            queuedTasks.add(() -> {
+                final CalendarDay queuedToday = currentMonth.getDay(Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+                queuedToday.onClick();
+            });
+        } else {
+            today.onClick();
         }
+
+
 
 
     }
@@ -109,7 +119,7 @@ public class CalendarView extends ThoughtsView {
         calendarPrevMonthButton.setOnMouseClicked(e -> changeMonth(currentMonth.getPreviousMonth()));
 
         calendarNewEventButton.setOnMouseClicked(e -> {
-            Logger.log("here");
+            addEvent(selectedDay.getDay());
         });
 
         final ToggleGroup fromGroup = new ToggleGroup();
@@ -124,6 +134,19 @@ public class CalendarView extends ThoughtsView {
         calendarToPMToggle.setToggleGroup(toGroup);
 
         calendarToAMToggle.setSelected(true);
+
+
+        calendarSaveEventButton.setOnAction(e -> {
+            if (selectedEvent == null) return;
+
+            selectedEvent.setEventName(calendarEventTitleInput.getText());
+            selectedEvent.setStartTime(calendarFromHourInput.getText(), calendarFromMinuteInput.getText());
+            selectedEvent.setEndTime(calendarToHourInput.getText(), calendarToMinuteInput.getText());
+            selectedEvent.setDescription(calendarEventDescriptionInput.getText());
+
+
+
+        });
 
 
 
@@ -156,6 +179,7 @@ public class CalendarView extends ThoughtsView {
         CalendarMonth n = activeMonths.get(new Pair<>(currentMonth.getNextMonth().getMonth(), currentMonth.getNextMonth().getYear()));
         final CalendarMonth nextMonth = n != null ? n : currentMonth.getNextMonth();
 
+        buildingMonth = true;
         Platform.runLater(() -> {
             calendarFrame.getChildren().clear();
 
@@ -214,28 +238,27 @@ public class CalendarView extends ThoughtsView {
                 }
             }
             queuedTasks.clear();
-
+            buildingMonth = false;
         });
 
 
     }
 
 
-    private void addEvent(final int dayNum, final String eventName) {
-
+    private void addEvent(final int day) {
 
         Platform.runLater(() -> {
-            if (dayNum < 0 || dayNum > currentMonth.getMonthLength())
-                throw new IllegalArgumentException("Day out of bounds. " + dayNum);
+            if (day < 0 || day > currentMonth.getMonthLength())
+                throw new IllegalArgumentException("Day out of bounds. " + day);
 
-            final CalendarDay day = currentMonth.getDay(dayNum);
+            final CalendarDay calendarDay = currentMonth.getDay(day);
 
-            if (day == null) {
-                queuedTasks.add(() -> addEvent(dayNum, eventName));
+            if (calendarDay == null) {
+                queuedTasks.add(() -> addEvent(day));
                 return;
             }
 
-            day.addEvent(eventName);
+            selectEvent(calendarDay.addEvent("New Event"));
         });
 
     }
@@ -257,10 +280,23 @@ public class CalendarView extends ThoughtsView {
 
     public void selectEvent(final DayEvent event) {
         event.getStyleClass().add("selected-label");
-
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-label");
-
         selectedEvent = event;
+
+
+        calendarEventTitleInput.setText(event.getEventName());
+        calendarDatePicker.setValue(LocalDate.of(event.getCalendarDay().getYear(), event.getCalendarDay().getMonth(), event.getCalendarDay().getDay()));
+
+        final LocalTime startTime = event.getStartTime();
+        calendarFromHourInput.setText(startTime == null ? "" : String.valueOf(startTime.getHour()));
+        calendarFromMinuteInput.setText(startTime == null ? "" : String.valueOf(startTime.getMinute()));
+
+        final LocalTime endTime = event.getEndTime();
+        calendarToHourInput.setText(endTime == null ? "" : String.valueOf(endTime.getHour()));
+        calendarToMinuteInput.setText(endTime == null ? "" : String.valueOf(endTime.getMinute()));
+
+        calendarEventDescriptionInput.setText(event.getDescription());
+
 
     }
 

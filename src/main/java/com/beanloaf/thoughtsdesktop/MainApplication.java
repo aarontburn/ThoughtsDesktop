@@ -130,6 +130,12 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN),
                 () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
 
+        keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN),
+                () -> homeView.swapToNextLayout());
+
+        keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
+                () -> homeView.swapToPreviousLayout());
+
         // TODO: this doesn't trigger
         keybindings.put(new KeyCharacterCombination(KeyCode.F5.getChar()),
                 () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH));

@@ -30,11 +30,41 @@ public class HomeView implements ThoughtsChangeListener {
 
 
     public enum Layouts {
-        HOME, CALENDAR, NOTES
+        HOME(0),
+        NOTES(1),
+
+        CALENDAR(2);
+
+        private final int layoutNum;
+
+        Layouts(final int layoutNum) {
+            this.layoutNum = layoutNum;
+        }
+
+        public static Layouts getNextLayout(final Layouts layout) {
+            final Layouts[] layouts = values();
+
+            if (layout.layoutNum  == values().length - 1) return layouts[0];
+
+            return layouts[layout.layoutNum + 1];
+
+        }
+
+        public static Layouts getPreviousLayout(final Layouts layout) {
+            final Layouts[] layouts = values();
+
+            if (layout.layoutNum <= 0) return layouts[layouts.length - 1];
+
+            return layouts[layout.layoutNum - 1];
+        }
+
+
 
     }
 
     private final MainApplication main;
+
+    public Layouts currentLayout;
 
     public Clock clock;
 
@@ -49,11 +79,11 @@ public class HomeView implements ThoughtsChangeListener {
     public HomeView(final MainApplication main) {
         this.main = main;
 
+        currentLayout = Layouts.HOME;
+
         ThoughtsHelper.getInstance().addListener(this);
 
         headerController = (GlobalHeaderController) ThoughtsHelper.getInstance().getController(GlobalHeaderController.class);
-
-
 
 
         homeRoot = (AnchorPane) findNodeByID("homeRoot");
@@ -138,6 +168,7 @@ public class HomeView implements ThoughtsChangeListener {
     }
 
     public void swapLayouts(final Layouts layout) {
+        this.currentLayout = layout;
         switch (layout) {
             case NOTES -> {
 
@@ -146,7 +177,6 @@ public class HomeView implements ThoughtsChangeListener {
                     main.listView = new ListView(main);
                     main.startup();
                 }
-
                 homeRoot.setVisible(false);
                 calendarFXML.setVisible(false);
                 notepadFXML.setVisible(true);
@@ -177,13 +207,21 @@ public class HomeView implements ThoughtsChangeListener {
 
     }
 
+    public void swapToNextLayout() {
+        swapLayouts(Layouts.getNextLayout(currentLayout));
+    }
+
+    public void swapToPreviousLayout() {
+        swapLayouts(Layouts.getPreviousLayout(currentLayout));
+    }
+
     public class Clock {
 
         private final ScheduledExecutorService scheduler;
 
-        private final DateTimeFormatter standardTimeFormatter = DateTimeFormatter.ofPattern("h:mm:ss a") ;
+        private final DateTimeFormatter standardTimeFormatter = DateTimeFormatter.ofPattern("h:mm:ss a");
 
-        private final DateTimeFormatter militaryTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss") ;
+        private final DateTimeFormatter militaryTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
         public Clock() {
             scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -203,7 +241,7 @@ public class HomeView implements ThoughtsChangeListener {
                 homeDateLabel.setText(getFullDate());
                 homeShortDateLabel.setText("(" + getShortDate() + ")");
 
-                headerController.setDateTime(getShortDate(), currentTime.format(standardTimeFormatter) );
+                headerController.setDateTime(getShortDate(), currentTime.format(standardTimeFormatter));
 
             });
         }
@@ -212,7 +250,6 @@ public class HomeView implements ThoughtsChangeListener {
             scheduler.shutdownNow();
 
         }
-
 
 
     }

@@ -57,7 +57,7 @@
     -fx-padding: 12 0 12 12;
 }
 
-#calendarNewEventButton {
+.calendarButton {
     -fx-background-color: rgb(78, 80, 82);
 }
 

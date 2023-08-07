@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.objects.calendar;
 
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.views.CalendarView;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -57,13 +58,10 @@ public class CalendarDay extends AnchorPane {
         // Triggers when a day event is clicked
         this.setOnMouseClicked(e -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
-                view.populateEventBox(this);
-
+                onClick();
                 final Node node = (Node) e.getTarget();
 
                 if (node.getId() != null && node.getId().equals(DayEvent.ID)) return;
-
-
 
             }
 
@@ -80,6 +78,11 @@ public class CalendarDay extends AnchorPane {
 
     }
 
+    public void onClick() {
+        view.populateEventBox(this);
+
+    }
+
     public Integer getDay() {
         return this.date.getDayOfMonth();
     }
@@ -92,11 +95,13 @@ public class CalendarDay extends AnchorPane {
         return this.date.getYear();
     }
 
-    public void addEvent(final String eventName) {
-        final DayEvent eventLabel = new DayEvent(eventName, view);
+    public DayEvent addEvent(final String eventName) {
+        final DayEvent eventLabel = new DayEvent(this, eventName, view);
         eventList.add(eventLabel);
 
         eventContainer.getChildren().add(eventLabel);
+
+        return eventLabel;
 
     }
 
