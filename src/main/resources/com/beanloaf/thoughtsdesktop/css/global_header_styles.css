@@ -15,3 +15,7 @@
     -fx-font-size: 18;
 
 }
+
+.selected-label {
+    -fx-text-fill: rgb(92, 146, 197);
+}

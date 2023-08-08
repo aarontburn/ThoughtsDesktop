@@ -2,9 +2,9 @@ package com.beanloaf.thoughtsdesktop;
 
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.controllers.GlobalHeaderController;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.views.CalendarView;
 import com.beanloaf.thoughtsdesktop.views.HomeView;
@@ -22,6 +22,8 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -37,9 +39,13 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
 
 
-    private NotesMenuBar menuBar;
+    private NotesMenuBar notesMenuBar;
     public FirebaseHandler firebaseHandler;
     public SettingsHandler settingsHandler;
+
+
+    public GlobalHeaderController headerController;
+
 
 
 
@@ -47,6 +53,41 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public CalendarView calendarView;
     public ListView listView;
     public TextView textView;
+
+
+
+
+    /*  Layouts  */
+    private Node[] layoutList;
+    private AnchorPane homeRoot;
+    private VBox notepadFXML, calendarFXML;
+    public Layouts currentLayout;
+
+    public enum Layouts {
+        HOME(0),
+        NOTES(1),
+        CALENDAR(2);
+
+        private final int layoutNum;
+
+        Layouts(final int layoutNum) {
+            this.layoutNum = layoutNum;
+        }
+
+        public static Layouts getNextLayout(final Layouts layout) {
+            final Layouts[] layouts = values();
+            return layout.layoutNum  == layouts.length - 1 ? layouts[0] : layouts[layout.layoutNum + 1];
+        }
+
+        public static Layouts getPreviousLayout(final Layouts layout) {
+            final Layouts[] layouts = values();
+            return layout.layoutNum <= 0 ? layouts[layouts.length - 1] : layouts[layout.layoutNum - 1];
+        }
+    }
+
+
+
+
 
     public static void main(final String[] args) {
         launch();
@@ -94,20 +135,83 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
         });
 
+        scene.heightProperty().addListener((observableValue, number, newHeight) -> {
+            if (calendarView != null) calendarView.resizePopupHeight(newHeight.doubleValue());
+        });
+
+        scene.widthProperty().addListener((observableValue, number, newWidth) -> {
+            if (calendarView != null) calendarView.resizePopupWidth(newWidth.doubleValue());
+        });
+
+        /*  Layouts */
+        homeRoot = (AnchorPane) findNodeByID("homeRoot");
+        notepadFXML = (VBox) findNodeByID("notepadFXML");
+        calendarFXML = (VBox) findNodeByID("calendarFXML");
+        layoutList = new Node[]{homeRoot, notepadFXML, calendarFXML};
+        /*  ------  */
 
 
-        menuBar = new NotesMenuBar(this);
+        headerController = (GlobalHeaderController) ThoughtsHelper.getInstance().getController(GlobalHeaderController.class);
         firebaseHandler = new FirebaseHandler(this);
+
+
         new Thread(() -> firebaseHandler.startup()).start();
-
-
-
-        homeView = new HomeView(this);
-
 
         setKeybindings();
 
+        swapLayouts(Layouts.HOME);
 
+
+    }
+
+    public void swapToNextLayout() {
+        swapLayouts(Layouts.getNextLayout(currentLayout));
+    }
+
+    public void swapToPreviousLayout() {
+        swapLayouts(Layouts.getPreviousLayout(currentLayout));
+    }
+
+    public void swapLayouts(final Layouts layout) {
+        this.currentLayout = layout;
+        switch (layout) {
+            case NOTES -> {
+                if (notesMenuBar == null) notesMenuBar = new NotesMenuBar(this);
+                if (textView == null) textView = new TextView(this);
+                if (listView == null) {
+                    listView = new ListView(this);
+                    startup();
+                }
+
+                headerController.setSelectedTab(headerController.headerNotesButton);
+                toggleLayoutVisibility(notepadFXML);
+            }
+            case HOME -> {
+                if (homeView == null) homeView = new HomeView(this);
+
+                headerController.setSelectedTab(headerController.headerHomeButton);
+                toggleLayoutVisibility(homeRoot);
+
+            }
+
+            case CALENDAR -> {
+                if (calendarView == null) calendarView = new CalendarView(this);
+                headerController.setSelectedTab(headerController.headerCalendarButton);
+                toggleLayoutVisibility(calendarFXML);
+                calendarView.onOpen();
+
+            }
+
+            default -> throw new IllegalArgumentException("Not sure how you got here. Illegal enum passed: " + layout);
+        }
+
+    }
+
+    private void toggleLayoutVisibility(final Node visibleLayout) {
+        for (final Node node : layoutList) {
+            node.setVisible(false);
+        }
+        visibleLayout.setVisible(true);
     }
 
     private void setKeybindings() {
@@ -131,10 +235,10 @@ public class MainApplication extends Application implements ThoughtsChangeListen
                 () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
 
         keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN),
-                () -> homeView.swapToNextLayout());
+                this::swapToNextLayout);
 
         keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
-                () -> homeView.swapToPreviousLayout());
+                this::swapToPreviousLayout);
 
         // TODO: this doesn't trigger
         keybindings.put(new KeyCharacterCombination(KeyCode.F5.getChar()),
@@ -151,6 +255,10 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         if (id.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
 
         return this.scene.lookup("#" + id);
+    }
+
+    public Stage getStage() {
+        return this.stage;
     }
 
 

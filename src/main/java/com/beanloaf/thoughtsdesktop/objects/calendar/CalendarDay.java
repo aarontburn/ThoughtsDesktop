@@ -53,6 +53,7 @@ public class CalendarDay extends AnchorPane {
         eventContainer = new VBox();
         eventContainer.getStyleClass().add("events");
         eventContainer.setMinHeight(0);
+        scrollPane.setContent(eventContainer);
 
 
         // Triggers when a day event is clicked
@@ -61,25 +62,31 @@ public class CalendarDay extends AnchorPane {
                 onClick();
                 final Node node = (Node) e.getTarget();
 
-                if (node.getId() != null && node.getId().equals(DayEvent.ID)) return;
+                if (node.getId() != null && node.getId().equals(DayEvent.ID)) {
+                    if (node.getClass() == DayEvent.class) {
+                        ((DayEvent) node).onClick();
+                    } else {
+                        ((DayEvent) node.getParent()).onClick();
+
+                    }
+                }
 
             }
 
 
         });
 
-        scrollPane.setContent(eventContainer);
 
 
 
         final Label dateLabel = new Label(day != null ? Integer.toString(day) : "");
-        this.getChildren().add(ThoughtsHelper.setAnchor(dateLabel, 4.0, null, null, 10.0));
+        this.getChildren().add(ThoughtsHelper.setAnchor(dateLabel, 4.0, null, null, 12.0));
 
 
     }
 
     public void onClick() {
-        view.populateEventBox(this);
+        view.selectDay(this);
 
     }
 

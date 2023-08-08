@@ -25,6 +25,7 @@ Calendar:
     -   Setting to choose to end week with Sunday or Saturday
     -   Disable time
     -   All day events
+    -   Marking events as complete
 
 
 

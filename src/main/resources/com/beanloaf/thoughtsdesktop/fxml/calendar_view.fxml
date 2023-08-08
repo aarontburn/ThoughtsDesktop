@@ -3,6 +3,8 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuBar?>
@@ -10,7 +12,6 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -43,200 +44,89 @@
                                     </ScrollPane>
                                  </children>
                               </AnchorPane>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                            <AnchorPane fx:id="calendarSmallEventFields" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
                                     <Label alignment="CENTER" layoutX="156.0" layoutY="35.0" text="Title" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
                                        <font>
                                           <Font size="20.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="calendarEventTitleInput" layoutX="95.0" layoutY="51.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="48.0" />
+                                    <TextField fx:id="calendarSmallEventTitleInput" layoutX="95.0" layoutY="51.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="48.0" />
                                     <Label alignment="CENTER" layoutX="156.0" layoutY="95.0" text="Date" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="84.0">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <DatePicker fx:id="calendarDatePicker" layoutX="68.0" layoutY="118.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="112.0" />
-                                    <GridPane hgap="15.0" layoutY="186.0" prefHeight="132.0" prefWidth="332.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="186.0">
-                                      <columnConstraints>
-                                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="61.0" />
-                                        <ColumnConstraints hgrow="ALWAYS" maxWidth="256.0" minWidth="10.0" prefWidth="256.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
-                                       <children>
-                                          <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" text="From:" GridPane.halignment="CENTER">
-                                             <font>
-                                                <Font size="15.0" />
-                                             </font>
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                             <opaqueInsets>
-                                                <Insets />
-                                             </opaqueInsets>
-                                          </Label>
-                                          <Label maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="53.0" prefWidth="49.0" text="To:" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="15.0" />
-                                             </font>
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                          </Label>
-                                          <GridPane GridPane.columnIndex="1">
-                                            <columnConstraints>
-                                              <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="61.0" minWidth="10.0" prefWidth="30.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                            </columnConstraints>
-                                            <rowConstraints>
-                                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                                            </rowConstraints>
-                                             <children>
-                                                <TextField fx:id="calendarFromHourInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                   <GridPane.margin>
-                                                      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                                   </GridPane.margin>
-                                                </TextField>
-                                                <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text=":" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
-                                                   <font>
-                                                      <Font size="40.0" />
-                                                   </font>
-                                                   <GridPane.margin>
-                                                      <Insets bottom="8.0" />
-                                                   </GridPane.margin>
-                                                </Label>
-                                                <TextField fx:id="calendarFromMinuteInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="73.0" GridPane.columnIndex="2">
-                                                   <GridPane.margin>
-                                                      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                                   </GridPane.margin>
-                                                </TextField>
-                                                <AnchorPane GridPane.columnIndex="3" GridPane.halignment="CENTER">
-                                                   <GridPane.margin>
-                                                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                                   </GridPane.margin>
-                                                   <children>
-                                                      <GridPane prefWidth="69.0" vgap="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                        <columnConstraints>
-                                                          <ColumnConstraints hgrow="ALWAYS" />
-                                                        </columnConstraints>
-                                                        <rowConstraints>
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        </rowConstraints>
-                                                         <children>
-                                                            <ToggleButton fx:id="calendarFromAMToggle" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="AM" textAlignment="CENTER" GridPane.halignment="CENTER">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="8.0" left="4.0" right="4.0" top="12.0" />
-                                                               </GridPane.margin>
-                                                            </ToggleButton>
-                                                            <ToggleButton fx:id="calendarFromPMToggle" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="PM" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="4.0" left="4.0" right="4.0" />
-                                                               </GridPane.margin>
-                                                            </ToggleButton>
-                                                         </children>
-                                                      </GridPane>
-                                                   </children>
-                                                </AnchorPane>
-                                             </children>
-                                             <GridPane.margin>
-                                                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                             </GridPane.margin>
-                                          </GridPane>
-                                          <GridPane GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <columnConstraints>
-                                                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="61.0" minWidth="10.0" prefWidth="30.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                             </columnConstraints>
-                                             <rowConstraints>
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                                             </rowConstraints>
-                                             <children>
-                                                <TextField fx:id="calendarToHourInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                                                   <GridPane.margin>
-                                                      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                                   </GridPane.margin>
-                                                </TextField>
-                                                <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text=":" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
-                                                   <font>
-                                                      <Font size="40.0" />
-                                                   </font>
-                                                   <GridPane.margin>
-                                                      <Insets bottom="8.0" />
-                                                   </GridPane.margin>
-                                                </Label>
-                                                <TextField fx:id="calendarToMinuteInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="73.0" GridPane.columnIndex="2">
-                                                   <GridPane.margin>
-                                                      <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                                   </GridPane.margin>
-                                                </TextField>
-                                                <AnchorPane GridPane.columnIndex="3" GridPane.halignment="CENTER">
-                                                   <GridPane.margin>
-                                                      <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                                   </GridPane.margin>
-                                                   <children>
-                                                      <GridPane prefWidth="69.0" vgap="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                         <columnConstraints>
-                                                            <ColumnConstraints hgrow="ALWAYS" />
-                                                         </columnConstraints>
-                                                         <rowConstraints>
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                         </rowConstraints>
-                                                         <children>
-                                                            <ToggleButton fx:id="calendarToAMToggle" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="AM" textAlignment="CENTER" GridPane.halignment="CENTER">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="8.0" left="4.0" right="4.0" top="12.0" />
-                                                               </GridPane.margin>
-                                                            </ToggleButton>
-                                                            <ToggleButton fx:id="calendarToPMToggle" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="PM" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                                                               <GridPane.margin>
-                                                                  <Insets bottom="4.0" left="4.0" right="4.0" />
-                                                               </GridPane.margin>
-                                                            </ToggleButton>
-                                                         </children>
-                                                      </GridPane>
-                                                   </children>
-                                                </AnchorPane>
-                                             </children>
-                                             <GridPane.margin>
-                                                <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                             </GridPane.margin>
-                                          </GridPane>
-                                       </children>
-                                    </GridPane>
+                                    <DatePicker fx:id="calendarSmallDatePicker" layoutX="68.0" layoutY="118.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="112.0" />
                                     <Label alignment="CENTER" layoutY="163.0" text="Time" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="163.0">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <TextArea fx:id="calendarEventDescriptionInput" layoutY="356.0" prefHeight="214.0" prefWidth="316.0" styleClass="text-field" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="356.0" />
-                                    <Label alignment="CENTER" layoutX="146.0" layoutY="336.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="324.0">
+                                    <TextArea fx:id="calendarSmallEventDescriptionInput" layoutY="265.0" prefHeight="303.0" prefWidth="316.0" styleClass="text-field" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="265.0" />
+                                    <Label alignment="CENTER" layoutX="8.0" layoutY="236.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="236.0">
                                        <font>
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
                                     <AnchorPane layoutX="42.0" layoutY="578.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
                                        <children>
-                                          <Button fx:id="calendarSaveEventButton" mnemonicParsing="false" prefHeight="45.0" prefWidth="94.0" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="calendarSmallSaveEventButton" mnemonicParsing="false" prefHeight="45.0" prefWidth="94.0" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="21.0" />
                                              </font>
                                           </Button>
-                                          <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="94.0" styleClass="calendarButton" text="Edit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <Button fx:id="calendarSmallEditButton" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="94.0" styleClass="calendarButton" text="Edit" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="21.0" />
                                              </font>
                                           </Button>
                                        </children>
                                     </AnchorPane>
+                                    <HBox alignment="CENTER" layoutX="8.0" layoutY="193.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
+                                       <children>
+                                          <AnchorPane>
+                                             <children>
+                                                <GridPane layoutX="56.0" layoutY="9.0" prefHeight="31.0" prefWidth="94.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="0.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <TextField fx:id="calendarSmallHourInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="60.0">
+                                                         <GridPane.margin>
+                                                            <Insets right="8.0" />
+                                                         </GridPane.margin>
+                                                      </TextField>
+                                                      <TextField fx:id="calendarSmallMinuteInput" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="53.0" GridPane.columnIndex="2">
+                                                         <GridPane.margin>
+                                                            <Insets left="8.0" />
+                                                         </GridPane.margin>
+                                                      </TextField>
+                                                      <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="51.0" prefWidth="22.0" text=":" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                                         <font>
+                                                            <Font size="32.0" />
+                                                         </font>
+                                                         <GridPane.margin>
+                                                            <Insets bottom="8.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                   </children>
+                                                </GridPane>
+                                                <Label alignment="TOP_CENTER" layoutY="9.0" prefHeight="32.0" prefWidth="32.0" text="\@" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <font>
+                                                      <Font size="25.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="calendarSmallAMPMSelector" layoutX="165.0" prefWidth="61.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
                                  </children>
                               </AnchorPane>
                           </items>
@@ -407,6 +297,131 @@
                   </AnchorPane>
               </items>
             </SplitPane>
+            <AnchorPane fx:id="popupWindow" layoutX="463.0" layoutY="201.0" prefHeight="587.0" prefWidth="1119.0" styleClass="popup" AnchorPane.bottomAnchor="169.5" AnchorPane.leftAnchor="384.0" AnchorPane.rightAnchor="384.0" AnchorPane.topAnchor="169.5">
+               <children>
+                  <Label layoutX="31.0" layoutY="23.0" text="Edit Event" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+                  <AnchorPane layoutX="203.0" layoutY="171.0" minHeight="0.0" minWidth="0.0" prefHeight="677.0" prefWidth="1152.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="64.0">
+                     <children>
+                        <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label alignment="CENTER" text="Title" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="10.0" layoutY="10.0" text="Time" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="160.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="100.0" layoutY="33.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="28.0">
+                           <children>
+                              <TextField fx:id="calendarEventTitleInput1" layoutX="137.0" layoutY="14.0" prefHeight="32.0" prefWidth="903.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="0.0" />
+                              <GridPane layoutX="55.0" prefHeight="31.0" prefWidth="94.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <TextField fx:id="calendarToHourInput1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="60.0">
+                                       <GridPane.margin>
+                                          <Insets right="8.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <TextField fx:id="calendarToMinuteInput1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="53.0" GridPane.columnIndex="2">
+                                       <GridPane.margin>
+                                          <Insets left="8.0" />
+                                       </GridPane.margin>
+                                    </TextField>
+                                    <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="51.0" prefWidth="22.0" text=":" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                       <font>
+                                          <Font size="32.0" />
+                                       </font>
+                                       <GridPane.margin>
+                                          <Insets bottom="8.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                 </children>
+                              </GridPane>
+                              <Label alignment="TOP_CENTER" layoutX="936.0" prefHeight="32.0" prefWidth="32.0" text="\@" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="168.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font size="25.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="calendarAMPMSelector" layoutX="1039.0" layoutY="7.0" prefHeight="32.0" prefWidth="61.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <HBox alignment="CENTER" layoutX="8.0" layoutY="90.0" spacing="64.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="90.0" />
+                        <TextArea layoutY="204.0" prefHeight="399.0" prefWidth="1136.0" styleClass="text-field" wrapText="true" AnchorPane.bottomAnchor="74.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="204.0" />
+                        <Label alignment="CENTER" layoutY="177.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="177.0">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <AnchorPane layoutX="42.0" layoutY="578.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                           <children>
+                              <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="94.0" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font size="21.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </AnchorPane>
+                        <DatePicker layoutX="932.0" layoutY="75.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="75.0" />
+                        <CheckBox alignment="CENTER" contentDisplay="RIGHT" layoutX="16.0" layoutY="80.0" mnemonicParsing="false" text="Recurring Event" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="80.0">
+                           <font>
+                              <Font name="Lato Regular" size="15.0" />
+                           </font>
+                        </CheckBox>
+                        <AnchorPane layoutX="16.0" layoutY="106.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                           <children>
+                              <AnchorPane prefHeight="31.0" prefWidth="503.0">
+                                 <children>
+                                    <Label layoutY="6.0" text="Every:" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="calendarRecurringTypeSelector" layoutX="113.0" layoutY="3.0" prefHeight="25.0" prefWidth="94.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <TextField layoutX="58.0" prefHeight="31.0" prefWidth="44.0" promptText="#" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                              <AnchorPane layoutY="40.0" prefHeight="31.0" prefWidth="503.0">
+                                 <children>
+                                    <Label layoutX="30.0" layoutY="2.0" text="for" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField layoutX="59.0" layoutY="-1.0" prefHeight="31.0" prefWidth="44.0" promptText="#" AnchorPane.bottomAnchor="1.0" AnchorPane.topAnchor="-1.0" />
+                                    <Label layoutX="117.0" layoutY="-1.0" text="additional occurances." AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+                  <Label fx:id="calendarClosePopup" layoutX="1078.0" layoutY="16.0" text="X" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="0.0">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
       <MenuBar prefWidth="1920.0" />

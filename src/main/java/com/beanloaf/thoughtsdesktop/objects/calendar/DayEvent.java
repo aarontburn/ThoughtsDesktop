@@ -18,8 +18,7 @@ public class DayEvent extends Label {
     private CalendarDay day;
     private String eventName;
 
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private LocalTime time;
     private String description;
 
 
@@ -49,62 +48,43 @@ public class DayEvent extends Label {
         });
 
         this.setOnMouseClicked(e -> {
-            this.view.selectEvent(this);
-
-            Logger.log("Event \"" + this.eventName + "\" was pressed.");
+            onClick();
         });
 
     }
 
-    private void setStartTime(final LocalTime startTime) {
-        this.startTime = startTime;
+    public void onClick() {
+        this.view.selectEvent(this);
+
+        Logger.log("Event \"" + this.eventName + "\" was pressed.");
+
     }
 
-    public void setStartTime(final int hour, final int minute) {
+    private void setTime(final LocalTime time) {
+        this.time = time;
+    }
+
+    public void setTime(final int hour, final int minute) {
         try {
-            setStartTime(LocalTime.of(hour, minute));
+            setTime(LocalTime.of(hour, minute));
         } catch (DateTimeException e) {
-            this.startTime = null;
+            this.time = null;
         }
     }
 
-    public void setStartTime(final String hourString, final String minuteString) {
+    public void setTime(final String hourString, final String minuteString) {
         try {
             final int hour = Integer.parseInt(hourString);
             final int minute = Integer.parseInt(minuteString);
-            setStartTime(hour, minute);
+            setTime(hour, minute);
 
         } catch (NumberFormatException e) {
-            this.startTime = null;
+            this.time = null;
         }
 
 
     }
 
-    private void setEndTime(final LocalTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public void setEndTime(final int hour, final int minute) {
-        try {
-            setEndTime(LocalTime.of(hour, minute));
-        } catch (DateTimeException e) {
-            this.endTime = null;
-        }
-    }
-
-    public void setEndTime(final String hourString, final String minuteString) {
-        try {
-            final int hour = Integer.parseInt(hourString);
-            final int minute = Integer.parseInt(minuteString);
-
-            setEndTime(hour, minute);
-
-        } catch (NumberFormatException e) {
-            this.endTime = null;
-        }
-
-    }
 
 
 
@@ -132,12 +112,8 @@ public class DayEvent extends Label {
         return this.day;
     }
 
-    public LocalTime getStartTime() {
-        return this.startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return this.endTime;
+    public LocalTime getTime() {
+        return this.time;
     }
 
     public String getDescription() {

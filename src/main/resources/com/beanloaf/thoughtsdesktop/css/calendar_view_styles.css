@@ -4,17 +4,11 @@
 
 }
 
-.menu-bar {
-    -fx-background-color: rgb(60,63,65);
-}
 
 .context-menu {
-    -fx-background-color: rgb(60,63,65);
+    -fx-background-color: rgb(97, 97, 97);
 }
 
-.menu-item {
-    -fx-font-size: 12;
-}
 
 .label {
     -fx-font-family: Lato;
@@ -43,7 +37,7 @@
 
 .calendar-day > .label {
     -fx-font-size: 15;
-    -fx-padding: 0 0 0 12;
+    -fx-padding: 0 0 0 0;
 }
 
 
@@ -54,7 +48,7 @@
 
 .events {
     -fx-font-size: 15;
-    -fx-padding: 12 0 12 12;
+    -fx-padding: 24 12 12 12;
 }
 
 .calendarButton {
@@ -104,6 +98,10 @@
 
 }
 
+.text-field:disabled {
+    -fx-opacity: 1.0;
+}
+
 
 
 .date-picker-popup > .month-year-pane {
@@ -138,6 +136,15 @@
 .toggle-button {
     -fx-text-fill: black;
     -fx-font-size: 12;
+}
+
+
+.popup {
+    -fx-background-color: rgba(52, 59, 64, 0.85);
+}
+
+.combo-box {
+    -fx-background-color: rgb(97, 97, 97);
 }
 
 
