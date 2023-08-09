@@ -1,12 +1,16 @@
 package com.beanloaf.thoughtsdesktop.objects.calendar;
 
 
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.views.CalendarView;
+
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
 public class CalendarMonth {
 
+    private final CalendarView view;
     private final Month month;
 
     private final Integer year;
@@ -20,14 +24,14 @@ public class CalendarMonth {
 
 
 
-    public CalendarMonth(final Month month) {
-        this(month, Calendar.getInstance().get(Calendar.YEAR));
+    public CalendarMonth(final Month month, final CalendarView view) {
+        this(month, Calendar.getInstance().get(Calendar.YEAR), view);
     }
 
-    public CalendarMonth(final Month month, final Integer year) {
+    public CalendarMonth(final Month month, final Integer year, final CalendarView view) {
         this.month = month;
         this.year = year;
-
+        this.view = view;
         monthInfo = LocalDate.of(year, month, 1);
 
     }
@@ -37,6 +41,14 @@ public class CalendarMonth {
     }
 
     public CalendarDay getDay(final int day) {
+        CalendarDay calendarDay = monthMap.get(day);
+
+        if (calendarDay == null) {
+            calendarDay = new CalendarDay(getYear(), getMonth(), day, view);
+            Logger.log("adding a new calendar day for " + month + " " + day);
+            monthMap.put(day, calendarDay);
+        }
+
         return this.monthMap.get(day);
     }
 
@@ -67,11 +79,11 @@ public class CalendarMonth {
     }
 
     public CalendarMonth getNextMonth() {
-        return month.getValue() == 12 ? new CalendarMonth(Month.JANUARY, year + 1) : new CalendarMonth(Month.of(month.getValue() + 1), year);
+        return month.getValue() == 12 ? new CalendarMonth(Month.JANUARY, year + 1, view) : new CalendarMonth(Month.of(month.getValue() + 1), year, view);
     }
 
     public CalendarMonth getPreviousMonth() {
-        return month.getValue() == 1 ? new CalendarMonth(Month.DECEMBER, year - 1) : new CalendarMonth(Month.of(month.getValue() - 1), year);
+        return month.getValue() == 1 ? new CalendarMonth(Month.DECEMBER, year - 1, view) : new CalendarMonth(Month.of(month.getValue() - 1), year, view);
     }
 
     @Override

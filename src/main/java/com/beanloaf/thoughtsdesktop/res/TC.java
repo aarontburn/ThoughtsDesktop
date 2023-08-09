@@ -10,7 +10,6 @@ public class TC {
     public static final String DEFAULT_TAG = "<untagged>";
     public static final String DEFAULT_DATE = "<date>";
 
-    public static final String APPLICATION_NAME = "Thoughts";
 
     public static class Directories {
 
@@ -19,6 +18,8 @@ public class TC {
         public static final File SORTED_DIRECTORY_PATH = new File(STORAGE_PATH, "/sorted/");
         public static final File LOGIN_PATH = new File(STORAGE_PATH, "user.json");
         public static final File SETTINGS_PATH = new File(STORAGE_PATH, "settings.json");
+        public static final File CALENDAR_PATH = new File(STORAGE_PATH, "calendar.json");
+        public static final File CALENDAR_TEST_PATH = new File(STORAGE_PATH, "calendar-test.json");
     }
 
 

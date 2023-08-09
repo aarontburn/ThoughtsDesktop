@@ -102,13 +102,12 @@ public class CalendarDay extends AnchorPane {
         return this.date.getYear();
     }
 
-    public DayEvent addEvent(final String eventName) {
-        final DayEvent eventLabel = new DayEvent(this, eventName, view);
-        eventList.add(eventLabel);
 
-        eventContainer.getChildren().add(eventLabel);
 
-        return eventLabel;
+    public DayEvent addEvent(final DayEvent event) {
+        eventList.add(event);
+        eventContainer.getChildren().add(event);
+        return event;
 
     }
 
@@ -116,6 +115,7 @@ public class CalendarDay extends AnchorPane {
 
 
     }
+
 
     public DayEvent[] getEvents() {
         return eventList.toArray(new DayEvent[0]);

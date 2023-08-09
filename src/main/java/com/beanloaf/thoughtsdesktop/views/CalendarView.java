@@ -2,31 +2,43 @@ package com.beanloaf.thoughtsdesktop.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarDay;
 import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.objects.calendar.DayEvent;
+import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
+import org.json.simple.JSONObject;
 
+import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CalendarView extends ThoughtsView {
 
     private final GridPane calendarFrame; // (7 x 5)
 
-    private final Map<Pair<Month, Integer>, CalendarMonth> activeMonths = new HashMap<>();
+    private final Map<Pair<Month, Integer>, CalendarMonth> activeMonths = new ConcurrentHashMap<>(); // key is Pair<Month, Year> (as an integer)
 
     private final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
 
     private CalendarMonth currentMonth;
+    private CalendarDay selectedDay;
+    private DayEvent selectedEvent;
+
+    public CalendarJSONHandler calendarJson;
 
 
     /*  Header  */
@@ -47,10 +59,11 @@ public class CalendarView extends ThoughtsView {
     private final TextArea calendarSmallEventDescriptionInput;
     private final Button calendarSmallSaveEventButton, calendarSmallEditButton;
     private final ComboBox<String> calendarSmallAMPMSelector;
+    private final HBox calendarSmallFinalTime, calendarSmallTimeFields;
+    private final Label calendarSmallFinalTimeLabel;
 
 
-    private CalendarDay selectedDay;
-    private DayEvent selectedEvent;
+
 
 
     /* Popup */
@@ -61,6 +74,7 @@ public class CalendarView extends ThoughtsView {
 
     public CalendarView(final MainApplication main) {
         super(main);
+        readCalendarJson();
 
 
         calendarFrame = (GridPane) findNodeByID("calendarFrame");
@@ -86,6 +100,9 @@ public class CalendarView extends ThoughtsView {
         calendarSmallSaveEventButton = (Button) findNodeByID("calendarSmallSaveEventButton");
         calendarSmallEditButton = (Button) findNodeByID("calendarSmallEditButton");
         calendarSmallAMPMSelector = (ComboBox<String>) findNodeByID("calendarSmallAMPMSelector");
+        calendarSmallFinalTime = (HBox) findNodeByID("calendarSmallFinalTime");
+        calendarSmallTimeFields = (HBox) findNodeByID("calendarSmallTimeFields");
+        calendarSmallFinalTimeLabel = (Label) findNodeByID("calendarSmallFinalTimeLabel");
 
 
         /*  Popup   */
@@ -94,12 +111,21 @@ public class CalendarView extends ThoughtsView {
         calendarClosePopup = (Label) findNodeByID("calendarClosePopup");
 
         attachEvents();
-        currentMonth = new CalendarMonth(LocalDate.now().getMonth());
+
+        final LocalDate now = LocalDate.now();
+        final CalendarMonth cMonth = activeMonths.get(new Pair<>(now.getMonth(), now.getYear()));
+
+        currentMonth = cMonth != null ? cMonth : new CalendarMonth(now.getMonth(), this);
+
+
+
 
         createCalendarGUI();
 
 
         // registerEvents();
+
+
 
 
     }
@@ -115,7 +141,7 @@ public class CalendarView extends ThoughtsView {
         calendarPrevMonthButton.setOnMouseClicked(e -> changeMonth(currentMonth.getPreviousMonth()));
 
         calendarNewEventButton.setOnMouseClicked(e -> {
-            addEvent(selectedDay.getDay());
+            selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
         });
 
 
@@ -128,17 +154,40 @@ public class CalendarView extends ThoughtsView {
             if (selectedEvent == null) return;
 
             selectedEvent.setEventName(calendarSmallEventTitleInput.getText());
-            selectedEvent.setTime(calendarSmallHourInput.getText(), calendarSmallMinuteInput.getText());
+            selectedEvent.setTime(calendarSmallHourInput.getText(), calendarSmallMinuteInput.getText(), calendarSmallAMPMSelector.getSelectionModel().getSelectedItem());
             selectedEvent.setDescription(calendarSmallEventDescriptionInput.getText());
 
+            final LocalTime time = selectedEvent.getTime();
+            calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
 
             calendarSmallSaveEventButton.setVisible(false);
             toggleSmallEventFields(false);
 
         });
 
-        calendarSmallHourInput.textProperty().addListener((observableValue, s, newValue) -> {
-            if (newValue.length() >= 2) calendarSmallMinuteInput.requestFocus();
+
+        calendarSmallHourInput.textProperty().addListener((observableValue, s, value) -> {
+            if (!value.matches("\\d*") || value.isEmpty()) {
+                calendarSmallHourInput.setText(value.replaceAll("\\D", ""));
+                return;
+            }
+
+            try {
+                final int hour = Integer.parseInt(value);
+                calendarSmallAMPMSelector.setDisable(hour > 12);
+
+
+            } catch (NumberFormatException e) {
+                Logger.log("Failed to convert " + value + " to an integer.");
+            }
+
+            if (value.length() >= 2) calendarSmallMinuteInput.requestFocus();
+        });
+
+        calendarSmallMinuteInput.textProperty().addListener((observableValue, s, value) -> {
+            if (!value.matches("\\d*")) {
+                calendarSmallMinuteInput.setText(value.replaceAll("\\D", ""));
+            }
         });
 
         calendarSmallAMPMSelector.getItems().clear();
@@ -186,9 +235,6 @@ public class CalendarView extends ThoughtsView {
 //        });
 
 
-
-
-
     }
 
     public void resizePopupHeight(final double newHeight) {
@@ -218,7 +264,6 @@ public class CalendarView extends ThoughtsView {
     private void changeMonth(final CalendarMonth month) {
         if (currentMonth.getNumDaysWithEvents() > 0) {
             Logger.log("saving " + currentMonth.getMonth() + " " + currentMonth.getYear());
-
             activeMonths.put(new Pair<>(currentMonth.getMonth(), currentMonth.getYear()), currentMonth);
         }
 
@@ -241,6 +286,8 @@ public class CalendarView extends ThoughtsView {
 
         CalendarMonth n = activeMonths.get(new Pair<>(currentMonth.getNextMonth().getMonth(), currentMonth.getNextMonth().getYear()));
         final CalendarMonth nextMonth = n != null ? n : currentMonth.getNextMonth();
+
+
 
         Platform.runLater(() -> {
             calendarFrame.getChildren().clear();
@@ -276,6 +323,8 @@ public class CalendarView extends ThoughtsView {
 
                     CalendarDay calendarDay = currentMonth.getDay(day);
                     if (calendarDay == null) {
+                        Logger.log("adding a new calendar day for " + currentMonth.getMonth() + " " + day);
+
                         calendarDay = new CalendarDay(currentMonth.getYear(), currentMonth.getMonth(), day, this);
                         currentMonth.addDay(day, calendarDay);
                     }
@@ -292,37 +341,52 @@ public class CalendarView extends ThoughtsView {
 
             }
 
-            if (!queuedTasks.isEmpty()) {
-                synchronized (queuedTasks) {
-                    for (final Runnable runnable : queuedTasks) {
-                        runnable.run();
-                    }
+            synchronized (queuedTasks) {
+                for (final Runnable runnable : queuedTasks) {
+                    runnable.run();
                 }
+                queuedTasks.clear();
             }
-            queuedTasks.clear();
         });
 
 
     }
 
 
-    private void addEvent(final int day) {
 
-        Platform.runLater(() -> {
-            if (day < 0 || day > currentMonth.getMonthLength())
-                throw new IllegalArgumentException("Day out of bounds. " + day);
+    private DayEvent addEvent(final int year, final Month month, final int day, final String eventName, final String desc, final String time) {
+        final Pair<Month, Integer> monthYear = new Pair<>(month, year);
 
-            final CalendarDay calendarDay = currentMonth.getDay(day);
+        CalendarMonth activeMonth = activeMonths.get(monthYear);
+        if (activeMonth == null) {
+            Logger.log("here");
+            activeMonth = new CalendarMonth(month, year, this);
+            activeMonths.put(monthYear, activeMonth);
+        }
 
-            if (calendarDay == null) {
-                queuedTasks.add(() -> addEvent(day));
-                return;
-            }
+        if (day < 0 || day > activeMonth.getMonthLength()) throw new IllegalArgumentException("Day out of bounds. " + day);
 
-            selectEvent(calendarDay.addEvent("New Event"));
-        });
+        final CalendarDay calendarDay = activeMonth.getDay(day);
+
+        final DayEvent event = new DayEvent(calendarDay, eventName, this);
+        event.setDescription(desc);
+
+
+        if (time == null || !time.contains(":")) {
+            event.setTime(null);
+        } else {
+            final String[] splitTime = time.split(":");
+            event.setTime(Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
+        }
+
+        calendarJson.addEvent(event);
+
+        calendarDay.addEvent(event);
+
+        return event;
 
     }
+
 
     public void selectDay(final CalendarDay day) {
         this.selectedDay = day;
@@ -333,33 +397,41 @@ public class CalendarView extends ThoughtsView {
         calendarSmallEventFields.setVisible(false);
 
 
-
         calendarEventBox.getChildren().clear();
 
 
         for (final DayEvent dayEvent : day.getEvents()) {
-            calendarEventBox.getChildren().add(new DayEvent(dayEvent, this));
+            final DayEvent clone = new DayEvent(dayEvent, this);
+            calendarEventBox.getChildren().add(clone);
+
+            dayEvent.setClone(clone);
 
         }
 
     }
 
-    public void selectEvent(final DayEvent event) {
+    public void selectEvent(final DayEvent event, final boolean editable) {
         event.getStyleClass().add("selected-label");
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-label");
         selectedEvent = event;
 
         calendarSmallEventFields.setVisible(true);
 
-        toggleSmallEventFields(false);
-        calendarSmallSaveEventButton.setVisible(false);
+        toggleSmallEventFields(editable);
+        calendarSmallSaveEventButton.setVisible(editable);
+
 
         calendarSmallEventTitleInput.setText(event.getEventName());
         calendarSmallDatePicker.setValue(LocalDate.of(event.getCalendarDay().getYear(), event.getCalendarDay().getMonth(), event.getCalendarDay().getDay()));
 
+
         final LocalTime time = event.getTime();
         calendarSmallHourInput.setText(time == null ? "" : String.valueOf(time.getHour()));
         calendarSmallMinuteInput.setText(time == null ? "" : String.valueOf(time.getMinute()));
+
+
+        calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
+
 
         calendarSmallEventDescriptionInput.setText(event.getDescription());
     }
@@ -368,10 +440,97 @@ public class CalendarView extends ThoughtsView {
         final boolean isDisabled = !isEnabled;
         calendarSmallEventTitleInput.setDisable(isDisabled);
         calendarSmallDatePicker.setDisable(isDisabled);
-        calendarSmallHourInput.setDisable(isDisabled);
-        calendarSmallMinuteInput.setDisable(isDisabled);
+
+
+        final ObservableList<String> styles = calendarSmallDatePicker.getStyleClass();
+        final String disableDatePickerStyle = "non-editable-date-picker";
+
+
+        if (isDisabled) {
+            if (!styles.contains(disableDatePickerStyle)) styles.add(disableDatePickerStyle);
+        } else {
+            while (styles.contains(disableDatePickerStyle)) styles.remove(disableDatePickerStyle);
+        }
+
+        calendarSmallTimeFields.setVisible(isEnabled);
+        calendarSmallFinalTime.setVisible(isDisabled);
+
         calendarSmallAMPMSelector.setDisable(isDisabled);
         calendarSmallEventDescriptionInput.setDisable(isDisabled);
+
+    }
+
+    private void readCalendarJson() {
+        try {
+            calendarJson = new CalendarJSONHandler();
+
+            if (!calendarJson.validJson()) { // json has error or doesn't exist
+                return;
+            }
+
+            for (final Object o : calendarJson.getKeys()) {
+                final String year = (String) o;
+                final JSONObject yearBranch = calendarJson.getBranch(year);
+                for (final Object m : yearBranch.keySet()) {
+                    final String month = (String) m;
+                    final JSONObject monthBranch = (JSONObject) yearBranch.get(month);
+                    for (final Object d : monthBranch.keySet()) {
+                        final String dayNum = (String) d;
+                        final JSONObject dayBranch = (JSONObject) monthBranch.get(dayNum);
+                        for (final Object e : dayBranch.keySet()) {
+                            final String eventName = (String) e;
+                            final JSONObject eventBranch = (JSONObject) dayBranch.get(eventName);
+                            final String description = (String) eventBranch.get("Description");
+                            final String time = (String) eventBranch.get("Time");
+                            try {
+                                addEvent(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum), eventName, description, time.isEmpty() ? null : time);
+
+                            } catch (Exception error) {
+                                Logger.log(e);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+        } catch (Exception e) {
+            // Delete and rerun?
+            Logger.log(e);
+        }
+
+    }
+
+    private void saveCalendarJson() {
+        try {
+            TC.Directories.CALENDAR_TEST_PATH.createNewFile();
+
+            try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.CALENDAR_TEST_PATH)) {
+
+                final JSONObject data = new JSONObject();
+
+                for (final Object my : activeMonths.keySet()) {
+                    final Pair<Month, Integer> monthYearPair = (Pair<Month, Integer>) my;
+
+                    final String year = String.valueOf(monthYearPair.getValue());
+                    final String month = monthYearPair.getKey().toString();
+
+                    final JSONObject yearBranch = new JSONObject();
+
+                    data.put(year, yearBranch);
+
+                }
+
+                fWriter.write(data.toString().getBytes());
+            }
+
+        } catch (Exception e) {
+            Logger.log(e);
+        }
+
+
+
+
 
     }
 
