@@ -7,7 +7,6 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarDay;
 import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.objects.calendar.DayEvent;
-import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
@@ -16,9 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
-import org.json.simple.JSONObject;
 
-import java.io.FileOutputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
@@ -44,6 +41,7 @@ public class CalendarView extends ThoughtsView {
     /*  Header  */
     private final Label calendarMonthYearLabel;
     private final Label calendarNextMonthButton, calendarPrevMonthButton;
+    private final Button calendarTestButton;
 
 
     /*  Event Box   */
@@ -57,13 +55,10 @@ public class CalendarView extends ThoughtsView {
     private final DatePicker calendarSmallDatePicker;
     private final TextField calendarSmallHourInput, calendarSmallMinuteInput;
     private final TextArea calendarSmallEventDescriptionInput;
-    private final Button calendarSmallSaveEventButton, calendarSmallEditButton;
+    private final Button calendarSmallSaveEventButton, calendarSmallEditButton, calendarSmallDeleteButton;
     private final ComboBox<String> calendarSmallAMPMSelector;
     private final HBox calendarSmallFinalTime, calendarSmallTimeFields;
     private final Label calendarSmallFinalTimeLabel;
-
-
-
 
 
     /* Popup */
@@ -74,7 +69,7 @@ public class CalendarView extends ThoughtsView {
 
     public CalendarView(final MainApplication main) {
         super(main);
-        readCalendarJson();
+        calendarJson = new CalendarJSONHandler(this);
 
 
         calendarFrame = (GridPane) findNodeByID("calendarFrame");
@@ -83,6 +78,7 @@ public class CalendarView extends ThoughtsView {
         calendarMonthYearLabel = (Label) findNodeByID("calendarMonthYearLabel");
         calendarNextMonthButton = (Label) findNodeByID("calendarNextMonthButton");
         calendarPrevMonthButton = (Label) findNodeByID("calendarPrevMonthButton");
+        calendarTestButton = (Button) findNodeByID("calendarTestButton");
 
         /*  Event Box   */
         calendarEventBox = (VBox) findNodeByID("calendarEventBox");
@@ -99,6 +95,7 @@ public class CalendarView extends ThoughtsView {
         calendarSmallEventDescriptionInput = (TextArea) findNodeByID("calendarSmallEventDescriptionInput");
         calendarSmallSaveEventButton = (Button) findNodeByID("calendarSmallSaveEventButton");
         calendarSmallEditButton = (Button) findNodeByID("calendarSmallEditButton");
+        calendarSmallDeleteButton = (Button) findNodeByID("calendarSmallDeleteButton");
         calendarSmallAMPMSelector = (ComboBox<String>) findNodeByID("calendarSmallAMPMSelector");
         calendarSmallFinalTime = (HBox) findNodeByID("calendarSmallFinalTime");
         calendarSmallTimeFields = (HBox) findNodeByID("calendarSmallTimeFields");
@@ -118,15 +115,7 @@ public class CalendarView extends ThoughtsView {
         currentMonth = cMonth != null ? cMonth : new CalendarMonth(now.getMonth(), this);
 
 
-
-
-        createCalendarGUI();
-
-
-        // registerEvents();
-
-
-
+        changeMonth(currentMonth);
 
     }
 
@@ -137,34 +126,39 @@ public class CalendarView extends ThoughtsView {
     private void attachEvents() {
         /*  Header  */
         calendarNextMonthButton.setOnMouseClicked(e -> changeMonth(currentMonth.getNextMonth()));
-
         calendarPrevMonthButton.setOnMouseClicked(e -> changeMonth(currentMonth.getPreviousMonth()));
+        calendarTestButton.setOnAction(e -> {
+            Logger.log(activeMonths);
 
+        });
+
+
+
+
+
+        /*  Small New Event*/
         calendarNewEventButton.setOnMouseClicked(e -> {
             selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
         });
 
 
-        /*  Small New Event*/
         calendarSmallEventFields.setVisible(false);
 
 
         calendarSmallSaveEventButton.setVisible(false);
         calendarSmallSaveEventButton.setOnAction(e -> {
             if (selectedEvent == null) return;
+            saveEvent(selectedEvent);
 
-            selectedEvent.setEventName(calendarSmallEventTitleInput.getText());
-            selectedEvent.setTime(calendarSmallHourInput.getText(), calendarSmallMinuteInput.getText(), calendarSmallAMPMSelector.getSelectionModel().getSelectedItem());
-            selectedEvent.setDescription(calendarSmallEventDescriptionInput.getText());
-
-            final LocalTime time = selectedEvent.getTime();
-            calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
-
-            calendarSmallSaveEventButton.setVisible(false);
-            toggleSmallEventFields(false);
-
+            selectDay(selectedDay);
+            selectEvent(selectedEvent, false);
         });
 
+
+        calendarSmallDeleteButton.setOnAction(e -> {
+            if (selectedEvent == null) return;
+            deleteEvent(selectedEvent);
+        });
 
         calendarSmallHourInput.textProperty().addListener((observableValue, s, value) -> {
             if (!value.matches("\\d*") || value.isEmpty()) {
@@ -262,14 +256,16 @@ public class CalendarView extends ThoughtsView {
     }
 
     private void changeMonth(final CalendarMonth month) {
-        if (currentMonth.getNumDaysWithEvents() > 0) {
-            Logger.log("saving " + currentMonth.getMonth() + " " + currentMonth.getYear());
-            activeMonths.put(new Pair<>(currentMonth.getMonth(), currentMonth.getYear()), currentMonth);
+        if (currentMonth.getNumDaysWithEvents() == 0) {
+            activeMonths.remove(new Pair<>(currentMonth.getMonth(), currentMonth.getYear()));
         }
 
         final CalendarMonth newMonth = activeMonths.get(new Pair<>(month.getMonth(), month.getYear()));
+        currentMonth = newMonth != null ? newMonth : month;
 
-        currentMonth = newMonth == null ? month : newMonth;
+
+        activeMonths.put(new Pair<>(month.getMonth(), month.getYear()), currentMonth);
+
         createCalendarGUI();
 
 
@@ -286,7 +282,6 @@ public class CalendarView extends ThoughtsView {
 
         CalendarMonth n = activeMonths.get(new Pair<>(currentMonth.getNextMonth().getMonth(), currentMonth.getNextMonth().getYear()));
         final CalendarMonth nextMonth = n != null ? n : currentMonth.getNextMonth();
-
 
 
         Platform.runLater(() -> {
@@ -353,24 +348,47 @@ public class CalendarView extends ThoughtsView {
     }
 
 
+    public DayEvent addEvent(final LocalDate date, final DayEvent event) {
+        final Month month = date.getMonth();
+        final Integer year = date.getYear();
+        final int day = date.getDayOfMonth();
+
+
+        final Pair<Month, Integer> monthYear = new Pair<>(month, year);
+
+        CalendarMonth activeMonth = activeMonths.get(monthYear);
+        if (activeMonth == null) {
+            activeMonth = new CalendarMonth(month, year, this);
+            activeMonths.put(monthYear, activeMonth);
+        }
+
+        if (day > activeMonth.getMonthLength()) throw new IllegalArgumentException("Day out of bounds. " + day);
+
+        activeMonth.getDay(day).addEvent(event);
+
+
+        return event;
+
+
+    }
 
     private DayEvent addEvent(final int year, final Month month, final int day, final String eventName, final String desc, final String time) {
         final Pair<Month, Integer> monthYear = new Pair<>(month, year);
 
         CalendarMonth activeMonth = activeMonths.get(monthYear);
         if (activeMonth == null) {
-            Logger.log("here");
             activeMonth = new CalendarMonth(month, year, this);
             activeMonths.put(monthYear, activeMonth);
         }
 
-        if (day < 0 || day > activeMonth.getMonthLength()) throw new IllegalArgumentException("Day out of bounds. " + day);
+        if (day < 0 || day > activeMonth.getMonthLength())
+            throw new IllegalArgumentException("Day out of bounds. " + day);
 
         final CalendarDay calendarDay = activeMonth.getDay(day);
 
-        final DayEvent event = new DayEvent(calendarDay, eventName, this);
-        event.setDescription(desc);
 
+        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), eventName, this);
+        event.setDescription(desc);
 
         if (time == null || !time.contains(":")) {
             event.setTime(null);
@@ -379,7 +397,7 @@ public class CalendarView extends ThoughtsView {
             event.setTime(Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
         }
 
-        calendarJson.addEvent(event);
+        calendarJson.addEventToJson(event);
 
         calendarDay.addEvent(event);
 
@@ -396,7 +414,6 @@ public class CalendarView extends ThoughtsView {
 
         calendarSmallEventFields.setVisible(false);
 
-
         calendarEventBox.getChildren().clear();
 
 
@@ -410,19 +427,24 @@ public class CalendarView extends ThoughtsView {
 
     }
 
-    public void selectEvent(final DayEvent event, final boolean editable) {
+    public void selectEvent(DayEvent event, final boolean editable) {
+        Logger.log("here");
+
         event.getStyleClass().add("selected-label");
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-label");
         selectedEvent = event;
+
+        if (event.isClone) event = event.getClone();
 
         calendarSmallEventFields.setVisible(true);
 
         toggleSmallEventFields(editable);
         calendarSmallSaveEventButton.setVisible(editable);
+        calendarSmallEditButton.setVisible(!editable);
 
 
-        calendarSmallEventTitleInput.setText(event.getEventName());
-        calendarSmallDatePicker.setValue(LocalDate.of(event.getCalendarDay().getYear(), event.getCalendarDay().getMonth(), event.getCalendarDay().getDay()));
+        calendarSmallEventTitleInput.setText(event.getEventTitle());
+        calendarSmallDatePicker.setValue(LocalDate.of(event.getDate().getYear(), event.getDate().getMonth(), event.getDate().getDayOfMonth()));
 
 
         final LocalTime time = event.getTime();
@@ -460,75 +482,40 @@ public class CalendarView extends ThoughtsView {
 
     }
 
-    private void readCalendarJson() {
-        try {
-            calendarJson = new CalendarJSONHandler();
+    private void saveEvent(DayEvent event) {
+        if (event.isClone) event = event.getClone();
 
-            if (!calendarJson.validJson()) { // json has error or doesn't exist
-                return;
-            }
+        event.setEventTitle(calendarSmallEventTitleInput.getText());
+        event.setTime(calendarSmallHourInput.getText(), calendarSmallMinuteInput.getText(), calendarSmallAMPMSelector.getSelectionModel().getSelectedItem());
+        event.setDescription(calendarSmallEventDescriptionInput.getText());
 
-            for (final Object o : calendarJson.getKeys()) {
-                final String year = (String) o;
-                final JSONObject yearBranch = calendarJson.getBranch(year);
-                for (final Object m : yearBranch.keySet()) {
-                    final String month = (String) m;
-                    final JSONObject monthBranch = (JSONObject) yearBranch.get(month);
-                    for (final Object d : monthBranch.keySet()) {
-                        final String dayNum = (String) d;
-                        final JSONObject dayBranch = (JSONObject) monthBranch.get(dayNum);
-                        for (final Object e : dayBranch.keySet()) {
-                            final String eventName = (String) e;
-                            final JSONObject eventBranch = (JSONObject) dayBranch.get(eventName);
-                            final String description = (String) eventBranch.get("Description");
-                            final String time = (String) eventBranch.get("Time");
-                            try {
-                                addEvent(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum), eventName, description, time.isEmpty() ? null : time);
+        final LocalTime time = event.getTime();
+        calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
 
-                            } catch (Exception error) {
-                                Logger.log(e);
-                            }
-                        }
-                    }
-                }
-            }
+        calendarSmallSaveEventButton.setVisible(false);
+        toggleSmallEventFields(false);
 
-
-        } catch (Exception e) {
-            // Delete and rerun?
-            Logger.log(e);
-        }
+        calendarJson.addEventToJson(event);
 
     }
 
-    private void saveCalendarJson() {
-        try {
-            TC.Directories.CALENDAR_TEST_PATH.createNewFile();
-
-            try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.CALENDAR_TEST_PATH)) {
-
-                final JSONObject data = new JSONObject();
-
-                for (final Object my : activeMonths.keySet()) {
-                    final Pair<Month, Integer> monthYearPair = (Pair<Month, Integer>) my;
-
-                    final String year = String.valueOf(monthYearPair.getValue());
-                    final String month = monthYearPair.getKey().toString();
-
-                    final JSONObject yearBranch = new JSONObject();
-
-                    data.put(year, yearBranch);
-
-                }
-
-                fWriter.write(data.toString().getBytes());
-            }
-
-        } catch (Exception e) {
-            Logger.log(e);
-        }
+    private void deleteEvent(final DayEvent event) {
+        calendarJson.removeEventFromJson(selectedEvent);
 
 
+        final Month month = event.getDate().getMonth();
+        final Integer year = event.getDate().getYear();
+        final int day = event.getDate().getDayOfMonth();
+
+        final CalendarMonth calendarMonth = activeMonths.get(new Pair<>(month, year));
+
+        if (calendarMonth == null)
+            throw new RuntimeException("Could not find month to delete event " + event.getEventTitle() + " from.");
+
+
+
+        calendarMonth.getDay(day).removeEvent(event);
+        selectDay(selectedDay);
 
 
 

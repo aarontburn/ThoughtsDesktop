@@ -7,80 +7,99 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 
 import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 public class DayEvent extends Label {
 
-    public final static String ID = "dayEvent";
+    public final static String DAY_EVENT_ID = "dayEvent";
 
     private final CalendarView view;
 
-    private CalendarDay day;
-    private String eventName;
-
+    private LocalDate day;
     private LocalTime time;
+
+    private String eventTitle;
+
     private String description;
 
 
     private DayEvent clone;
 
+    private final String eventID;
 
+    public boolean isClone;
 
 
     // TODO: Generate unique eventID
 
+
+    // Cloning constructor
     public DayEvent(final DayEvent dayEvent, final CalendarView view) {
-        this(dayEvent.getCalendarDay(), dayEvent.getEventName(), view);
+        this(dayEvent.getDate(), dayEvent.getEventTitle(), view);
 
-
+        this.isClone = true;
         this.clone = dayEvent;
         this.time = dayEvent.time;
         this.description = dayEvent.description;
 
+        if (time != null) {
+            this.setText(time.getHour() + ":" + time.getMinute() + " | " + eventTitle);
+        } else {
+            this.setText(eventTitle);
+        }
+
     }
 
 
+    // Constructor for creating a NEW event
+    public DayEvent(final LocalDate day, final String eventName, final CalendarView view) {
+        this(day, eventName, UUID.randomUUID().toString(), view);
+    }
 
 
-    public DayEvent(final CalendarDay day, final String eventName, final CalendarView view) {
-        super(eventName);
+    // Constructor for reading an EXISTING event from file
+    public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarView view) {
+        super(eventTitle);
         this.view = view;
         this.day = day;
 
-
         this.setMaxWidth(Double.MAX_VALUE);
-        this.eventName = eventName;
-        this.setId(ID);
+        this.eventTitle = eventTitle;
+        this.setId(DAY_EVENT_ID);
 
-        this.getChildren().addListener((ListChangeListener<Node>) change -> {
-            getChildren().get(0).setId(ID);
-        });
+        this.eventID = eventID;
+
+
+        this.getChildren().addListener((ListChangeListener<Node>) change -> getChildren().get(0).setId(DAY_EVENT_ID));
 
         this.setOnMouseClicked(e -> onClick());
 
     }
 
+
     public void onClick() {
         this.view.selectEvent(this, false);
 
-        Logger.log("Event \"" + this.eventName + "\" was pressed.");
-
+        Logger.log("Event \"" + this.eventTitle + "\" was pressed.");
     }
 
 
-    public void save() {
-        view.calendarJson.addEvent(this);
-
-
-    }
 
     public void setTime(final LocalTime time) {
         this.time = time;
+
+
+        if (time != null) {
+            setText(time.getHour() + ":" + time.getMinute() + " | " + eventTitle);
+        } else {
+            setText(eventTitle);
+        }
+
         if (this.clone != null) setTimeClone(time);
 
-        save();
     }
-
 
 
     public void setTime(final int hour, final int minute) {
@@ -89,7 +108,6 @@ public class DayEvent extends Label {
         } catch (DateTimeException e) {
             this.time = null;
         }
-        save();
 
     }
 
@@ -98,7 +116,8 @@ public class DayEvent extends Label {
             int hour = Integer.parseInt(hourString);
             final int minute = Integer.parseInt(minuteString);
 
-            if (!(period.equals("AM") || period.equals("PM"))) throw new IllegalArgumentException("Period needs to be AM or PM: " + period);
+            if (!(period.equals("AM") || period.equals("PM")))
+                throw new IllegalArgumentException("Period needs to be AM or PM: " + period);
 
             final boolean isPM = period.equals("PM");
 
@@ -120,14 +139,15 @@ public class DayEvent extends Label {
     }
 
 
+    public void setEventTitle(final String eventTitle) {
+        this.eventTitle = eventTitle;
+        this.setText(eventTitle);
 
 
-    public void setEventName(final String eventName) {
-        this.eventName = eventName;
-        this.setText(eventName);
 
-        if (this.clone != null) setEventNameClone(eventName);
-        save();
+        if (this.clone != null) setEventNameClone(eventTitle);
+
+
 
 
     }
@@ -136,15 +156,13 @@ public class DayEvent extends Label {
         this.description = description;
 
         if (this.clone != null) setDescriptionClone(description);
-        save();
 
 
     }
 
-    public void setDate(final CalendarDay day) {
+    public void setDate(final LocalDate day) {
         this.day = day;
         if (this.clone != null) setDateClone(day);
-        save();
 
 
     }
@@ -154,9 +172,12 @@ public class DayEvent extends Label {
     }
 
 
+    public DayEvent getClone() {
+        return this.clone;
+    }
 
     public void setEventNameClone(final String eventName) {
-        clone.eventName = eventName;
+        clone.eventTitle = eventName;
         clone.setText(eventName);
     }
 
@@ -165,27 +186,26 @@ public class DayEvent extends Label {
 
     }
 
-    public void setDateClone(final CalendarDay day) {
+    public void setDateClone(final LocalDate day) {
         clone.day = day;
 
     }
 
     private void setTimeClone(final LocalTime time) {
         clone.time = time;
+        if (time != null) {
+            clone.setText(time.getHour() + ":" + time.getMinute() + " | " + eventTitle);
+        } else {
+            clone.setText(eventTitle);
+        }
     }
 
 
-
-
-
-
-
-
-    public String getEventName() {
-        return this.eventName;
+    public String getEventTitle() {
+        return this.eventTitle;
     }
 
-    public CalendarDay getCalendarDay() {
+    public LocalDate getDate() {
         return this.day;
     }
 
@@ -197,14 +217,24 @@ public class DayEvent extends Label {
         return this.description;
     }
 
-
-    @Override
-    public String toString() {
-        return "Year: " + day.getYear() + " Month: " + day.getMonth() + " Day: " + day.getDay() + " Desc: " + description + " Time: " + time;
-
+    public String getEventID() {
+        return this.eventID;
     }
 
 
+    @Override
+    public String toString() {
+        return "Year: " + day.getYear() + " Month: " + day.getMonth() + " Day: " + day.getDayOfMonth() + " Desc: " + description + " Time: " + time;
+
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other.getClass() != this.getClass()) return false;
+
+        return this.eventID.equals(((DayEvent) other).getEventID());
+
+    }
 
 
 }

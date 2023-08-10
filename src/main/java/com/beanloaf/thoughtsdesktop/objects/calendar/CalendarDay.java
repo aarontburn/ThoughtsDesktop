@@ -62,7 +62,7 @@ public class CalendarDay extends AnchorPane {
                 onClick();
                 final Node node = (Node) e.getTarget();
 
-                if (node.getId() != null && node.getId().equals(DayEvent.ID)) {
+                if (node.getId() != null && node.getId().equals(DayEvent.DAY_EVENT_ID)) {
                     if (node.getClass() == DayEvent.class) {
                         ((DayEvent) node).onClick();
                     } else {
@@ -103,7 +103,6 @@ public class CalendarDay extends AnchorPane {
     }
 
 
-
     public DayEvent addEvent(final DayEvent event) {
         eventList.add(event);
         eventContainer.getChildren().add(event);
@@ -111,7 +110,14 @@ public class CalendarDay extends AnchorPane {
 
     }
 
-    public void removeEvent(final String eventName) {
+    public void removeEvent(final DayEvent event) {
+
+
+        eventList.remove(event);
+
+
+        eventContainer.getChildren().remove(event);
+
 
 
     }

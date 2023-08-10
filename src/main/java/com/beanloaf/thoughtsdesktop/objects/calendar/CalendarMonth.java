@@ -45,7 +45,6 @@ public class CalendarMonth {
 
         if (calendarDay == null) {
             calendarDay = new CalendarDay(getYear(), getMonth(), day, view);
-            Logger.log("adding a new calendar day for " + month + " " + day);
             monthMap.put(day, calendarDay);
         }
 
