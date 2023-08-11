@@ -1,8 +1,9 @@
-package com.beanloaf.thoughtsdesktop.handlers;
+package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
-import com.beanloaf.thoughtsdesktop.objects.calendar.DayEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import com.beanloaf.thoughtsdesktop.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -61,19 +62,20 @@ public class CalendarJSONHandler {
                         final JSONObject dayBranch = (JSONObject) monthBranch.get(dayNum);
                         for (final Object e : dayBranch.keySet()) {
                             final String eventID = (String) e;
-
+                            Logger.log("reading " + eventID);
                             final JSONObject eventBranch = (JSONObject) dayBranch.get(eventID);
 
                             final String eventTitle = (String) eventBranch.get("Title");
                             final String description = (String) eventBranch.get("Description");
                             final String time = (String) eventBranch.get("Time");
+                            final Boolean isCompleted = (Boolean) eventBranch.get("Completed");
 
 
                             final LocalDate eventDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum));
 
                             final DayEvent event = new DayEvent(eventDate, eventTitle, eventID, view);
                             event.setDescription(description);
-
+                            event.setCompleted(isCompleted != null ? isCompleted : false, false);
 
                             if (time == null || !time.contains(":")) {
                                 event.setTime(null);
@@ -109,6 +111,7 @@ public class CalendarJSONHandler {
             final String year = String.valueOf(event.getDate().getYear());
             final String month = event.getDate().getMonth().toString();
             final String day = String.valueOf(event.getDate().getDayOfMonth());
+            final boolean completed = event.isCompleted();
 
 
             JSONObject yearBranch = (JSONObject) root.get(year);
@@ -146,6 +149,7 @@ public class CalendarJSONHandler {
             eventBranch.put("Title", event.getEventTitle());
             eventBranch.put("Description", event.getDescription());
             eventBranch.put("Time", time != null ? time.getHour() + ":" + time.getMinute() : "");
+            eventBranch.put("Completed", completed);
 
             saveJson();
         }).start();

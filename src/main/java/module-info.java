@@ -16,17 +16,21 @@ module com.example.thoughtsdesktop {
     requires org.apache.commons.codec;
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;
-    exports com.beanloaf.thoughtsdesktop.changeListener;
-    opens com.beanloaf.thoughtsdesktop.changeListener to javafx.fxml;
-    exports com.beanloaf.thoughtsdesktop.objects;
-    opens com.beanloaf.thoughtsdesktop.objects to javafx.fxml;
-    exports com.beanloaf.thoughtsdesktop.views;
-    opens com.beanloaf.thoughtsdesktop.views to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.notes.changeListener;
+    opens com.beanloaf.thoughtsdesktop.notes.changeListener to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.notes.objects;
+    opens com.beanloaf.thoughtsdesktop.notes.objects to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.global_views;
+    opens com.beanloaf.thoughtsdesktop.global_views to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.res;
     opens com.beanloaf.thoughtsdesktop.res to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop;
-    exports com.beanloaf.thoughtsdesktop.controllers;
-    opens com.beanloaf.thoughtsdesktop.controllers to javafx.fxml;
-    exports com.beanloaf.thoughtsdesktop.objects.calendar;
-    opens com.beanloaf.thoughtsdesktop.objects.calendar to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.database;
+    opens com.beanloaf.thoughtsdesktop.database to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.calendar.objects;
+    opens com.beanloaf.thoughtsdesktop.calendar.objects to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.calendar.views;
+    opens com.beanloaf.thoughtsdesktop.calendar.views to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.notes.views;
+    opens com.beanloaf.thoughtsdesktop.notes.views to javafx.fxml;
 }

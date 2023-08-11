@@ -1,14 +1,17 @@
-package com.beanloaf.thoughtsdesktop.objects.calendar;
+package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class DayEvent extends Label {
@@ -19,23 +22,20 @@ public class DayEvent extends Label {
 
     private LocalDate day;
     private LocalTime time;
-
     private String eventTitle;
-
     private String description;
+    private final String eventID;
+
+
+    private boolean isCompleted;
 
 
     private DayEvent clone;
 
-    private final String eventID;
-
     public boolean isClone;
 
 
-    // TODO: Generate unique eventID
-
-
-    // Cloning constructor
+    // Cloning constructor, used to tie the eventbox object to the one in the grid
     public DayEvent(final DayEvent dayEvent, final CalendarView view) {
         this(dayEvent.getDate(), dayEvent.getEventTitle(), view);
 
@@ -43,13 +43,9 @@ public class DayEvent extends Label {
         this.clone = dayEvent;
         this.time = dayEvent.time;
         this.description = dayEvent.description;
+        this.isCompleted = dayEvent.isCompleted;
 
-        if (time != null) {
-            this.setText(time.getHour() + ":" + time.getMinute() + " | " + eventTitle);
-        } else {
-            this.setText(eventTitle);
-        }
-
+        this.setText(getDisplayTime(time) + eventTitle);
     }
 
 
@@ -72,7 +68,10 @@ public class DayEvent extends Label {
         this.eventID = eventID;
 
 
-        this.getChildren().addListener((ListChangeListener<Node>) change -> getChildren().get(0).setId(DAY_EVENT_ID));
+        this.getChildren().addListener((ListChangeListener<Node>) change -> {
+            getChildren().get(0).setId(DAY_EVENT_ID);
+            ((Text) getChildren().get(0)).setStrikethrough(isCompleted);
+        });
 
         this.setOnMouseClicked(e -> onClick());
 
@@ -86,18 +85,18 @@ public class DayEvent extends Label {
     }
 
 
-
     public void setTime(final LocalTime time) {
         this.time = time;
 
 
-        if (time != null) {
-            setText(time.getHour() + ":" + time.getMinute() + " | " + eventTitle);
-        } else {
-            setText(eventTitle);
-        }
+        final String newText = getDisplayTime(time) + eventTitle;
 
-        if (this.clone != null) setTimeClone(time);
+        setText(newText);
+
+        if (this.clone != null) {
+            clone.time = time;
+            clone.setText(newText);
+        }
 
     }
 
@@ -143,28 +142,35 @@ public class DayEvent extends Label {
         this.eventTitle = eventTitle;
         this.setText(eventTitle);
 
-
-
-        if (this.clone != null) setEventNameClone(eventTitle);
-
-
-
-
+        if (this.clone != null) {
+            clone.eventTitle = eventTitle;
+            clone.setText(eventTitle);
+        }
     }
 
     public void setDescription(final String description) {
         this.description = description;
 
-        if (this.clone != null) setDescriptionClone(description);
-
-
+        if (this.clone != null) clone.description = description;
     }
 
     public void setDate(final LocalDate day) {
         this.day = day;
-        if (this.clone != null) setDateClone(day);
+
+        if (this.clone != null) clone.day = day;
+    }
+
+    public void setCompleted(final boolean isCompleted, final boolean save) {
+        this.isCompleted = isCompleted;
+        if (this.clone != null) {
+            clone.isCompleted = isCompleted;
+            ((Text) clone.getChildren().get(0)).setStrikethrough(isCompleted);
+        }
+
+        if (getChildren().size() > 0) ((Text) getChildren().get(0)).setStrikethrough(isCompleted);
 
 
+        if (save) view.saveEvent(this);
     }
 
     public void setClone(final DayEvent clone) {
@@ -174,30 +180,6 @@ public class DayEvent extends Label {
 
     public DayEvent getClone() {
         return this.clone;
-    }
-
-    public void setEventNameClone(final String eventName) {
-        clone.eventTitle = eventName;
-        clone.setText(eventName);
-    }
-
-    public void setDescriptionClone(final String description) {
-        clone.description = description;
-
-    }
-
-    public void setDateClone(final LocalDate day) {
-        clone.day = day;
-
-    }
-
-    private void setTimeClone(final LocalTime time) {
-        clone.time = time;
-        if (time != null) {
-            clone.setText(time.getHour() + ":" + time.getMinute() + " | " + eventTitle);
-        } else {
-            clone.setText(eventTitle);
-        }
     }
 
 
@@ -221,6 +203,25 @@ public class DayEvent extends Label {
         return this.eventID;
     }
 
+    public boolean isCompleted() {
+        return this.isCompleted;
+    }
+
+    public String getDisplayTime(final LocalTime time) {
+        String formattedTime = "";
+        if (time != null) {
+            formattedTime = time.format(DateTimeFormatter.ofPattern("h:mm a")) + " | ";
+            if (formattedTime.contains("AM")) {
+                formattedTime = formattedTime.replace(" AM", "a");
+            } else {
+                formattedTime = formattedTime.replace(" PM", "p");
+
+            }
+        }
+        return formattedTime;
+
+    }
+
 
     @Override
     public String toString() {
@@ -235,6 +236,8 @@ public class DayEvent extends Label {
         return this.eventID.equals(((DayEvent) other).getEventID());
 
     }
+
+
 
 
 }

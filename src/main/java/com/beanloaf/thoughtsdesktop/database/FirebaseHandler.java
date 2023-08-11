@@ -2,15 +2,14 @@ package com.beanloaf.thoughtsdesktop.database;
 
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.changeListener.DatabaseSnapshot;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
-import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.objects.ThoughtObject;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import com.beanloaf.thoughtsdesktop.views.TextView;
+import com.beanloaf.thoughtsdesktop.notes.views.TextView;
 import com.google.common.io.BaseEncoding;
 
 import javafx.application.Platform;
@@ -31,8 +30,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
-import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Data.*;
+import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
+import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Data.*;
 
 public class FirebaseHandler implements ThoughtsChangeListener {
 

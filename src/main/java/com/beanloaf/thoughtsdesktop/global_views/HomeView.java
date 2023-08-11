@@ -1,14 +1,12 @@
-package com.beanloaf.thoughtsdesktop.views;
+package com.beanloaf.thoughtsdesktop.global_views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
@@ -16,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
 
-import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 
 import java.util.Date;
 import java.util.concurrent.Executors;

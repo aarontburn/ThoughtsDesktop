@@ -1,4 +1,4 @@
-package com.beanloaf.thoughtsdesktop.views;
+package com.beanloaf.thoughtsdesktop.notes.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import javafx.scene.Node;

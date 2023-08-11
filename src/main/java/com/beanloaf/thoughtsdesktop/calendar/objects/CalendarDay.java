@@ -1,8 +1,7 @@
-package com.beanloaf.thoughtsdesktop.objects.calendar;
+package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;

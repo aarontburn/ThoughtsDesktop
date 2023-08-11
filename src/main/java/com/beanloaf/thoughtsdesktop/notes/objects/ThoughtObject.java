@@ -1,4 +1,4 @@
-package com.beanloaf.thoughtsdesktop.objects;
+package com.beanloaf.thoughtsdesktop.notes.objects;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 
-import com.beanloaf.thoughtsdesktop.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;

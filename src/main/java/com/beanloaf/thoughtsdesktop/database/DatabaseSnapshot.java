@@ -1,6 +1,6 @@
-package com.beanloaf.thoughtsdesktop.changeListener;
+package com.beanloaf.thoughtsdesktop.database;
 
-import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import com.beanloaf.thoughtsdesktop.notes.objects.ThoughtObject;
 
 import java.util.*;
 

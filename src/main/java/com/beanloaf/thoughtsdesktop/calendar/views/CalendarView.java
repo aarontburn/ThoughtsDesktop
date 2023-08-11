@@ -1,13 +1,16 @@
-package com.beanloaf.thoughtsdesktop.views;
+package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
-import com.beanloaf.thoughtsdesktop.handlers.CalendarJSONHandler;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarDay;
-import com.beanloaf.thoughtsdesktop.objects.calendar.CalendarMonth;
-import com.beanloaf.thoughtsdesktop.objects.calendar.DayEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarDay;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
+import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
+import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -59,6 +62,8 @@ public class CalendarView extends ThoughtsView {
     private final ComboBox<String> calendarSmallAMPMSelector;
     private final HBox calendarSmallFinalTime, calendarSmallTimeFields;
     private final Label calendarSmallFinalTimeLabel;
+    private final CheckBox calendarSmallProgressCheckBox;
+    private boolean calendarSmallProgressCheckBoxReady = true;
 
 
     /* Popup */
@@ -100,6 +105,7 @@ public class CalendarView extends ThoughtsView {
         calendarSmallFinalTime = (HBox) findNodeByID("calendarSmallFinalTime");
         calendarSmallTimeFields = (HBox) findNodeByID("calendarSmallTimeFields");
         calendarSmallFinalTimeLabel = (Label) findNodeByID("calendarSmallFinalTimeLabel");
+        calendarSmallProgressCheckBox = (CheckBox) findNodeByID("calendarSmallProgressCheckBox");
 
 
         /*  Popup   */
@@ -137,13 +143,20 @@ public class CalendarView extends ThoughtsView {
 
 
         /*  Small New Event*/
-        calendarNewEventButton.setOnMouseClicked(e -> {
-            selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
+        calendarSmallEventFields.setVisible(false);
+
+        calendarSmallProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
+            calendarSmallProgressCheckBox.setText(isChecked ? "Completed" : "In-progress");
+
+
+
+            if (calendarSmallProgressCheckBoxReady) selectedEvent.setCompleted(isChecked, true);
         });
 
 
-        calendarSmallEventFields.setVisible(false);
-
+        calendarNewEventButton.setOnMouseClicked(e -> {
+            selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
+        });
 
         calendarSmallSaveEventButton.setVisible(false);
         calendarSmallSaveEventButton.setOnAction(e -> {
@@ -154,11 +167,16 @@ public class CalendarView extends ThoughtsView {
             selectEvent(selectedEvent, false);
         });
 
-
         calendarSmallDeleteButton.setOnAction(e -> {
             if (selectedEvent == null) return;
             deleteEvent(selectedEvent);
         });
+
+
+
+
+
+
 
         calendarSmallHourInput.textProperty().addListener((observableValue, s, value) -> {
             if (!value.matches("\\d*") || value.isEmpty()) {
@@ -428,8 +446,6 @@ public class CalendarView extends ThoughtsView {
     }
 
     public void selectEvent(DayEvent event, final boolean editable) {
-        Logger.log("here");
-
         event.getStyleClass().add("selected-label");
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-label");
         selectedEvent = event;
@@ -446,10 +462,33 @@ public class CalendarView extends ThoughtsView {
         calendarSmallEventTitleInput.setText(event.getEventTitle());
         calendarSmallDatePicker.setValue(LocalDate.of(event.getDate().getYear(), event.getDate().getMonth(), event.getDate().getDayOfMonth()));
 
+        calendarSmallProgressCheckBoxReady = false;
+        calendarSmallProgressCheckBox.setSelected(event.isCompleted());
+        calendarSmallProgressCheckBoxReady = true;
 
         final LocalTime time = event.getTime();
-        calendarSmallHourInput.setText(time == null ? "" : String.valueOf(time.getHour()));
-        calendarSmallMinuteInput.setText(time == null ? "" : String.valueOf(time.getMinute()));
+
+        if (time != null) {
+            final String formattedTime = time.format(DateTimeFormatter.ofPattern("h:mm a"));
+            final boolean isAm = formattedTime.contains("AM");
+
+
+            int hour = time.getHour();
+            if (hour > 12 && !isAm) hour = hour - 12;
+
+
+            calendarSmallHourInput.setText(String.valueOf(hour));
+            calendarSmallMinuteInput.setText(String.valueOf(time.getMinute()));
+
+            calendarSmallAMPMSelector.getSelectionModel().select(isAm ? "AM" : "PM");
+
+        } else {
+            calendarSmallHourInput.setText("");
+            calendarSmallMinuteInput.setText("");
+        }
+
+
+
 
 
         calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
@@ -482,7 +521,7 @@ public class CalendarView extends ThoughtsView {
 
     }
 
-    private void saveEvent(DayEvent event) {
+    public void saveEvent(DayEvent event) {
         if (event.isClone) event = event.getClone();
 
         event.setEventTitle(calendarSmallEventTitleInput.getText());

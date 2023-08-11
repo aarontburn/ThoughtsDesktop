@@ -1,8 +1,8 @@
-package com.beanloaf.thoughtsdesktop.changeListener;
+package com.beanloaf.thoughtsdesktop.notes.changeListener;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
+import com.beanloaf.thoughtsdesktop.notes.objects.ThoughtObject;
 import com.google.common.base.CaseFormat;
 import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
@@ -12,7 +12,6 @@ import org.json.simple.JSONValue;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 

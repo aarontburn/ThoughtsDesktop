@@ -1,12 +1,12 @@
-package com.beanloaf.thoughtsdesktop.views;
+package com.beanloaf.thoughtsdesktop.notes.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
-import com.beanloaf.thoughtsdesktop.objects.ThoughtObject;
-import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.objects.ThoughtObject;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;

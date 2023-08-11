@@ -46,25 +46,25 @@
                               </AnchorPane>
                             <AnchorPane fx:id="calendarSmallEventFields" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                  <children>
-                                    <Label alignment="CENTER" layoutX="156.0" layoutY="35.0" text="Title" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
+                                    <Label alignment="CENTER" layoutY="57.0" text="Title" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="57.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="calendarSmallEventTitleInput" layoutX="8.0" layoutY="36.0" style="-fx-font-size: 18;" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="36.0" />
-                                    <Label alignment="CENTER" layoutX="156.0" layoutY="95.0" text="Date" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="84.0">
+                                    <TextField fx:id="calendarSmallEventTitleInput" layoutX="8.0" layoutY="77.0" style="-fx-font-size: 18;" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="77.0" />
+                                    <Label alignment="CENTER" layoutY="128.0" text="Date" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="128.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
                                     </Label>
-                                    <DatePicker fx:id="calendarSmallDatePicker" layoutX="8.0" layoutY="104.0" styleClass="text-field" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="104.0" />
-                                    <Label alignment="CENTER" layoutY="146.0" text="Time" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="146.0">
+                                    <DatePicker fx:id="calendarSmallDatePicker" layoutX="8.0" layoutY="148.0" styleClass="text-field" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="148.0" />
+                                    <Label alignment="CENTER" layoutY="191.0" text="Time" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="191.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
                                     </Label>
-                                    <TextArea fx:id="calendarSmallEventDescriptionInput" layoutY="233.0" prefHeight="335.0" prefWidth="316.0" styleClass="text-field" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="233.0" />
-                                    <Label alignment="CENTER" layoutY="207.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="207.0">
+                                    <TextArea fx:id="calendarSmallEventDescriptionInput" layoutY="282.0" prefHeight="286.0" prefWidth="316.0" styleClass="text-field" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="275.0" />
+                                    <Label alignment="CENTER" layoutY="255.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="255.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -92,7 +92,7 @@
                                           </AnchorPane>
                                        </children>
                                     </HBox>
-                                    <AnchorPane layoutX="8.0" layoutY="166.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
+                                    <AnchorPane layoutX="8.0" layoutY="211.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0">
                                        <children>
                                           <HBox fx:id="calendarSmallTimeFields" alignment="CENTER" layoutY="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <children>
@@ -150,6 +150,11 @@
                                           </HBox>
                                        </children>
                                     </AnchorPane>
+                                    <CheckBox fx:id="calendarSmallProgressCheckBox" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" text="In-progress" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
+                                       <font>
+                                          <Font name="Lato Regular" size="15.0" />
+                                       </font>
+                                    </CheckBox>
                                  </children>
                               </AnchorPane>
                           </items>
@@ -195,7 +200,7 @@
                                        <content>
                                           <VBox nodeOrientation="LEFT_TO_RIGHT" styleClass="events">
                                              <children>
-                                                <Label maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" style="-fx-strikethrough: true;" text="6:30 PM Meet with Group 342" wrapText="true">
+                                                <Label maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" text="6:30 PM Meet with Group 342" wrapText="true">
                                                    <font>
                                                       <Font size="20.0" />
                                                    </font>

@@ -1,8 +1,8 @@
-package com.beanloaf.thoughtsdesktop.objects;
+package com.beanloaf.thoughtsdesktop.notes.objects;
 
-import com.beanloaf.thoughtsdesktop.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.views.ListView;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.views.ListView;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -12,7 +12,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper.setAnchor;
+import static com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper.setAnchor;
 
 public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 

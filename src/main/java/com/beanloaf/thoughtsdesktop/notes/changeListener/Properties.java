@@ -1,4 +1,4 @@
-package com.beanloaf.thoughtsdesktop.changeListener;
+package com.beanloaf.thoughtsdesktop.notes.changeListener;
 
 public class Properties {
     /**

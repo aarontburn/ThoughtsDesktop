@@ -1,9 +1,9 @@
-package com.beanloaf.thoughtsdesktop.controllers;
+package com.beanloaf.thoughtsdesktop.global_views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

@@ -1,20 +1,18 @@
 package com.beanloaf.thoughtsdesktop;
 
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsChangeListener;
-import com.beanloaf.thoughtsdesktop.changeListener.ThoughtsHelper;
-import com.beanloaf.thoughtsdesktop.controllers.GlobalHeaderController;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
-import com.beanloaf.thoughtsdesktop.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import com.beanloaf.thoughtsdesktop.views.CalendarView;
-import com.beanloaf.thoughtsdesktop.views.HomeView;
-import com.beanloaf.thoughtsdesktop.views.ListView;
-import com.beanloaf.thoughtsdesktop.views.NotesMenuBar;
-import com.beanloaf.thoughtsdesktop.views.SettingsView;
-import com.beanloaf.thoughtsdesktop.views.TextView;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.global_views.HomeView;
+import com.beanloaf.thoughtsdesktop.notes.views.ListView;
+import com.beanloaf.thoughtsdesktop.global_views.NotesMenuBar;
+import com.beanloaf.thoughtsdesktop.global_views.SettingsView;
+import com.beanloaf.thoughtsdesktop.notes.views.TextView;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -29,7 +27,7 @@ import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
-import static com.beanloaf.thoughtsdesktop.changeListener.Properties.Actions.*;
+import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
 
 public class MainApplication extends Application implements ThoughtsChangeListener {
 
