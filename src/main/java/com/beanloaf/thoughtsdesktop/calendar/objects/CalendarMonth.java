@@ -47,7 +47,7 @@ public class CalendarMonth {
             monthMap.put(day, calendarDay);
         }
 
-        return this.monthMap.get(day);
+        return calendarDay;
     }
 
     public int getNumDaysWithEvents() {

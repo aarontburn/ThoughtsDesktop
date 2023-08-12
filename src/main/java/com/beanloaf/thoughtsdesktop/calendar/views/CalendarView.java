@@ -427,6 +427,7 @@ public class CalendarView extends ThoughtsView {
     public void selectDay(final CalendarDay day) {
         this.selectedDay = day;
 
+
         calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
                 + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
 

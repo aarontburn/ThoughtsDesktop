@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CalendarJSONHandler {
 
+
     private final CalendarView view;
 
     private JSONObject root;
@@ -62,7 +63,6 @@ public class CalendarJSONHandler {
                         final JSONObject dayBranch = (JSONObject) monthBranch.get(dayNum);
                         for (final Object e : dayBranch.keySet()) {
                             final String eventID = (String) e;
-                            Logger.log("reading " + eventID);
                             final JSONObject eventBranch = (JSONObject) dayBranch.get(eventID);
 
                             final String eventTitle = (String) eventBranch.get("Title");
