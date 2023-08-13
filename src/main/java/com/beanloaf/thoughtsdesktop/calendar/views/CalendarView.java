@@ -9,10 +9,14 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -68,8 +72,8 @@ public class CalendarView extends ThoughtsView {
 
     /* Popup */
     private AnchorPane popupWindow;
-    private ComboBox<String> calendarAMPMSelector, calendarRecurringTypeSelector;
-    private Label calendarClosePopup;
+    private final ComboBox<String> calendarAMPMSelector, calendarRecurringTypeSelector;
+    private final Label calendarClosePopup;
 
 
     public CalendarView(final MainApplication main) {
@@ -154,9 +158,7 @@ public class CalendarView extends ThoughtsView {
         });
 
 
-        calendarNewEventButton.setOnMouseClicked(e -> {
-            selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
-        });
+        calendarNewEventButton.setOnMouseClicked(e -> selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true));
 
         calendarSmallSaveEventButton.setVisible(false);
         calendarSmallSaveEventButton.setOnAction(e -> {
@@ -222,9 +224,7 @@ public class CalendarView extends ThoughtsView {
         calendarRecurringTypeSelector.getItems().addAll("Day", "Week", "Month", "Year");
         calendarRecurringTypeSelector.getSelectionModel().select("Week");
 
-        calendarClosePopup.setOnMouseClicked(e -> {
-            popupWindow.setVisible(false);
-        });
+        calendarClosePopup.setOnMouseClicked(e -> popupWindow.setVisible(false));
 
 
         createPopup();
@@ -278,11 +278,12 @@ public class CalendarView extends ThoughtsView {
             activeMonths.remove(new Pair<>(currentMonth.getMonth(), currentMonth.getYear()));
         }
 
-        final CalendarMonth newMonth = activeMonths.get(new Pair<>(month.getMonth(), month.getYear()));
+        final Pair<Month, Integer> monthYear = new Pair<>(month.getMonth(), month.getYear());
+
+        final CalendarMonth newMonth = activeMonths.get(monthYear);
+
         currentMonth = newMonth != null ? newMonth : month;
-
-
-        activeMonths.put(new Pair<>(month.getMonth(), month.getYear()), currentMonth);
+        activeMonths.put(monthYear, currentMonth);
 
         createCalendarGUI();
 
@@ -317,16 +318,18 @@ public class CalendarView extends ThoughtsView {
 
                 if ((row == 0 && col < currentMonth.getStartingDayOfWeek())) { // first row, before the first day of the month
                     CalendarDay calendarDay = prevMonth.getDay(prevDays);
-                    if (calendarDay == null)
+                    if (calendarDay == null) {
                         calendarDay = new CalendarDay(prevMonth.getYear(), prevMonth.getMonth(), prevDays, this);
+                    }
                     prevDays++;
                     calendarFrame.add(calendarDay, col, row);
 
 
                 } else if (day >= monthLength) { // after the last day of the month
                     CalendarDay calendarDay = nextMonth.getDay(overflowDays);
-                    if (calendarDay == null)
+                    if (calendarDay == null) {
                         calendarDay = new CalendarDay(nextMonth.getYear(), nextMonth.getMonth(), overflowDays, this);
+                    }
                     overflowDays++;
                     calendarFrame.add(calendarDay, col, row);
 
@@ -336,8 +339,6 @@ public class CalendarView extends ThoughtsView {
 
                     CalendarDay calendarDay = currentMonth.getDay(day);
                     if (calendarDay == null) {
-                        Logger.log("adding a new calendar day for " + currentMonth.getMonth() + " " + day);
-
                         calendarDay = new CalendarDay(currentMonth.getYear(), currentMonth.getMonth(), day, this);
                         currentMonth.addDay(day, calendarDay);
                     }
@@ -526,6 +527,8 @@ public class CalendarView extends ThoughtsView {
         if (event.isClone) event = event.getClone();
 
         event.setEventTitle(calendarSmallEventTitleInput.getText());
+        event.setDate(calendarSmallDatePicker.getValue());
+
         event.setTime(calendarSmallHourInput.getText(), calendarSmallMinuteInput.getText(), calendarSmallAMPMSelector.getSelectionModel().getSelectedItem());
         event.setDescription(calendarSmallEventDescriptionInput.getText());
 
@@ -541,7 +544,6 @@ public class CalendarView extends ThoughtsView {
 
     private void deleteEvent(final DayEvent event) {
         calendarJson.removeEventFromJson(selectedEvent);
-
 
         final Month month = event.getDate().getMonth();
         final Integer year = event.getDate().getYear();

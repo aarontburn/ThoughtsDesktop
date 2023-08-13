@@ -5,7 +5,6 @@ import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import java.time.DateTimeException;
