@@ -1,4 +1,4 @@
-module com.example.thoughtsdesktop {
+module com.beanloaf.thoughtsdesktop {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;

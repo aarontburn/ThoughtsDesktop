@@ -17,6 +17,7 @@ import org.apache.commons.codec.binary.Base32;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 
 import java.io.*;
@@ -76,6 +77,8 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         Logger.log("Checking user file...");
 
         try {
+            TC.Directories.LOGIN_PATH.createNewFile();
+
             final BufferedReader bufferedReader = new BufferedReader(new FileReader(TC.Directories.LOGIN_PATH));
             final StringBuilder stringBuilder = new StringBuilder();
             String line = bufferedReader.readLine();
@@ -86,8 +89,17 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             }
             bufferedReader.close();
 
-            final JSONObject data = (JSONObject) new JSONParser()
-                    .parse(new StringReader(stringBuilder.toString()));
+            JSONObject data = null;
+            try {
+                data = (JSONObject) new JSONParser().parse(new StringReader(stringBuilder.toString()));
+            } catch (ParseException e) {
+
+            }
+
+            if (data == null) {
+                Logger.log(data);
+                return;
+            }
 
             final String email = (String) data.get("email");
             final String password = (String) data.get("password");
@@ -140,7 +152,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
                 },
                 0,
-                (Integer) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE),
+                ((Double) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE)).longValue(),
                 TimeUnit.MINUTES);
     }
 

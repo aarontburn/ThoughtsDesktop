@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop;
 
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
@@ -12,6 +13,7 @@ import com.beanloaf.thoughtsdesktop.notes.views.ListView;
 import com.beanloaf.thoughtsdesktop.global_views.NotesMenuBar;
 import com.beanloaf.thoughtsdesktop.global_views.SettingsView;
 import com.beanloaf.thoughtsdesktop.notes.views.TextView;
+import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
@@ -94,6 +96,10 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
     @Override
     public void start(final Stage stage) throws IOException {
+        TC.Directories.STORAGE_PATH.mkdirs();
+
+
+
         settingsHandler = new SettingsHandler();
         ThoughtsHelper.getInstance().addListener(this);
 

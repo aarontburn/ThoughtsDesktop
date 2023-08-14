@@ -161,11 +161,11 @@ public class SettingsHandler {
 
 
         if (returnValue instanceof Double) {
-            return (Double) returnValue;
+            return returnValue;
         } else if (returnValue instanceof Long) {
-            return ((Long) returnValue).intValue();
+            return ((Long) returnValue).doubleValue();
         } else if (returnValue instanceof Integer) {
-            return (Integer) returnValue;
+            return ((Integer) returnValue).doubleValue();
         }
 
 
