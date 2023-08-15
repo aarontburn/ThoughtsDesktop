@@ -261,12 +261,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         return this.scene.lookup("#" + id);
     }
 
-    public Stage getStage() {
-        return this.stage;
-    }
-
-
-
 
     @Override
     public void eventFired(final String eventName, final Object eventValue) {

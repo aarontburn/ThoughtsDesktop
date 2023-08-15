@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.objects.ScheduleCalendarDay;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
@@ -234,7 +235,7 @@ public class CalendarView extends ThoughtsView {
     private void createPopup() {
 
         popupWindow = (AnchorPane) findNodeByID("popupWindow");
-
+        SchedulePopup day = new SchedulePopup(this);
 
         // TODO: Drag popup window feature?
 //        popupWindow.setOnMouseDragged(e -> {
@@ -252,7 +253,7 @@ public class CalendarView extends ThoughtsView {
     public void resizePopupHeight(final double newHeight) {
         if (popupWindow == null) return;
 
-        final double anchor = newHeight * 1 / 6;
+        final double anchor = newHeight * 1 / 7;
 
         AnchorPane.setTopAnchor(popupWindow, anchor);
         AnchorPane.setBottomAnchor(popupWindow, anchor);
@@ -263,7 +264,7 @@ public class CalendarView extends ThoughtsView {
             if (popupWindow == null) return;
 
 
-            final double anchor = newWidth * 1 / 5;
+            final double anchor = newWidth * 1 / 6;
 
             AnchorPane.setLeftAnchor(popupWindow, anchor);
             AnchorPane.setRightAnchor(popupWindow, anchor);

@@ -53,6 +53,13 @@
 
 .calendarButton {
     -fx-background-color: rgb(78, 80, 82);
+    -fx-background-radius: 5;
+
+
+}
+
+.scroll-pane {
+    -fx-background-color:transparent;
 }
 
 

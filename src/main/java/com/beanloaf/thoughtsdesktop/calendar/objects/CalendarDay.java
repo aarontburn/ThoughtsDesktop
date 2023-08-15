@@ -16,7 +16,7 @@ import java.util.*;
 
 public class CalendarDay extends AnchorPane {
 
-    final CalendarView view;
+    private final CalendarView view;
 
     private final LocalDate date;
 
