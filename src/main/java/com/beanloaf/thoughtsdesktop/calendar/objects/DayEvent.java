@@ -1,11 +1,18 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
+import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.res.TC;
+import com.sun.javafx.scene.control.LabeledText;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -38,6 +45,7 @@ public class DayEvent extends Label {
     public DayEvent(final DayEvent dayEvent, final CalendarView view) {
         this(dayEvent.getDate(), dayEvent.getEventTitle(), view);
 
+
         this.isClone = true;
         this.clone = dayEvent;
         this.time = dayEvent.time;
@@ -56,10 +64,17 @@ public class DayEvent extends Label {
 
     // Constructor for reading an EXISTING event from file
     public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarView view) {
-        super(eventTitle);
+        super(eventTitle, new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
+
         this.view = view;
         this.day = day;
 
+
+        final Tooltip tooltip = new Tooltip(eventTitle);
+        tooltip.setShowDelay(Duration.seconds(0.5));
+        this.setTooltip(tooltip);
+
+        this.getStyleClass().add("day-event");
         this.setMaxWidth(Double.MAX_VALUE);
         this.eventTitle = eventTitle;
         this.setId(DAY_EVENT_ID);
@@ -68,8 +83,18 @@ public class DayEvent extends Label {
 
 
         this.getChildren().addListener((ListChangeListener<Node>) change -> {
-            getChildren().get(0).setId(DAY_EVENT_ID);
-            ((Text) getChildren().get(0)).setStrikethrough(isCompleted);
+
+            for (final Node node : getChildren()) {
+                node.setId(DAY_EVENT_ID);
+                if (node.getClass().getSimpleName().equals("LabeledText")) {
+                    final Text text = (Text) node;
+                    text.setStrikethrough(isCompleted);
+                }
+            }
+
+
+
+
         });
 
         this.setOnMouseClicked(e -> onClick());
@@ -163,10 +188,24 @@ public class DayEvent extends Label {
         this.isCompleted = isCompleted;
         if (this.clone != null) {
             clone.isCompleted = isCompleted;
-            ((Text) clone.getChildren().get(0)).setStrikethrough(isCompleted);
+
+            for (final Node node : clone.getChildren()) {
+                if (node.getClass().getSimpleName().equals("LabeledText")) {
+                    final Text text = (Text) node;
+                    text.setStrikethrough(isCompleted);
+                }
+            }
         }
 
-        if (getChildren().size() > 0) ((Text) getChildren().get(0)).setStrikethrough(isCompleted);
+        if (getChildren().size() > 0) {
+            for (final Node node : getChildren()) {
+                if (node.getClass().getSimpleName().equals("LabeledText")) {
+                    final Text text = (Text) node;
+                    text.setStrikethrough(isCompleted);
+                }
+            }
+
+        }
 
 
         if (save) view.saveEvent(this);
@@ -218,15 +257,14 @@ public class DayEvent extends Label {
             }
         }
         return formattedTime;
-
     }
 
 
-    @Override
-    public String toString() {
-        return "Year: " + day.getYear() + " Month: " + day.getMonth() + " Day: " + day.getDayOfMonth() + " Desc: " + description + " Time: " + time;
-
-    }
+//    @Override
+//    public String toString() {
+//        return "Year: " + day.getYear() + " Month: " + day.getMonth() + " Day: " + day.getDayOfMonth() + " Desc: " + description + " Time: " + time;
+//
+//    }
 
     @Override
     public boolean equals(final Object other) {
@@ -235,8 +273,6 @@ public class DayEvent extends Label {
         return this.eventID.equals(((DayEvent) other).getEventID());
 
     }
-
-
 
 
 }

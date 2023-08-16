@@ -41,25 +41,51 @@
 }
 
 
-.selected-label {
-    -fx-border-color: red;
-    -fx-padding: -1;
-}
+
 
 .events {
     -fx-font-size: 15;
-    -fx-padding: 24 12 12 12;
+    -fx-padding: 24 6 12 6;
+}
+
+.day-event {
+    -fx-border-color: rgba(25, 25, 25, 100);
+    -fx-border-width: 0.75;
+    -fx-border-radius: 3;
+    -fx-padding: 3;
+
+}
+
+.selected-day-event {
+    -fx-border-color: rgb(41, 163, 211);
 }
 
 .calendarButton {
     -fx-background-color: rgb(78, 80, 82);
     -fx-background-radius: 5;
+    -fx-border-color: transparent;
+}
 
-
+.calendarButton:hover {
+    -fx-border-color: rgb(41, 163, 211);
+    -fx-border-radius: 5;
 }
 
 .scroll-pane {
-    -fx-background-color:transparent;
+    -fx-background-color: transparent;
+}
+
+.tooltip {
+    -fx-font-family: Lato;
+    -fx-background-color: rgb(84, 88, 91);
+}
+
+
+.schedule {
+    -fx-border-color: rgba(25, 25, 25, 100);
+    -fx-border-width: 0.75;
+    -fx-border-radius: 3;
+    -fx-padding: 0 0 0 3;
 }
 
 

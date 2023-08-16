@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import javafx.scene.Node;
@@ -41,6 +42,7 @@ public class CalendarDay extends AnchorPane {
         scrollPane.getStyleClass().add("calendar-day");
         scrollPane.getStyleClass().add("edge-to-edge");
         scrollPane.fitToWidthProperty().set(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         scrollPane.skinProperty().addListener((observableValue, skin, t1) -> {
             StackPane stackPane = (StackPane) scrollPane.lookup("ScrollPane .viewport");
@@ -52,6 +54,7 @@ public class CalendarDay extends AnchorPane {
         eventContainer = new VBox();
         eventContainer.getStyleClass().add("events");
         eventContainer.setMinHeight(0);
+        eventContainer.setSpacing(2);
         scrollPane.setContent(eventContainer);
 
 
@@ -60,6 +63,9 @@ public class CalendarDay extends AnchorPane {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 onClick();
                 final Node node = (Node) e.getTarget();
+
+//                Logger.log(node.getId());
+
 
                 if (node.getId() != null && node.getId().equals(DayEvent.DAY_EVENT_ID)) {
                     if (node.getClass() == DayEvent.class) {
@@ -85,8 +91,8 @@ public class CalendarDay extends AnchorPane {
     }
 
     public void onClick() {
-        view.selectDay(this);
 
+        view.selectDay(this);
     }
 
     public Integer getDay() {

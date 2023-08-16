@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +24,7 @@ public class CalendarJSONHandler {
     private final CalendarView view;
 
     private JSONObject root;
-    private final Map<LocalDate, DayEvent> eventMap = new ConcurrentHashMap<>();
+    private final Map<LocalDate, List<DayEvent>> eventMap = new ConcurrentHashMap<>();
 
     public CalendarJSONHandler(final CalendarView view) {
         this.view = view;
@@ -84,7 +86,13 @@ public class CalendarJSONHandler {
                                 event.setTime(Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
                             }
 
-                            this.eventMap.put(eventDate, event);
+
+                            List<DayEvent> dayEventList = eventMap.get(eventDate);
+                            if (dayEventList == null) {
+                                dayEventList = new ArrayList<>();
+                                this.eventMap.put(eventDate, dayEventList);
+                            }
+                            dayEventList.add(event);
 
                         }
                     }
@@ -97,9 +105,10 @@ public class CalendarJSONHandler {
             Logger.log(e);
         }
 
-
         for (final LocalDate date : eventMap.keySet()) {
-            view.addEvent(date, eventMap.get(date));
+            for (final DayEvent event : eventMap.get(date)) {
+                view.addEvent(date, event);
+            }
         }
 
     }

@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
+import com.beanloaf.thoughtsdesktop.calendar.views.SchedulePopup;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -12,14 +13,15 @@ import java.util.List;
 
 public class ScheduleCalendarDay extends AnchorPane {
 
-    private final VBox eventContainer;
-    private final List<DayEvent> eventList = new ArrayList<>();
+    private final VBox scheduleContainer;
+    private final List<ScheduleEvent> scheduleList = new ArrayList<>();
+
+    private final SchedulePopup.Weekday weekday;
 
 
-
-    public ScheduleCalendarDay(final int weekday) {
+    public ScheduleCalendarDay(final SchedulePopup.Weekday weekday) {
         super();
-
+        this.weekday = weekday;
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
         this.getStyleClass().add("calendar-day");
 
@@ -36,22 +38,31 @@ public class ScheduleCalendarDay extends AnchorPane {
         this.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 0.0, 0.0, 0.0, 0.0));
 
 
-        eventContainer = new VBox();
-        eventContainer.getStyleClass().add("events");
-        eventContainer.setMinHeight(0);
-        scrollPane.setContent(eventContainer);
-
-
-        final Label dateLabel = new Label(Integer.toString(weekday));
-        this.getChildren().add(ThoughtsHelper.setAnchor(dateLabel, 4.0, null, null, 12.0));
+        scheduleContainer = new VBox();
+        scheduleContainer.getStyleClass().add("events");
+        scheduleContainer.setMinHeight(0);
+        scheduleContainer.setSpacing(3);
+        scrollPane.setContent(scheduleContainer);
 
     }
 
-    public DayEvent addEvent(final DayEvent event) {
-        eventList.add(event);
-        eventContainer.getChildren().add(event);
-        return event;
+    public void addSchedule(final Schedule schedule) {
+        final ScheduleEvent event = new ScheduleEvent(schedule, weekday);
 
+        scheduleList.add(event);
+        schedule.addReference(event);
+
+        scheduleContainer.getChildren().add(event);
+    }
+
+    public void removeSchedule(final Schedule schedule) {
+        final ScheduleEvent event = new ScheduleEvent(schedule, weekday);
+
+        scheduleList.remove(event);
+        schedule.removeReference(event);
+
+
+        scheduleContainer.getChildren().remove(event);
     }
 
 

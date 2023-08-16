@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
@@ -16,13 +17,13 @@ public class test {
 
 
     public static void main(String[] args) {
+        Logger.log(LocalTime.now().format(DateTimeFormatter.ofPattern("H")));
 
 
-        final String id = UUID.randomUUID().toString();
-
-        System.out.println(id);
 
     }
+
+
 
 
 

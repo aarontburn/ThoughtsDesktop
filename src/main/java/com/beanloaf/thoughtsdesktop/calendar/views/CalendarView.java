@@ -1,7 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.calendar.objects.ScheduleCalendarDay;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
@@ -33,48 +33,48 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CalendarView extends ThoughtsView {
 
-    private final GridPane calendarFrame; // (7 x 5)
 
     private final Map<Pair<Month, Integer>, CalendarMonth> activeMonths = new ConcurrentHashMap<>(); // key is Pair<Month, Year> (as an integer)
-
     private final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
 
     private CalendarMonth currentMonth;
     private CalendarDay selectedDay;
     private DayEvent selectedEvent;
-
     public CalendarJSONHandler calendarJson;
 
+    private GridPane calendarFrame; // (7 x 5)
 
     /*  Header  */
-    private final Label calendarMonthYearLabel;
-    private final Label calendarNextMonthButton, calendarPrevMonthButton;
-    private final Button calendarTestButton;
+    private Label calendarMonthYearLabel;
+    private Label calendarNextMonthButton, calendarPrevMonthButton;
+    private Button calendarTestButton, calendarNewScheduleButton;
 
 
     /*  Event Box   */
-    private final VBox calendarEventBox;
-    private final Label calendarDayLabel;
-    private final Button calendarNewEventButton;
+    private VBox calendarEventBox;
+    private Label calendarDayLabel;
+    private Button calendarNewEventButton;
 
     /*  Small Event Input */
-    private final AnchorPane calendarSmallEventFields;
-    private final TextField calendarSmallEventTitleInput;
-    private final DatePicker calendarSmallDatePicker;
-    private final TextField calendarSmallHourInput, calendarSmallMinuteInput;
-    private final TextArea calendarSmallEventDescriptionInput;
-    private final Button calendarSmallSaveEventButton, calendarSmallEditButton, calendarSmallDeleteButton;
-    private final ComboBox<String> calendarSmallAMPMSelector;
-    private final HBox calendarSmallFinalTime, calendarSmallTimeFields;
-    private final Label calendarSmallFinalTimeLabel;
-    private final CheckBox calendarSmallProgressCheckBox;
+    private AnchorPane calendarSmallEventFields;
+    private TextField calendarSmallEventTitleInput;
+    private DatePicker calendarSmallDatePicker;
+    private TextField calendarSmallHourInputFrom, calendarSmallMinuteInputFrom, calendarSmallHourInputTo, calendarSmallMinuteInputTo;
+    private TextArea calendarSmallEventDescriptionInput;
+    private Button calendarSmallSaveEventButton, calendarSmallEditButton, calendarSmallDeleteButton;
+    private ComboBox<String> calendarSmallAMPMSelectorFrom, calendarSmallAMPMSelectorTo;
+    private HBox calendarSmallFinalTime, calendarSmallTimeFields;
+    private Label calendarSmallFinalTimeLabel;
+    private CheckBox calendarSmallProgressCheckBox;
     private boolean calendarSmallProgressCheckBoxReady = true;
 
 
     /* Popup */
     private AnchorPane popupWindow;
-    private final ComboBox<String> calendarAMPMSelector, calendarRecurringTypeSelector;
-    private final Label calendarClosePopup;
+    private AnchorPane newEventPopup, schedulePopup;
+    private AnchorPane[] popupList;
+    private ComboBox<String> calendarAMPMSelector, calendarRecurringTypeSelector;
+    private Label calendarClosePopup;
 
 
     public CalendarView(final MainApplication main) {
@@ -82,6 +82,21 @@ public class CalendarView extends ThoughtsView {
         calendarJson = new CalendarJSONHandler(this);
 
 
+        locateNodes();
+
+        attachEvents();
+
+        final LocalDate now = LocalDate.now();
+        final CalendarMonth cMonth = activeMonths.get(new Pair<>(now.getMonth(), now.getYear()));
+
+        currentMonth = cMonth != null ? cMonth : new CalendarMonth(now.getMonth(), this);
+
+
+        changeMonth(currentMonth);
+
+    }
+
+    private void locateNodes() {
         calendarFrame = (GridPane) findNodeByID("calendarFrame");
 
         /*  Header  */
@@ -89,6 +104,7 @@ public class CalendarView extends ThoughtsView {
         calendarNextMonthButton = (Label) findNodeByID("calendarNextMonthButton");
         calendarPrevMonthButton = (Label) findNodeByID("calendarPrevMonthButton");
         calendarTestButton = (Button) findNodeByID("calendarTestButton");
+        calendarNewScheduleButton = (Button) findNodeByID("calendarNewScheduleButton");
 
         /*  Event Box   */
         calendarEventBox = (VBox) findNodeByID("calendarEventBox");
@@ -100,13 +116,17 @@ public class CalendarView extends ThoughtsView {
         calendarSmallEventFields = (AnchorPane) findNodeByID("calendarSmallEventFields");
         calendarSmallEventTitleInput = (TextField) findNodeByID("calendarSmallEventTitleInput");
         calendarSmallDatePicker = (DatePicker) findNodeByID("calendarSmallDatePicker");
-        calendarSmallHourInput = (TextField) findNodeByID("calendarSmallHourInput");
-        calendarSmallMinuteInput = (TextField) findNodeByID("calendarSmallMinuteInput");
+        calendarSmallHourInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallHourInputFrom"));
+        calendarSmallMinuteInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallMinuteInputFrom"));
+        calendarSmallHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallHourInputTo"));
+        calendarSmallMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallMinuteInputTo"));
         calendarSmallEventDescriptionInput = (TextArea) findNodeByID("calendarSmallEventDescriptionInput");
         calendarSmallSaveEventButton = (Button) findNodeByID("calendarSmallSaveEventButton");
         calendarSmallEditButton = (Button) findNodeByID("calendarSmallEditButton");
         calendarSmallDeleteButton = (Button) findNodeByID("calendarSmallDeleteButton");
-        calendarSmallAMPMSelector = (ComboBox<String>) findNodeByID("calendarSmallAMPMSelector");
+        calendarSmallAMPMSelectorFrom = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("calendarSmallAMPMSelectorFrom"));
+        calendarSmallAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("calendarSmallAMPMSelectorTo"));
+
         calendarSmallFinalTime = (HBox) findNodeByID("calendarSmallFinalTime");
         calendarSmallTimeFields = (HBox) findNodeByID("calendarSmallTimeFields");
         calendarSmallFinalTimeLabel = (Label) findNodeByID("calendarSmallFinalTimeLabel");
@@ -114,19 +134,14 @@ public class CalendarView extends ThoughtsView {
 
 
         /*  Popup   */
+        popupWindow = (AnchorPane) findNodeByID("popupWindow");
+        newEventPopup = (AnchorPane) findNodeByID("newEventPopup");
+        schedulePopup = (AnchorPane) findNodeByID("schedulePopup");
+        popupList = new AnchorPane[]{newEventPopup, schedulePopup};
+
         calendarAMPMSelector = (ComboBox<String>) findNodeByID("calendarAMPMSelector");
         calendarRecurringTypeSelector = (ComboBox<String>) findNodeByID("calendarRecurringTypeSelector");
         calendarClosePopup = (Label) findNodeByID("calendarClosePopup");
-
-        attachEvents();
-
-        final LocalDate now = LocalDate.now();
-        final CalendarMonth cMonth = activeMonths.get(new Pair<>(now.getMonth(), now.getYear()));
-
-        currentMonth = cMonth != null ? cMonth : new CalendarMonth(now.getMonth(), this);
-
-
-        changeMonth(currentMonth);
 
     }
 
@@ -143,6 +158,10 @@ public class CalendarView extends ThoughtsView {
 
         });
 
+        calendarNewScheduleButton.setOnAction(e -> {
+            setVisiblePopup(schedulePopup);
+        });
+
 
 
 
@@ -154,12 +173,14 @@ public class CalendarView extends ThoughtsView {
             calendarSmallProgressCheckBox.setText(isChecked ? "Completed" : "In-progress");
 
 
-
             if (calendarSmallProgressCheckBoxReady) selectedEvent.setCompleted(isChecked, true);
         });
 
 
-        calendarNewEventButton.setOnMouseClicked(e -> selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true));
+        calendarNewEventButton.setOnMouseClicked(e -> {
+            if (selectedDay != null)
+                selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
+        });
 
         calendarSmallSaveEventButton.setVisible(false);
         calendarSmallSaveEventButton.setOnAction(e -> {
@@ -175,39 +196,35 @@ public class CalendarView extends ThoughtsView {
             deleteEvent(selectedEvent);
         });
 
-
-
-
-
-
-
-        calendarSmallHourInput.textProperty().addListener((observableValue, s, value) -> {
-            if (!value.matches("\\d*") || value.isEmpty()) {
-                calendarSmallHourInput.setText(value.replaceAll("\\D", ""));
-                return;
-            }
+        calendarSmallHourInputFrom.textProperty().addListener((observableValue, s, value) -> {
+            if (value.isEmpty()) return;
 
             try {
                 final int hour = Integer.parseInt(value);
-                calendarSmallAMPMSelector.setDisable(hour > 12);
-
+                calendarSmallAMPMSelectorFrom.setDisable(hour > 12);
 
             } catch (NumberFormatException e) {
                 Logger.log("Failed to convert " + value + " to an integer.");
             }
 
-            if (value.length() >= 2) calendarSmallMinuteInput.requestFocus();
+            if (value.length() >= 2) calendarSmallMinuteInputFrom.requestFocus();
         });
 
-        calendarSmallMinuteInput.textProperty().addListener((observableValue, s, value) -> {
-            if (!value.matches("\\d*")) {
-                calendarSmallMinuteInput.setText(value.replaceAll("\\D", ""));
+
+        calendarSmallHourInputTo.textProperty().addListener(((observableValue, s, value) -> {
+            if (value.isEmpty()) return;
+
+            try {
+                final int hour = Integer.parseInt(value);
+                calendarSmallAMPMSelectorFrom.setDisable(hour > 12);
+
+            } catch (NumberFormatException e) {
+                Logger.log("Failed to convert " + value + " to an integer.");
             }
-        });
 
-        calendarSmallAMPMSelector.getItems().clear();
-        calendarSmallAMPMSelector.getItems().addAll("AM", "PM");
-        calendarSmallAMPMSelector.getSelectionModel().select("PM");
+            if (value.length() >= 2) calendarSmallMinuteInputTo.requestFocus();
+        }));
+
 
 
         calendarSmallEditButton.setOnAction(e -> {
@@ -217,24 +234,33 @@ public class CalendarView extends ThoughtsView {
 
 
         /*  Popup   */
-        calendarAMPMSelector.getItems().clear();
-        calendarAMPMSelector.getItems().addAll("AM", "PM");
-        calendarAMPMSelector.getSelectionModel().select("PM");
+        setVisiblePopup(null);
+
+
+        CH.setAMPMComboBox(calendarAMPMSelector);
 
         calendarRecurringTypeSelector.getItems().clear();
         calendarRecurringTypeSelector.getItems().addAll("Day", "Week", "Month", "Year");
         calendarRecurringTypeSelector.getSelectionModel().select("Week");
 
-        calendarClosePopup.setOnMouseClicked(e -> popupWindow.setVisible(false));
+        calendarClosePopup.setOnMouseClicked(e -> setVisiblePopup(null));
 
 
         createPopup();
 
     }
 
+    private void setVisiblePopup(final AnchorPane visiblePopup) {
+        for (final AnchorPane pane : popupList) {
+            pane.setVisible(false);
+        }
+        popupWindow.setVisible(visiblePopup != null);
+
+        if (visiblePopup != null) visiblePopup.setVisible(true);
+    }
+
     private void createPopup() {
 
-        popupWindow = (AnchorPane) findNodeByID("popupWindow");
         SchedulePopup day = new SchedulePopup(this);
 
         // TODO: Drag popup window feature?
@@ -433,7 +459,9 @@ public class CalendarView extends ThoughtsView {
         calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
                 + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
 
+
         calendarSmallEventFields.setVisible(false);
+
 
         calendarEventBox.getChildren().clear();
 
@@ -449,13 +477,14 @@ public class CalendarView extends ThoughtsView {
     }
 
     public void selectEvent(DayEvent event, final boolean editable) {
-        event.getStyleClass().add("selected-label");
-        if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-label");
+        event.getStyleClass().add("selected-day-event");
+        if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-day-event");
         selectedEvent = event;
 
         if (event.isClone) event = event.getClone();
 
         calendarSmallEventFields.setVisible(true);
+
 
         toggleSmallEventFields(editable);
         calendarSmallSaveEventButton.setVisible(editable);
@@ -480,18 +509,15 @@ public class CalendarView extends ThoughtsView {
             if (hour > 12 && !isAm) hour = hour - 12;
 
 
-            calendarSmallHourInput.setText(String.valueOf(hour));
-            calendarSmallMinuteInput.setText(String.valueOf(time.getMinute()));
+            calendarSmallHourInputFrom.setText(String.valueOf(hour));
+            calendarSmallMinuteInputFrom.setText(String.valueOf(time.getMinute()));
 
-            calendarSmallAMPMSelector.getSelectionModel().select(isAm ? "AM" : "PM");
+            calendarSmallAMPMSelectorFrom.getSelectionModel().select(isAm ? "AM" : "PM");
 
         } else {
-            calendarSmallHourInput.setText("");
-            calendarSmallMinuteInput.setText("");
+            calendarSmallHourInputFrom.setText("");
+            calendarSmallMinuteInputFrom.setText("");
         }
-
-
-
 
 
         calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
@@ -519,7 +545,7 @@ public class CalendarView extends ThoughtsView {
         calendarSmallTimeFields.setVisible(isEnabled);
         calendarSmallFinalTime.setVisible(isDisabled);
 
-        calendarSmallAMPMSelector.setDisable(isDisabled);
+        calendarSmallAMPMSelectorFrom.setDisable(isDisabled);
         calendarSmallEventDescriptionInput.setDisable(isDisabled);
 
     }
@@ -530,7 +556,7 @@ public class CalendarView extends ThoughtsView {
         event.setEventTitle(calendarSmallEventTitleInput.getText());
         event.setDate(calendarSmallDatePicker.getValue());
 
-        event.setTime(calendarSmallHourInput.getText(), calendarSmallMinuteInput.getText(), calendarSmallAMPMSelector.getSelectionModel().getSelectedItem());
+        event.setTime(calendarSmallHourInputFrom.getText(), calendarSmallMinuteInputFrom.getText(), calendarSmallAMPMSelectorFrom.getSelectionModel().getSelectedItem());
         event.setDescription(calendarSmallEventDescriptionInput.getText());
 
         final LocalTime time = event.getTime();
@@ -556,10 +582,8 @@ public class CalendarView extends ThoughtsView {
             throw new RuntimeException("Could not find month to delete event " + event.getEventTitle() + " from.");
 
 
-
         calendarMonth.getDay(day).removeEvent(event);
         selectDay(selectedDay);
-
 
 
     }
