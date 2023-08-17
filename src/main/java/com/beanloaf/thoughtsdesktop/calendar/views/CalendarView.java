@@ -63,8 +63,8 @@ public class CalendarView extends ThoughtsView {
     private TextArea calendarSmallEventDescriptionInput;
     private Button calendarSmallSaveEventButton, calendarSmallEditButton, calendarSmallDeleteButton;
     private ComboBox<String> calendarSmallAMPMSelectorFrom, calendarSmallAMPMSelectorTo;
-    private HBox calendarSmallFinalTime, calendarSmallTimeFields;
-    private Label calendarSmallFinalTimeLabel;
+    private HBox calendarSmallStartTimeFields, calendarSmallEndTimeFields;
+    private Label calendarSmallFinalStartTimeLabel, calendarSmallFinalEndTimeLabel;
     private CheckBox calendarSmallProgressCheckBox;
     private boolean calendarSmallProgressCheckBoxReady = true;
 
@@ -127,9 +127,13 @@ public class CalendarView extends ThoughtsView {
         calendarSmallAMPMSelectorFrom = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("calendarSmallAMPMSelectorFrom"));
         calendarSmallAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("calendarSmallAMPMSelectorTo"));
 
-        calendarSmallFinalTime = (HBox) findNodeByID("calendarSmallFinalTime");
-        calendarSmallTimeFields = (HBox) findNodeByID("calendarSmallTimeFields");
-        calendarSmallFinalTimeLabel = (Label) findNodeByID("calendarSmallFinalTimeLabel");
+
+        calendarSmallEndTimeFields = (HBox) findNodeByID("calendarSmallEndTimeFields");
+        calendarSmallStartTimeFields = (HBox) findNodeByID("calendarSmallStartTimeFields");
+
+        calendarSmallFinalStartTimeLabel = (Label) findNodeByID("calendarSmallFinalStartTimeLabel");
+        calendarSmallFinalEndTimeLabel = (Label) findNodeByID("calendarSmallFinalEndTimeLabel");
+
         calendarSmallProgressCheckBox = (CheckBox) findNodeByID("calendarSmallProgressCheckBox");
 
 
@@ -210,13 +214,17 @@ public class CalendarView extends ThoughtsView {
             if (value.length() >= 2) calendarSmallMinuteInputFrom.requestFocus();
         });
 
+        calendarSmallMinuteInputFrom.textProperty().addListener((observableValue, s, value) -> {
+            if (value.length() >= 2) calendarSmallHourInputTo.requestFocus();
+        });
+
 
         calendarSmallHourInputTo.textProperty().addListener(((observableValue, s, value) -> {
             if (value.isEmpty()) return;
 
             try {
                 final int hour = Integer.parseInt(value);
-                calendarSmallAMPMSelectorFrom.setDisable(hour > 12);
+                calendarSmallAMPMSelectorTo.setDisable(hour > 12);
 
             } catch (NumberFormatException e) {
                 Logger.log("Failed to convert " + value + " to an integer.");
@@ -224,6 +232,11 @@ public class CalendarView extends ThoughtsView {
 
             if (value.length() >= 2) calendarSmallMinuteInputTo.requestFocus();
         }));
+
+
+        calendarSmallMinuteInputTo.textProperty().addListener((observableValue, s, value) -> {
+            if (value.length() >= 2) calendarSmallEventDescriptionInput.requestFocus();
+        });
 
 
 
@@ -437,10 +450,10 @@ public class CalendarView extends ThoughtsView {
         event.setDescription(desc);
 
         if (time == null || !time.contains(":")) {
-            event.setTime(null);
+            event.setStartTime(null);
         } else {
             final String[] splitTime = time.split(":");
-            event.setTime(Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
+            event.setStartTime(Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
         }
 
         calendarJson.addEventToJson(event);
@@ -498,29 +511,38 @@ public class CalendarView extends ThoughtsView {
         calendarSmallProgressCheckBox.setSelected(event.isCompleted());
         calendarSmallProgressCheckBoxReady = true;
 
-        final LocalTime time = event.getTime();
+        final LocalTime startTime = event.getStartTime();
+        final LocalTime endTime = event.getEndTime();
 
-        if (time != null) {
-            final String formattedTime = time.format(DateTimeFormatter.ofPattern("h:mm a"));
-            final boolean isAm = formattedTime.contains("AM");
+        if (startTime != null) {
+            final String formattedStartTime = startTime.format(DateTimeFormatter.ofPattern("h:mm a"));
+            final boolean startIsAM = formattedStartTime.contains("AM");
 
-
-            int hour = time.getHour();
-            if (hour > 12 && !isAm) hour = hour - 12;
-
-
-            calendarSmallHourInputFrom.setText(String.valueOf(hour));
-            calendarSmallMinuteInputFrom.setText(String.valueOf(time.getMinute()));
-
-            calendarSmallAMPMSelectorFrom.getSelectionModel().select(isAm ? "AM" : "PM");
+            calendarSmallHourInputFrom.setText(startTime.format(DateTimeFormatter.ofPattern("hh")));
+            calendarSmallMinuteInputFrom.setText(startTime.format(DateTimeFormatter.ofPattern("mm")));
+            calendarSmallAMPMSelectorFrom.getSelectionModel().select(startIsAM ? "AM" : "PM");
 
         } else {
             calendarSmallHourInputFrom.setText("");
             calendarSmallMinuteInputFrom.setText("");
         }
 
+        if (endTime != null) {
+            final String formattedEndTime = endTime.format(DateTimeFormatter.ofPattern("h:mm a"));
+            final boolean endIsAM = formattedEndTime.contains("AM");
 
-        calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
+            calendarSmallHourInputTo.setText(endTime.format(DateTimeFormatter.ofPattern("hh")));
+            calendarSmallMinuteInputTo.setText(endTime.format(DateTimeFormatter.ofPattern("mm")));
+            calendarSmallAMPMSelectorTo.getSelectionModel().select(endIsAM ? "AM" : "PM");
+
+        } else {
+            calendarSmallHourInputTo.setText("");
+            calendarSmallMinuteInputTo.setText("");
+        }
+
+
+        calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "to " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
 
 
         calendarSmallEventDescriptionInput.setText(event.getDescription());
@@ -542,8 +564,11 @@ public class CalendarView extends ThoughtsView {
             while (styles.contains(disableDatePickerStyle)) styles.remove(disableDatePickerStyle);
         }
 
-        calendarSmallTimeFields.setVisible(isEnabled);
-        calendarSmallFinalTime.setVisible(isDisabled);
+        calendarSmallStartTimeFields.setVisible(isEnabled);
+        calendarSmallFinalStartTimeLabel.setVisible(isDisabled);
+
+        calendarSmallEndTimeFields.setVisible(isEnabled);
+        calendarSmallFinalEndTimeLabel.setVisible(isDisabled);
 
         calendarSmallAMPMSelectorFrom.setDisable(isDisabled);
         calendarSmallEventDescriptionInput.setDisable(isDisabled);
@@ -556,11 +581,14 @@ public class CalendarView extends ThoughtsView {
         event.setEventTitle(calendarSmallEventTitleInput.getText());
         event.setDate(calendarSmallDatePicker.getValue());
 
-        event.setTime(calendarSmallHourInputFrom.getText(), calendarSmallMinuteInputFrom.getText(), calendarSmallAMPMSelectorFrom.getSelectionModel().getSelectedItem());
+        event.setStartTime(calendarSmallHourInputFrom.getText(), calendarSmallMinuteInputFrom.getText(), calendarSmallAMPMSelectorFrom.getSelectionModel().getSelectedItem());
+        event.setEndTime(calendarSmallHourInputTo.getText(), calendarSmallMinuteInputTo.getText(), calendarSmallAMPMSelectorTo.getSelectionModel().getSelectedItem());
         event.setDescription(calendarSmallEventDescriptionInput.getText());
 
-        final LocalTime time = event.getTime();
-        calendarSmallFinalTimeLabel.setText(time == null ? "" : "@ " + time.format(DateTimeFormatter.ofPattern("h:mm a")));
+        final LocalTime startTime = event.getStartTime();
+        final LocalTime endTime = event.getStartTime();
+        calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "@ " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
 
         calendarSmallSaveEventButton.setVisible(false);
         toggleSmallEventFields(false);

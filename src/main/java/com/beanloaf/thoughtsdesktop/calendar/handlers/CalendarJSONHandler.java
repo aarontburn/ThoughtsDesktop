@@ -1,17 +1,21 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.ScheduleData;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -29,16 +33,18 @@ public class CalendarJSONHandler {
     public CalendarJSONHandler(final CalendarView view) {
         this.view = view;
 
+        TC.Directories.CALENDAR_PATH.mkdir();
+
         try {
-            TC.Directories.CALENDAR_PATH.createNewFile();
-            this.root = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.CALENDAR_PATH.toPath())));
+            TC.Directories.CALENDAR_DATA_PATH.createNewFile();
+            this.root = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.CALENDAR_DATA_PATH.toPath())));
 
             if (root == null) root = new JSONObject();
 
         } catch (Exception e) {
-            TC.Directories.CALENDAR_PATH.delete();
+            TC.Directories.CALENDAR_DATA_PATH.delete();
             try {
-                TC.Directories.CALENDAR_PATH.createNewFile();
+                TC.Directories.CALENDAR_DATA_PATH.createNewFile();
             } catch (Exception error) {
                 Logger.log(e);
             }
@@ -69,7 +75,8 @@ public class CalendarJSONHandler {
 
                             final String eventTitle = (String) eventBranch.get("Title");
                             final String description = (String) eventBranch.get("Description");
-                            final String time = (String) eventBranch.get("Time");
+                            final String startTime = (String) eventBranch.get("Start Time");
+                            final String endTime = (String) eventBranch.get("End Time");
                             final Boolean isCompleted = (Boolean) eventBranch.get("Completed");
 
 
@@ -79,11 +86,27 @@ public class CalendarJSONHandler {
                             event.setDescription(description);
                             event.setCompleted(isCompleted != null ? isCompleted : false, false);
 
-                            if (time == null || !time.contains(":")) {
-                                event.setTime(null);
+                            if (startTime == null) {
+                                event.setStartTime(null);
                             } else {
-                                final String[] splitTime = time.split(":");
-                                event.setTime(Integer.parseInt(splitTime[0]), Integer.parseInt(splitTime[1]));
+                                try {
+                                    final LocalTime parsedStartTime = LocalTime.parse(startTime);
+                                    event.setStartTime(parsedStartTime);
+                                } catch (DateTimeParseException parseException) {
+                                    event.setStartTime(null);
+                                }
+                            }
+
+
+                            if (endTime == null) {
+                                event.setEndTime(null);
+                            } else {
+                                try {
+                                    final LocalTime parsedEndTime = LocalTime.parse(endTime);
+                                    event.setEndTime(parsedEndTime);
+                                } catch (DateTimeParseException parseException) {
+                                    event.setEndTime(null);
+                                }
                             }
 
 
@@ -152,15 +175,17 @@ public class CalendarJSONHandler {
                 dayBranch.put(event.getEventID(), eventBranch);
             }
 
-            final LocalTime time = event.getTime();
+            final LocalTime startTime = event.getStartTime();
+            final LocalTime endTime = event.getEndTime();
 
 
             eventBranch.put("Title", event.getEventTitle());
             eventBranch.put("Description", event.getDescription());
-            eventBranch.put("Time", time != null ? time.getHour() + ":" + time.getMinute() : "");
+            eventBranch.put("Start Time", startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
+            eventBranch.put("End Time", endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
             eventBranch.put("Completed", completed);
 
-            saveJson();
+            saveCalendarJSON();
         }).start();
 
 
@@ -191,24 +216,51 @@ public class CalendarJSONHandler {
             }
 
 
-            saveJson();
+            saveCalendarJSON();
 
         }).start();
     }
 
 
-    public void saveJson() {
+    public void saveCalendarJSON() {
         Logger.log("Saving calendar.json");
         try {
-            TC.Directories.CALENDAR_PATH.createNewFile();
+            TC.Directories.CALENDAR_DATA_PATH.createNewFile();
 
-            try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.CALENDAR_PATH)) {
+            try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.CALENDAR_DATA_PATH)) {
                 fWriter.write(root.toString().getBytes());
             }
         } catch (Exception e) {
             Logger.log(e);
         }
 
+    }
+
+    public void saveScheduleData(final ScheduleData data) {
+        Logger.log("Saving schedule " + data.getScheduleName());
+
+        TC.Directories.CALENDAR_SCHEDULES_PATH.mkdir();
+        final File scheduleFile = new File(TC.Directories.CALENDAR_SCHEDULES_PATH, data.getId() + ".json");
+
+
+        try {
+            scheduleFile.createNewFile();
+
+            final JSONObject json = new JSONObject();
+
+            json.put("Schedule Name", data.getScheduleName());
+            json.put("Start Date", data.getStartDate() != null ? data.getStartDate().toString() : "");
+            json.put("End Date", data.getEndDate() != null ? data.getEndDate().toString() : "");
+            json.put("ID", data.getId());
+
+            // TODO: add events
+
+            try (FileOutputStream fWriter = new FileOutputStream(scheduleFile)) {
+                fWriter.write(json.toString().getBytes());
+            }
+        } catch (Exception e) {
+            Logger.log(e);
+        }
 
     }
 

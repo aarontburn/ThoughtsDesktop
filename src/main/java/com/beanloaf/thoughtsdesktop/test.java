@@ -5,6 +5,7 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoField;
 import java.util.Calendar;
 import java.util.Date;
@@ -17,7 +18,17 @@ public class test {
 
 
     public static void main(String[] args) {
-        Logger.log(LocalTime.now().format(DateTimeFormatter.ofPattern("H")));
+        final String time = "07:30 PM";
+
+
+        LocalTime t = null;
+        try {
+            t = LocalTime.parse(time, DateTimeFormatter.ofPattern("hh:mm a"));
+        } catch (DateTimeParseException parseException) {
+            parseException.printStackTrace();
+        }
+
+        Logger.log(t);
 
 
 

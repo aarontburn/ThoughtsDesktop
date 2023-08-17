@@ -3,8 +3,6 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
-import com.beanloaf.thoughtsdesktop.res.TC;
-import com.sun.javafx.scene.control.LabeledText;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -27,7 +25,8 @@ public class DayEvent extends Label {
     private final CalendarView view;
 
     private LocalDate day;
-    private LocalTime time;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String eventTitle;
     private String description;
     private final String eventID;
@@ -42,17 +41,18 @@ public class DayEvent extends Label {
 
 
     // Cloning constructor, used to tie the eventbox object to the one in the grid
-    public DayEvent(final DayEvent dayEvent, final CalendarView view) {
-        this(dayEvent.getDate(), dayEvent.getEventTitle(), view);
+    public DayEvent(final DayEvent clone, final CalendarView view) {
+        this(clone.getDate(), clone.getEventTitle(), view);
 
 
         this.isClone = true;
-        this.clone = dayEvent;
-        this.time = dayEvent.time;
-        this.description = dayEvent.description;
-        this.isCompleted = dayEvent.isCompleted;
+        this.clone = clone;
+        this.startTime = clone.startTime;
+        this.endTime = clone.endTime;
+        this.description = clone.description;
+        this.isCompleted = clone.isCompleted;
 
-        this.setText(getDisplayTime(time) + eventTitle);
+        this.setText(getDisplayTime(startTime) + eventTitle);
     }
 
 
@@ -109,57 +109,45 @@ public class DayEvent extends Label {
     }
 
 
-    public void setTime(final LocalTime time) {
-        this.time = time;
-
-
-        final String newText = getDisplayTime(time) + eventTitle;
-
+    public void setStartTime(final LocalTime startTime) {
+        this.startTime = startTime;
+        final String newText = getDisplayTime(startTime) + eventTitle;
         setText(newText);
-
         if (this.clone != null) {
-            clone.time = time;
+            clone.startTime = startTime;
             clone.setText(newText);
         }
 
     }
 
 
-    public void setTime(final int hour, final int minute) {
+    public void setStartTime(final int hour, final int minute) {
         try {
-            setTime(LocalTime.of(hour, minute));
+            setStartTime(LocalTime.of(hour, minute));
         } catch (DateTimeException e) {
-            this.time = null;
+            this.startTime = null;
+        }
+    }
+
+    public void setStartTime(final String hourString, final String minuteString, final String period) {
+        setStartTime(CH.validateStringIntoTime(hourString, minuteString, period));
+    }
+
+
+
+    public void setEndTime(final LocalTime endTime) {
+        this.endTime = endTime;
+        if (this.clone != null) {
+            clone.startTime = endTime;
         }
 
     }
 
-    public void setTime(final String hourString, final String minuteString, final String period) {
-        try {
-            int hour = Integer.parseInt(hourString);
-            final int minute = Integer.parseInt(minuteString);
-
-            if (!(period.equals("AM") || period.equals("PM")))
-                throw new IllegalArgumentException("Period needs to be AM or PM: " + period);
-
-            final boolean isPM = period.equals("PM");
-
-            if (hour == 12 && !isPM) {
-                hour = 0;
-            } else if (hour < 12 && isPM) {
-                hour += 12;
-            }
-
-            if (hour >= 24) hour = 0; // since military time goes from 0 to 23
-
-            setTime(hour, minute);
-
-        } catch (NumberFormatException e) {
-            this.time = null;
-        }
-
-
+    public void setEndTime(final String hourString, final String minuteString, final String period) {
+        setEndTime(CH.validateStringIntoTime(hourString, minuteString, period));
     }
+
+
 
 
     public void setEventTitle(final String eventTitle) {
@@ -229,8 +217,12 @@ public class DayEvent extends Label {
         return this.day;
     }
 
-    public LocalTime getTime() {
-        return this.time;
+    public LocalTime getStartTime() {
+        return this.startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return this.endTime;
     }
 
     public String getDescription() {

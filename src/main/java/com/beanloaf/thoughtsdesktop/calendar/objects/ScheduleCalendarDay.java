@@ -16,10 +16,10 @@ public class ScheduleCalendarDay extends AnchorPane {
     private final VBox scheduleContainer;
     private final List<ScheduleEvent> scheduleList = new ArrayList<>();
 
-    private final SchedulePopup.Weekday weekday;
+    private final Weekday weekday;
 
 
-    public ScheduleCalendarDay(final SchedulePopup.Weekday weekday) {
+    public ScheduleCalendarDay(final Weekday weekday) {
         super();
         this.weekday = weekday;
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
@@ -65,5 +65,12 @@ public class ScheduleCalendarDay extends AnchorPane {
         scheduleContainer.getChildren().remove(event);
     }
 
+    public List<ScheduleEvent> getScheduleList() {
+        return this.scheduleList;
+    }
+
+    public Weekday getWeekday() {
+        return this.weekday;
+    }
 
 }

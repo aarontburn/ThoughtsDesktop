@@ -25,7 +25,7 @@
    <children>
       <AnchorPane VBox.vgrow="ALWAYS">
          <children>
-            <SplitPane dividerPositions="0.1941544885177453" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane dividerPositions="0.30427974947807934" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
@@ -40,7 +40,7 @@
                                  <children>
                                     <ScrollPane fitToWidth="true" layoutX="-14.0" maxWidth="1.7976931348623157E308" styleClass="edge-to-edge" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <content>
-                                          <VBox fx:id="calendarEventBox" prefHeight="34.0" prefWidth="339.0" styleClass="event-box" />
+                                          <VBox fx:id="calendarEventBox" prefHeight="34.0" prefWidth="339.0" spacing="5.0" styleClass="event-box" />
                                        </content>
                                     </ScrollPane>
                                  </children>
@@ -98,11 +98,28 @@
                                           </AnchorPane>
                                        </children>
                                     </HBox>
+                                    <FlowPane fx:id="calendar" alignment="CENTER" hgap="8.0" vgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0">
+                                       <padding>
+                                          <Insets right="15.0" />
+                                       </padding>
+                                       <children>
+                                          <Label fx:id="calendarSmallFinalStartTimeLabel" alignment="CENTER" text="\@ 11:59 PM" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Lato Regular" size="25.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="calendarSmallFinalEndTimeLabel" alignment="CENTER" text="to 11:59 AM" textAlignment="CENTER">
+                                             <font>
+                                                <Font name="Lato Regular" size="25.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </FlowPane>
                                     <FlowPane alignment="CENTER" layoutY="211.0" vgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0">
                                        <children>
                                           <AnchorPane>
                                              <children>
-                                                <HBox fx:id="calendarSmallTimeFields" alignment="CENTER" layoutY="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <HBox fx:id="calendarSmallStartTimeFields" alignment="CENTER" layoutY="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <AnchorPane>
                                                          <children>
@@ -149,20 +166,11 @@
                                                       </AnchorPane>
                                                    </children>
                                                 </HBox>
-                                                <HBox fx:id="calendarSmallFinalTime" alignment="CENTER" layoutX="10.0" layoutY="18.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <children>
-                                                      <Label fx:id="calendarSmallFinalTimeLabel" text="\@ 11:59 PM">
-                                                         <font>
-                                                            <Font name="Lato Regular" size="25.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </HBox>
                                              </children>
                                           </AnchorPane>
                                           <AnchorPane>
                                              <children>
-                                                <HBox fx:id="calendarSmallTimeFields1" alignment="CENTER" layoutY="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <HBox fx:id="calendarSmallEndTimeFields" alignment="CENTER" layoutY="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
                                                       <AnchorPane>
                                                          <children>
@@ -196,7 +204,7 @@
                                                                   </Label>
                                                                </children>
                                                             </GridPane>
-                                                            <Label alignment="TOP_CENTER" layoutY="9.0" prefHeight="32.0" prefWidth="32.0" text="to" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label alignment="TOP_CENTER" layoutY="9.0" prefHeight="32.0" prefWidth="32.0" text="to" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <font>
                                                                   <Font size="20.0" />
                                                                </font>
@@ -207,15 +215,6 @@
                                                             <ComboBox fx:id="calendarSmallAMPMSelectorTo" layoutX="142.0" prefHeight="32.0" prefWidth="61.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
                                                          </children>
                                                       </AnchorPane>
-                                                   </children>
-                                                </HBox>
-                                                <HBox fx:id="calendarSmallFinalTime1" alignment="CENTER" layoutX="10.0" layoutY="18.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <children>
-                                                      <Label fx:id="calendarSmallFinalTimeLabel1" text="\@ 11:59 PM">
-                                                         <font>
-                                                            <Font name="Lato Regular" size="25.0" />
-                                                         </font>
-                                                      </Label>
                                                    </children>
                                                 </HBox>
                                              </children>
@@ -623,7 +622,7 @@
                                     </GridPane>
                                     <AnchorPane fx:id="scheduleEventBox" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <ScrollPane fitToWidth="true" layoutX="112.0" layoutY="32.0" prefHeight="302.0" prefWidth="455.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                          <ScrollPane fitToWidth="true" layoutX="112.0" layoutY="32.0" prefHeight="224.0" prefWidth="552.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                              <content>
                                                 <VBox prefHeight="41.0" prefWidth="785.0" spacing="7.0">
                                                    <children>
@@ -729,12 +728,17 @@
                                              </content>
                                           </ScrollPane>
                                           <Button fx:id="scheduleNewEventButton" mnemonicParsing="false" styleClass="calendarButton" text="New Event" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                          <Button fx:id="scheduleSaveScheduleButton" layoutX="412.0" layoutY="277.0" mnemonicParsing="false" styleClass="calendarButton" text="Save Schedule" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Button>
                                        </children>
                                        <GridPane.margin>
                                           <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                                        </GridPane.margin>
                                     </AnchorPane>
-                                    <AnchorPane prefHeight="327.0" prefWidth="543.0" GridPane.rowIndex="1">
+                                    <AnchorPane prefHeight="327.0" GridPane.rowIndex="1">
                                        <children>
                                           <HBox layoutX="4.0" layoutY="20.0" minWidth="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                              <children>
@@ -757,7 +761,7 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <Button fx:id="scheduleSaveButton" layoutX="477.0" layoutY="287.0" mnemonicParsing="false" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                          <Button fx:id="scheduleSaveEventButton" layoutX="477.0" layoutY="287.0" mnemonicParsing="false" styleClass="calendarButton" text="Save Event" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                              <font>
                                                 <Font size="16.0" />
                                              </font>

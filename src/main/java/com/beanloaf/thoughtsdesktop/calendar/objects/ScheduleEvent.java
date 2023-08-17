@@ -12,9 +12,9 @@ public class ScheduleEvent extends Label {
 
 
     private final Schedule schedule;
-    private final SchedulePopup.Weekday weekday;
+    private final Weekday weekday;
 
-    public ScheduleEvent(final Schedule schedule, final SchedulePopup.Weekday weekday) {
+    public ScheduleEvent(final Schedule schedule, final Weekday weekday) {
         super(schedule.getScheduleName());
 
         this.schedule = schedule;

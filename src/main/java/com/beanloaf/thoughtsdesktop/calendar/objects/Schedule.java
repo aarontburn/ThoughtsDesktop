@@ -21,7 +21,7 @@ public class Schedule extends GridPane {
     private final SchedulePopup view;
 
 
-    private final Map<SchedulePopup.Weekday, CheckBox> checkBoxMap = new HashMap<>();
+    private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
 
     private String scheduleName;
     private LocalTime time;
@@ -56,8 +56,8 @@ public class Schedule extends GridPane {
         weekendColumnConstraints.setHgrow(Priority.SOMETIMES);
 
         final GridPane weekdayPane = new GridPane();
-        for (int i = 0; i < SchedulePopup.Weekday.values().length; i++) {
-            final SchedulePopup.Weekday weekday = SchedulePopup.Weekday.values()[i];
+        for (int i = 0; i < Weekday.values().length; i++) {
+            final Weekday weekday = Weekday.values()[i];
 
 
             final Label eventLabel = new Label(weekday.getAbbreviation());

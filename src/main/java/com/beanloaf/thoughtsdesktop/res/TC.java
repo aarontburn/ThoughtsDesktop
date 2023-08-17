@@ -12,14 +12,20 @@ public class TC {
 
 
     public static class Directories {
-
         public static final File STORAGE_PATH = new File(System.getProperty("user.dir") + "/storage/");
-        public static final File UNSORTED_DIRECTORY_PATH = new File(STORAGE_PATH, "/unsorted/");
-        public static final File SORTED_DIRECTORY_PATH = new File(STORAGE_PATH, "/sorted/");
         public static final File LOGIN_PATH = new File(STORAGE_PATH, "user.json");
         public static final File SETTINGS_PATH = new File(STORAGE_PATH, "settings.json");
-        public static final File CALENDAR_PATH = new File(STORAGE_PATH, "calendar.json");
-        public static final File CALENDAR_TEST_PATH = new File(STORAGE_PATH, "calendar-test.json");
+
+
+        /*  Notes       */
+        public static final File UNSORTED_DIRECTORY_PATH = new File(STORAGE_PATH, "/unsorted/");
+        public static final File SORTED_DIRECTORY_PATH = new File(STORAGE_PATH, "/sorted/");
+
+
+        /*  Calendar    */
+        public static final File CALENDAR_PATH = new File(STORAGE_PATH, "/calendar/");
+        public static final File CALENDAR_DATA_PATH = new File(CALENDAR_PATH, "calendar.json");
+        public static final File CALENDAR_SCHEDULES_PATH = new File(CALENDAR_PATH, "/schedules/");
     }
 
 
