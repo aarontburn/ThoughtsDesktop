@@ -14,7 +14,7 @@ import java.util.List;
 public class ScheduleCalendarDay extends AnchorPane {
 
     private final VBox scheduleContainer;
-    private final List<ScheduleEvent> scheduleList = new ArrayList<>();
+    private final List<Schedule> scheduleList = new ArrayList<>();
 
     private final Weekday weekday;
 
@@ -49,7 +49,7 @@ public class ScheduleCalendarDay extends AnchorPane {
     public void addSchedule(final Schedule schedule) {
         final ScheduleEvent event = new ScheduleEvent(schedule, weekday);
 
-        scheduleList.add(event);
+        scheduleList.add(schedule);
         schedule.addReference(event);
 
         scheduleContainer.getChildren().add(event);
@@ -58,14 +58,14 @@ public class ScheduleCalendarDay extends AnchorPane {
     public void removeSchedule(final Schedule schedule) {
         final ScheduleEvent event = new ScheduleEvent(schedule, weekday);
 
-        scheduleList.remove(event);
+        scheduleList.remove(schedule);
         schedule.removeReference(event);
 
 
         scheduleContainer.getChildren().remove(event);
     }
 
-    public List<ScheduleEvent> getScheduleList() {
+    public List<Schedule> getScheduleList() {
         return this.scheduleList;
     }
 

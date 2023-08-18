@@ -3,7 +3,6 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.*;
 
 public class ScheduleData {
@@ -14,7 +13,7 @@ public class ScheduleData {
 
     private String id;
 
-    private final Map<Weekday, List<ScheduleEvent>> scheduleMap = new HashMap<>();
+    private final List<Schedule> scheduleList = new ArrayList<>();
 
     public ScheduleData(final CalendarView view) {
         this(view, UUID.randomUUID().toString());
@@ -27,15 +26,16 @@ public class ScheduleData {
         this.id = id;
     }
 
-    public void addEvent(final Weekday weekday, final ScheduleEvent event) {
-        List<ScheduleEvent> eventList = scheduleMap.computeIfAbsent(weekday, k -> new ArrayList<>());
-
-        eventList.add(event);
+    public void addEvent(final Schedule event) {
+        scheduleList.add(event);
     }
 
     public void save() {
         view.calendarJson.saveScheduleData(this);
+    }
 
+    public List<Schedule> getScheduleList() {
+        return this.scheduleList;
     }
 
 

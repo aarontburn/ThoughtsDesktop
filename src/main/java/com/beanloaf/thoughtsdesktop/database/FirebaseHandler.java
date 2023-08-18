@@ -77,9 +77,9 @@ public class FirebaseHandler implements ThoughtsChangeListener {
         Logger.log("Checking user file...");
 
         try {
-            TC.Directories.LOGIN_PATH.createNewFile();
+            TC.Directories.LOGIN_FILE.createNewFile();
 
-            final BufferedReader bufferedReader = new BufferedReader(new FileReader(TC.Directories.LOGIN_PATH));
+            final BufferedReader bufferedReader = new BufferedReader(new FileReader(TC.Directories.LOGIN_FILE));
             final StringBuilder stringBuilder = new StringBuilder();
             String line = bufferedReader.readLine();
 
@@ -477,7 +477,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     private void saveLoginInformation(final String email, final String password) {
         Logger.log("Saving login info");
-        try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.LOGIN_PATH)) {
+        try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.LOGIN_FILE)) {
 
             final Map<String, String> textContent = new HashMap<>();
 

@@ -112,6 +112,7 @@ public class SchedulePopup {
     }
 
     private void attachEvents() {
+
         scheduleNewEventButton.setOnAction(e -> scheduleEventList.getChildren().add(new Schedule(this, "New Scheduled Event")));
 
         scheduleSaveEventButton.setOnAction(e -> {
@@ -120,7 +121,7 @@ public class SchedulePopup {
             selectedSchedule.setScheduleName(scheduleEventTitleInput.getText());
             selectedSchedule.setDescription(scheduleEventDescriptionInput.getText());
 
-            selectedSchedule.setTime(scheduleHourInputFrom.getText(), scheduleMinuteInputFrom.getText(), scheduleAMPMSelectorFrom.getSelectionModel().getSelectedItem());
+            selectedSchedule.setStartTime(scheduleHourInputFrom.getText(), scheduleMinuteInputFrom.getText(), scheduleAMPMSelectorFrom.getSelectionModel().getSelectedItem());
 
         });
 
@@ -169,12 +170,12 @@ public class SchedulePopup {
 
         scheduleEventTitleInput.setText(schedule.getScheduleName());
 
-        if (schedule.getTime() == null) {
+        if (schedule.getStartTime() == null) {
             scheduleHourInputFrom.setText("");
             scheduleMinuteInputFrom.setText("");
         } else {
-            scheduleHourInputFrom.setText(schedule.getTime().format(DateTimeFormatter.ofPattern("hh")));
-            scheduleMinuteInputFrom.setText(schedule.getTime().format(DateTimeFormatter.ofPattern("mm")));
+            scheduleHourInputFrom.setText(schedule.getStartTime().format(DateTimeFormatter.ofPattern("hh")));
+            scheduleMinuteInputFrom.setText(schedule.getStartTime().format(DateTimeFormatter.ofPattern("mm")));
         }
 
         scheduleEventDescriptionInput.setText(schedule.getDescription());
@@ -200,8 +201,8 @@ public class SchedulePopup {
 
 
         for (final ScheduleCalendarDay day : dayMap.values()) {
-            for (final ScheduleEvent event : day.getScheduleList()) {
-                data.addEvent(day.getWeekday(), event);
+            for (final Schedule schedule : day.getScheduleList()) {
+                data.addEvent(schedule);
             }
         }
 

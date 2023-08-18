@@ -1,6 +1,5 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.calendar.views.SchedulePopup;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -21,6 +20,7 @@ public class ScheduleEvent extends Label {
         this.weekday = weekday;
 
 
+
         this.getStyleClass().add("day-event");
         this.setMaxWidth(Double.MAX_VALUE);
 
@@ -37,6 +37,14 @@ public class ScheduleEvent extends Label {
             schedule.doClick();
         });
 
+    }
+    
+    public String getScheduleID() {
+        return this.schedule.getScheduleId();
+    }
+
+    public Schedule getSchedule() {
+        return this.schedule;
     }
 
 

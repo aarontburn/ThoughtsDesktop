@@ -49,7 +49,6 @@ public class SettingsHandler {
             }
 
             throw new IllegalArgumentException("Invalid String passed: " + s);
-
         }
     }
 
@@ -70,7 +69,7 @@ public class SettingsHandler {
     private void checkSettingsFile() {
 
         try {
-            if (TC.Directories.SETTINGS_PATH.createNewFile()) {
+            if (TC.Directories.SETTINGS_FILE.createNewFile()) {
                 Logger.log("Created new settings file. Writing defaults...");
                 setDefaults();
                 saveSettingsFile();
@@ -78,7 +77,7 @@ public class SettingsHandler {
             } else { // already exists
                 // read file
                 Logger.log("Reading settings from file...");
-                final JSONObject data = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.SETTINGS_PATH.toPath())));
+                final JSONObject data = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.SETTINGS_FILE.toPath())));
 
                 if (data == null) {
                     setDefaults();
@@ -117,7 +116,7 @@ public class SettingsHandler {
     private void saveSettingsFile() {
 
         new Thread(() -> {
-            try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.SETTINGS_PATH)) {
+            try (FileOutputStream fWriter = new FileOutputStream(TC.Directories.SETTINGS_FILE)) {
                 final Map<String, Object> data = new HashMap<>();
 
 

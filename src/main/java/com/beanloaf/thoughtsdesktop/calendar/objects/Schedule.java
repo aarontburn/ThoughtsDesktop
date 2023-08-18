@@ -9,7 +9,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 
-import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -23,9 +22,12 @@ public class Schedule extends GridPane {
 
     private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
 
-    private String scheduleName;
-    private LocalTime time;
-    private String description;
+    private final List<Weekday> weekdays = new ArrayList<>();
+
+    private String scheduleName = "";
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private String description = "";
 
     private String id;
 
@@ -34,19 +36,18 @@ public class Schedule extends GridPane {
     private final List<ScheduleEvent> references = new ArrayList<>();
 
 
-
-    public Schedule(final SchedulePopup view, final String name) {
+    public Schedule(final SchedulePopup view, final String scheduleName, final String id) {
         super();
         this.view = view;
-        this.scheduleName = name;
+        this.scheduleName = scheduleName;
 
-        id = UUID.randomUUID().toString();
+        this.id = id;
 
 
         this.getStyleClass().add("schedule");
 
 
-        displayText = new Label(name);
+        displayText = new Label(scheduleName);
         displayText.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
         this.add(displayText, 0, 0);
 
@@ -72,8 +73,16 @@ public class Schedule extends GridPane {
 
             checkBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
 
-                if (isChecked) view.addScheduleToWeekView(weekday, this);
-                else view.removeScheduleFromWeekView(weekday, this);
+                if (isChecked) {
+                    view.addScheduleToWeekView(weekday, this);
+
+                    if (!weekdays.contains(weekday)) weekdays.add(weekday);
+                }
+                else {
+                    view.removeScheduleFromWeekView(weekday, this);
+
+                    while (weekdays.contains(weekday)) weekdays.remove(weekday);
+                }
 
             });
 
@@ -105,6 +114,10 @@ public class Schedule extends GridPane {
 
         this.setOnMouseClicked(e -> doClick());
 
+    }
+
+    public Schedule(final SchedulePopup view, final String scheduleName) {
+        this(view, scheduleName, UUID.randomUUID().toString());
 
     }
 
@@ -137,53 +150,39 @@ public class Schedule extends GridPane {
     }
 
 
-    public void setTime(final LocalTime time) {
-        this.time = time;
+    public void setStartTime(final LocalTime startTime) {
+        this.startTime = startTime;
     }
 
 
-    public void setTime(final int hour, final int minute) {
-        try {
-            setTime(LocalTime.of(hour, minute));
-        } catch (DateTimeException e) {
-            this.time = null;
-        }
-
-    }
-
-    public void setTime(final String hourString, final String minuteString, final String period) {
-        try {
-            int hour = Integer.parseInt(hourString);
-            final int minute = Integer.parseInt(minuteString);
-
-            if (!(period.equals("AM") || period.equals("PM")))
-                throw new IllegalArgumentException("Period needs to be AM or PM: " + period);
-
-            final boolean isPM = period.equals("PM");
-
-            if (hour == 12 && !isPM) {
-                hour = 0;
-            } else if (hour < 12 && isPM) {
-                hour += 12;
-            }
-
-            if (hour >= 24) hour = 0; // since military time goes from 0 to 23
-
-            setTime(hour, minute);
-
-        } catch (NumberFormatException e) {
-            this.time = null;
-        }
-
-
+    public void setStartTime(final String hourString, final String minuteString, final String period) {
+        setStartTime(CH.validateStringIntoTime(hourString, minuteString, period));
     }
 
 
 
-    public LocalTime getTime() {
-        return this.time;
+    public void setEndTime(final LocalTime endTime) {
+        this.endTime = endTime;
     }
 
+
+    public void setEndTime(final String hourString, final String minuteString, final String period) {
+        setEndTime(CH.validateStringIntoTime(hourString, minuteString, period));
+    }
+
+
+
+    public LocalTime getStartTime() {
+        return this.startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return this.endTime;
+    }
+
+    public String getScheduleId() {
+        return this.id;
+    }
 
     public String getDisplayTime(final LocalTime time) {
         String formattedTime = "";
@@ -207,6 +206,19 @@ public class Schedule extends GridPane {
         this.references.remove(event);
     }
 
+
+    public List<String> getWeekdays() {
+        final List<String> stringList = new ArrayList<>();
+
+        Collections.sort(weekdays);
+        for (final Weekday weekday : weekdays) {
+            stringList.add(weekday.name());
+        }
+
+        return stringList;
+
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -217,6 +229,6 @@ public class Schedule extends GridPane {
 
     @Override
     public int hashCode() {
-        return Objects.hash(scheduleName, time, description, id);
+        return Objects.hash(scheduleName, startTime, description, id);
     }
 }
