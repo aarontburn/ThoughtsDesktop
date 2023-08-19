@@ -33,4 +33,6 @@ module com.beanloaf.thoughtsdesktop {
     opens com.beanloaf.thoughtsdesktop.calendar.views to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.notes.views;
     opens com.beanloaf.thoughtsdesktop.notes.views to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
+    opens com.beanloaf.thoughtsdesktop.calendar.objects.schedule to javafx.fxml;
 }

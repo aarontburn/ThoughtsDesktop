@@ -1,6 +1,8 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
@@ -58,27 +60,31 @@ public class CalendarJSONHandler {
 
     private void readCalendarJson() {
         try {
-            for (final Object o : root.keySet()) {
+            final JSONHelper rootHelper = new JSONHelper(root);
+
+
+            for (final Object o : rootHelper.getKeys()) {
                 final String year = (String) o;
 
-                final JSONObject yearBranch = (JSONObject) root.get(year);
-                for (final Object m : yearBranch.keySet()) {
+                final JSONHelper yearBranch = rootHelper.getBranch(year);
+                for (final Object m : yearBranch.getKeys()) {
                     final String month = (String) m;
 
-                    final JSONObject monthBranch = (JSONObject) yearBranch.get(month);
-                    for (final Object d : monthBranch.keySet()) {
+                    final JSONHelper monthBranch = yearBranch.getBranch(month);
+                    for (final Object d : monthBranch.getKeys()) {
                         final String dayNum = (String) d;
 
-                        final JSONObject dayBranch = (JSONObject) monthBranch.get(dayNum);
-                        for (final Object e : dayBranch.keySet()) {
+                        final JSONHelper dayBranch = monthBranch.getBranch(dayNum);
+                        for (final Object e : dayBranch.getKeys()) {
                             final String eventID = (String) e;
-                            final JSONObject eventBranch = (JSONObject) dayBranch.get(eventID);
 
-                            final String eventTitle = (String) eventBranch.get(Keys.TITLE);
-                            final String description = (String) eventBranch.get(Keys.DESCRIPTION);
-                            final String startTime = (String) eventBranch.get(Keys.START_TIME);
-                            final String endTime = (String) eventBranch.get(Keys.END_TIME);
-                            final Boolean isCompleted = (Boolean) eventBranch.get(Keys.COMPLETED);
+                            final JSONHelper json = dayBranch.getBranch(eventID);
+
+                            final String eventTitle = json.getString(Keys.TITLE);
+                            final String description = json.getString(Keys.DESCRIPTION);
+                            final String startTime = json.getString(Keys.START_TIME);
+                            final String endTime = json.getString(Keys.END_TIME);
+                            final Boolean isCompleted = json.getBoolean(Keys.COMPLETED);
 
 
                             final LocalDate eventDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum));
@@ -145,6 +151,8 @@ public class CalendarJSONHandler {
             final String month = event.getDate().getMonth().toString();
             final String day = String.valueOf(event.getDate().getDayOfMonth());
             final boolean completed = event.isCompleted();
+
+
 
 
             JSONObject yearBranch = (JSONObject) root.get(year);
@@ -246,38 +254,83 @@ public class CalendarJSONHandler {
 
         for (final File file : scheduleFiles) {
             try {
-                final JSONObject jsonObject = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(file.toPath())));
-                final JSONHelper scheduleRoot = new JSONHelper(jsonObject);
+                final JSONHelper scheduleRoot = new JSONHelper((JSONObject) JSONValue.parse(new String(Files.readAllBytes(file.toPath()))));
 
+                final String scheduleName = scheduleRoot.getString(Keys.SCHEDULE_NAME);
+                final String startDate = scheduleRoot.getString(Keys.START_DATE);
+                final String endDate = scheduleRoot.getString(Keys.END_DATE);
+                final String scheduleId = scheduleRoot.getString(Keys.ID);
+                final JSONHelper schedules = scheduleRoot.getBranch(Keys.SCHEDULE_EVENTS.toString());
 
-                final String scheduleName = scheduleRoot.get(Keys.SCHEDULE_NAME);
-                final String startDate = scheduleRoot.get(Keys.START_DATE);
-                final String endDate = scheduleRoot.get(Keys.END_DATE);
-                final String scheduleId = scheduleRoot.get(Keys.ID);
-                final JSONObject schedules = (JSONObject) jsonObject.get(Keys.SCHEDULE_EVENTS);
+                final ScheduleData scheduleData = new ScheduleData(scheduleId);
+                scheduleData.setScheduleName(scheduleName);
 
+                if (startDate == null) {
+                    scheduleData.setStartDate(null);
+                } else {
+                    try {
+                        scheduleData.setStartDate(LocalDate.parse(startDate));
+                    } catch (DateTimeParseException parseException) {
+                        scheduleData.setStartDate(null);
+                    }
+                }
 
-                for (final Object idObject : schedules.keySet()) {
-                    final JSONObject eventDetails = (JSONObject) schedules.get(idObject);
-                    final JSONHelper eventJson = new JSONHelper(eventDetails);
-
-
-                    final String scheduleEventID = (String) idObject;
-                    final String description = eventJson.get(Keys.DESCRIPTION);
-                    final String eventName = eventJson.get(Keys.EVENT_NAME);
-                    final String startTime = eventJson.get(Keys.START_TIME);
-                    final String endTime = eventJson.get(Keys.END_TIME);
-
-                    final Object[] a = ((JSONArray) JSONValue.parse((String) eventDetails.get(Keys.DAYS))).toArray();
-                    final String[] weekdayStringArray = Arrays.copyOf(a, a.length, String[].class);
-
-                    final Schedule schedule = new Schedule(view.p)
-
-
+                if (endDate == null) {
+                    scheduleData.setEndDate(null);
+                } else {
+                    try {
+                        scheduleData.setEndDate(LocalDate.parse(endDate));
+                    } catch (DateTimeParseException parseException) {
+                        scheduleData.setEndDate(null);
+                    }
                 }
 
 
+                for (final Object idObject : schedules.getKeys()) {
+                    final JSONHelper eventJson = schedules.getBranch(idObject);
 
+                    final String scheduleEventID = (String) idObject;
+                    final String scheduleEventName = eventJson.getString(Keys.EVENT_NAME);
+
+                    final String scheduleEventDescription = eventJson.getString(Keys.DESCRIPTION);
+                    final String scheduleEventStartTime = eventJson.getString(Keys.START_TIME);
+                    final String scheduleEventEndTime = eventJson.getString(Keys.END_TIME);
+
+                    final Object[] a = ((JSONArray) JSONValue.parse(eventJson.getString(Keys.DAYS))).toArray();
+                    final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
+
+                    final ScheduleEvent scheduleEvent = new ScheduleEvent(scheduleEventName, scheduleEventID);
+                    scheduleEvent.setDescription(scheduleEventDescription);
+
+                    for (final String weekday : scheduleEventWeekdayStrings) {
+                        scheduleEvent.addWeekday(weekday);
+                    }
+
+                    if (scheduleEventStartTime == null) {
+                        scheduleEvent.setStartTime(null);
+                    } else {
+                        try {
+                            scheduleEvent.setStartTime(LocalTime.parse(scheduleEventStartTime));
+                        } catch (DateTimeParseException parseException) {
+                            scheduleEvent.setStartTime(null);
+                        }
+                    }
+
+                    if (scheduleEventEndTime == null) {
+                        scheduleEvent.setEndTime(null);
+                    } else {
+                        try {
+                            scheduleEvent.setEndTime(LocalTime.parse(scheduleEventEndTime));
+                        } catch (DateTimeParseException parseException) {
+                            scheduleEvent.setEndTime(null);
+                        }
+                    }
+
+                    scheduleData.addEvent(scheduleEvent);
+
+
+                }
+                scheduleDataList.add(scheduleData);
 
 
             } catch (Exception e) {
@@ -286,9 +339,11 @@ public class CalendarJSONHandler {
 
 
         }
+
+        Logger.log(scheduleDataList);
     }
 
-    public void saveScheduleData(final ScheduleData data) {
+    public void writeScheduleData(final ScheduleData data) {
         Logger.log("Saving schedule " + data.getScheduleName());
 
         TC.Directories.CALENDAR_SCHEDULES_PATH.mkdir();
@@ -309,15 +364,15 @@ public class CalendarJSONHandler {
             final JSONObject scheduleEventBranch = new JSONObject();
             json.put(Keys.SCHEDULE_EVENTS, scheduleEventBranch);
 
-            for (final Schedule schedule : data.getScheduleList()) {
+            for (final ScheduleEvent schedule : data.getScheduleEventList()) {
                 final JSONObject eventBranch = new JSONObject();
-                scheduleEventBranch.put(schedule.getScheduleId(), eventBranch);
+                scheduleEventBranch.put(schedule.getId(), eventBranch);
 
 
                 final LocalTime startTime = schedule.getStartTime();
                 final LocalTime endTime = schedule.getEndTime();
 
-                eventBranch.put(Keys.EVENT_NAME, schedule.getScheduleName());
+                eventBranch.put(Keys.EVENT_NAME, schedule.getScheduleEventName());
                 eventBranch.put(Keys.DAYS, JSONArray.toJSONString(schedule.getWeekdays()));
                 eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
@@ -339,49 +394,5 @@ public class CalendarJSONHandler {
     }
 
 
-    public enum Keys {
-        EVENT_NAME,
-        DAYS,
-        START_TIME,
-        END_TIME,
-        DESCRIPTION,
-        COMPLETED,
-        SCHEDULE_NAME,
-        START_DATE,
-        END_DATE,
-        ID,
-        SCHEDULE_EVENTS,
-        TITLE;
-
-
-        @Override
-        public String toString() {
-            final StringBuilder keyName = new StringBuilder();
-
-            for (final String s : name().split("_")) {
-                keyName.append(ThoughtsHelper.toCamelCase(s)).append(" ");
-            }
-
-            return keyName.toString().trim();
-
-        }
-
-    }
-
-    public class JSONHelper {
-
-        public JSONObject json;
-
-        public JSONHelper(final JSONObject obj) {
-            this.json = obj;
-        }
-
-        public String get(final Keys key){
-            return (String) json.get(key);
-        }
-
-
-
-    }
 
 }

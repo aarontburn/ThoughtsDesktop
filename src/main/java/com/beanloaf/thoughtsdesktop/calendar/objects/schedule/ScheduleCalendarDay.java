@@ -1,8 +1,6 @@
-package com.beanloaf.thoughtsdesktop.calendar.objects;
+package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
-import com.beanloaf.thoughtsdesktop.calendar.views.SchedulePopup;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -14,14 +12,12 @@ import java.util.List;
 public class ScheduleCalendarDay extends AnchorPane {
 
     private final VBox scheduleContainer;
-    private final List<Schedule> scheduleList = new ArrayList<>();
-
-    private final Weekday weekday;
+    private final List<ScheduleEvent> scheduleEventList = new ArrayList<>();
 
 
-    public ScheduleCalendarDay(final Weekday weekday) {
+
+    public ScheduleCalendarDay() {
         super();
-        this.weekday = weekday;
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
         this.getStyleClass().add("calendar-day");
 
@@ -46,31 +42,24 @@ public class ScheduleCalendarDay extends AnchorPane {
 
     }
 
-    public void addSchedule(final Schedule schedule) {
-        final ScheduleEvent event = new ScheduleEvent(schedule, weekday);
+    public void addSchedule(final ScheduleListItem scheduleListItem) {
+        scheduleEventList.add(scheduleListItem.getEvent());
 
-        scheduleList.add(schedule);
-        schedule.addReference(event);
-
-        scheduleContainer.getChildren().add(event);
+        scheduleListItem.addReference(scheduleListItem.getLabel());
+        scheduleContainer.getChildren().add(scheduleListItem.getLabel());
     }
 
-    public void removeSchedule(final Schedule schedule) {
-        final ScheduleEvent event = new ScheduleEvent(schedule, weekday);
+    public void removeSchedule(final ScheduleListItem scheduleListItem) {
+        scheduleEventList.remove(scheduleListItem.getEvent());
 
-        scheduleList.remove(schedule);
-        schedule.removeReference(event);
+        scheduleListItem.removeReference(scheduleListItem.getLabel());
+        scheduleContainer.getChildren().remove(scheduleListItem.getLabel());
 
-
-        scheduleContainer.getChildren().remove(event);
     }
 
-    public List<Schedule> getScheduleList() {
-        return this.scheduleList;
+    public List<ScheduleEvent> getScheduleEventList() {
+        return this.scheduleEventList;
     }
 
-    public Weekday getWeekday() {
-        return this.weekday;
-    }
 
 }

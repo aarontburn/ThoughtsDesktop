@@ -1,4 +1,4 @@
-package com.beanloaf.thoughtsdesktop.calendar.objects;
+package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 
@@ -7,41 +7,38 @@ import java.util.*;
 
 public class ScheduleData {
 
-    private final CalendarView view;
+
     private String scheduleName;
     private LocalDate startDate, endDate;
 
     private String id;
 
-    private final List<Schedule> scheduleList = new ArrayList<>();
+    private final List<ScheduleEvent> scheduleEventList = new ArrayList<>();
 
-    public ScheduleData(final CalendarView view) {
-        this(view, UUID.randomUUID().toString());
+    public ScheduleData() {
+        this(UUID.randomUUID().toString());
 
 
     }
 
-    public ScheduleData(final CalendarView view, final String id) {
-        this.view = view;
+    public ScheduleData(final String id) {
         this.id = id;
     }
 
-    public void addEvent(final Schedule event) {
-        scheduleList.add(event);
+    public void addEvent(final ScheduleEvent event) {
+        scheduleEventList.add(event);
     }
 
-    public void save() {
-        view.calendarJson.saveScheduleData(this);
-    }
 
-    public List<Schedule> getScheduleList() {
-        return this.scheduleList;
+    public List<ScheduleEvent> getScheduleEventList() {
+        return this.scheduleEventList;
     }
 
 
     public String getId() {
         return this.id;
     }
+
     public String getScheduleName() {
         return this.scheduleName;
     }
@@ -53,7 +50,6 @@ public class ScheduleData {
     public LocalDate getEndDate() {
         return this.endDate;
     }
-
 
 
     public void setScheduleName(final String name) {
@@ -68,6 +64,14 @@ public class ScheduleData {
         this.endDate = date;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "ScheduleData{" +
+                ", Schedule Name: '" + scheduleName + '\'' +
+                ", Start Date: " + startDate +
+                ", End Date: " + endDate +
+                ", ID: '" + id + '\'' +
+                ", Schedule Event List: " + scheduleEventList +
+                '}';
+    }
 }

@@ -1,19 +1,24 @@
-package com.beanloaf.thoughtsdesktop.calendar.objects;
+package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
+import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
+import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.views.SchedulePopup;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.util.Duration;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-public class Schedule extends GridPane {
+public class ScheduleListItem extends GridPane {
 
 
 
@@ -24,25 +29,17 @@ public class Schedule extends GridPane {
 
     private final List<Weekday> weekdays = new ArrayList<>();
 
-    private String scheduleName = "";
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private String description = "";
-
-    private String id;
+    private ScheduleEvent event;
 
     private final Label displayText;
 
-    private final List<ScheduleEvent> references = new ArrayList<>();
+    private final List<ScheduleLabel> references = new ArrayList<>();
 
 
-    public Schedule(final SchedulePopup view, final String scheduleName, final String id) {
+    public ScheduleListItem(final SchedulePopup view, final String scheduleName, final String id) {
         super();
         this.view = view;
-        this.scheduleName = scheduleName;
-
-        this.id = id;
-
+        this.event = new ScheduleEvent(scheduleName, id);
 
         this.getStyleClass().add("schedule");
 
@@ -116,7 +113,7 @@ public class Schedule extends GridPane {
 
     }
 
-    public Schedule(final SchedulePopup view, final String scheduleName) {
+    public ScheduleListItem(final SchedulePopup view, final String scheduleName) {
         this(view, scheduleName, UUID.randomUUID().toString());
 
     }
@@ -124,34 +121,39 @@ public class Schedule extends GridPane {
     public void doClick() {
         view.setInputFields(this);
 
-
     }
 
+    public ScheduleEvent getEvent() {
+        return this.event;
+    }
+
+
+
     public void setScheduleName(final String newName) {
-        this.scheduleName = newName;
+        event.setScheduleEventName(newName);
         displayText.setText(newName);
 
-        for (final ScheduleEvent scheduleEvent : references) {
-            scheduleEvent.setText(newName);
+        for (final ScheduleLabel scheduleLabel : references) {
+            scheduleLabel.setText(newName);
 
         }
     }
 
     public String getScheduleName() {
-        return this.scheduleName;
+        return event.getScheduleEventName();
     }
 
     public void setDescription(final String newDescription) {
-        this.description = newDescription;
+        event.setDescription(newDescription);
     }
 
     public String getDescription() {
-        return this.description;
+        return event.getDescription();
     }
 
 
     public void setStartTime(final LocalTime startTime) {
-        this.startTime = startTime;
+        this.event.setStartTime(startTime);
     }
 
 
@@ -162,7 +164,7 @@ public class Schedule extends GridPane {
 
 
     public void setEndTime(final LocalTime endTime) {
-        this.endTime = endTime;
+        this.event.setEndTime(endTime);
     }
 
 
@@ -173,16 +175,13 @@ public class Schedule extends GridPane {
 
 
     public LocalTime getStartTime() {
-        return this.startTime;
+        return event.getStartTime();
     }
 
     public LocalTime getEndTime() {
-        return this.endTime;
+        return event.getEndTime();
     }
 
-    public String getScheduleId() {
-        return this.id;
-    }
 
     public String getDisplayTime(final LocalTime time) {
         String formattedTime = "";
@@ -198,37 +197,75 @@ public class Schedule extends GridPane {
         return formattedTime;
     }
 
-    public void addReference(final ScheduleEvent event) {
+    public void addReference(final ScheduleLabel event) {
         this.references.add(event);
     }
 
-    public void removeReference(final ScheduleEvent event) {
+    public void removeReference(final ScheduleLabel event) {
         this.references.remove(event);
     }
 
 
-    public List<String> getWeekdays() {
-        final List<String> stringList = new ArrayList<>();
-
-        Collections.sort(weekdays);
-        for (final Weekday weekday : weekdays) {
-            stringList.add(weekday.name());
-        }
-
-        return stringList;
-
+    public ScheduleLabel getLabel() {
+        return new ScheduleLabel(this);
     }
+
 
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Schedule schedule = (Schedule) o;
-        return this.id.equals(schedule.id);
+        final ScheduleListItem scheduleListItem = (ScheduleListItem) o;
+        return event.equals(scheduleListItem.event);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scheduleName, startTime, description, id);
+        return Objects.hash(event);
     }
+
+
+
+
+
+    public static class ScheduleLabel extends Label {
+
+        private final ScheduleListItem scheduleListItem;
+
+        public ScheduleLabel(final ScheduleListItem scheduleListItem) {
+            super(scheduleListItem.getScheduleName());
+
+            this.scheduleListItem = scheduleListItem;
+
+
+            this.getStyleClass().add("day-event");
+            this.setMaxWidth(Double.MAX_VALUE);
+
+            final Tooltip tooltip = new Tooltip(scheduleListItem.getScheduleName());
+            tooltip.setShowDelay(Duration.seconds(0.5));
+            this.setTooltip(tooltip);
+
+            this.setOnMouseClicked(e -> {
+                Logger.log("Schedule \"" + this.scheduleListItem.getScheduleName() + "\" was pressed.");
+                scheduleListItem.doClick();
+            });
+
+        }
+
+        @Override
+        public boolean equals(final Object other) {
+            if (this == other) return true;
+            if (other == null || getClass() != other.getClass()) return false;
+            final ScheduleLabel that = (ScheduleLabel) other;
+            return Objects.equals(scheduleListItem, that.scheduleListItem);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(scheduleListItem);
+        }
+    }
+
+
+
 }

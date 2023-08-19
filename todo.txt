@@ -14,7 +14,7 @@ Todo:
 
 
 Home Screen:
-    -   Show upcoming events and schedule for the current week is
+    -   Show upcoming events and scheduleListItem for the current week is
     -   Hide/Show things based on screen size
 
 

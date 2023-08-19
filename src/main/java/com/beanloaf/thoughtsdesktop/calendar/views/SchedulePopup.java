@@ -2,6 +2,10 @@ package com.beanloaf.thoughtsdesktop.calendar.views;
 
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDay;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleListItem;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -24,7 +28,7 @@ public class SchedulePopup {
 
     private final ScheduleData data;
 
-    private Schedule selectedSchedule;
+    private ScheduleListItem selectedScheduleListItem;
 
     private Map<Weekday, ScheduleCalendarDay> dayMap = new HashMap<>();
 
@@ -57,7 +61,7 @@ public class SchedulePopup {
 
 
     public SchedulePopup(final CalendarView view) {
-        this(view, new ScheduleData(view));
+        this(view, new ScheduleData());
     }
 
 
@@ -113,15 +117,15 @@ public class SchedulePopup {
 
     private void attachEvents() {
 
-        scheduleNewEventButton.setOnAction(e -> scheduleEventList.getChildren().add(new Schedule(this, "New Scheduled Event")));
+        scheduleNewEventButton.setOnAction(e -> scheduleEventList.getChildren().add(new ScheduleListItem(this, "New Scheduled Event")));
 
         scheduleSaveEventButton.setOnAction(e -> {
-            if (selectedSchedule == null) return;
+            if (selectedScheduleListItem == null) return;
 
-            selectedSchedule.setScheduleName(scheduleEventTitleInput.getText());
-            selectedSchedule.setDescription(scheduleEventDescriptionInput.getText());
+            selectedScheduleListItem.setScheduleName(scheduleEventTitleInput.getText());
+            selectedScheduleListItem.setDescription(scheduleEventDescriptionInput.getText());
 
-            selectedSchedule.setStartTime(scheduleHourInputFrom.getText(), scheduleMinuteInputFrom.getText(), scheduleAMPMSelectorFrom.getSelectionModel().getSelectedItem());
+            selectedScheduleListItem.setStartTime(scheduleHourInputFrom.getText(), scheduleMinuteInputFrom.getText(), scheduleAMPMSelectorFrom.getSelectionModel().getSelectedItem());
 
         });
 
@@ -157,7 +161,7 @@ public class SchedulePopup {
         for (int i = 0; i < scheduleWeekGrid.getColumnCount(); i++) {
             final Weekday weekday = Weekday.values()[i];
 
-            final ScheduleCalendarDay day = new ScheduleCalendarDay(weekday);
+            final ScheduleCalendarDay day = new ScheduleCalendarDay();
             dayMap.put(weekday, day);
             scheduleWeekGrid.add(day, i, 1);
         }
@@ -165,33 +169,42 @@ public class SchedulePopup {
 
     }
 
-    public void setInputFields(final Schedule schedule) {
-        this.selectedSchedule = schedule;
+    public void setInputFields(final ScheduleListItem scheduleListItem) {
+        this.selectedScheduleListItem = scheduleListItem;
 
-        scheduleEventTitleInput.setText(schedule.getScheduleName());
+        scheduleEventTitleInput.setText(scheduleListItem.getScheduleName());
 
-        if (schedule.getStartTime() == null) {
+        if (scheduleListItem.getStartTime() == null) {
             scheduleHourInputFrom.setText("");
             scheduleMinuteInputFrom.setText("");
         } else {
-            scheduleHourInputFrom.setText(schedule.getStartTime().format(DateTimeFormatter.ofPattern("hh")));
-            scheduleMinuteInputFrom.setText(schedule.getStartTime().format(DateTimeFormatter.ofPattern("mm")));
+            scheduleHourInputFrom.setText(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("hh")));
+            scheduleMinuteInputFrom.setText(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("mm")));
         }
 
-        scheduleEventDescriptionInput.setText(schedule.getDescription());
+
+        if (scheduleListItem.getEndTime() == null) {
+            scheduleHourInputTo.setText("");
+            scheduleMinuteInputTo.setText("");
+        } else {
+            scheduleHourInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("hh")));
+            scheduleMinuteInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("mm")));
+        }
+
+        scheduleEventDescriptionInput.setText(scheduleListItem.getDescription());
 
     }
 
-    public void addScheduleToWeekView(final Weekday weekday, final Schedule schedule) {
+    public void addScheduleToWeekView(final Weekday weekday, final ScheduleListItem scheduleListItem) {
         final ScheduleCalendarDay day = dayMap.get(weekday);
 
-        day.addSchedule(schedule);
+        day.addSchedule(scheduleListItem);
     }
 
-    public void removeScheduleFromWeekView(final Weekday weekday, final Schedule schedule) {
+    public void removeScheduleFromWeekView(final Weekday weekday, final ScheduleListItem scheduleListItem) {
         final ScheduleCalendarDay day = dayMap.get(weekday);
 
-        day.removeSchedule(schedule);
+        day.removeSchedule(scheduleListItem);
     }
 
     private void saveScheduleData() {
@@ -201,12 +214,12 @@ public class SchedulePopup {
 
 
         for (final ScheduleCalendarDay day : dayMap.values()) {
-            for (final Schedule schedule : day.getScheduleList()) {
-                data.addEvent(schedule);
+            for (final ScheduleEvent scheduleView : day.getScheduleEventList()) {
+                data.addEvent(scheduleView);
             }
         }
 
-        data.save();
+        view.calendarJson.writeScheduleData(data);
 
     }
 

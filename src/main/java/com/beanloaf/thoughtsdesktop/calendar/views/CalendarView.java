@@ -314,16 +314,39 @@ public class CalendarView extends ThoughtsView {
     }
 
     private void changeMonth(final CalendarMonth month) {
-        if (currentMonth.getNumDaysWithEvents() == 0) {
-            activeMonths.remove(new Pair<>(currentMonth.getMonth(), currentMonth.getYear()));
+        for (final Pair<Month, Integer> key : activeMonths.keySet()) {
+            final CalendarMonth calendarMonth = activeMonths.get(key);
+
+            if (calendarMonth.getNumDaysWithEvents() == 0) {
+                activeMonths.remove(key);
+            }
+
         }
 
+
+        final Pair<Month, Integer> prevMonthYear = new Pair<>(month.getPreviousMonth().getMonth(), month.getPreviousMonth().getYear());
         final Pair<Month, Integer> monthYear = new Pair<>(month.getMonth(), month.getYear());
+        final Pair<Month, Integer> nextMonthYear = new Pair<>(month.getNextMonth().getMonth(), month.getNextMonth().getYear());
+
+
+        CalendarMonth prevMonth = activeMonths.get(prevMonthYear);
+        prevMonth = prevMonth != null ? prevMonth : month.getPreviousMonth();
+        activeMonths.put(prevMonthYear, prevMonth);
+
+
+        CalendarMonth nextMonth = activeMonths.get(nextMonthYear);
+        nextMonth = nextMonth != null ? nextMonth : month.getNextMonth();
+        activeMonths.put(nextMonthYear, nextMonth);
+
 
         final CalendarMonth newMonth = activeMonths.get(monthYear);
-
         currentMonth = newMonth != null ? newMonth : month;
         activeMonths.put(monthYear, currentMonth);
+
+
+
+
+
 
         createCalendarGUI();
 
@@ -542,7 +565,7 @@ public class CalendarView extends ThoughtsView {
 
 
         calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
-        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "to " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
 
 
         calendarSmallEventDescriptionInput.setText(event.getDescription());
@@ -588,7 +611,7 @@ public class CalendarView extends ThoughtsView {
         final LocalTime startTime = event.getStartTime();
         final LocalTime endTime = event.getStartTime();
         calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
-        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "@ " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
 
         calendarSmallSaveEventButton.setVisible(false);
         toggleSmallEventFields(false);
