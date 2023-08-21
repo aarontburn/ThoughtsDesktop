@@ -29,22 +29,34 @@ public class ScheduleListItem extends GridPane {
 
     private final List<Weekday> weekdays = new ArrayList<>();
 
-    private ScheduleEvent event;
+    private final ScheduleEvent event;
 
     private final Label displayText;
 
     private final List<ScheduleLabel> references = new ArrayList<>();
 
 
+
+    public ScheduleListItem(final SchedulePopup view, final String scheduleName) {
+        this(view, scheduleName, UUID.randomUUID().toString());
+
+    }
+
     public ScheduleListItem(final SchedulePopup view, final String scheduleName, final String id) {
+        this(view, new ScheduleEvent(scheduleName, id));
+
+    }
+
+
+    public ScheduleListItem(final SchedulePopup view, final ScheduleEvent event) {
         super();
         this.view = view;
-        this.event = new ScheduleEvent(scheduleName, id);
+        this.event = event;
 
         this.getStyleClass().add("schedule");
 
 
-        displayText = new Label(scheduleName);
+        displayText = new Label(event.getScheduleEventName());
         displayText.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
         this.add(displayText, 0, 0);
 
@@ -71,12 +83,12 @@ public class ScheduleListItem extends GridPane {
             checkBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
 
                 if (isChecked) {
-                    view.addScheduleToWeekView(weekday, this);
+                    view.addScheduleEventToDay(weekday, this);
 
                     if (!weekdays.contains(weekday)) weekdays.add(weekday);
                 }
                 else {
-                    view.removeScheduleFromWeekView(weekday, this);
+                    view.removeScheduleFromDay(weekday, this);
 
                     while (weekdays.contains(weekday)) weekdays.remove(weekday);
                 }
@@ -113,10 +125,8 @@ public class ScheduleListItem extends GridPane {
 
     }
 
-    public ScheduleListItem(final SchedulePopup view, final String scheduleName) {
-        this(view, scheduleName, UUID.randomUUID().toString());
 
-    }
+
 
     public void doClick() {
         view.setInputFields(this);
@@ -225,8 +235,14 @@ public class ScheduleListItem extends GridPane {
     }
 
 
-
-
+    @Override
+    public String toString() {
+        return "ScheduleListItem {" +
+                "weekdays=" + weekdays +
+                ", event=" + event +
+                ", displayText=" + displayText +
+                '}';
+    }
 
     public static class ScheduleLabel extends Label {
 

@@ -6,6 +6,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDa
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleListItem;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -14,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public class SchedulePopup {
 
     private ScheduleListItem selectedScheduleListItem;
 
-    private Map<Weekday, ScheduleCalendarDay> dayMap = new HashMap<>();
+    private final Map<Weekday, ScheduleCalendarDay> dayMap = new HashMap<>();
 
 
     /*  Header  */
@@ -60,11 +62,6 @@ public class SchedulePopup {
     /*  ----------  */
 
 
-    public SchedulePopup(final CalendarView view) {
-        this(view, new ScheduleData());
-    }
-
-
     // Loading data into the popup
     public SchedulePopup(final CalendarView view, final ScheduleData data) {
         this.view = view;
@@ -75,13 +72,15 @@ public class SchedulePopup {
         attachEvents();
         createGUI();
 
+        startup();
+
         scheduleEventList.getChildren().clear();
 
 
     }
 
     private Node findNodeByID(final String nodeID) {
-        return view.findNodeByID(nodeID);
+        return view.findNodeById(nodeID);
     }
 
     private void findNodes() {
@@ -117,7 +116,7 @@ public class SchedulePopup {
 
     private void attachEvents() {
 
-        scheduleNewEventButton.setOnAction(e -> scheduleEventList.getChildren().add(new ScheduleListItem(this, "New Scheduled Event")));
+        scheduleNewEventButton.setOnAction(e -> addScheduleEventToListView(new ScheduleListItem(this, "New Scheduled Event")));
 
         scheduleSaveEventButton.setOnAction(e -> {
             if (selectedScheduleListItem == null) return;
@@ -169,6 +168,25 @@ public class SchedulePopup {
 
     }
 
+    private void startup() {
+        scheduleNameInput.setText(data.getScheduleName());
+        scheduleStartDate.setValue(data.getStartDate());
+        scheduleEndDate.setValue(data.getEndDate());
+
+        for (final ScheduleEvent event : data.getScheduleEventList()) {
+            final ScheduleListItem listItem = new ScheduleListItem(this, event);
+
+            Logger.log(listItem);
+
+            for (final Weekday weekday : event.getWeekdays()) {
+                addScheduleEventToDay(weekday, listItem);
+
+            }
+
+            addScheduleEventToListView(listItem);
+        }
+    }
+
     public void setInputFields(final ScheduleListItem scheduleListItem) {
         this.selectedScheduleListItem = scheduleListItem;
 
@@ -180,6 +198,7 @@ public class SchedulePopup {
         } else {
             scheduleHourInputFrom.setText(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("hh")));
             scheduleMinuteInputFrom.setText(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("mm")));
+            scheduleAMPMSelectorFrom.getSelectionModel().select(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("a")));
         }
 
 
@@ -189,19 +208,27 @@ public class SchedulePopup {
         } else {
             scheduleHourInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("hh")));
             scheduleMinuteInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("mm")));
+            scheduleAMPMSelectorTo.getSelectionModel().select(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("a")));
+
         }
 
         scheduleEventDescriptionInput.setText(scheduleListItem.getDescription());
 
     }
 
-    public void addScheduleToWeekView(final Weekday weekday, final ScheduleListItem scheduleListItem) {
+    public void addScheduleEventToListView(final ScheduleListItem scheduleListItem) {
+        scheduleEventList.getChildren().add(scheduleListItem);
+
+        Logger.log(scheduleEventList.getChildren());
+    }
+
+    public void addScheduleEventToDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
         final ScheduleCalendarDay day = dayMap.get(weekday);
 
         day.addSchedule(scheduleListItem);
     }
 
-    public void removeScheduleFromWeekView(final Weekday weekday, final ScheduleListItem scheduleListItem) {
+    public void removeScheduleFromDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
         final ScheduleCalendarDay day = dayMap.get(weekday);
 
         day.removeSchedule(scheduleListItem);

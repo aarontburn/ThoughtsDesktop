@@ -2,6 +2,7 @@ package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
@@ -35,12 +36,14 @@ public class CalendarView extends ThoughtsView {
 
 
     private final Map<Pair<Month, Integer>, CalendarMonth> activeMonths = new ConcurrentHashMap<>(); // key is Pair<Month, Year> (as an integer)
-    private final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
+    public final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
 
     private CalendarMonth currentMonth;
     private CalendarDay selectedDay;
     private DayEvent selectedEvent;
-    public CalendarJSONHandler calendarJson;
+    public final CalendarJSONHandler calendarJson;
+    public final CalendarPopup popup;
+
 
     private GridPane calendarFrame; // (7 x 5)
 
@@ -54,6 +57,11 @@ public class CalendarView extends ThoughtsView {
     private VBox calendarEventBox;
     private Label calendarDayLabel;
     private Button calendarNewEventButton;
+
+
+    /*  Schedule Box    */
+    public VBox calendarScheduleBox;
+
 
     /*  Small Event Input */
     private AnchorPane calendarSmallEventFields;
@@ -69,12 +77,7 @@ public class CalendarView extends ThoughtsView {
     private boolean calendarSmallProgressCheckBoxReady = true;
 
 
-    /* Popup */
-    private AnchorPane popupWindow;
-    private AnchorPane newEventPopup, schedulePopup;
-    private AnchorPane[] popupList;
-    private ComboBox<String> calendarAMPMSelector, calendarRecurringTypeSelector;
-    private Label calendarClosePopup;
+
 
 
     public CalendarView(final MainApplication main) {
@@ -82,9 +85,11 @@ public class CalendarView extends ThoughtsView {
         calendarJson = new CalendarJSONHandler(this);
 
 
-        locateNodes();
 
+        locateNodes();
         attachEvents();
+
+        popup = new CalendarPopup(this);
 
         final LocalDate now = LocalDate.now();
         final CalendarMonth cMonth = activeMonths.get(new Pair<>(now.getMonth(), now.getYear()));
@@ -97,55 +102,49 @@ public class CalendarView extends ThoughtsView {
     }
 
     private void locateNodes() {
-        calendarFrame = (GridPane) findNodeByID("calendarFrame");
+        calendarFrame = (GridPane) findNodeById("calendarFrame");
 
         /*  Header  */
-        calendarMonthYearLabel = (Label) findNodeByID("calendarMonthYearLabel");
-        calendarNextMonthButton = (Label) findNodeByID("calendarNextMonthButton");
-        calendarPrevMonthButton = (Label) findNodeByID("calendarPrevMonthButton");
-        calendarTestButton = (Button) findNodeByID("calendarTestButton");
-        calendarNewScheduleButton = (Button) findNodeByID("calendarNewScheduleButton");
+        calendarMonthYearLabel = (Label) findNodeById("calendarMonthYearLabel");
+        calendarNextMonthButton = (Label) findNodeById("calendarNextMonthButton");
+        calendarPrevMonthButton = (Label) findNodeById("calendarPrevMonthButton");
+        calendarTestButton = (Button) findNodeById("calendarTestButton");
+        calendarNewScheduleButton = (Button) findNodeById("calendarNewScheduleButton");
 
         /*  Event Box   */
-        calendarEventBox = (VBox) findNodeByID("calendarEventBox");
-        calendarDayLabel = (Label) findNodeByID("calendarDayLabel");
-        calendarNewEventButton = (Button) findNodeByID("calendarNewEventButton");
+        calendarEventBox = (VBox) findNodeById("calendarEventBox");
+        calendarDayLabel = (Label) findNodeById("calendarDayLabel");
+        calendarNewEventButton = (Button) findNodeById("calendarNewEventButton");
+
+        /*  Schedule Box    */
+        calendarScheduleBox = (VBox) findNodeById("calendarScheduleBox");
 
 
         /*  Small Event Input   */
-        calendarSmallEventFields = (AnchorPane) findNodeByID("calendarSmallEventFields");
-        calendarSmallEventTitleInput = (TextField) findNodeByID("calendarSmallEventTitleInput");
-        calendarSmallDatePicker = (DatePicker) findNodeByID("calendarSmallDatePicker");
-        calendarSmallHourInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallHourInputFrom"));
-        calendarSmallMinuteInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallMinuteInputFrom"));
-        calendarSmallHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallHourInputTo"));
-        calendarSmallMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("calendarSmallMinuteInputTo"));
-        calendarSmallEventDescriptionInput = (TextArea) findNodeByID("calendarSmallEventDescriptionInput");
-        calendarSmallSaveEventButton = (Button) findNodeByID("calendarSmallSaveEventButton");
-        calendarSmallEditButton = (Button) findNodeByID("calendarSmallEditButton");
-        calendarSmallDeleteButton = (Button) findNodeByID("calendarSmallDeleteButton");
-        calendarSmallAMPMSelectorFrom = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("calendarSmallAMPMSelectorFrom"));
-        calendarSmallAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("calendarSmallAMPMSelectorTo"));
+        calendarSmallEventFields = (AnchorPane) findNodeById("calendarSmallEventFields");
+        calendarSmallEventTitleInput = (TextField) findNodeById("calendarSmallEventTitleInput");
+        calendarSmallDatePicker = (DatePicker) findNodeById("calendarSmallDatePicker");
+        calendarSmallHourInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeById("calendarSmallHourInputFrom"));
+        calendarSmallMinuteInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeById("calendarSmallMinuteInputFrom"));
+        calendarSmallHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeById("calendarSmallHourInputTo"));
+        calendarSmallMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeById("calendarSmallMinuteInputTo"));
+        calendarSmallEventDescriptionInput = (TextArea) findNodeById("calendarSmallEventDescriptionInput");
+        calendarSmallSaveEventButton = (Button) findNodeById("calendarSmallSaveEventButton");
+        calendarSmallEditButton = (Button) findNodeById("calendarSmallEditButton");
+        calendarSmallDeleteButton = (Button) findNodeById("calendarSmallDeleteButton");
+        calendarSmallAMPMSelectorFrom = CH.setAMPMComboBox((ComboBox<String>) findNodeById("calendarSmallAMPMSelectorFrom"));
+        calendarSmallAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeById("calendarSmallAMPMSelectorTo"));
 
 
-        calendarSmallEndTimeFields = (HBox) findNodeByID("calendarSmallEndTimeFields");
-        calendarSmallStartTimeFields = (HBox) findNodeByID("calendarSmallStartTimeFields");
+        calendarSmallEndTimeFields = (HBox) findNodeById("calendarSmallEndTimeFields");
+        calendarSmallStartTimeFields = (HBox) findNodeById("calendarSmallStartTimeFields");
 
-        calendarSmallFinalStartTimeLabel = (Label) findNodeByID("calendarSmallFinalStartTimeLabel");
-        calendarSmallFinalEndTimeLabel = (Label) findNodeByID("calendarSmallFinalEndTimeLabel");
+        calendarSmallFinalStartTimeLabel = (Label) findNodeById("calendarSmallFinalStartTimeLabel");
+        calendarSmallFinalEndTimeLabel = (Label) findNodeById("calendarSmallFinalEndTimeLabel");
 
-        calendarSmallProgressCheckBox = (CheckBox) findNodeByID("calendarSmallProgressCheckBox");
+        calendarSmallProgressCheckBox = (CheckBox) findNodeById("calendarSmallProgressCheckBox");
 
 
-        /*  Popup   */
-        popupWindow = (AnchorPane) findNodeByID("popupWindow");
-        newEventPopup = (AnchorPane) findNodeByID("newEventPopup");
-        schedulePopup = (AnchorPane) findNodeByID("schedulePopup");
-        popupList = new AnchorPane[]{newEventPopup, schedulePopup};
-
-        calendarAMPMSelector = (ComboBox<String>) findNodeByID("calendarAMPMSelector");
-        calendarRecurringTypeSelector = (ComboBox<String>) findNodeByID("calendarRecurringTypeSelector");
-        calendarClosePopup = (Label) findNodeByID("calendarClosePopup");
 
     }
 
@@ -162,9 +161,7 @@ public class CalendarView extends ThoughtsView {
 
         });
 
-        calendarNewScheduleButton.setOnAction(e -> {
-            setVisiblePopup(schedulePopup);
-        });
+        calendarNewScheduleButton.setOnAction(e -> popup.displaySchedule(new ScheduleData()));
 
 
 
@@ -246,72 +243,13 @@ public class CalendarView extends ThoughtsView {
         });
 
 
-        /*  Popup   */
-        setVisiblePopup(null);
-
-
-        CH.setAMPMComboBox(calendarAMPMSelector);
-
-        calendarRecurringTypeSelector.getItems().clear();
-        calendarRecurringTypeSelector.getItems().addAll("Day", "Week", "Month", "Year");
-        calendarRecurringTypeSelector.getSelectionModel().select("Week");
-
-        calendarClosePopup.setOnMouseClicked(e -> setVisiblePopup(null));
-
-
-        createPopup();
-
     }
 
-    private void setVisiblePopup(final AnchorPane visiblePopup) {
-        for (final AnchorPane pane : popupList) {
-            pane.setVisible(false);
-        }
-        popupWindow.setVisible(visiblePopup != null);
-
-        if (visiblePopup != null) visiblePopup.setVisible(true);
-    }
-
-    private void createPopup() {
-
-        SchedulePopup day = new SchedulePopup(this);
-
-        // TODO: Drag popup window feature?
-//        popupWindow.setOnMouseDragged(e -> {
-//            Logger.log("X: " + e.getX() + " Y: " + e.getY());
-//        });
-//
-//        popupWindow.setOnMouseClicked(e -> {
-//            Logger.log("X: " + e.getX() + " Y: " + e.getY());
-//
-//        });
 
 
-    }
-
-    public void resizePopupHeight(final double newHeight) {
-        if (popupWindow == null) return;
-
-        final double anchor = newHeight * 1 / 7;
-
-        AnchorPane.setTopAnchor(popupWindow, anchor);
-        AnchorPane.setBottomAnchor(popupWindow, anchor);
-    }
-
-    public void resizePopupWidth(final double newWidth) {
-        try {
-            if (popupWindow == null) return;
 
 
-            final double anchor = newWidth * 1 / 6;
 
-            AnchorPane.setLeftAnchor(popupWindow, anchor);
-            AnchorPane.setRightAnchor(popupWindow, anchor);
-        } catch (Exception e) {
-            Logger.log(e);
-        }
-
-    }
 
     private void changeMonth(final CalendarMonth month) {
         for (final Pair<Month, Integer> key : activeMonths.keySet()) {

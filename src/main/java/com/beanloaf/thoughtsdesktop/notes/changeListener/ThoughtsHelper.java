@@ -122,11 +122,11 @@ public class ThoughtsHelper {
     }
 
 
-    public static Node setAnchor(final Node node, final Double top, final Double bottom, final Double left, final Double right) {
-        AnchorPane.setTopAnchor(node, top);
-        AnchorPane.setBottomAnchor(node, bottom);
-        AnchorPane.setLeftAnchor(node, left);
-        AnchorPane.setRightAnchor(node, right);
+    public static Node setAnchor(final Node node, final Number top, final Number bottom, final Number left, final Number right) {
+        AnchorPane.setTopAnchor(node, top == null ? null : top.doubleValue());
+        AnchorPane.setBottomAnchor(node, bottom == null ? null : bottom.doubleValue());
+        AnchorPane.setLeftAnchor(node, left == null ? null : left.doubleValue());
+        AnchorPane.setRightAnchor(node, right == null ? null : right.doubleValue());
 
 
         return node;

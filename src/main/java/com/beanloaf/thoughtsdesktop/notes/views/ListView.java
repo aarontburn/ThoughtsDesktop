@@ -50,14 +50,14 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
         this.itemList = (VBox) main.findNodeByID("itemList");
 
 
-        final SplitPane listViewContainer = (SplitPane) findNodeByID("listViewContainer");
+        final SplitPane listViewContainer = (SplitPane) findNodeById("listViewContainer");
 
         listViewContainer.lookupAll(".split-pane-divider").forEach(div -> {
             div.setMouseTransparent(true);
             div.setStyle("-fx-background-color: transparent;");
         });
 
-        this.searchBar = (TextField) findNodeByID("searchBar");
+        this.searchBar = (TextField) findNodeById("searchBar");
 
         unsortedThoughtList = new TagListItem(this, "Unsorted");
         sortedThoughtList = new TagListItem(this, "Sorted");

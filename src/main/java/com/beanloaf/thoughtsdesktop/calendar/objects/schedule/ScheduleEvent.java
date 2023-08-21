@@ -85,7 +85,7 @@ public class ScheduleEvent {
         if (!this.weekdays.contains(weekday)) this.weekdays.add(Weekday.getWeekdayByString(weekdayString));
     }
 
-    public List<String> getWeekdays() {
+    public List<String> getWeekdayStrings() {
         final List<String> stringList = new ArrayList<>();
 
         Collections.sort(weekdays);
@@ -94,7 +94,11 @@ public class ScheduleEvent {
         }
 
         return stringList;
+    }
 
+    public List<Weekday> getWeekdays() {
+        Collections.sort(weekdays);
+        return this.weekdays;
     }
 
     @Override

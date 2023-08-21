@@ -152,57 +152,57 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
 
 
     private void findNodes() {
-        settingsTabbedPane = (TabPane) findNodeByID("settingsTabbedPane");
+        settingsTabbedPane = (TabPane) findNodeById("settingsTabbedPane");
 
         // General Settings
-        revalidateButton = (Button) findNodeByID("revalidateButton");
+        revalidateButton = (Button) findNodeById("revalidateButton");
 
-        lightThemeCheckBox = (CheckBox) findNodeByID("lightThemeCheckBox");
+        lightThemeCheckBox = (CheckBox) findNodeById("lightThemeCheckBox");
         lightThemeCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.LIGHT_THEME));
 
-        pullOnStartupCheckBox = (CheckBox) findNodeByID("pullOnStartupCheckBox");
+        pullOnStartupCheckBox = (CheckBox) findNodeById("pullOnStartupCheckBox");
         pullOnStartupCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PULL_ON_STARTUP));
 
-        refreshSpinner = (Spinner<Integer>) findNodeByID("refreshSpinner");
+        refreshSpinner = (Spinner<Integer>) findNodeById("refreshSpinner");
         refreshSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9));
 
 
-        pushOnExitCheckBox = (CheckBox) findNodeByID("pushOnExitCheckBox");
+        pushOnExitCheckBox = (CheckBox) findNodeById("pushOnExitCheckBox");
         pushOnExitCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PUSH_ON_EXIT));
 
-        matchBraceCheckBox = (CheckBox) findNodeByID("matchBraceCheckBox");
+        matchBraceCheckBox = (CheckBox) findNodeById("matchBraceCheckBox");
         matchBraceCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.MATCH_BRACE));
 
         // Login/Register Layout
-        loginRegisterLayout = (AnchorPane) findNodeByID("loginRegisterLayout");
-        loginLayoutButton = (Button) findNodeByID("loginLayoutButton");
-        registerLayoutButton = (Button) findNodeByID("registerLayoutButton");
+        loginRegisterLayout = (AnchorPane) findNodeById("loginRegisterLayout");
+        loginLayoutButton = (Button) findNodeById("loginLayoutButton");
+        registerLayoutButton = (Button) findNodeById("registerLayoutButton");
 
 
         // Login Layout
-        loginLayout = (AnchorPane) findNodeByID("loginLayout");
-        loginBackButton = (Button) findNodeByID("loginBackButton");
-        loginButton = (Button) findNodeByID("loginButton");
-        loginEmailInput = (TextField) findNodeByID("loginEmailInput");
-        loginPasswordInput = (TextField) findNodeByID("loginPasswordInput");
-        loginShowPasswordCheckBox = (CheckBox) findNodeByID("loginShowPasswordCheckBox");
+        loginLayout = (AnchorPane) findNodeById("loginLayout");
+        loginBackButton = (Button) findNodeById("loginBackButton");
+        loginButton = (Button) findNodeById("loginButton");
+        loginEmailInput = (TextField) findNodeById("loginEmailInput");
+        loginPasswordInput = (TextField) findNodeById("loginPasswordInput");
+        loginShowPasswordCheckBox = (CheckBox) findNodeById("loginShowPasswordCheckBox");
 
 
         // Register Layout
-        registerLayout = (AnchorPane) findNodeByID("registerLayout");
-        registerBackButton = (Button) findNodeByID("registerBackButton");
-        registerButton = (Button) findNodeByID("registerButton");
-        registerNameInput = (TextField) findNodeByID("registerNameInput");
-        registerEmailInput = (TextField) findNodeByID("registerEmailInput");
-        registerPasswordInput = (TextField) findNodeByID("registerPasswordInput");
-        registerReenterPasswordInput = (TextField) findNodeByID("registerReenterPasswordInput");
+        registerLayout = (AnchorPane) findNodeById("registerLayout");
+        registerBackButton = (Button) findNodeById("registerBackButton");
+        registerButton = (Button) findNodeById("registerButton");
+        registerNameInput = (TextField) findNodeById("registerNameInput");
+        registerEmailInput = (TextField) findNodeById("registerEmailInput");
+        registerPasswordInput = (TextField) findNodeById("registerPasswordInput");
+        registerReenterPasswordInput = (TextField) findNodeById("registerReenterPasswordInput");
 
         // Info Layout
-        infoLayout = (AnchorPane) findNodeByID("infoLayout");
-        infoDisplayNameField = (Label) findNodeByID("infoDisplayNameField");
-        infoEmailField = (Label) findNodeByID("infoEmailField");
-        infoUserIDField = (Label) findNodeByID("infoUserIDField");
-        infoSignOutButton = (Button) findNodeByID("infoSignOutButton");
+        infoLayout = (AnchorPane) findNodeById("infoLayout");
+        infoDisplayNameField = (Label) findNodeById("infoDisplayNameField");
+        infoEmailField = (Label) findNodeById("infoEmailField");
+        infoUserIDField = (Label) findNodeById("infoUserIDField");
+        infoSignOutButton = (Button) findNodeById("infoSignOutButton");
 
     }
 

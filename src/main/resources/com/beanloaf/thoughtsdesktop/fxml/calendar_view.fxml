@@ -253,9 +253,9 @@
                               </Label>
                               <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="90.0" layoutY="51.0" prefHeight="962.0" prefWidth="380.0" style="-fx-border-color: red;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="86.0">
                                  <content>
-                                    <VBox prefHeight="456.0" prefWidth="376.0">
+                                    <VBox fx:id="calendarScheduleBox" prefHeight="456.0" prefWidth="376.0">
                                        <children>
-                                          <AnchorPane prefHeight="259.0" prefWidth="376.0" style="-fx-border-color: blue;">
+                                          <AnchorPane prefHeight="146.0" prefWidth="376.0" style="-fx-border-color: blue;">
                                              <children>
                                                 <Label layoutX="14.0" layoutY="14.0" text="Schedule Name" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
                                                    <font>
@@ -272,11 +272,11 @@
                                                       <Font size="16.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="49.0" layoutY="96.0" text="Label" AnchorPane.leftAnchor="48.0" AnchorPane.topAnchor="88.0">
+                                                <Button layoutX="245.0" layoutY="85.0" mnemonicParsing="false" styleClass="calendarButton" text="Edit/View" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0">
                                                    <font>
-                                                      <Font size="15.0" />
+                                                      <Font size="16.0" />
                                                    </font>
-                                                </Label>
+                                                </Button>
                                              </children>
                                           </AnchorPane>
                                        </children>
@@ -435,7 +435,7 @@
                   </AnchorPane>
               </items>
             </SplitPane>
-            <AnchorPane fx:id="popupWindow" layoutX="463.0" layoutY="201.0" prefHeight="587.0" prefWidth="1119.0" styleClass="popup" visible="false" AnchorPane.bottomAnchor="169.5" AnchorPane.leftAnchor="384.0" AnchorPane.rightAnchor="384.0" AnchorPane.topAnchor="169.5">
+            <AnchorPane fx:id="popupWindow" layoutX="463.0" layoutY="201.0" prefHeight="587.0" prefWidth="1119.0" styleClass="popup" AnchorPane.bottomAnchor="169.5" AnchorPane.leftAnchor="384.0" AnchorPane.rightAnchor="384.0" AnchorPane.topAnchor="169.5">
                <children>
                   <AnchorPane fx:id="newEventPopup" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>

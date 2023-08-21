@@ -62,45 +62,45 @@ public class TextView extends ThoughtsView implements ThoughtsChangeListener {
 
 
         /*  Text Fields    */
-        titleTextField = (TextField) findNodeByID("titleTextField");
-        tagTextField = (TextField) findNodeByID("tagTextField");
-        dateText = (Text) findNodeByID("dateText");
-        bodyTextField = (TextArea) findNodeByID("bodyTextField");
-        bodyAnchorPane = (AnchorPane) findNodeByID("bodyAnchorPane");
-        enlargeBodyButton = (Label) findNodeByID("enlargeBodyButton");
-        enlargedBodyHeader = (GridPane) findNodeByID("enlargedBodyHeader");
+        titleTextField = (TextField) findNodeById("titleTextField");
+        tagTextField = (TextField) findNodeById("tagTextField");
+        dateText = (Text) findNodeById("dateText");
+        bodyTextField = (TextArea) findNodeById("bodyTextField");
+        bodyAnchorPane = (AnchorPane) findNodeById("bodyAnchorPane");
+        enlargeBodyButton = (Label) findNodeById("enlargeBodyButton");
+        enlargedBodyHeader = (GridPane) findNodeById("enlargedBodyHeader");
 
-        enlargeBodyTitle = (Label) findNodeByID("enlargeBodyTitle");
-        enlargeBodyTag = (Label) findNodeByID("enlargeBodyTag");
-        enlargeBodyDate = (Label) findNodeByID("enlargeBodyDate");
+        enlargeBodyTitle = (Label) findNodeById("enlargeBodyTitle");
+        enlargeBodyTag = (Label) findNodeById("enlargeBodyTag");
+        enlargeBodyDate = (Label) findNodeById("enlargeBodyDate");
 
         /* ---------------  */
 
 
         /*  Button Toolbar  */
-        sortButton = (Button) findNodeByID("sortButton");
-        newFileButton = (Button) findNodeByID("newFileButton");
-        deleteButton = (Button) findNodeByID("deleteButton");
+        sortButton = (Button) findNodeById("sortButton");
+        newFileButton = (Button) findNodeById("newFileButton");
+        deleteButton = (Button) findNodeById("deleteButton");
 
-        deleteLocalButton = (Button) findNodeByID("deleteLocalButton");
-        forceSaveButton = (Button) findNodeByID("forceSaveButton");
-        pushFileButton = (Button) findNodeByID("pushFileButton");
+        deleteLocalButton = (Button) findNodeById("deleteLocalButton");
+        forceSaveButton = (Button) findNodeById("forceSaveButton");
+        pushFileButton = (Button) findNodeById("pushFileButton");
 
-        localOnlyCheckBox = (CheckBox) findNodeByID("localOnlyCheckBox");
-        lockTitleCheckBox = (CheckBox) findNodeByID("lockTitleCheckBox");
-        lockTagCheckBox = (CheckBox) findNodeByID("lockTagCheckBox");
-        lockBodyCheckBox = (CheckBox) findNodeByID("lockBodyCheckBox");
+        localOnlyCheckBox = (CheckBox) findNodeById("localOnlyCheckBox");
+        lockTitleCheckBox = (CheckBox) findNodeById("lockTitleCheckBox");
+        lockTagCheckBox = (CheckBox) findNodeById("lockTagCheckBox");
+        lockBodyCheckBox = (CheckBox) findNodeById("lockBodyCheckBox");
         /* ---------------  */
 
 
         /*  Cloud Header    */
-        pullButton = (Button) findNodeByID("pullButton");
-        pushAllButton = (Button) findNodeByID("pushAllButton");
+        pullButton = (Button) findNodeById("pullButton");
+        pushAllButton = (Button) findNodeById("pushAllButton");
 
-        cloudHeader = (GridPane) findNodeByID("cloudHeader");
-        cloudHeaderDisplayName = (Label) findNodeByID("cloudHeaderDisplayName");
-        pushProgressIndicator = (ProgressIndicator) findNodeByID("pushProgressIndicator");
-        pullProgressIndicator = (ProgressIndicator) findNodeByID("pullProgressIndicator");
+        cloudHeader = (GridPane) findNodeById("cloudHeader");
+        cloudHeaderDisplayName = (Label) findNodeById("cloudHeaderDisplayName");
+        pushProgressIndicator = (ProgressIndicator) findNodeById("pushProgressIndicator");
+        pullProgressIndicator = (ProgressIndicator) findNodeById("pullProgressIndicator");
         /* ---------------  */
 
 

@@ -140,11 +140,11 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         });
 
         scene.heightProperty().addListener((observableValue, number, newHeight) -> {
-            if (calendarView != null) calendarView.resizePopupHeight(newHeight.doubleValue());
+            if (calendarView != null) calendarView.popup.resizePopupHeight(newHeight.doubleValue());
         });
 
         scene.widthProperty().addListener((observableValue, number, newWidth) -> {
-            if (calendarView != null) calendarView.resizePopupWidth(newWidth.doubleValue());
+            if (calendarView != null) calendarView.popup.resizePopupWidth(newWidth.doubleValue());
         });
 
         /*  Layouts */

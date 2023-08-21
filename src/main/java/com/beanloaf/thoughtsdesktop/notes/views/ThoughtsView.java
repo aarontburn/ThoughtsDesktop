@@ -26,11 +26,11 @@ public class ThoughtsView {
     
 
 
-    public Node findNodeByID(final String nodeID) {
-        if (nodeID.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
+    public Node findNodeById(final String nodeId) {
+        if (nodeId.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
 
 
-        return scene == null ? main.findNodeByID(nodeID) : scene.lookup("#" + nodeID);
+        return scene == null ? main.findNodeByID(nodeId) : scene.lookup("#" + nodeId);
     }
     
     

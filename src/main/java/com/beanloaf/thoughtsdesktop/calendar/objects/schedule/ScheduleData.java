@@ -8,10 +8,10 @@ import java.util.*;
 public class ScheduleData {
 
 
-    private String scheduleName;
+    private String scheduleName = "";
     private LocalDate startDate, endDate;
 
-    private String id;
+    private final String id;
 
     private final List<ScheduleEvent> scheduleEventList = new ArrayList<>();
 

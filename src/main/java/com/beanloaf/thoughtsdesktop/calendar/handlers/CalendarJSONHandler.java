@@ -1,10 +1,10 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import org.json.simple.JSONArray;
@@ -151,8 +151,6 @@ public class CalendarJSONHandler {
             final String month = event.getDate().getMonth().toString();
             final String day = String.valueOf(event.getDate().getDayOfMonth());
             final boolean completed = event.isCompleted();
-
-
 
 
             JSONObject yearBranch = (JSONObject) root.get(year);
@@ -341,6 +339,20 @@ public class CalendarJSONHandler {
         }
 
         Logger.log(scheduleDataList);
+
+        for (final ScheduleData data : scheduleDataList) {
+            if (view.calendarScheduleBox == null) {
+                view.queuedTasks.add(() -> {
+                    view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data));
+                });
+                return;
+            }
+
+            view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data));
+
+
+        }
+
     }
 
     public void writeScheduleData(final ScheduleData data) {
@@ -373,7 +385,7 @@ public class CalendarJSONHandler {
                 final LocalTime endTime = schedule.getEndTime();
 
                 eventBranch.put(Keys.EVENT_NAME, schedule.getScheduleEventName());
-                eventBranch.put(Keys.DAYS, JSONArray.toJSONString(schedule.getWeekdays()));
+                eventBranch.put(Keys.DAYS, JSONArray.toJSONString(schedule.getWeekdayStrings()));
                 eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.DESCRIPTION, schedule.getDescription());
@@ -392,7 +404,6 @@ public class CalendarJSONHandler {
     public String toString() {
         return root.toString();
     }
-
 
 
 }
