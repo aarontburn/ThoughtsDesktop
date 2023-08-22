@@ -243,6 +243,8 @@ public class CalendarView extends ThoughtsView {
         });
 
 
+
+        calendarScheduleBox.getChildren().clear();
     }
 
 

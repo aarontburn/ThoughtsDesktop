@@ -1,6 +1,5 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
-import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
 
 import java.time.LocalTime;
@@ -19,8 +18,7 @@ public class ScheduleEvent {
     private LocalTime startTime;
     private LocalTime endTime;
     private String description = "";
-
-    private String id;
+    private final String id;
 
 
     public ScheduleEvent(final String scheduleEventName, final String id) {
@@ -50,19 +48,8 @@ public class ScheduleEvent {
     }
 
 
-    public void setStartTime(final String hourString, final String minuteString, final String period) {
-        setStartTime(CH.validateStringIntoTime(hourString, minuteString, period));
-    }
-
-
-
     public void setEndTime(final LocalTime endTime) {
         this.endTime = endTime;
-    }
-
-
-    public void setEndTime(final String hourString, final String minuteString, final String period) {
-        setEndTime(CH.validateStringIntoTime(hourString, minuteString, period));
     }
 
 
@@ -80,9 +67,17 @@ public class ScheduleEvent {
     }
 
     public void addWeekday(final String weekdayString) {
-        final Weekday weekday = Weekday.getWeekdayByString(weekdayString);
+        addWeekday(Weekday.getWeekdayByString(weekdayString));
+    }
 
-        if (!this.weekdays.contains(weekday)) this.weekdays.add(Weekday.getWeekdayByString(weekdayString));
+    public void addWeekday(final Weekday weekday) {
+        if (!this.weekdays.contains(weekday)) this.weekdays.add(weekday);
+    }
+
+
+
+    public void removeAllWeekdays() {
+        this.weekdays.clear();
     }
 
     public List<String> getWeekdayStrings() {

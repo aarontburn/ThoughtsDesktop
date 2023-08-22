@@ -44,7 +44,6 @@ public class ScheduleListItem extends GridPane {
 
     public ScheduleListItem(final SchedulePopup view, final String scheduleName, final String id) {
         this(view, new ScheduleEvent(scheduleName, id));
-
     }
 
 
@@ -138,6 +137,9 @@ public class ScheduleListItem extends GridPane {
     }
 
 
+    public void setChecked(final Weekday weekday, final boolean isChecked) {
+        this.checkBoxMap.get(weekday).setSelected(isChecked);
+    }
 
     public void setScheduleName(final String newName) {
         event.setScheduleEventName(newName);
@@ -216,6 +218,7 @@ public class ScheduleListItem extends GridPane {
     }
 
 
+
     public ScheduleLabel getLabel() {
         return new ScheduleLabel(this);
     }
@@ -240,7 +243,6 @@ public class ScheduleListItem extends GridPane {
         return "ScheduleListItem {" +
                 "weekdays=" + weekdays +
                 ", event=" + event +
-                ", displayText=" + displayText +
                 '}';
     }
 

@@ -338,19 +338,18 @@ public class CalendarJSONHandler {
 
         }
 
-        Logger.log(scheduleDataList);
-
         for (final ScheduleData data : scheduleDataList) {
             if (view.calendarScheduleBox == null) {
-                view.queuedTasks.add(() -> {
-                    view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data));
-                });
-                return;
+                view.queuedTasks.add(() -> view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data)));
+                continue;
             }
 
+            final ScheduleBoxItem scheduleBoxItem = new ScheduleBoxItem(view, data);
+
+
+
+
             view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data));
-
-
         }
 
     }
@@ -360,7 +359,6 @@ public class CalendarJSONHandler {
 
         TC.Directories.CALENDAR_SCHEDULES_PATH.mkdir();
         final File scheduleFile = new File(TC.Directories.CALENDAR_SCHEDULES_PATH, data.getId() + ".json");
-
 
         try {
             scheduleFile.createNewFile();

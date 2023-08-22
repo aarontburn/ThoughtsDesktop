@@ -6,7 +6,6 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDa
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleListItem;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -15,7 +14,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +27,13 @@ public class SchedulePopup {
     private final CalendarView view;
 
     private final ScheduleData data;
-
     private ScheduleListItem selectedScheduleListItem;
 
+
+    private final List<Runnable> queuedTasks = new ArrayList<>();
+
     private final Map<Weekday, ScheduleCalendarDay> dayMap = new HashMap<>();
+    private final List<ScheduleListItem> eventList = new ArrayList<>();
 
 
     /*  Header  */
@@ -55,9 +56,11 @@ public class SchedulePopup {
 
     /*  ---------   */
     /*  Day of the week */
-    private Button scheduleNewEventButton;
+    private Button scheduleNewEventButton, scheduleDeleteEventButton;
     private AnchorPane scheduleEventBox;
     private VBox scheduleEventList;
+    private boolean scheduleEventListReady;
+
 
     /*  ----------  */
 
@@ -96,16 +99,18 @@ public class SchedulePopup {
 
         /*  Input Fields    */
         scheduleEventTitleInput = (TextField) findNodeByID("scheduleEventTitleInput");
+        scheduleEventDescriptionInput = (TextArea) findNodeByID("scheduleEventDescriptionInput");
+
         scheduleHourInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleHourInputFrom"));
         scheduleMinuteInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleMinuteInputFrom"));
         scheduleHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleHourInputTo"));
         scheduleMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleMinuteInputTo"));
 
-        scheduleEventDescriptionInput = (TextArea) findNodeByID("scheduleEventDescriptionInput");
         scheduleAMPMSelectorFrom = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("scheduleAMPMSelectorFrom"));
         scheduleAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("scheduleAMPMSelectorTo"));
-        scheduleSaveEventButton = (Button) findNodeByID("scheduleSaveEventButton");
 
+        scheduleSaveEventButton = (Button) findNodeByID("scheduleSaveEventButton");
+        scheduleDeleteEventButton = (Button) findNodeByID("scheduleDeleteEventButton");
 
         /*  Day of the week */
         scheduleEventBox = (AnchorPane) findNodeByID("scheduleEventBox");
@@ -115,8 +120,8 @@ public class SchedulePopup {
     }
 
     private void attachEvents() {
-
         scheduleNewEventButton.setOnAction(e -> addScheduleEventToListView(new ScheduleListItem(this, "New Scheduled Event")));
+
 
         scheduleSaveEventButton.setOnAction(e -> {
             if (selectedScheduleListItem == null) return;
@@ -128,6 +133,18 @@ public class SchedulePopup {
 
         });
 
+        scheduleDeleteEventButton.setOnAction(e -> {
+            if (selectedScheduleListItem == null) return;
+
+            for (final Weekday weekday : dayMap.keySet()) {
+                final ScheduleCalendarDay day = dayMap.get(weekday);
+                day.removeScheduleEventFromDay(selectedScheduleListItem);
+            }
+
+            eventList.remove(selectedScheduleListItem);
+            scheduleEventList.getChildren().remove(selectedScheduleListItem);
+        });
+
         CH.setAMPMComboBox(scheduleAMPMSelectorFrom);
 
         scheduleSaveScheduleButton.setOnAction(e -> saveScheduleData());
@@ -137,13 +154,23 @@ public class SchedulePopup {
         scheduleEventList = new VBox();
         scheduleEventList.setSpacing(5);
 
+
         final ScrollPane pane = (ScrollPane) ThoughtsHelper.setAnchor(new ScrollPane(), 32.0, 48.0, 0.0, 0.0);
         pane.skinProperty().addListener((observableValue, skin, t1) -> {
             final StackPane stackPane = (StackPane) pane.lookup("ScrollPane .viewport");
             stackPane.setCache(false);
+
+            scheduleEventListReady = true;
+
+            synchronized (queuedTasks) {
+                for (final Runnable r : queuedTasks) {
+                    r.run();
+                }
+            }
+
+
         });
         pane.setFitToWidth(true);
-
         pane.setContent(scheduleEventList);
 
         scheduleEventBox.getChildren().add(pane);
@@ -160,7 +187,7 @@ public class SchedulePopup {
         for (int i = 0; i < scheduleWeekGrid.getColumnCount(); i++) {
             final Weekday weekday = Weekday.values()[i];
 
-            final ScheduleCalendarDay day = new ScheduleCalendarDay();
+            final ScheduleCalendarDay day = new ScheduleCalendarDay(weekday);
             dayMap.put(weekday, day);
             scheduleWeekGrid.add(day, i, 1);
         }
@@ -176,11 +203,8 @@ public class SchedulePopup {
         for (final ScheduleEvent event : data.getScheduleEventList()) {
             final ScheduleListItem listItem = new ScheduleListItem(this, event);
 
-            Logger.log(listItem);
-
             for (final Weekday weekday : event.getWeekdays()) {
-                addScheduleEventToDay(weekday, listItem);
-
+                listItem.setChecked(weekday, true);
             }
 
             addScheduleEventToListView(listItem);
@@ -217,21 +241,22 @@ public class SchedulePopup {
     }
 
     public void addScheduleEventToListView(final ScheduleListItem scheduleListItem) {
-        scheduleEventList.getChildren().add(scheduleListItem);
+        if (!scheduleEventListReady) {
+            queuedTasks.add(() -> addScheduleEventToListView(scheduleListItem));
+            return;
+        }
 
-        Logger.log(scheduleEventList.getChildren());
+        eventList.add(scheduleListItem);
+
+        scheduleEventList.getChildren().add(scheduleListItem);
     }
 
     public void addScheduleEventToDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
-        final ScheduleCalendarDay day = dayMap.get(weekday);
-
-        day.addSchedule(scheduleListItem);
+        dayMap.get(weekday).addScheduleEventToDay(scheduleListItem);
     }
 
     public void removeScheduleFromDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
-        final ScheduleCalendarDay day = dayMap.get(weekday);
-
-        day.removeSchedule(scheduleListItem);
+        dayMap.get(weekday).removeScheduleEventFromDay(scheduleListItem);
     }
 
     private void saveScheduleData() {
@@ -239,12 +264,28 @@ public class SchedulePopup {
         data.setStartDate(scheduleStartDate.getValue());
         data.setEndDate(scheduleEndDate.getValue());
 
+        data.setEvents(eventList);
 
-        for (final ScheduleCalendarDay day : dayMap.values()) {
-            for (final ScheduleEvent scheduleView : day.getScheduleEventList()) {
-                data.addEvent(scheduleView);
+
+
+
+        for (final ScheduleListItem scheduleListItem : eventList) {
+            data.addEvent(scheduleListItem.getEvent());
+            scheduleListItem.getEvent().removeAllWeekdays();
+        }
+
+
+
+        for (final Weekday weekday : dayMap.keySet()) {
+            final ScheduleCalendarDay day = dayMap.get(weekday);
+
+            for (final ScheduleEvent event : day.getScheduleEventList()) {
+                if (data.getScheduleEventList().contains(event)) {
+                    data.getEvent(event.getId()).addWeekday(weekday);
+                }
             }
         }
+
 
         view.calendarJson.writeScheduleData(data);
 

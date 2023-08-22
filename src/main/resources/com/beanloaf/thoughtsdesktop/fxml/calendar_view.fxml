@@ -251,11 +251,11 @@
                                     <Font size="23.0" />
                                  </font>
                               </Label>
-                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="90.0" layoutY="51.0" prefHeight="962.0" prefWidth="380.0" style="-fx-border-color: red;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="86.0">
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="90.0" layoutY="51.0" prefHeight="962.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="86.0">
                                  <content>
-                                    <VBox fx:id="calendarScheduleBox" prefHeight="456.0" prefWidth="376.0">
+                                    <VBox fx:id="calendarScheduleBox" prefHeight="456.0" prefWidth="376.0" spacing="5.0">
                                        <children>
-                                          <AnchorPane prefHeight="146.0" prefWidth="376.0" style="-fx-border-color: blue;">
+                                          <AnchorPane prefHeight="150.0" style="-fx-border-color: blue;">
                                              <children>
                                                 <Label layoutX="14.0" layoutY="14.0" text="Schedule Name" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
                                                    <font>
@@ -280,6 +280,9 @@
                                              </children>
                                           </AnchorPane>
                                        </children>
+                                       <padding>
+                                          <Insets left="8.0" right="8.0" />
+                                       </padding>
                                     </VBox>
                                  </content>
                               </ScrollPane>
@@ -960,6 +963,11 @@
                                                 </HBox>
                                              </children>
                                           </FlowPane>
+                                          <Button fx:id="scheduleDeleteEventButton" layoutX="16.0" layoutY="297.0" mnemonicParsing="false" styleClass="calendarButton" text="Delete Event" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Button>
                                        </children>
                                        <GridPane.margin>
                                           <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

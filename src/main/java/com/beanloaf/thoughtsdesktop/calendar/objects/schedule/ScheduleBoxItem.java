@@ -6,28 +6,39 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
+import java.time.LocalDate;
+
 public class ScheduleBoxItem extends AnchorPane {
 
     private final ScheduleData data;
+
+
+    private final Label scheduleNameLabel, startDateLabel, endDateLabel;
 
     public ScheduleBoxItem(final CalendarView view, final ScheduleData data) {
         super();
 
         this.data = data;
+        data.addReference(this);
 
-        this.setStyle("-fx-border-color: blue;");
 
-        final Label scheduleNameLabel = new Label(data.getScheduleName().isEmpty() ? "<Untitled Schedule>" : data.getScheduleName());
+        this.setPrefHeight(150);
+        this.getStyleClass().add("schedule-box-item");
+
+        scheduleNameLabel = new Label();
+        updateScheduleNameLabel();
         scheduleNameLabel.setStyle("-fx-font-size: 18px");
         this.getChildren().add(ThoughtsHelper.setAnchor(scheduleNameLabel, 16, null, 16, null));
 
 
-        final Label startDateLabel = new Label("Start Date: " + data.getStartDate());
+        startDateLabel = new Label();
+        updateStartDateLabelText();
         startDateLabel.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(startDateLabel, 40, null, 48, null));
 
 
-        final Label endDateLabel = new Label("End Date: " + data.getEndDate());
+        endDateLabel = new Label();
+        updateEndDateLabelText();
         endDateLabel.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(endDateLabel, 64, null, 48, null));
 
@@ -37,12 +48,19 @@ public class ScheduleBoxItem extends AnchorPane {
         editButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(editButton, null, 16, null, 16));
 
-        editButton.setOnAction(e -> {
-            view.popup.displaySchedule(data);
+        editButton.setOnAction(e -> view.popup.displaySchedule(data));
+    }
 
-        });
+    public void updateScheduleNameLabel() {
+        scheduleNameLabel.setText(data.getScheduleName().isEmpty() ? "<Untitled Schedule>" : data.getScheduleName());
+    }
 
+    public void updateStartDateLabelText() {
+        startDateLabel.setText(data.getStartDate() == null ? "" : "Start Date: " + data.getStartDate());
+    }
 
+    public void updateEndDateLabelText() {
+        endDateLabel.setText(data.getEndDate() == null ? "" : "End Date: " + data.getEndDate());
     }
 
 
