@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ScheduleBoxItem extends AnchorPane {
 
@@ -56,11 +57,11 @@ public class ScheduleBoxItem extends AnchorPane {
     }
 
     public void updateStartDateLabelText() {
-        startDateLabel.setText(data.getStartDate() == null ? "" : "Start Date: " + data.getStartDate());
+        startDateLabel.setText(data.getStartDate() == null ? "" : "Start Date: " + data.getStartDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
     }
 
     public void updateEndDateLabelText() {
-        endDateLabel.setText(data.getEndDate() == null ? "" : "End Date: " + data.getEndDate());
+        endDateLabel.setText(data.getEndDate() == null ? "" : "End Date: " + data.getEndDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
     }
 
 

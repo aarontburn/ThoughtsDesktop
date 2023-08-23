@@ -34,9 +34,7 @@ public class DayEvent extends Label {
 
     private boolean isCompleted;
 
-
     private DayEvent clone;
-
     public boolean isClone;
 
 
@@ -83,7 +81,6 @@ public class DayEvent extends Label {
 
 
         this.getChildren().addListener((ListChangeListener<Node>) change -> {
-
             for (final Node node : getChildren()) {
                 node.setId(DAY_EVENT_ID);
                 if (node.getClass().getSimpleName().equals("LabeledText")) {
@@ -91,10 +88,6 @@ public class DayEvent extends Label {
                     text.setStrikethrough(isCompleted);
                 }
             }
-
-
-
-
         });
 
         this.setOnMouseClicked(e -> onClick());

@@ -3,6 +3,7 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -10,6 +11,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -84,8 +89,17 @@ public class CalendarDay extends AnchorPane {
 
 
 
-        final Label dateLabel = new Label(day != null ? Integer.toString(day) : "");
-        this.getChildren().add(ThoughtsHelper.setAnchor(dateLabel, 4.0, null, null, 12.0));
+        final Label dateLabel = new Label();
+        dateLabel.setTextAlignment(TextAlignment.RIGHT);
+
+        if (day != null && day == 1) {
+            dateLabel.setText(ThoughtsHelper.toCamelCase(month.toString()) + " " + day);
+        } else {
+            dateLabel.setText(day != null ? Integer.toString(day) : "");
+        }
+
+        dateLabel.setTextAlignment(TextAlignment.RIGHT);
+        this.getChildren().add(ThoughtsHelper.setAnchor(dateLabel, 4, null, null, 12));
 
 
     }
@@ -108,22 +122,15 @@ public class CalendarDay extends AnchorPane {
     }
 
 
-    public DayEvent addEvent(final DayEvent event) {
+    public void addEvent(final DayEvent event) {
         eventList.add(event);
         eventContainer.getChildren().add(event);
-        return event;
 
     }
 
     public void removeEvent(final DayEvent event) {
-
-
         eventList.remove(event);
-
-
         eventContainer.getChildren().remove(event);
-
-
 
     }
 

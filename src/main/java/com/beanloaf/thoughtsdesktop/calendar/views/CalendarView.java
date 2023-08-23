@@ -53,6 +53,13 @@ public class CalendarView extends ThoughtsView {
     private Button calendarTestButton, calendarNewScheduleButton;
 
 
+    /*  Left Panel  */
+    private Button calendarEventsButton, calendarScheduleButton;
+    private AnchorPane[] leftLayoutList;
+    private AnchorPane calendarLeftEventPanel, calendarLeftSchedulePanel;
+
+
+
     /*  Event Box   */
     private VBox calendarEventBox;
     private Label calendarDayLabel;
@@ -77,13 +84,9 @@ public class CalendarView extends ThoughtsView {
     private boolean calendarSmallProgressCheckBoxReady = true;
 
 
-
-
-
     public CalendarView(final MainApplication main) {
         super(main);
         calendarJson = new CalendarJSONHandler(this);
-
 
 
         locateNodes();
@@ -98,6 +101,7 @@ public class CalendarView extends ThoughtsView {
 
 
         changeMonth(currentMonth);
+        swapLeftPanel(calendarLeftEventPanel);
 
     }
 
@@ -110,6 +114,13 @@ public class CalendarView extends ThoughtsView {
         calendarPrevMonthButton = (Label) findNodeById("calendarPrevMonthButton");
         calendarTestButton = (Button) findNodeById("calendarTestButton");
         calendarNewScheduleButton = (Button) findNodeById("calendarNewScheduleButton");
+
+        /*  Left Panel  */
+        calendarEventsButton = (Button) findNodeById("calendarEventsButton");
+        calendarScheduleButton = (Button) findNodeById("calendarScheduleButton");
+        calendarLeftEventPanel = (AnchorPane) findNodeById("calendarLeftEventPanel");
+        calendarLeftSchedulePanel = (AnchorPane) findNodeById("calendarLeftSchedulePanel");
+        leftLayoutList = new AnchorPane[]{calendarLeftEventPanel, calendarLeftSchedulePanel};
 
         /*  Event Box   */
         calendarEventBox = (VBox) findNodeById("calendarEventBox");
@@ -145,7 +156,6 @@ public class CalendarView extends ThoughtsView {
         calendarSmallProgressCheckBox = (CheckBox) findNodeById("calendarSmallProgressCheckBox");
 
 
-
     }
 
     public void onOpen() {
@@ -163,8 +173,15 @@ public class CalendarView extends ThoughtsView {
 
         calendarNewScheduleButton.setOnAction(e -> popup.displaySchedule(new ScheduleData()));
 
+        /*  Left Panel  */
+        calendarEventsButton.setOnAction(e -> {
+            swapLeftPanel(calendarLeftEventPanel);
 
+        });
 
+        calendarScheduleButton.setOnAction(e -> {
+            swapLeftPanel(calendarLeftSchedulePanel);
+        });
 
 
         /*  Small New Event*/
@@ -236,21 +253,24 @@ public class CalendarView extends ThoughtsView {
         });
 
 
-
         calendarSmallEditButton.setOnAction(e -> {
             toggleSmallEventFields(true);
             calendarSmallSaveEventButton.setVisible(true);
         });
 
 
-
         calendarScheduleBox.getChildren().clear();
     }
 
+    private void swapLeftPanel(final AnchorPane pane) {
+        for (final AnchorPane anchorPane : leftLayoutList) {
+            anchorPane.setVisible(false);
+        }
+
+        if (pane != null) pane.setVisible(true);
 
 
-
-
+    }
 
 
     private void changeMonth(final CalendarMonth month) {
@@ -260,7 +280,6 @@ public class CalendarView extends ThoughtsView {
             if (calendarMonth.getNumDaysWithEvents() == 0) {
                 activeMonths.remove(key);
             }
-
         }
 
 
@@ -282,10 +301,6 @@ public class CalendarView extends ThoughtsView {
         final CalendarMonth newMonth = activeMonths.get(monthYear);
         currentMonth = newMonth != null ? newMonth : month;
         activeMonths.put(monthYear, currentMonth);
-
-
-
-
 
 
         createCalendarGUI();
