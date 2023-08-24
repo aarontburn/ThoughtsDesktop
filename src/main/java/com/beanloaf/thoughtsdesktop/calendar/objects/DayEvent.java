@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import javafx.collections.ListChangeListener;
@@ -37,10 +38,15 @@ public class DayEvent extends Label {
     private DayEvent clone;
     public boolean isClone;
 
+    public boolean isScheduleEvent;
+
+
+
+
 
     // Cloning constructor, used to tie the eventbox object to the one in the grid
     public DayEvent(final DayEvent clone, final CalendarView view) {
-        this(clone.getDate(), clone.getEventTitle(), view);
+        this(clone.getDate(), clone.getEventTitle(), view, clone.isScheduleEvent);
 
 
         this.isClone = true;
@@ -54,19 +60,20 @@ public class DayEvent extends Label {
     }
 
 
+
     // Constructor for creating a NEW event
-    public DayEvent(final LocalDate day, final String eventName, final CalendarView view) {
-        this(day, eventName, UUID.randomUUID().toString(), view);
+    public DayEvent(final LocalDate day, final String eventName, final CalendarView view, final boolean isScheduleEvent) {
+        this(day, eventName, UUID.randomUUID().toString(), view, isScheduleEvent);
     }
 
 
     // Constructor for reading an EXISTING event from file
-    public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarView view) {
-        super(eventTitle, new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
+    public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarView view, final boolean isScheduleEvent) {
+        super(eventTitle, new ImageView(new Image(String.valueOf(MainApplication.class.getResource(isScheduleEvent ? "icons/schedule-icon.png": "icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
 
         this.view = view;
         this.day = day;
-
+        this.isScheduleEvent = isScheduleEvent;
 
         final Tooltip tooltip = new Tooltip(eventTitle);
         tooltip.setShowDelay(Duration.seconds(0.5));

@@ -89,7 +89,7 @@ public class CalendarJSONHandler {
 
                             final LocalDate eventDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum));
 
-                            final DayEvent event = new DayEvent(eventDate, eventTitle, eventID, view);
+                            final DayEvent event = new DayEvent(eventDate, eventTitle, eventID, view, false);
                             event.setDescription(description);
                             event.setCompleted(isCompleted != null ? isCompleted : false, false);
 
@@ -137,7 +137,7 @@ public class CalendarJSONHandler {
 
         for (final LocalDate date : eventMap.keySet()) {
             for (final DayEvent event : eventMap.get(date)) {
-                view.addEvent(date, event);
+                view.addEventToCalendarDay(date, event);
             }
         }
 
@@ -145,6 +145,11 @@ public class CalendarJSONHandler {
 
 
     public void addEventToJson(final DayEvent event) {
+        if (event.isScheduleEvent) {
+            Logger.log("Attempted to record a scheduleEvent to json: " + event.getEventTitle());
+            return;
+        }
+
 
         new Thread(() -> {
             final String year = String.valueOf(event.getDate().getYear());
@@ -344,12 +349,12 @@ public class CalendarJSONHandler {
                 continue;
             }
 
-            final ScheduleBoxItem scheduleBoxItem = new ScheduleBoxItem(view, data);
-
-
-
-
             view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data));
+        }
+
+
+        for (final ScheduleData data : scheduleDataList) {
+            view.addScheduleToCalendarDay(data);
         }
 
     }

@@ -1,14 +1,12 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
+import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarDay;
-import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
-import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -29,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -57,7 +56,6 @@ public class CalendarView extends ThoughtsView {
     private Button calendarEventsButton, calendarScheduleButton;
     private AnchorPane[] leftLayoutList;
     private AnchorPane calendarLeftEventPanel, calendarLeftSchedulePanel;
-
 
 
     /*  Event Box   */
@@ -197,7 +195,7 @@ public class CalendarView extends ThoughtsView {
 
         calendarNewEventButton.setOnMouseClicked(e -> {
             if (selectedDay != null)
-                selectEvent(addEvent(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
+                selectEvent(addEventToCalendarDay(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay(), "New Event", "", null), true);
         });
 
         calendarSmallSaveEventButton.setVisible(false);
@@ -380,12 +378,54 @@ public class CalendarView extends ThoughtsView {
                 queuedTasks.clear();
             }
         });
+    }
+
+
+    public void addScheduleToCalendarDay(final ScheduleData schedule) {
+        LocalDate startDate = schedule.getStartDate();
+        final LocalDate endDate = schedule.getEndDate();
+
+
+        if (startDate == null || endDate == null) {
+            Logger.log("Needs to have a startdate and enddate. This needs to be changed to not have this issue.");
+            return;
+        }
+
+
+        final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
+
+
+        for (int i = 0; i < daysBetween; i++) {
+            for (final ScheduleEvent scheduleEvent : schedule.getScheduleEventList()) {
+                boolean isCorrectDay = false;
+
+                for (final Weekday weekday : scheduleEvent.getWeekdays()) {
+                    if (weekday.getDayOfWeek() == startDate.getDayOfWeek().getValue() || (weekday.getDayOfWeek() == 0 && startDate.getDayOfWeek().getValue() == 7)) {
+                        isCorrectDay = true;
+                        break;
+                    }
+                }
+
+                if (!isCorrectDay) continue;
+
+
+
+                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), scheduleEvent.getId(), this, true);
+                dayEvent.setDescription(scheduleEvent.getDescription());
+                dayEvent.setStartTime(scheduleEvent.getStartTime());
+                dayEvent.setEndTime(scheduleEvent.getEndTime());
+
+                addEventToCalendarDay(startDate, dayEvent);
+
+            }
+            startDate = startDate.plusDays(1);
+        }
 
 
     }
 
 
-    public DayEvent addEvent(final LocalDate date, final DayEvent event) {
+    public DayEvent addEventToCalendarDay(final LocalDate date, final DayEvent event) {
         final Month month = date.getMonth();
         final Integer year = date.getYear();
         final int day = date.getDayOfMonth();
@@ -405,11 +445,9 @@ public class CalendarView extends ThoughtsView {
 
 
         return event;
-
-
     }
 
-    private DayEvent addEvent(final int year, final Month month, final int day, final String eventName, final String desc, final String time) {
+    private DayEvent addEventToCalendarDay(final int year, final Month month, final int day, final String eventName, final String desc, final String time) {
         final Pair<Month, Integer> monthYear = new Pair<>(month, year);
 
         CalendarMonth activeMonth = activeMonths.get(monthYear);
@@ -424,7 +462,7 @@ public class CalendarView extends ThoughtsView {
         final CalendarDay calendarDay = activeMonth.getDay(day);
 
 
-        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), eventName, this);
+        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), eventName, this, false);
         event.setDescription(desc);
 
         if (time == null || !time.contains(":")) {

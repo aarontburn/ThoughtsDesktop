@@ -157,7 +157,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
     }
 
     public void stopRefresh() {
-        scheduler.shutdownNow();
+        if (scheduler != null) scheduler.shutdownNow();
     }
 
     private void signOut() {

@@ -9,6 +9,7 @@ public class ScheduleData {
     private String scheduleName = "";
     private LocalDate startDate, endDate;
     private final String id;
+
     private final Map<String, ScheduleEvent> scheduleEventMap = new HashMap<>();
 
     private final List<ScheduleBoxItem> references = new ArrayList<>();
