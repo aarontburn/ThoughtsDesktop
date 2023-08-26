@@ -2,14 +2,17 @@ package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
+import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -23,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
@@ -267,7 +271,6 @@ public class CalendarView extends ThoughtsView {
 
         if (pane != null) pane.setVisible(true);
 
-
     }
 
 
@@ -381,6 +384,50 @@ public class CalendarView extends ThoughtsView {
     }
 
 
+    public void updateSchedule(final ScheduleData data) {
+        for (final CalendarMonth month : activeMonths.values()) {
+            for (int i = 1; i < month.getMonthLength() + 1; i++) {
+                final CalendarDay day = month.getDay(i);
+
+                for (final DayEvent event : day.getEvents()) {
+                    if (data.getId() != null && data.getId().equals(event.getEventID())) {
+                        Platform.runLater(() -> day.removeEvent(event));
+                    }
+
+                }
+            }
+
+        }
+
+        boolean boxExists = false;
+        for (final Node node : calendarScheduleBox.getChildrenUnmodifiable()) {
+            if (node.getClass() != ScheduleBoxItem.class) continue;
+            final ScheduleBoxItem scheduleBoxItem = (ScheduleBoxItem) node;
+            if (scheduleBoxItem.getScheduleId().equals(data.getId())) {
+                boxExists = true;
+                break;
+            }
+
+        }
+
+
+        if (!boxExists) Platform.runLater(() -> calendarScheduleBox.getChildren().add(new ScheduleBoxItem(this, data)));
+
+
+        addScheduleToCalendarDay(data);
+
+    }
+
+
+    public void removeSchedule(final ScheduleBoxItem scheduleBoxItem) {
+        calendarScheduleBox.getChildren().remove(scheduleBoxItem);
+
+
+//        Logger.log(new File(TC.Directories.CALENDAR_SCHEDULES_PATH, scheduleBoxItem.getScheduleId()).getPath());
+        new File(TC.Directories.CALENDAR_SCHEDULES_PATH, scheduleBoxItem.getScheduleId() + ".json").delete();
+
+    }
+
     public void addScheduleToCalendarDay(final ScheduleData schedule) {
         LocalDate startDate = schedule.getStartDate();
         final LocalDate endDate = schedule.getEndDate();
@@ -392,7 +439,7 @@ public class CalendarView extends ThoughtsView {
         }
 
 
-        final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate);
+        final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
 
         for (int i = 0; i < daysBetween; i++) {
@@ -409,13 +456,13 @@ public class CalendarView extends ThoughtsView {
                 if (!isCorrectDay) continue;
 
 
-
-                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), scheduleEvent.getId(), this, true);
+                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), this, true);
                 dayEvent.setDescription(scheduleEvent.getDescription());
                 dayEvent.setStartTime(scheduleEvent.getStartTime());
                 dayEvent.setEndTime(scheduleEvent.getEndTime());
 
-                addEventToCalendarDay(startDate, dayEvent);
+                LocalDate finalStartDate = startDate;
+                Platform.runLater(() -> addEventToCalendarDay(finalStartDate, dayEvent));
 
             }
             startDate = startDate.plusDays(1);
@@ -506,6 +553,8 @@ public class CalendarView extends ThoughtsView {
     }
 
     public void selectEvent(DayEvent event, final boolean editable) {
+        swapLeftPanel(calendarLeftEventPanel);
+
         event.getStyleClass().add("selected-day-event");
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-day-event");
         selectedEvent = event;

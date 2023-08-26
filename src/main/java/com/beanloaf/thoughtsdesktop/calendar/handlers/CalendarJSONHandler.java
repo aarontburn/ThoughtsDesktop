@@ -7,6 +7,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import javafx.application.Platform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -262,7 +263,11 @@ public class CalendarJSONHandler {
                 final String scheduleName = scheduleRoot.getString(Keys.SCHEDULE_NAME);
                 final String startDate = scheduleRoot.getString(Keys.START_DATE);
                 final String endDate = scheduleRoot.getString(Keys.END_DATE);
-                final String scheduleId = scheduleRoot.getString(Keys.ID);
+                final String scheduleId = file.getName().replace(".json", "");
+                if (!scheduleId.equals(scheduleRoot.getString(Keys.ID))) {
+                    Logger.log("WARNING: ID of " + scheduleName + " does not match file name: " + file.getName());
+                }
+
                 final JSONHelper schedules = scheduleRoot.getBranch(Keys.SCHEDULE_EVENTS.toString());
 
                 final ScheduleData scheduleData = new ScheduleData(scheduleId);
@@ -343,19 +348,19 @@ public class CalendarJSONHandler {
 
         }
 
-        for (final ScheduleData data : scheduleDataList) {
-            if (view.calendarScheduleBox == null) {
-                view.queuedTasks.add(() -> view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data)));
-                continue;
+        new Thread(() -> {
+            for (final ScheduleData data : scheduleDataList) {
+                view.addScheduleToCalendarDay(data);
+
+                if (view.calendarScheduleBox == null) {
+                    Platform.runLater(() -> view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data)));
+                    continue;
+                }
+
+                Platform.runLater(() -> view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data)));
             }
+        }).start();
 
-            view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data));
-        }
-
-
-        for (final ScheduleData data : scheduleDataList) {
-            view.addScheduleToCalendarDay(data);
-        }
 
     }
 

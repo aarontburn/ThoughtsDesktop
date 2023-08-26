@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
+import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.views.SchedulePopup;
@@ -8,6 +9,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -22,7 +25,7 @@ public class ScheduleListItem extends GridPane {
 
 
 
-    private final SchedulePopup view;
+    private final SchedulePopup popup;
 
 
     private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
@@ -37,19 +40,19 @@ public class ScheduleListItem extends GridPane {
 
 
 
-    public ScheduleListItem(final SchedulePopup view, final String scheduleName) {
-        this(view, scheduleName, UUID.randomUUID().toString());
+    public ScheduleListItem(final SchedulePopup popup, final String scheduleName) {
+        this(popup, scheduleName, UUID.randomUUID().toString());
 
     }
 
-    public ScheduleListItem(final SchedulePopup view, final String scheduleName, final String id) {
-        this(view, new ScheduleEvent(scheduleName, id));
+    public ScheduleListItem(final SchedulePopup popup, final String scheduleName, final String id) {
+        this(popup, new ScheduleEvent(scheduleName, id));
     }
 
 
-    public ScheduleListItem(final SchedulePopup view, final ScheduleEvent event) {
+    public ScheduleListItem(final SchedulePopup popup, final ScheduleEvent event) {
         super();
-        this.view = view;
+        this.popup = popup;
         this.event = event;
 
         this.getStyleClass().add("schedule");
@@ -82,13 +85,11 @@ public class ScheduleListItem extends GridPane {
             checkBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
 
                 if (isChecked) {
-                    view.addScheduleEventToDay(weekday, this);
-
+                    popup.addScheduleEventToDay(weekday, this);
                     if (!weekdays.contains(weekday)) weekdays.add(weekday);
                 }
                 else {
-                    view.removeScheduleFromDay(weekday, this);
-
+                    popup.removeScheduleFromDay(weekday, this);
                     while (weekdays.contains(weekday)) weekdays.remove(weekday);
                 }
 
@@ -128,8 +129,8 @@ public class ScheduleListItem extends GridPane {
 
 
     public void doClick() {
-        view.setInputFields(this);
-
+        popup.setInputFields(this);
+        Logger.log(event.getId());
     }
 
     public ScheduleEvent getEvent() {
@@ -141,13 +142,13 @@ public class ScheduleListItem extends GridPane {
         this.checkBoxMap.get(weekday).setSelected(isChecked);
     }
 
-    public void setScheduleName(final String newName) {
+    public void setScheduleEventName(final String newName) {
         event.setScheduleEventName(newName);
         displayText.setText(newName);
 
+
         for (final ScheduleLabel scheduleLabel : references) {
             scheduleLabel.setText(newName);
-
         }
     }
 
@@ -217,25 +218,11 @@ public class ScheduleListItem extends GridPane {
         this.references.remove(event);
     }
 
-
-
     public ScheduleLabel getLabel() {
         return new ScheduleLabel(this);
     }
 
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final ScheduleListItem scheduleListItem = (ScheduleListItem) o;
-        return event.equals(scheduleListItem.event);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(event);
-    }
 
 
     @Override
@@ -251,10 +238,9 @@ public class ScheduleListItem extends GridPane {
         private final ScheduleListItem scheduleListItem;
 
         public ScheduleLabel(final ScheduleListItem scheduleListItem) {
-            super(scheduleListItem.getScheduleName());
+            super(scheduleListItem.getScheduleName(), new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/schedule-icon.png")), 17.5, 17.5, true, true)));
 
             this.scheduleListItem = scheduleListItem;
-
 
             this.getStyleClass().add("day-event");
             this.setMaxWidth(Double.MAX_VALUE);
@@ -270,12 +256,16 @@ public class ScheduleListItem extends GridPane {
 
         }
 
+        public String getScheduleId() {
+            return scheduleListItem.getEvent().getId();
+        }
+
         @Override
         public boolean equals(final Object other) {
             if (this == other) return true;
             if (other == null || getClass() != other.getClass()) return false;
             final ScheduleLabel that = (ScheduleLabel) other;
-            return Objects.equals(scheduleListItem, that.scheduleListItem);
+            return getScheduleId().equals(that.getScheduleId());
         }
 
         @Override

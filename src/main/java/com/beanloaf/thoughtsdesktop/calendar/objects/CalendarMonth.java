@@ -40,6 +40,11 @@ public class CalendarMonth {
     }
 
     public CalendarDay getDay(final int day) {
+        if (day > getMonthLength()) {
+            throw new IllegalArgumentException("Day is greater than month length: Day: " + day + " Month Length: " + getMonthLength());
+        }
+
+
         CalendarDay calendarDay = monthMap.get(day);
 
         if (calendarDay == null) {

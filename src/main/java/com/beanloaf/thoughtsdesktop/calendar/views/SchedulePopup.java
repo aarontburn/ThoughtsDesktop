@@ -32,7 +32,7 @@ public class SchedulePopup {
 
     private final List<Runnable> queuedTasks = new ArrayList<>();
 
-    private final Map<Weekday, ScheduleCalendarDay> dayMap = new HashMap<>();
+    private final Map<Weekday, ScheduleCalendarDay> weekdayMap = new HashMap<>();
     private final List<ScheduleListItem> eventList = new ArrayList<>();
 
 
@@ -120,15 +120,19 @@ public class SchedulePopup {
     }
 
     private void attachEvents() {
-        scheduleNewEventButton.setOnAction(e -> addScheduleEventToListView(new ScheduleListItem(this, "New Scheduled Event")));
+        scheduleNewEventButton.setOnAction(e -> {
+            final ScheduleListItem scheduleListItem = new ScheduleListItem(this, "New Scheduled Event");
+
+            addScheduleEventToListView(scheduleListItem);
+            setInputFields(scheduleListItem);
+        });
 
 
         scheduleSaveEventButton.setOnAction(e -> {
             if (selectedScheduleListItem == null) return;
 
-            selectedScheduleListItem.setScheduleName(scheduleEventTitleInput.getText());
+            selectedScheduleListItem.setScheduleEventName(scheduleEventTitleInput.getText());
             selectedScheduleListItem.setDescription(scheduleEventDescriptionInput.getText());
-
             selectedScheduleListItem.setStartTime(scheduleHourInputFrom.getText(), scheduleMinuteInputFrom.getText(), scheduleAMPMSelectorFrom.getSelectionModel().getSelectedItem());
 
         });
@@ -136,8 +140,8 @@ public class SchedulePopup {
         scheduleDeleteEventButton.setOnAction(e -> {
             if (selectedScheduleListItem == null) return;
 
-            for (final Weekday weekday : dayMap.keySet()) {
-                final ScheduleCalendarDay day = dayMap.get(weekday);
+            for (final Weekday weekday : weekdayMap.keySet()) {
+                final ScheduleCalendarDay day = weekdayMap.get(weekday);
                 day.removeScheduleEventFromDay(selectedScheduleListItem);
             }
 
@@ -188,7 +192,7 @@ public class SchedulePopup {
             final Weekday weekday = Weekday.values()[i];
 
             final ScheduleCalendarDay day = new ScheduleCalendarDay(weekday);
-            dayMap.put(weekday, day);
+            weekdayMap.put(weekday, day);
             scheduleWeekGrid.add(day, i, 1);
         }
 
@@ -232,7 +236,7 @@ public class SchedulePopup {
         } else {
             scheduleHourInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("hh")));
             scheduleMinuteInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("mm")));
-            scheduleAMPMSelectorTo.getSelectionModel().select(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("a")));
+            scheduleAMPMSelectorTo.getSelectionModel().select(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("a")));
 
         }
 
@@ -247,16 +251,15 @@ public class SchedulePopup {
         }
 
         eventList.add(scheduleListItem);
-
         scheduleEventList.getChildren().add(scheduleListItem);
     }
 
     public void addScheduleEventToDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
-        dayMap.get(weekday).addScheduleEventToDay(scheduleListItem);
+        weekdayMap.get(weekday).addScheduleEventToDay(scheduleListItem);
     }
 
     public void removeScheduleFromDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
-        dayMap.get(weekday).removeScheduleEventFromDay(scheduleListItem);
+        weekdayMap.get(weekday).removeScheduleEventFromDay(scheduleListItem);
     }
 
     private void saveScheduleData() {
@@ -266,28 +269,28 @@ public class SchedulePopup {
 
         data.setEvents(eventList);
 
-
-
-
         for (final ScheduleListItem scheduleListItem : eventList) {
             data.addEvent(scheduleListItem.getEvent());
             scheduleListItem.getEvent().removeAllWeekdays();
+
         }
 
-
-
-        for (final Weekday weekday : dayMap.keySet()) {
-            final ScheduleCalendarDay day = dayMap.get(weekday);
+        for (final Weekday weekday : weekdayMap.keySet()) {
+            final ScheduleCalendarDay day = weekdayMap.get(weekday);
 
             for (final ScheduleEvent event : day.getScheduleEventList()) {
+
                 if (data.getScheduleEventList().contains(event)) {
                     data.getEvent(event.getId()).addWeekday(weekday);
                 }
+
             }
         }
 
 
         view.calendarJson.writeScheduleData(data);
+
+        new Thread(() -> view.updateSchedule(data)).start();
 
     }
 

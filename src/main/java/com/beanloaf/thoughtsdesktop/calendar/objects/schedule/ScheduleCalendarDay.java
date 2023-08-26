@@ -1,7 +1,9 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -50,15 +52,21 @@ public class ScheduleCalendarDay extends AnchorPane {
     public void addScheduleEventToDay(final ScheduleListItem scheduleListItem) {
         scheduleEventList.add(scheduleListItem.getEvent());
 
-        scheduleListItem.addReference(scheduleListItem.getLabel());
-        scheduleContainer.getChildren().add(scheduleListItem.getLabel());
+        final ScheduleListItem.ScheduleLabel label = scheduleListItem.getLabel();
+
+        scheduleListItem.addReference(label);
+        scheduleContainer.getChildren().add(label);
+
     }
 
     public void removeScheduleEventFromDay(final ScheduleListItem scheduleListItem) {
         scheduleEventList.remove(scheduleListItem.getEvent());
 
-        scheduleListItem.removeReference(scheduleListItem.getLabel());
-        scheduleContainer.getChildren().remove(scheduleListItem.getLabel());
+        final ScheduleListItem.ScheduleLabel label = scheduleListItem.getLabel();
+
+        scheduleListItem.removeReference(label);
+        scheduleContainer.getChildren().remove(label);
+
 
     }
 

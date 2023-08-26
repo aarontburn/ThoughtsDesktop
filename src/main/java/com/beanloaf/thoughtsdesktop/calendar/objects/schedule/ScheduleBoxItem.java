@@ -6,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class ScheduleBoxItem extends AnchorPane {
@@ -50,6 +49,16 @@ public class ScheduleBoxItem extends AnchorPane {
         this.getChildren().add(ThoughtsHelper.setAnchor(editButton, null, 16, null, 16));
 
         editButton.setOnAction(e -> view.popup.displaySchedule(data));
+
+
+        final Button deleteButton = new Button("Delete");
+        deleteButton.getStyleClass().add("calendarButton");
+        deleteButton.setStyle("-fx-font-size: 16");
+        this.getChildren().add(ThoughtsHelper.setAnchor(deleteButton, null, 16, 16, null));
+
+        deleteButton.setOnAction(e -> {
+            view.removeSchedule(this);
+        });
     }
 
     public void updateScheduleNameLabel() {
@@ -62,6 +71,10 @@ public class ScheduleBoxItem extends AnchorPane {
 
     public void updateEndDateLabelText() {
         endDateLabel.setText(data.getEndDate() == null ? "" : "End Date: " + data.getEndDate().format(DateTimeFormatter.ofPattern("MM/dd/yyyy")));
+    }
+
+    public String getScheduleId() {
+        return data.getId();
     }
 
 
