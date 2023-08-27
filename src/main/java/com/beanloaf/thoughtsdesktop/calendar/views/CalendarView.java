@@ -322,6 +322,7 @@ public class CalendarView extends ThoughtsView {
         final CalendarMonth nextMonth = n != null ? n : currentMonth.getNextMonth();
 
 
+
         Platform.runLater(() -> {
             calendarFrame.getChildren().clear();
 
@@ -340,6 +341,7 @@ public class CalendarView extends ThoughtsView {
                     if (calendarDay == null) {
                         calendarDay = new CalendarDay(prevMonth.getYear(), prevMonth.getMonth(), prevDays, this);
                     }
+                    calendarDay.checkIsToday();
                     prevDays++;
                     calendarFrame.add(calendarDay, col, row);
 
@@ -349,6 +351,8 @@ public class CalendarView extends ThoughtsView {
                     if (calendarDay == null) {
                         calendarDay = new CalendarDay(nextMonth.getYear(), nextMonth.getMonth(), overflowDays, this);
                     }
+                    calendarDay.checkIsToday();
+
                     overflowDays++;
                     calendarFrame.add(calendarDay, col, row);
 
@@ -361,6 +365,7 @@ public class CalendarView extends ThoughtsView {
                         calendarDay = new CalendarDay(currentMonth.getYear(), currentMonth.getMonth(), day, this);
                         currentMonth.addDay(day, calendarDay);
                     }
+                    calendarDay.checkIsToday();
                     calendarFrame.add(calendarDay, col, row);
                 }
 
@@ -384,20 +389,31 @@ public class CalendarView extends ThoughtsView {
     }
 
 
-    public void updateSchedule(final ScheduleData data) {
-        for (final CalendarMonth month : activeMonths.values()) {
-            for (int i = 1; i < month.getMonthLength() + 1; i++) {
-                final CalendarDay day = month.getDay(i);
+    public void updateSchedule(final ScheduleData data, final LocalDate oldStartDate, final LocalDate oldEndDate) {
 
+        if (oldStartDate != null && oldEndDate != null) {
+            final long daysBetween = ChronoUnit.DAYS.between(oldStartDate, oldEndDate) + 1;
+
+            LocalDate date = oldStartDate;
+            for (int i = 0; i < daysBetween; i++) {
+                final CalendarMonth month = activeMonths.get(new Pair<>(date.getMonth(), date.getYear()));
+                if (month == null) {
+                    Logger.log("month is when updating schedule, somehow.");
+                    continue;
+                }
+
+                final CalendarDay day = month.getDay(date.getDayOfMonth());
                 for (final DayEvent event : day.getEvents()) {
                     if (data.getId() != null && data.getId().equals(event.getEventID())) {
                         Platform.runLater(() -> day.removeEvent(event));
                     }
 
                 }
-            }
+                date = date.plusDays(1);
 
+            }
         }
+
 
         boolean boxExists = false;
         for (final Node node : calendarScheduleBox.getChildrenUnmodifiable()) {
@@ -419,7 +435,7 @@ public class CalendarView extends ThoughtsView {
     }
 
 
-    public void removeSchedule(final ScheduleBoxItem scheduleBoxItem) {
+    public void deleteSchedule(final ScheduleBoxItem scheduleBoxItem) {
         calendarScheduleBox.getChildren().remove(scheduleBoxItem);
 
 

@@ -40,6 +40,13 @@
     -fx-padding: 0 0 0 0;
 }
 
+.calendar-date-label {
+    -fx-font-family: Lato;
+    -fx-font-size: 16;
+    -fx-fill: rgb(209, 209 ,209);
+
+}
+
 
 
 

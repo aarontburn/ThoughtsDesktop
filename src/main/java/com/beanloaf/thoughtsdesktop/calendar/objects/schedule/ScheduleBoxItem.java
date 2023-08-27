@@ -57,7 +57,7 @@ public class ScheduleBoxItem extends AnchorPane {
         this.getChildren().add(ThoughtsHelper.setAnchor(deleteButton, null, 16, 16, null));
 
         deleteButton.setOnAction(e -> {
-            view.removeSchedule(this);
+            view.deleteSchedule(this);
         });
     }
 

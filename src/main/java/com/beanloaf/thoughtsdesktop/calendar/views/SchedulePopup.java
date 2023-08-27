@@ -14,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -263,6 +264,10 @@ public class SchedulePopup {
     }
 
     private void saveScheduleData() {
+        final LocalDate oldStartDate = data.getStartDate();
+        final LocalDate oldEndDate = data.getEndDate();
+
+
         data.setScheduleName(scheduleNameInput.getText());
         data.setStartDate(scheduleStartDate.getValue());
         data.setEndDate(scheduleEndDate.getValue());
@@ -290,7 +295,7 @@ public class SchedulePopup {
 
         view.calendarJson.writeScheduleData(data);
 
-        new Thread(() -> view.updateSchedule(data)).start();
+        new Thread(() -> view.updateSchedule(data, oldStartDate, oldEndDate)).start();
 
     }
 

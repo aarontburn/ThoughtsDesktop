@@ -27,7 +27,8 @@ public class CalendarDay extends AnchorPane {
     private final LocalDate date;
 
     private final VBox eventContainer;
-
+    private final ScrollPane scrollPane;
+    private final Text dateText;
     private final List<DayEvent> eventList = new ArrayList<>();
 
 
@@ -42,9 +43,11 @@ public class CalendarDay extends AnchorPane {
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
         this.getStyleClass().add("calendar-day");
 
-
-        final ScrollPane scrollPane = new ScrollPane();
+        scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("calendar-day");
+
+
+
         scrollPane.getStyleClass().add("edge-to-edge");
         scrollPane.fitToWidthProperty().set(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -89,17 +92,19 @@ public class CalendarDay extends AnchorPane {
 
 
 
-        final Label dateLabel = new Label();
-        dateLabel.setTextAlignment(TextAlignment.RIGHT);
+        dateText = new Text();
 
         if (day != null && day == 1) {
-            dateLabel.setText(ThoughtsHelper.toCamelCase(month.toString()) + " " + day);
+            dateText.setText(ThoughtsHelper.toCamelCase(month.toString()) + " " + day);
         } else {
-            dateLabel.setText(day != null ? Integer.toString(day) : "");
+            dateText.setText(day != null ? Integer.toString(day) : "");
         }
 
-        dateLabel.setTextAlignment(TextAlignment.RIGHT);
-        this.getChildren().add(ThoughtsHelper.setAnchor(dateLabel, 4, null, null, 12));
+
+        dateText.setTextAlignment(TextAlignment.RIGHT);
+        dateText.getStyleClass().add("calendar-date-label");
+        dateText.setPickOnBounds(false);
+        this.getChildren().add(ThoughtsHelper.setAnchor(dateText, 4, null, null, 12));
 
 
     }
@@ -131,7 +136,12 @@ public class CalendarDay extends AnchorPane {
     public void removeEvent(final DayEvent event) {
         eventList.remove(event);
         eventContainer.getChildren().remove(event);
+    }
 
+    public void checkIsToday() {
+
+        if (date.isEqual(LocalDate.now())) scrollPane.setStyle("-fx-border-color: rgb(41, 163, 211);");
+        if (date.isEqual(LocalDate.now())) this.setStyle("-fx-border-color: rgb(41, 163, 211);");
     }
 
 

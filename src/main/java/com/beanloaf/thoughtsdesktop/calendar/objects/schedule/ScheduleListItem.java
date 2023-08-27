@@ -130,7 +130,6 @@ public class ScheduleListItem extends GridPane {
 
     public void doClick() {
         popup.setInputFields(this);
-        Logger.log(event.getId());
     }
 
     public ScheduleEvent getEvent() {
