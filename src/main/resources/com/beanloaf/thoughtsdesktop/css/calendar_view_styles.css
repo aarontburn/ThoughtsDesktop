@@ -130,7 +130,6 @@
 }
 
 .text-field {
-
     -fx-text-box-border: transparent;
     -fx-control-inner-background: rgb(97, 97, 97);
     -fx-prompt-text-fill: rgb(209, 209 ,209);
@@ -142,7 +141,6 @@
 .text-field:disabled {
     -fx-opacity: 1.0;
     -fx-control-inner-background: rgb(60, 63 ,65);
-
 }
 
 .date-picker > .text-field {

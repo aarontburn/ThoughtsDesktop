@@ -147,11 +147,11 @@ public class ScheduleListItem extends GridPane {
 
 
         for (final ScheduleLabel scheduleLabel : references) {
-            scheduleLabel.setText(newName);
+            scheduleLabel.updateText();
         }
     }
 
-    public String getScheduleName() {
+    public String getScheduleEventName() {
         return event.getScheduleEventName();
     }
 
@@ -195,19 +195,7 @@ public class ScheduleListItem extends GridPane {
     }
 
 
-    public String getDisplayTime(final LocalTime time) {
-        String formattedTime = "";
-        if (time != null) {
-            formattedTime = time.format(DateTimeFormatter.ofPattern("h:mm a")) + " | ";
-            if (formattedTime.contains("AM")) {
-                formattedTime = formattedTime.replace(" AM", "a");
-            } else {
-                formattedTime = formattedTime.replace(" PM", "p");
 
-            }
-        }
-        return formattedTime;
-    }
 
     public void addReference(final ScheduleLabel event) {
         this.references.add(event);
@@ -236,23 +224,50 @@ public class ScheduleListItem extends GridPane {
 
         private final ScheduleListItem scheduleListItem;
 
+        private final Tooltip tooltip;
+
         public ScheduleLabel(final ScheduleListItem scheduleListItem) {
-            super(scheduleListItem.getScheduleName(), new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/schedule-icon.png")), 17.5, 17.5, true, true)));
+            super("", new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/schedule-icon.png")), 17.5, 17.5, true, true)));
 
             this.scheduleListItem = scheduleListItem;
 
             this.getStyleClass().add("day-event");
             this.setMaxWidth(Double.MAX_VALUE);
 
-            final Tooltip tooltip = new Tooltip(scheduleListItem.getScheduleName());
+            tooltip = new Tooltip(scheduleListItem.getScheduleEventName());
             tooltip.setShowDelay(Duration.seconds(0.5));
             this.setTooltip(tooltip);
 
+            updateText();
+
+
             this.setOnMouseClicked(e -> {
-                Logger.log("Schedule \"" + this.scheduleListItem.getScheduleName() + "\" was pressed.");
+                Logger.log("Schedule \"" + this.scheduleListItem.getScheduleEventName() + "\" was pressed.");
                 scheduleListItem.doClick();
             });
+        }
 
+        public void updateText() {
+            final String displayText = getDisplayTime(scheduleListItem.getStartTime()) + scheduleListItem.getScheduleEventName();
+
+            this.setText(displayText);
+            tooltip.setText(displayText);
+        }
+
+
+
+        public String getDisplayTime(final LocalTime time) {
+            String formattedTime = "";
+            if (time != null) {
+                formattedTime = time.format(DateTimeFormatter.ofPattern("h:mm a")) + " | ";
+                if (formattedTime.contains("AM")) {
+                    formattedTime = formattedTime.replace(" AM", "a");
+                } else {
+                    formattedTime = formattedTime.replace(" PM", "p");
+
+                }
+            }
+            return formattedTime;
         }
 
         public String getScheduleId() {

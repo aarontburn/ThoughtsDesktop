@@ -9,7 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CalendarPopup {
+public class CalendarPopupView {
 
     private final CalendarView view;
 
@@ -29,7 +29,7 @@ public class CalendarPopup {
     private Label calendarClosePopup;
 
 
-    public CalendarPopup(final CalendarView view) {
+    public CalendarPopupView(final CalendarView view) {
         this.view = view;
 
         locateNodes();

@@ -30,7 +30,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
-                        <AnchorPane fx:id="calendarLeftEventPanel" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftEventPanel" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <SplitPane dividerPositions="0.4236602628918099" orientation="VERTICAL" prefHeight="993.0" prefWidth="343.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <items>
@@ -48,7 +48,7 @@
                                                       <Insets right="16.0" />
                                                    </HBox.margin>
                                                    <font>
-                                                      <Font name="Lato Regular" size="13.0" />
+                                                      <Font name="Lato Regular" size="15.0" />
                                                    </font>
                                                 </Button>
                                              </children>
@@ -84,7 +84,7 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <TextArea fx:id="calendarSmallEventDescriptionInput" layoutY="320.0" prefHeight="248.0" prefWidth="677.0" styleClass="text-field" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="320.0" />
+                                          <TextArea fx:id="calendarSmallEventDescriptionInput" layoutY="320.0" prefHeight="248.0" prefWidth="677.0" styleClass="text-field" text="test" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="320.0" />
                                           <Label alignment="CENTER" layoutY="300.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="300.0">
                                              <font>
                                                 <Font size="16.0" />
@@ -245,14 +245,14 @@
                               </SplitPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="calendarLeftSchedulePanel" prefHeight="986.0" prefWidth="380.0" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftSchedulePanel" prefHeight="986.0" prefWidth="380.0" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <Label alignment="CENTER" layoutX="184.0" layoutY="39.0" text="Schedules" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
                                  <font>
                                     <Font size="23.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="calendarNewScheduleButton" layoutX="249.0" layoutY="45.0" mnemonicParsing="false" styleClass="calendarButton" text="New Schedule" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="48.0">
+                              <Button fx:id="calendarNewScheduleButton" layoutX="249.0" layoutY="45.0" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendarButton" text="New Schedule" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="48.0">
                                  <font>
                                     <Font name="Lato Regular" size="15.0" />
                                  </font>
@@ -500,7 +500,7 @@
                   </AnchorPane>
               </items>
             </SplitPane>
-            <AnchorPane fx:id="popupWindow" layoutX="463.0" layoutY="201.0" prefHeight="587.0" prefWidth="1119.0" styleClass="popup" visible="false" AnchorPane.bottomAnchor="169.5" AnchorPane.leftAnchor="384.0" AnchorPane.rightAnchor="384.0" AnchorPane.topAnchor="169.5">
+            <AnchorPane fx:id="popupWindow" layoutX="463.0" layoutY="201.0" prefHeight="587.0" prefWidth="1119.0" styleClass="popup" AnchorPane.bottomAnchor="169.5" AnchorPane.leftAnchor="384.0" AnchorPane.rightAnchor="384.0" AnchorPane.topAnchor="169.5">
                <children>
                   <AnchorPane fx:id="newEventPopup" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
@@ -899,14 +899,8 @@
                                           <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
                                        </GridPane.margin>
                                     </AnchorPane>
-                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="327.0" GridPane.rowIndex="1">
+                                    <AnchorPane fx:id="scheduleInputBox" minHeight="0.0" minWidth="0.0" prefHeight="327.0" GridPane.rowIndex="1">
                                        <children>
-                                          <HBox layoutX="4.0" layoutY="20.0" minWidth="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                             <children>
-                                                <TextField fx:id="scheduleEventTitleInput" minWidth="0.0" prefHeight="31.0" prefWidth="342.0" HBox.hgrow="ALWAYS" />
-                                             </children>
-                                          </HBox>
-                                          <TextArea fx:id="scheduleEventDescriptionInput" layoutY="179.0" prefHeight="91.0" prefWidth="552.0" styleClass="text-field" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="179.0" />
                                           <Label text="Title" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <font>
                                                 <Font size="16.0" />
@@ -917,17 +911,22 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="3.0" layoutY="159.0" text="Description" AnchorPane.topAnchor="159.0">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                          </Label>
                                           <Button fx:id="scheduleSaveEventButton" layoutX="477.0" layoutY="287.0" mnemonicParsing="false" styleClass="calendarButton" text="Save Event" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                              <font>
                                                 <Font size="16.0" />
                                              </font>
                                           </Button>
-                                          <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutY="70.0" rowValignment="TOP" vgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+                                          <AnchorPane layoutX="19.0" layoutY="159.0" prefHeight="116.0" prefWidth="552.0" AnchorPane.bottomAnchor="43.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="159.0">
+                                             <children>
+                                                <Label layoutX="3.0" text="Description" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea fx:id="scheduleEventDescriptionInput" prefHeight="203.0" prefWidth="540.0" style="-fx-background-insets: 2;" styleClass="text-field" text="test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                             </children>
+                                          </AnchorPane>
+                                          <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutY="70.0" vgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
                                              <children>
                                                 <HBox alignment="CENTER" prefHeight="32.0" prefWidth="197.0">
                                                    <children>
@@ -976,7 +975,7 @@
                                                       </AnchorPane>
                                                    </children>
                                                 </HBox>
-                                                <HBox alignment="CENTER" prefHeight="32.0" prefWidth="197.0">
+                                                <HBox alignment="CENTER" fillHeight="false" prefHeight="32.0" prefWidth="197.0">
                                                    <children>
                                                       <AnchorPane>
                                                          <children>
@@ -1030,6 +1029,7 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Button>
+                                          <TextField fx:id="scheduleEventTitleInput" layoutX="3.0" layoutY="20.0" minWidth="0.0" prefHeight="31.0" prefWidth="342.0" text="test" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
                                        </children>
                                        <GridPane.margin>
                                           <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />

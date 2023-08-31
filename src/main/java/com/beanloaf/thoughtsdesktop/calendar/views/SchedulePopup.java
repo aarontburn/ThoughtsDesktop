@@ -15,7 +15,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,9 +48,11 @@ public class SchedulePopup {
 
     /*  ------  */
     /*  Input Fields    */
-    private TextField scheduleEventTitleInput, scheduleHourInputFrom, scheduleMinuteInputFrom, scheduleHourInputTo, scheduleMinuteInputTo;
+    private AnchorPane scheduleInputBox;
+
+    private TimeGroupView scheduleTimeFrom, scheduleTimeTo;
+    private TextField scheduleEventTitleInput;
     private TextArea scheduleEventDescriptionInput;
-    private ComboBox<String> scheduleAMPMSelectorFrom, scheduleAMPMSelectorTo;
     private Button scheduleSaveEventButton, scheduleSaveScheduleButton;
 
 
@@ -99,16 +100,23 @@ public class SchedulePopup {
 
 
         /*  Input Fields    */
+        scheduleInputBox = (AnchorPane) findNodeByID("scheduleInputBox");
+
         scheduleEventTitleInput = (TextField) findNodeByID("scheduleEventTitleInput");
         scheduleEventDescriptionInput = (TextArea) findNodeByID("scheduleEventDescriptionInput");
 
-        scheduleHourInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleHourInputFrom"));
-        scheduleMinuteInputFrom = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleMinuteInputFrom"));
-        scheduleHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleHourInputTo"));
-        scheduleMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleMinuteInputTo"));
 
-        scheduleAMPMSelectorFrom = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("scheduleAMPMSelectorFrom"));
-        scheduleAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("scheduleAMPMSelectorTo"));
+        final TextField scheduleHourInputFrom = (TextField) findNodeByID("scheduleHourInputFrom");
+        final TextField scheduleMinuteInputFrom = (TextField) findNodeByID("scheduleMinuteInputFrom");
+        final ComboBox<String> scheduleAMPMSelectorFrom = (ComboBox<String>) findNodeByID("scheduleAMPMSelectorFrom");
+        scheduleTimeFrom = new TimeGroupView(scheduleHourInputFrom, scheduleMinuteInputFrom, scheduleAMPMSelectorFrom);
+
+
+        final TextField scheduleHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleHourInputTo"));
+        final TextField scheduleMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleMinuteInputTo"));
+        final ComboBox<String> scheduleAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("scheduleAMPMSelectorTo"));
+        scheduleTimeTo = new TimeGroupView(scheduleHourInputTo, scheduleMinuteInputTo, scheduleAMPMSelectorTo);
+
 
         scheduleSaveEventButton = (Button) findNodeByID("scheduleSaveEventButton");
         scheduleDeleteEventButton = (Button) findNodeByID("scheduleDeleteEventButton");
@@ -121,6 +129,7 @@ public class SchedulePopup {
     }
 
     private void attachEvents() {
+
         scheduleNewEventButton.setOnAction(e -> {
             final ScheduleListItem scheduleListItem = new ScheduleListItem(this, "New Scheduled Event");
 
@@ -129,14 +138,7 @@ public class SchedulePopup {
         });
 
 
-        scheduleSaveEventButton.setOnAction(e -> {
-            if (selectedScheduleListItem == null) return;
-
-            selectedScheduleListItem.setScheduleEventName(scheduleEventTitleInput.getText());
-            selectedScheduleListItem.setDescription(scheduleEventDescriptionInput.getText());
-            selectedScheduleListItem.setStartTime(scheduleHourInputFrom.getText(), scheduleMinuteInputFrom.getText(), scheduleAMPMSelectorFrom.getSelectionModel().getSelectedItem());
-
-        });
+        scheduleSaveEventButton.setOnAction(e -> saveScheduleEvent());
 
         scheduleDeleteEventButton.setOnAction(e -> {
             if (selectedScheduleListItem == null) return;
@@ -150,7 +152,6 @@ public class SchedulePopup {
             scheduleEventList.getChildren().remove(selectedScheduleListItem);
         });
 
-        CH.setAMPMComboBox(scheduleAMPMSelectorFrom);
 
         scheduleSaveScheduleButton.setOnAction(e -> saveScheduleData());
     }
@@ -201,9 +202,25 @@ public class SchedulePopup {
     }
 
     private void startup() {
+
         scheduleNameInput.setText(data.getScheduleName());
         scheduleStartDate.setValue(data.getStartDate());
         scheduleEndDate.setValue(data.getEndDate());
+
+
+
+
+        scheduleEventTitleInput.setText("");
+        scheduleEventDescriptionInput.setText("");
+
+        scheduleTimeFrom.setTime(null);
+        scheduleTimeTo.setTime(null);
+
+        scheduleEventTitleInput.setDisable(true);
+        scheduleEventDescriptionInput.setDisable(true);
+        scheduleTimeFrom.setDisabled(true);
+        scheduleTimeTo.setDisabled(true);
+
 
         for (final ScheduleEvent event : data.getScheduleEventList()) {
             final ScheduleListItem listItem = new ScheduleListItem(this, event);
@@ -217,29 +234,23 @@ public class SchedulePopup {
     }
 
     public void setInputFields(final ScheduleListItem scheduleListItem) {
+        if (scheduleListItem == null) throw new IllegalArgumentException("ScheduleListItem cannot be null.");
+
+
+        scheduleEventTitleInput.setDisable(false);
+        scheduleEventDescriptionInput.setDisable(false);
+        scheduleTimeFrom.setDisabled(false);
+        scheduleTimeTo.setDisabled(false);
+
+
         this.selectedScheduleListItem = scheduleListItem;
 
-        scheduleEventTitleInput.setText(scheduleListItem.getScheduleName());
 
-        if (scheduleListItem.getStartTime() == null) {
-            scheduleHourInputFrom.setText("");
-            scheduleMinuteInputFrom.setText("");
-        } else {
-            scheduleHourInputFrom.setText(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("hh")));
-            scheduleMinuteInputFrom.setText(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("mm")));
-            scheduleAMPMSelectorFrom.getSelectionModel().select(scheduleListItem.getStartTime().format(DateTimeFormatter.ofPattern("a")));
-        }
+        scheduleEventTitleInput.setText(scheduleListItem.getScheduleEventName());
 
 
-        if (scheduleListItem.getEndTime() == null) {
-            scheduleHourInputTo.setText("");
-            scheduleMinuteInputTo.setText("");
-        } else {
-            scheduleHourInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("hh")));
-            scheduleMinuteInputTo.setText(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("mm")));
-            scheduleAMPMSelectorTo.getSelectionModel().select(scheduleListItem.getEndTime().format(DateTimeFormatter.ofPattern("a")));
-
-        }
+        scheduleTimeFrom.setTime(scheduleListItem.getStartTime());
+        scheduleTimeTo.setTime(scheduleListItem.getEndTime());
 
         scheduleEventDescriptionInput.setText(scheduleListItem.getDescription());
 
@@ -261,6 +272,15 @@ public class SchedulePopup {
 
     public void removeScheduleFromDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
         weekdayMap.get(weekday).removeScheduleEventFromDay(scheduleListItem);
+    }
+
+    private void saveScheduleEvent() {
+        if (selectedScheduleListItem == null) return;
+
+        selectedScheduleListItem.setScheduleEventName(scheduleEventTitleInput.getText());
+        selectedScheduleListItem.setDescription(scheduleEventDescriptionInput.getText());
+        selectedScheduleListItem.setStartTime(scheduleTimeFrom.getTime());
+        selectedScheduleListItem.setEndTime(scheduleTimeTo.getTime());
     }
 
     private void saveScheduleData() {

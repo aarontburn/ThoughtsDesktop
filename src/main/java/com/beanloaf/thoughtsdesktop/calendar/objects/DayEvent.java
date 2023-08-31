@@ -32,6 +32,7 @@ public class DayEvent extends Label {
     private String description;
     private final String eventID;
 
+    private final Tooltip tooltip;
 
     private boolean isCompleted;
 
@@ -75,7 +76,8 @@ public class DayEvent extends Label {
         this.day = day;
         this.isScheduleEvent = isScheduleEvent;
 
-        final Tooltip tooltip = new Tooltip(eventTitle);
+        tooltip = new Tooltip();
+        tooltip.textProperty().bindBidirectional(this.textProperty());
         tooltip.setShowDelay(Duration.seconds(0.5));
         this.setTooltip(tooltip);
 

@@ -190,7 +190,7 @@ public class CalendarJSONHandler {
 
             final LocalTime startTime = event.getStartTime();
             final LocalTime endTime = event.getEndTime();
-
+            eventBranch.clear();
 
             eventBranch.put(Keys.TITLE, event.getEventTitle());
             eventBranch.put(Keys.DESCRIPTION, event.getDescription());
@@ -365,7 +365,7 @@ public class CalendarJSONHandler {
     }
 
     public void writeScheduleData(final ScheduleData data) {
-        Logger.log("Saving schedule " + data.getScheduleName());
+        Logger.log("Saving: " + data.getScheduleName());
 
         TC.Directories.CALENDAR_SCHEDULES_PATH.mkdir();
         final File scheduleFile = new File(TC.Directories.CALENDAR_SCHEDULES_PATH, data.getId() + ".json");
