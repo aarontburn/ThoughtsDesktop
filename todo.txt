@@ -24,9 +24,11 @@ Home Screen:
 Calendar:
     -   Setting to choose to end week with Sunday or Saturday
     -   Hide schedules without deleting them
+    -   Shift-click events marks them as complete
 
 
 
 Future:
-    Add a calendar that can sync with the notepad
-    Home screen
+    -   Make this a proper second-monitor application
+        - Discord support?
+        - Spotify/Music support (maybe make your own music player)

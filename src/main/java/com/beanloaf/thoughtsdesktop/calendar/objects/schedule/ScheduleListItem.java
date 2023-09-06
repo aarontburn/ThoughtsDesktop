@@ -168,22 +168,9 @@ public class ScheduleListItem extends GridPane {
         this.event.setStartTime(startTime);
     }
 
-
-    public void setStartTime(final String hourString, final String minuteString, final String period) {
-        setStartTime(CH.validateStringIntoTime(hourString, minuteString, period));
-    }
-
-
-
     public void setEndTime(final LocalTime endTime) {
         this.event.setEndTime(endTime);
     }
-
-
-    public void setEndTime(final String hourString, final String minuteString, final String period) {
-        setEndTime(CH.validateStringIntoTime(hourString, minuteString, period));
-    }
-
 
 
     public LocalTime getStartTime() {

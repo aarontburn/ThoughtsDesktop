@@ -1,7 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import javafx.collections.ListChangeListener;
@@ -131,11 +130,6 @@ public class DayEvent extends Label {
         }
     }
 
-    public void setStartTime(final String hourString, final String minuteString, final String period) {
-        setStartTime(CH.validateStringIntoTime(hourString, minuteString, period));
-    }
-
-
 
     public void setEndTime(final LocalTime endTime) {
         this.endTime = endTime;
@@ -144,13 +138,6 @@ public class DayEvent extends Label {
         }
 
     }
-
-    public void setEndTime(final String hourString, final String minuteString, final String period) {
-        setEndTime(CH.validateStringIntoTime(hourString, minuteString, period));
-    }
-
-
-
 
     public void setEventTitle(final String eventTitle) {
         this.eventTitle = eventTitle;
@@ -267,6 +254,5 @@ public class DayEvent extends Label {
         return this.eventID.equals(((DayEvent) other).getEventID());
 
     }
-
 
 }

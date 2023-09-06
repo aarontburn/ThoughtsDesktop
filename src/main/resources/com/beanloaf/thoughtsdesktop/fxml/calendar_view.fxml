@@ -30,7 +30,7 @@
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
-                        <AnchorPane fx:id="calendarLeftEventPanel" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftEventPanel" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <SplitPane dividerPositions="0.4236602628918099" orientation="VERTICAL" prefHeight="993.0" prefWidth="343.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <items>
@@ -245,7 +245,7 @@
                               </SplitPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="calendarLeftSchedulePanel" prefHeight="986.0" prefWidth="380.0" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftSchedulePanel" prefHeight="986.0" prefWidth="380.0" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <Label alignment="CENTER" layoutX="184.0" layoutY="39.0" text="Schedules" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
                                  <font>
@@ -259,8 +259,95 @@
                               </Button>
                               <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="90.0" layoutY="51.0" prefHeight="962.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="86.0">
                                  <content>
-                                    <VBox fx:id="calendarScheduleBox" prefHeight="456.0" prefWidth="376.0" spacing="5.0">
+                                    <VBox fx:id="calendarScheduleBox" maxWidth="1.7976931348623157E308" prefWidth="378.0" spacing="5.0">
                                        <children>
+                                          <AnchorPane prefHeight="150.0" style="-fx-border-color: blue;">
+                                             <children>
+                                                <Label layoutX="14.0" layoutY="14.0" text="Schedule Name" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="65.0" layoutY="40.0" text="Start Date:" AnchorPane.leftAnchor="48.0" AnchorPane.topAnchor="40.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="49.0" layoutY="77.0" text="End Date:" AnchorPane.leftAnchor="48.0" AnchorPane.topAnchor="64.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Button layoutX="245.0" layoutY="85.0" mnemonicParsing="false" styleClass="calendarButton" text="Edit/View" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Button>
+                                                <Button layoutX="18.0" layoutY="96.0" mnemonicParsing="false" styleClass="calendarButton" text="Delete" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane prefHeight="150.0" style="-fx-border-color: blue;">
+                                             <children>
+                                                <Label layoutX="14.0" layoutY="14.0" text="Schedule Name" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="65.0" layoutY="40.0" text="Start Date:" AnchorPane.leftAnchor="48.0" AnchorPane.topAnchor="40.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="49.0" layoutY="77.0" text="End Date:" AnchorPane.leftAnchor="48.0" AnchorPane.topAnchor="64.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Button layoutX="245.0" layoutY="85.0" mnemonicParsing="false" styleClass="calendarButton" text="Edit/View" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Button>
+                                                <Button layoutX="18.0" layoutY="96.0" mnemonicParsing="false" styleClass="calendarButton" text="Delete" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </AnchorPane>
+                                          <AnchorPane prefHeight="150.0" style="-fx-border-color: blue;">
+                                             <children>
+                                                <Label layoutX="14.0" layoutY="14.0" text="Schedule Name" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="65.0" layoutY="40.0" text="Start Date:" AnchorPane.leftAnchor="48.0" AnchorPane.topAnchor="40.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="49.0" layoutY="77.0" text="End Date:" AnchorPane.leftAnchor="48.0" AnchorPane.topAnchor="64.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <Button layoutX="245.0" layoutY="85.0" mnemonicParsing="false" styleClass="calendarButton" text="Edit/View" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Button>
+                                                <Button layoutX="18.0" layoutY="96.0" mnemonicParsing="false" styleClass="calendarButton" text="Delete" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </AnchorPane>
                                           <AnchorPane prefHeight="150.0" style="-fx-border-color: blue;">
                                              <children>
                                                 <Label layoutX="14.0" layoutY="14.0" text="Schedule Name" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">

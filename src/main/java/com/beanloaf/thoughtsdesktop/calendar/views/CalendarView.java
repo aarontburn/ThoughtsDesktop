@@ -356,9 +356,39 @@ public class CalendarView extends ThoughtsView {
         });
     }
 
+    public void hideSchedule(final ScheduleData data, final boolean isHidden) {
+        if (isHidden) {
+            if (data.getStartDate() != null && data.getEndDate() != null) {
+                final long daysBetween = ChronoUnit.DAYS.between(data.getStartDate(), data.getEndDate()) + 1;
+
+                LocalDate date = data.getStartDate();
+                for (int i = 0; i < daysBetween; i++) {
+                    final CalendarMonth month = activeMonths.get(new Pair<>(date.getMonth(), date.getYear()));
+                    if (month == null) {
+                        Logger.log("month is when updating schedule, somehow.");
+                        continue;
+                    }
+
+                    final CalendarDay day = month.getDay(date.getDayOfMonth());
+                    for (final DayEvent event : day.getEvents()) {
+                        if (data.getId() != null && data.getId().equals(event.getEventID())) {
+                            Platform.runLater(() -> day.removeEvent(event));
+                        }
+
+                    }
+                    date = date.plusDays(1);
+                }
+            }
+        } else {
+            addScheduleToCalendarDay(data);
+        }
+
+
+
+    }
+
 
     public void updateSchedule(final ScheduleData data, final LocalDate oldStartDate, final LocalDate oldEndDate) {
-
         if (oldStartDate != null && oldEndDate != null) {
             final long daysBetween = ChronoUnit.DAYS.between(oldStartDate, oldEndDate) + 1;
 
@@ -389,6 +419,7 @@ public class CalendarView extends ThoughtsView {
             final ScheduleBoxItem scheduleBoxItem = (ScheduleBoxItem) node;
             if (scheduleBoxItem.getScheduleId().equals(data.getId())) {
                 boxExists = true;
+                scheduleBoxItem.setHidden(false);
                 break;
             }
 
@@ -405,9 +436,6 @@ public class CalendarView extends ThoughtsView {
 
     public void deleteSchedule(final ScheduleBoxItem scheduleBoxItem) {
         calendarScheduleBox.getChildren().remove(scheduleBoxItem);
-
-
-//        Logger.log(new File(TC.Directories.CALENDAR_SCHEDULES_PATH, scheduleBoxItem.getScheduleId()).getPath());
         new File(TC.Directories.CALENDAR_SCHEDULES_PATH, scheduleBoxItem.getScheduleId() + ".json").delete();
 
     }
@@ -474,7 +502,6 @@ public class CalendarView extends ThoughtsView {
 
         activeMonth.getDay(day).addEvent(event);
 
-
         return event;
     }
 
@@ -514,18 +541,11 @@ public class CalendarView extends ThoughtsView {
 
     public void selectDay(final CalendarDay day) {
         this.selectedDay = day;
-
-
         calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
                 + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
 
-
         calendarSmallEventFields.setVisible(false);
-
-
         calendarEventBox.getChildren().clear();
-
-
         for (final DayEvent dayEvent : day.getEvents()) {
             final DayEvent clone = new DayEvent(dayEvent, this);
             calendarEventBox.getChildren().add(clone);
@@ -533,9 +553,20 @@ public class CalendarView extends ThoughtsView {
             dayEvent.setClone(clone);
 
         }
-
     }
 
+    public void selectDay(final LocalDate date) {
+        final Pair<Month, Integer> monthYear = new Pair<>(date.getMonth(), date.getYear());
+
+        CalendarMonth month = activeMonths.get(monthYear);
+        if (month == null) {
+            month = new CalendarMonth(date.getMonth(), date.getYear(), this);
+            activeMonths.put(monthYear, month);
+        }
+
+        selectDay(month.getDay(date.getDayOfMonth()));
+
+    }
     public void selectEvent(DayEvent event, final boolean editable) {
         swapLeftPanel(calendarLeftEventPanel);
 
@@ -604,7 +635,17 @@ public class CalendarView extends ThoughtsView {
         if (event.isClone) event = event.getClone();
 
         event.setEventTitle(calendarSmallEventTitleInput.getText());
-        event.setDate(calendarSmallDatePicker.getValue());
+
+        final LocalDate oldDate = event.getDate();
+        if (oldDate != null && !calendarSmallDatePicker.getValue().isEqual(oldDate)) {
+            deleteEvent(event);
+            event.setDate(calendarSmallDatePicker.getValue());
+            selectEvent(addEventToCalendarDay(event.getDate(), event), false);
+            selectDay(event.getDate());
+        } else {
+            event.setDate(calendarSmallDatePicker.getValue());
+
+        }
 
         event.setStartTime(calendarSmallTimeFrom.getTime());
         event.setEndTime(calendarSmallTimeTo.getTime());

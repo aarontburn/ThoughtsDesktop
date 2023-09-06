@@ -14,6 +14,7 @@ module com.beanloaf.thoughtsdesktop {
     requires java.desktop;
     requires com.google.common;
     requires org.apache.commons.codec;
+    requires annotations;
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.notes.changeListener;

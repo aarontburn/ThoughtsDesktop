@@ -1,8 +1,10 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
@@ -14,6 +16,7 @@ public class ScheduleBoxItem extends AnchorPane {
 
 
     private final Label scheduleNameLabel, startDateLabel, endDateLabel;
+    private final CheckBox hideCheckBox;
 
     public ScheduleBoxItem(final CalendarView view, final ScheduleData data) {
         super();
@@ -56,9 +59,17 @@ public class ScheduleBoxItem extends AnchorPane {
         deleteButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(deleteButton, null, 16, 16, null));
 
-        deleteButton.setOnAction(e -> {
-            view.deleteSchedule(this);
+        deleteButton.setOnAction(e -> view.deleteSchedule(this));
+
+
+
+        hideCheckBox = new CheckBox();
+        hideCheckBox.setStyle("-fx-font-family: Lato;");
+        hideCheckBox.setText("Hide");
+        hideCheckBox.setOnAction(e -> {
+            view.hideSchedule(data, hideCheckBox.isSelected());
         });
+        this.getChildren().add(ThoughtsHelper.setAnchor(hideCheckBox, null, 27, 96, null));
     }
 
     public void updateScheduleNameLabel() {
@@ -77,5 +88,9 @@ public class ScheduleBoxItem extends AnchorPane {
         return data.getId();
     }
 
+    public void setHidden(final boolean isHidden) {
+        hideCheckBox.setSelected(isHidden);
+
+    }
 
 }
