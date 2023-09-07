@@ -212,7 +212,6 @@ public class CalendarJSONHandler {
             final String month = eventToRemove.getDate().getMonth().toString();
             final String day = String.valueOf(eventToRemove.getDate().getDayOfMonth());
 
-            Logger.log(year + " " + month + " " + day);
             JSONObject yearBranch = (JSONObject) root.get(year);
             JSONObject monthBranch = (JSONObject) yearBranch.get(month);
             JSONObject dayBranch = (JSONObject) monthBranch.get(day);

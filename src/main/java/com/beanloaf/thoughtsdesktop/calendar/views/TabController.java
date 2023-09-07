@@ -2,8 +2,12 @@ package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.Tab;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +26,7 @@ public class TabController {
         attachEvents();
 
         swapTabs(Tabs.WEEK);
+
         displayWeekView();
     }
 
@@ -36,8 +41,6 @@ public class TabController {
 
     private void attachEvents() {
         closeButton.setOnMouseClicked(e -> swapTabs(Tabs.CALENDAR));
-
-
     }
 
     private Node findNodeById(final String nodeId) {
@@ -56,11 +59,17 @@ public class TabController {
         scheduleTab = new ScheduleTab(view, this, scheduleData);
 
         swapTabs(Tabs.SCHEDULE);
+
+
+
     }
 
     public void displayWeekView() {
         weekTab = new WeekTab(view, this);
         swapTabs(Tabs.WEEK);
+
+
+
     }
 
 

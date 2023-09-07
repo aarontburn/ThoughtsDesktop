@@ -1,6 +1,5 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 
 public enum Weekday {
 
