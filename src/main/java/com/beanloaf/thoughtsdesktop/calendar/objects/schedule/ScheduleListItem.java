@@ -1,9 +1,8 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
-import com.beanloaf.thoughtsdesktop.calendar.views.SchedulePopup;
+import com.beanloaf.thoughtsdesktop.calendar.views.ScheduleTab;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -25,7 +24,7 @@ public class ScheduleListItem extends GridPane {
 
 
 
-    private final SchedulePopup popup;
+    private final ScheduleTab tab;
 
 
     private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
@@ -40,19 +39,19 @@ public class ScheduleListItem extends GridPane {
 
 
 
-    public ScheduleListItem(final SchedulePopup popup, final String scheduleName) {
-        this(popup, scheduleName, UUID.randomUUID().toString());
+    public ScheduleListItem(final ScheduleTab tab, final String scheduleName) {
+        this(tab, scheduleName, UUID.randomUUID().toString());
 
     }
 
-    public ScheduleListItem(final SchedulePopup popup, final String scheduleName, final String id) {
-        this(popup, new ScheduleEvent(scheduleName, id));
+    public ScheduleListItem(final ScheduleTab tab, final String scheduleName, final String id) {
+        this(tab, new ScheduleEvent(scheduleName, id));
     }
 
 
-    public ScheduleListItem(final SchedulePopup popup, final ScheduleEvent event) {
+    public ScheduleListItem(final ScheduleTab tab, final ScheduleEvent event) {
         super();
-        this.popup = popup;
+        this.tab = tab;
         this.event = event;
 
         this.getStyleClass().add("schedule");
@@ -85,11 +84,11 @@ public class ScheduleListItem extends GridPane {
             checkBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
 
                 if (isChecked) {
-                    popup.addScheduleEventToDay(weekday, this);
+                    tab.addScheduleEventToDay(weekday, this);
                     if (!weekdays.contains(weekday)) weekdays.add(weekday);
                 }
                 else {
-                    popup.removeScheduleFromDay(weekday, this);
+                    tab.removeScheduleFromDay(weekday, this);
                     while (weekdays.contains(weekday)) weekdays.remove(weekday);
                 }
 
@@ -129,7 +128,7 @@ public class ScheduleListItem extends GridPane {
 
 
     public void doClick() {
-        popup.setInputFields(this);
+        tab.setInputFields(this);
     }
 
     public ScheduleEvent getEvent() {

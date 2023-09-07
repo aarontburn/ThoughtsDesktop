@@ -2,6 +2,7 @@ package com.beanloaf.thoughtsdesktop.calendar.views;
 
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.objects.Tab;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
@@ -21,10 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 
-public class SchedulePopup {
+public class ScheduleTab extends Tab {
 
 
-    private final CalendarView view;
 
     private final ScheduleData data;
     private ScheduleListItem selectedScheduleListItem;
@@ -47,9 +47,6 @@ public class SchedulePopup {
 
 
     /*  ------  */
-    /*  Input Fields    */
-    private AnchorPane scheduleInputBox;
-
     private TimeGroupView scheduleTimeFrom, scheduleTimeTo;
     private TextField scheduleEventTitleInput;
     private TextArea scheduleEventDescriptionInput;
@@ -67,13 +64,13 @@ public class SchedulePopup {
     /*  ----------  */
 
 
-    // Loading data into the popup
-    public SchedulePopup(final CalendarView view, final ScheduleData data) {
-        this.view = view;
+    // Loading data into the tab
+    public ScheduleTab(final CalendarView view, final TabController tabController, final ScheduleData data) {
+        super(view, tabController);
         this.data = data;
 
 
-        findNodes();
+        locateNodes();
         attachEvents();
         createGUI();
 
@@ -84,51 +81,47 @@ public class SchedulePopup {
 
     }
 
-    private Node findNodeByID(final String nodeID) {
-        return view.findNodeById(nodeID);
-    }
-
-    private void findNodes() {
+    @Override
+    public void locateNodes() {
         /*  Header  */
-        scheduleNameInput = (TextField) findNodeByID("scheduleNameInput");
-        scheduleStartDate = (DatePicker) findNodeByID("scheduleStartDate");
-        scheduleEndDate = (DatePicker) findNodeByID("scheduleEndDate");
+        scheduleNameInput = (TextField) findNodeById("scheduleNameInput");
+        scheduleStartDate = (DatePicker) findNodeById("scheduleStartDate");
+        scheduleEndDate = (DatePicker) findNodeById("scheduleEndDate");
 
 
         /*  Week View   */
-        scheduleWeekGrid = (GridPane) findNodeByID("scheduleWeekGrid");
+        scheduleWeekGrid = (GridPane) findNodeById("scheduleWeekGrid");
 
 
         /*  Input Fields    */
-        scheduleInputBox = (AnchorPane) findNodeByID("scheduleInputBox");
-
-        scheduleEventTitleInput = (TextField) findNodeByID("scheduleEventTitleInput");
-        scheduleEventDescriptionInput = (TextArea) findNodeByID("scheduleEventDescriptionInput");
+        scheduleEventTitleInput = (TextField) findNodeById("scheduleEventTitleInput");
+        scheduleEventDescriptionInput = (TextArea) findNodeById("scheduleEventDescriptionInput");
 
 
-        final TextField scheduleHourInputFrom = (TextField) findNodeByID("scheduleHourInputFrom");
-        final TextField scheduleMinuteInputFrom = (TextField) findNodeByID("scheduleMinuteInputFrom");
-        final ComboBox<String> scheduleAMPMSelectorFrom = (ComboBox<String>) findNodeByID("scheduleAMPMSelectorFrom");
+        final TextField scheduleHourInputFrom = (TextField) findNodeById("scheduleHourInputFrom");
+        final TextField scheduleMinuteInputFrom = (TextField) findNodeById("scheduleMinuteInputFrom");
+        final ComboBox<String> scheduleAMPMSelectorFrom = (ComboBox<String>) findNodeById("scheduleAMPMSelectorFrom");
         scheduleTimeFrom = new TimeGroupView(scheduleHourInputFrom, scheduleMinuteInputFrom, scheduleAMPMSelectorFrom);
 
 
-        final TextField scheduleHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleHourInputTo"));
-        final TextField scheduleMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeByID("scheduleMinuteInputTo"));
-        final ComboBox<String> scheduleAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeByID("scheduleAMPMSelectorTo"));
+        final TextField scheduleHourInputTo = CH.setNumbersOnlyTextField((TextField) findNodeById("scheduleHourInputTo"));
+        final TextField scheduleMinuteInputTo = CH.setNumbersOnlyTextField((TextField) findNodeById("scheduleMinuteInputTo"));
+        final ComboBox<String> scheduleAMPMSelectorTo = CH.setAMPMComboBox((ComboBox<String>) findNodeById("scheduleAMPMSelectorTo"));
         scheduleTimeTo = new TimeGroupView(scheduleHourInputTo, scheduleMinuteInputTo, scheduleAMPMSelectorTo);
 
 
-        scheduleSaveEventButton = (Button) findNodeByID("scheduleSaveEventButton");
-        scheduleDeleteEventButton = (Button) findNodeByID("scheduleDeleteEventButton");
+        scheduleSaveEventButton = (Button) findNodeById("scheduleSaveEventButton");
+        scheduleDeleteEventButton = (Button) findNodeById("scheduleDeleteEventButton");
 
         /*  Day of the week */
-        scheduleEventBox = (AnchorPane) findNodeByID("scheduleEventBox");
-        scheduleNewEventButton = (Button) findNodeByID("scheduleNewEventButton");
-        scheduleEventList = (VBox) findNodeByID("scheduleEventList");
-        scheduleSaveScheduleButton = (Button) findNodeByID("scheduleSaveScheduleButton");
+        scheduleEventBox = (AnchorPane) findNodeById("scheduleEventBox");
+        scheduleNewEventButton = (Button) findNodeById("scheduleNewEventButton");
+        scheduleEventList = (VBox) findNodeById("scheduleEventList");
+        scheduleSaveScheduleButton = (Button) findNodeById("scheduleSaveScheduleButton");
     }
 
-    private void attachEvents() {
+    @Override
+    public void attachEvents() {
 
         scheduleNewEventButton.setOnAction(e -> {
             final ScheduleListItem scheduleListItem = new ScheduleListItem(this, "New Scheduled Event");
@@ -156,7 +149,8 @@ public class SchedulePopup {
         scheduleSaveScheduleButton.setOnAction(e -> saveScheduleData());
     }
 
-    private void createGUI() {
+    @Override
+    protected void createGUI() {
         scheduleEventList = new VBox();
         scheduleEventList.setSpacing(5);
 
@@ -206,8 +200,6 @@ public class SchedulePopup {
         scheduleNameInput.setText(data.getScheduleName());
         scheduleStartDate.setValue(data.getStartDate());
         scheduleEndDate.setValue(data.getEndDate());
-
-
 
 
         scheduleEventTitleInput.setText("");
@@ -313,9 +305,11 @@ public class SchedulePopup {
         }
 
 
-        view.calendarJson.writeScheduleData(data);
+        super.getView().calendarJson.writeScheduleData(data);
 
-        new Thread(() -> view.updateSchedule(data, oldStartDate, oldEndDate)).start();
+        super.getTabController().swapTabs(TabController.Tabs.CALENDAR);
+
+        new Thread(() -> super.getView().updateSchedule(data, oldStartDate, oldEndDate)).start();
 
     }
 

@@ -6,6 +6,7 @@ import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.awt.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,12 +20,13 @@ public class SettingsHandler {
     private final Map<Settings, Object> settingPropertyList = new ConcurrentHashMap<>();
 
     public enum Settings {
+
         LIGHT_THEME("lightTheme", false),
         PULL_ON_STARTUP("pullOnStartup", false),
         PUSH_ON_EXIT("pushOnExit", false),
         MATCH_BRACE("matchBrace", true),
-        WINDOW_WIDTH("windowWidth", 1920),
-        WINDOW_HEIGHT("windowHeight", 1080),
+        WINDOW_WIDTH("windowWidth", Toolkit.getDefaultToolkit().getScreenSize().getWidth()),
+        WINDOW_HEIGHT("windowHeight", Toolkit.getDefaultToolkit().getScreenSize().getHeight()),
         WINDOW_X("windowX", 0.0),
         WINDOW_Y("windowY", 0.0),
         WINDOW_MAXIMIZED("windowMaximized", false),
@@ -33,6 +35,7 @@ public class SettingsHandler {
 
         private final String name;
         private final Object defaultState;
+
 
         Settings(final String name, final Object defaultState) {
             this.name = name;

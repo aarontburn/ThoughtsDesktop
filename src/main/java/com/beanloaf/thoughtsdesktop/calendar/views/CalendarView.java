@@ -45,7 +45,7 @@ public class CalendarView extends ThoughtsView {
     private CalendarDay selectedDay;
     private DayEvent selectedEvent;
     public final CalendarJSONHandler calendarJson;
-    public final CalendarPopupView popup;
+    public final TabController tabController;
 
 
     private GridPane calendarFrame; // (7 x 5)
@@ -94,7 +94,7 @@ public class CalendarView extends ThoughtsView {
         locateNodes();
         attachEvents();
 
-        popup = new CalendarPopupView(this);
+        tabController = new TabController(this);
 
         final LocalDate now = LocalDate.now();
         final CalendarMonth cMonth = activeMonths.get(new Pair<>(now.getMonth(), now.getYear()));
@@ -187,7 +187,7 @@ public class CalendarView extends ThoughtsView {
         calendarPrevMonthButton.setOnMouseClicked(e -> changeMonth(currentMonth.getPreviousMonth()));
         calendarTestButton.setOnAction(e -> Logger.log(activeMonths));
 
-        calendarNewScheduleButton.setOnAction(e -> popup.displaySchedule(new ScheduleData()));
+        calendarNewScheduleButton.setOnAction(e -> tabController.displaySchedule(new ScheduleData()));
 
         /*  Left Panel  */
         calendarEventsButton.setOnAction(e -> swapLeftPanel(calendarLeftEventPanel));

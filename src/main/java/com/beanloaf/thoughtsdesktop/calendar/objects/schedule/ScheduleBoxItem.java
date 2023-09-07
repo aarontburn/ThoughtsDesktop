@@ -1,7 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -51,7 +50,7 @@ public class ScheduleBoxItem extends AnchorPane {
         editButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(editButton, null, 16, null, 16));
 
-        editButton.setOnAction(e -> view.popup.displaySchedule(data));
+        editButton.setOnAction(e -> view.tabController.displaySchedule(data));
 
 
         final Button deleteButton = new Button("Delete");

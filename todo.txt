@@ -32,3 +32,5 @@ Future:
     -   Make this a proper second-monitor application
         - Discord support?
         - Spotify/Music support (maybe make your own music player)
+        - Application dock? maybe possible idk
+            - Ability to "dock" windows inside the program, so it displays them inside Thoughts instead of its own window
