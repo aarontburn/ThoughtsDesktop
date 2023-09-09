@@ -18,6 +18,8 @@ public class ThoughtsView {
         this.main = main;
         this.scene = scene;
 
+
+
     }
 
     public void setScene(final Scene scene) {

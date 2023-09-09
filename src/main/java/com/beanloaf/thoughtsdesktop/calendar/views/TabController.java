@@ -17,7 +17,7 @@ public class TabController {
     private final CalendarView view;
     private final Map<Tabs, Node> tabMap = new HashMap<>();
     private ScheduleTab scheduleTab;
-    private WeekTab weekTab;
+    public WeekTab weekTab;
     private Label closeButton;
     public TabController(final CalendarView view) {
         this.view = view;

@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
 
@@ -121,6 +122,8 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         stage.setMaximized((Boolean) settingsHandler.getSetting(SettingsHandler.Settings.WINDOW_MAXIMIZED));
 
         stage.show();
+
+
 
         scene.getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> {
             homeView.clock.stop();

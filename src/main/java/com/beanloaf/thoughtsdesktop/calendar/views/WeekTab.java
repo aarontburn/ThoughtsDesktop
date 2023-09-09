@@ -1,24 +1,36 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.Tab;
+import com.beanloaf.thoughtsdesktop.calendar.objects.WeekBlock;
 import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
+import java.lang.reflect.Method;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WeekTab extends Tab {
 
-    private GridPane weekGrid;
+    public static int START_HOUR = 6;
+    public static int END_HOUR = 24;
+
+    public GridPane weekGrid;
     private AnchorPane weekPane;
+    private ScrollPane scrollPane;
+
+
+    private final List<WeekBlock> weekBlockList = new ArrayList<>();
 
     public WeekTab(final CalendarView view, final TabController tabController) {
         super(view, tabController);
@@ -26,8 +38,20 @@ public class WeekTab extends Tab {
         attachEvents();
         createGUI();
 
-    }
 
+        addEventToDay(Weekday.MONDAY, LocalTime.of(11, 0), LocalTime.of(12, 20), "TCSS 360 A", "CP 325");
+        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(11, 0), LocalTime.of(12, 20), "TCSS 360 A", "CP 325");
+        addEventToDay(Weekday.FRIDAY, LocalTime.of(11, 0), LocalTime.of(12, 20), "TCSS 360 A", "CP 325");
+
+        addEventToDay(Weekday.MONDAY, LocalTime.of(15, 40), LocalTime.of(17, 40), "TCSS 372 A", "MLG 311");
+        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(15, 40), LocalTime.of(17, 40), "TCSS 372 A", "MLG 311");
+
+        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(13, 30), LocalTime.of(15, 30), "TCSS 380 A", "MLG 110");
+
+
+        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(2, 30), LocalTime.of(4, 30), "test", "desc");
+        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(22, 30), LocalTime.of(23, 30), "test", "desc");
+    }
 
     @Override
     protected void locateNodes() {
@@ -41,8 +65,7 @@ public class WeekTab extends Tab {
 
     @Override
     protected void createGUI() {
-
-        final ScrollPane scrollPane = new ScrollPane();
+        scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("edge-to-edge");
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
@@ -52,6 +75,14 @@ public class WeekTab extends Tab {
         });
         weekPane.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 114, 16, 16, 16));
 
+        createGrid();
+
+    }
+
+    public void createGrid() {
+        if (weekGrid != null) {
+            weekPane.getChildren().remove(weekGrid);
+        }
 
         weekGrid = new GridPane();
         weekGrid.setGridLinesVisible(true);
@@ -66,17 +97,18 @@ public class WeekTab extends Tab {
             weekGrid.add(new Text(), column, 0);
         }
 
-        LocalTime time = LocalTime.of(6, 0);
+        LocalTime time = LocalTime.of(START_HOUR, 0);
 
-        final int rowCount = 36;
+        final int rowCount = (END_HOUR - START_HOUR) * 2;
         for (int row = 0; row < rowCount; row++) {
             final RowConstraints con = new RowConstraints();
             con.setPercentHeight(100.0 / rowCount);
+            con.setMinHeight(30);
             con.setValignment(VPos.TOP);
             weekGrid.getRowConstraints().add(con);
 
 
-            Label label = new Label();
+            final Label label = new Label();
             if (row % 2 == 0) {
                 label.setText(time.format(DateTimeFormatter.ofPattern("h:mm a")));
                 time = time.plusHours(1);
@@ -87,36 +119,49 @@ public class WeekTab extends Tab {
             weekGrid.add(label, 0, row);
         }
 
-
-        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(7, 35), LocalTime.of(13, 35), "test");
     }
 
 
-    public void addEventToDay(final Weekday weekday, LocalTime startTime,
-                              LocalTime endTime, final String displayText) {
+    public void addEventToDay(final Weekday weekday, final LocalTime startTime,
+                              final LocalTime endTime, final String displayText, final String description) {
+        addEventToDay(new WeekBlock(weekday, startTime, endTime, displayText, description));
+    }
 
-        final AnchorPane pane = new AnchorPane();
-        pane.setStyle("-fx-border-color: red; -fx-background-color: red");
+    public void addEventToDay(final WeekBlock weekBlock) {
+        this.weekBlockList.add(weekBlock);
 
-        startTime = startTime.truncatedTo(ChronoUnit.HOURS).plusMinutes(30 * (startTime.getMinute() / 30));
-        endTime = endTime.truncatedTo(ChronoUnit.HOURS).plusMinutes(30 * (endTime.getMinute() / 30));
+        if (adjustBounds()) {
+            createGrid();
+            for (final WeekBlock block : weekBlockList) {
+                weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
+            }
+        } else {
+            final int columnIndex = weekBlock.getWeekday().getDayOfWeek() + 1;
+            final int rowIndex = weekBlock.getStartIndex();
+            final int columnSpan = 1; // this shouldn't change
+            final int rowSpan = weekBlock.getSpan();
 
-        final int columnIndex = weekday.getDayOfWeek() + 1;
-        final int rowIndex = (int) (ChronoUnit.MINUTES.between(LocalTime.of(6, 0), startTime) / 30);
-        final int columnSpan = 1; // this shouldn't change
-        final int rowSpan = (int) (ChronoUnit.MINUTES.between(startTime, endTime) / 30);
-
-        Logger.log("rowIndex: " + rowIndex + " rowSpan: " + rowSpan + " | ");
-
-        weekGrid.add(pane, columnIndex, rowIndex, columnSpan, rowSpan);
-
-
-        final Label label = new Label(displayText);
-
-        pane.getChildren().add(ThoughtsHelper.setAnchor(label, 16,  null, 0, 0));
-
+            weekGrid.add(weekBlock, columnIndex, rowIndex, columnSpan, rowSpan);
+        }
 
     }
 
-    // row 0 is 6, 1 is 6:30, 2 is 7
+    private boolean adjustBounds() {
+        final int oldStartHour = START_HOUR;
+        final int oldEndHour = END_HOUR;
+
+        LocalTime minTime = null;
+        LocalTime maxTime = null;
+
+        for (final WeekBlock block : weekBlockList) {
+            if (minTime == null || block.getStartTime().isBefore(minTime)) minTime = block.getStartTime();
+            if (maxTime == null || block.getEndTime().isAfter(maxTime)) maxTime = block.getEndTime();
+        }
+
+        if (minTime != null) START_HOUR = minTime.getHour() - 1;
+        if (maxTime != null) END_HOUR = maxTime.getHour() + 1;
+
+        return oldStartHour != START_HOUR || oldEndHour != END_HOUR;
+
+    }
 }
