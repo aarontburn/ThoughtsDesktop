@@ -35,8 +35,16 @@ public enum Weekday {
         }
 
         throw new IllegalArgumentException("Invalid weekday passed: " + s);
-
     }
 
+    public static Weekday getWeekdayByDayOfWeek(final int dayOfWeek) {
+        if (dayOfWeek == 7) return SUNDAY;
+        if (dayOfWeek < 0 || dayOfWeek > 6) throw new IndexOutOfBoundsException("Day of week out of bounds 0 - 6: " + dayOfWeek);
 
+        for (final Weekday weekday : Weekday.values()) {
+            if (weekday.dayOfWeek == dayOfWeek) return weekday;
+        }
+
+        throw new IllegalArgumentException("How did you get here? " + dayOfWeek);
+    }
 }

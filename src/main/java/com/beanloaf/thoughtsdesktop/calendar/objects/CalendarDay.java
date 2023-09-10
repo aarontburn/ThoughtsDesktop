@@ -3,22 +3,19 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
-import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CalendarDay extends AnchorPane {
 
@@ -45,15 +42,11 @@ public class CalendarDay extends AnchorPane {
 
         scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("calendar-day");
-
-
-
         scrollPane.getStyleClass().add("edge-to-edge");
         scrollPane.fitToWidthProperty().set(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
         scrollPane.skinProperty().addListener((observableValue, skin, t1) -> {
-            StackPane stackPane = (StackPane) scrollPane.lookup("ScrollPane .viewport");
+            final StackPane stackPane = (StackPane) scrollPane.lookup("ScrollPane .viewport");
             stackPane.setCache(false);
         });
         this.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 0.0, 0.0, 0.0, 0.0));
@@ -126,6 +119,10 @@ public class CalendarDay extends AnchorPane {
         return this.date.getYear();
     }
 
+
+    public LocalDate getDate() {
+        return this.date;
+    }
 
     public void addEvent(final DayEvent event) {
         eventList.add(event);

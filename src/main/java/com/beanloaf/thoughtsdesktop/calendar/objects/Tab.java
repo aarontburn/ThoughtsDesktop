@@ -1,6 +1,5 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.calendar.handlers.Calendar;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import com.beanloaf.thoughtsdesktop.calendar.views.TabController;
 import javafx.scene.Node;

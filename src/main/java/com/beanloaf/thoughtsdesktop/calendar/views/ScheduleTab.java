@@ -39,6 +39,8 @@ public class ScheduleTab extends Tab {
     /*  Header  */
     private TextField scheduleNameInput;
     private DatePicker scheduleStartDate, scheduleEndDate;
+    private Label closeButton;
+
 
 
     /*  ------  */
@@ -87,6 +89,8 @@ public class ScheduleTab extends Tab {
         scheduleNameInput = (TextField) findNodeById("scheduleNameInput");
         scheduleStartDate = (DatePicker) findNodeById("scheduleStartDate");
         scheduleEndDate = (DatePicker) findNodeById("scheduleEndDate");
+        closeButton = (Label) findNodeById("closeButton");
+
 
 
         /*  Week View   */
@@ -122,6 +126,8 @@ public class ScheduleTab extends Tab {
 
     @Override
     public void attachEvents() {
+        closeButton.setOnMouseClicked(e -> getTabController().swapTabs(TabController.Tabs.CALENDAR));
+
 
         scheduleNewEventButton.setOnAction(e -> {
             final ScheduleListItem scheduleListItem = new ScheduleListItem(this, "New Scheduled Event");

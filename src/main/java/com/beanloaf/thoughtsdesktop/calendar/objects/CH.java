@@ -1,6 +1,5 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 

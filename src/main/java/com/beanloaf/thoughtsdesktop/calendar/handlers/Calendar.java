@@ -14,16 +14,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Calendar {
 
     private final CalendarView view;
-
     private final Map<Pair<Month, Year>, CalendarMonth> activeMonths = new ConcurrentHashMap<>();
-
     private CalendarMonth currentMonth;
+    private CalendarDay selectedDay;
+
 
 
     public Calendar(final CalendarView view) {
         this.view = view;
-
-
+        final LocalDate now = LocalDate.now();
+        this.currentMonth = getMonth(now.getMonth(), now.getYear());
     }
 
 
@@ -35,7 +35,6 @@ public class Calendar {
             month = new CalendarMonth(date.getMonth(), date.getYear(), view);
             activeMonths.put(monthYear, month);
         }
-
 
         return month.getDay(date.getDayOfMonth());
     }
@@ -60,11 +59,6 @@ public class Calendar {
                 activeMonths.remove(key);
             }
         }
-
-    }
-
-    public void setCurrentMonth(final CalendarMonth month) {
-        this.currentMonth = month;
     }
 
     public void setCurrentMonth(final Month month, final int year) {
@@ -73,6 +67,14 @@ public class Calendar {
 
     public CalendarMonth getCurrentMonth() {
         return this.currentMonth;
+    }
+
+    public CalendarDay getSelectedDay() {
+        return this.selectedDay;
+    }
+
+    public void setSelectedDay(final CalendarDay day) {
+        this.selectedDay = day;
     }
 
 

@@ -5,43 +5,32 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-public class DayEvent extends Label {
+public class DayEvent extends EventBoxLabel {
 
     public final static String DAY_EVENT_ID = "dayEvent";
 
     private final CalendarView view;
 
-    private LocalDate day;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private String eventTitle;
-    private String description;
-    private final String eventID;
 
-    private final Tooltip tooltip;
+    private final Event event;
+
+    private final String eventID;
 
     private boolean isCompleted;
 
     private DayEvent clone;
     public boolean isClone;
 
-    public boolean isScheduleEvent;
-
-
-
+    public final boolean isScheduleEvent;
 
 
     // Cloning constructor, used to tie the eventbox object to the one in the grid
@@ -51,14 +40,15 @@ public class DayEvent extends Label {
 
         this.isClone = true;
         this.clone = clone;
-        this.startTime = clone.startTime;
-        this.endTime = clone.endTime;
-        this.description = clone.description;
+
+        event.setStartTime(clone.event.getStartTime());
+        event.setEndTime(clone.event.getEndTime());
+        event.setDescription(clone.event.getDescription());
+
         this.isCompleted = clone.isCompleted;
 
-        this.setText(getDisplayTime(startTime) + eventTitle);
+        this.setText(getDisplayTime(event.getStartTime()) + event.getDescription());
     }
-
 
 
     // Constructor for creating a NEW event
@@ -69,22 +59,17 @@ public class DayEvent extends Label {
 
     // Constructor for reading an EXISTING event from file
     public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarView view, final boolean isScheduleEvent) {
-        super(eventTitle, new ImageView(new Image(String.valueOf(MainApplication.class.getResource(isScheduleEvent ? "icons/schedule-icon.png": "icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
+        super(eventTitle);
+        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(isScheduleEvent ? "icons/schedule-icon.png" : "icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
 
         this.view = view;
-        this.day = day;
+        event = new Event(eventTitle);
+        event.setStartDate(day);
+
         this.isScheduleEvent = isScheduleEvent;
 
-        tooltip = new Tooltip();
-        tooltip.textProperty().bindBidirectional(this.textProperty());
-        tooltip.setShowDelay(Duration.seconds(0.5));
-        this.setTooltip(tooltip);
-
-        this.getStyleClass().add("day-event");
-        this.setMaxWidth(Double.MAX_VALUE);
-        this.eventTitle = eventTitle;
+        getToolTip().textProperty().bindBidirectional(this.textProperty());
         this.setId(DAY_EVENT_ID);
-
         this.eventID = eventID;
 
 
@@ -103,62 +88,54 @@ public class DayEvent extends Label {
     }
 
 
+    @Override
     public void onClick() {
         this.view.selectEvent(this, false);
-
-        Logger.log("Event \"" + this.eventTitle + "\" was pressed.");
+        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed.");
     }
 
 
     public void setStartTime(final LocalTime startTime) {
-        this.startTime = startTime;
-        final String newText = getDisplayTime(startTime) + eventTitle;
+        event.setStartTime(startTime);
+        final String newText = getDisplayTime(startTime) + event.getTitle();
         setText(newText);
         if (this.clone != null) {
-            clone.startTime = startTime;
+            clone.event.setStartTime(startTime);
             clone.setText(newText);
         }
 
     }
 
 
-    public void setStartTime(final int hour, final int minute) {
-        try {
-            setStartTime(LocalTime.of(hour, minute));
-        } catch (DateTimeException e) {
-            this.startTime = null;
-        }
-    }
-
-
     public void setEndTime(final LocalTime endTime) {
-        this.endTime = endTime;
+        event.setEndTime(endTime);
         if (this.clone != null) {
-            clone.startTime = endTime;
+            clone.event.setEndTime(endTime);
         }
 
     }
 
+    @Override
     public void setEventTitle(final String eventTitle) {
-        this.eventTitle = eventTitle;
+        event.setTitle(eventTitle);
         this.setText(eventTitle);
 
         if (this.clone != null) {
-            clone.eventTitle = eventTitle;
+            clone.event.setTitle(eventTitle);
             clone.setText(eventTitle);
         }
     }
 
     public void setDescription(final String description) {
-        this.description = description;
+        event.setDescription(description);
 
-        if (this.clone != null) clone.description = description;
+        if (this.clone != null) clone.event.setDescription(description);
     }
 
     public void setDate(final LocalDate day) {
-        this.day = day;
+        event.setStartDate(day);
 
-        if (this.clone != null) clone.day = day;
+        if (this.clone != null) clone.event.setStartDate(day);
     }
 
     public void setCompleted(final boolean isCompleted, final boolean save) {
@@ -198,24 +175,25 @@ public class DayEvent extends Label {
     }
 
 
+    @Override
     public String getEventTitle() {
-        return this.eventTitle;
+        return this.event.getTitle();
     }
 
     public LocalDate getDate() {
-        return this.day;
+        return this.event.getStartDate();
     }
 
     public LocalTime getStartTime() {
-        return this.startTime;
+        return this.event.getStartTime();
     }
 
     public LocalTime getEndTime() {
-        return this.endTime;
+        return this.event.getEndTime();
     }
 
     public String getDescription() {
-        return this.description;
+        return this.event.getDescription();
     }
 
     public String getEventID() {
@@ -240,12 +218,6 @@ public class DayEvent extends Label {
         return formattedTime;
     }
 
-
-//    @Override
-//    public String toString() {
-//        return "Year: " + day.getYear() + " Month: " + day.getMonth() + " Day: " + day.getDayOfMonth() + " Desc: " + description + " Time: " + time;
-//
-//    }
 
     @Override
     public boolean equals(final Object other) {

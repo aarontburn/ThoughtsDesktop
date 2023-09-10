@@ -192,12 +192,9 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
             setAnchor(this, 0.0, null, 4.0, null);
             decorators.add(this);
 
-
             this.setOnMouseClicked(e -> setActive(!isActive()));
 
         }
-
-
 
         public boolean isActive() {
             return this.isActive;

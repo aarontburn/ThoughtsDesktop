@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.objects.EventBoxLabel;
 import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.views.ScheduleTab;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
@@ -23,7 +24,6 @@ import java.util.*;
 public class ScheduleListItem extends GridPane {
 
 
-
     private final ScheduleTab tab;
 
 
@@ -36,7 +36,6 @@ public class ScheduleListItem extends GridPane {
     private final Label displayText;
 
     private final List<ScheduleLabel> references = new ArrayList<>();
-
 
 
     public ScheduleListItem(final ScheduleTab tab, final String scheduleName) {
@@ -86,8 +85,7 @@ public class ScheduleListItem extends GridPane {
                 if (isChecked) {
                     tab.addScheduleEventToDay(weekday, this);
                     if (!weekdays.contains(weekday)) weekdays.add(weekday);
-                }
-                else {
+                } else {
                     tab.removeScheduleFromDay(weekday, this);
                     while (weekdays.contains(weekday)) weekdays.remove(weekday);
                 }
@@ -123,8 +121,6 @@ public class ScheduleListItem extends GridPane {
         this.setOnMouseClicked(e -> doClick());
 
     }
-
-
 
 
     public void doClick() {
@@ -181,8 +177,6 @@ public class ScheduleListItem extends GridPane {
     }
 
 
-
-
     public void addReference(final ScheduleLabel event) {
         this.references.add(event);
     }
@@ -196,8 +190,6 @@ public class ScheduleListItem extends GridPane {
     }
 
 
-
-
     @Override
     public String toString() {
         return "ScheduleListItem {" +
@@ -206,40 +198,33 @@ public class ScheduleListItem extends GridPane {
                 '}';
     }
 
-    public static class ScheduleLabel extends Label {
+    public static class ScheduleLabel extends EventBoxLabel {
 
         private final ScheduleListItem scheduleListItem;
 
-        private final Tooltip tooltip;
 
         public ScheduleLabel(final ScheduleListItem scheduleListItem) {
-            super("", new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/schedule-icon.png")), 17.5, 17.5, true, true)));
-
+            super("");
+            setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/schedule-icon.png")), 17.5, 17.5, true, true)));
             this.scheduleListItem = scheduleListItem;
 
-            this.getStyleClass().add("day-event");
-            this.setMaxWidth(Double.MAX_VALUE);
 
-            tooltip = new Tooltip(scheduleListItem.getScheduleEventName());
-            tooltip.setShowDelay(Duration.seconds(0.5));
-            this.setTooltip(tooltip);
-
+            getToolTip().setText(scheduleListItem.getScheduleEventName());
             updateText();
+        }
 
-
-            this.setOnMouseClicked(e -> {
-                Logger.log("Schedule \"" + this.scheduleListItem.getScheduleEventName() + "\" was pressed.");
-                scheduleListItem.doClick();
-            });
+        @Override
+        public void onClick() {
+            Logger.log("Schedule \"" + this.scheduleListItem.getScheduleEventName() + "\" was pressed.");
+            scheduleListItem.doClick();
         }
 
         public void updateText() {
             final String displayText = getDisplayTime(scheduleListItem.getStartTime()) + scheduleListItem.getScheduleEventName();
 
             this.setText(displayText);
-            tooltip.setText(displayText);
+            getToolTip().setText(displayText);
         }
-
 
 
         public String getDisplayTime(final LocalTime time) {
@@ -272,8 +257,9 @@ public class ScheduleListItem extends GridPane {
         public int hashCode() {
             return Objects.hash(scheduleListItem);
         }
-    }
 
+
+    }
 
 
 }

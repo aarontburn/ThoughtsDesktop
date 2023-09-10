@@ -3,18 +3,12 @@ module com.beanloaf.thoughtsdesktop {
     requires javafx.fxml;
     requires javafx.web;
 
-    requires org.controlsfx.controls;
-    requires com.dlsc.formsfx;
-    requires net.synedra.validatorfx;
-    requires org.kordamp.ikonli.javafx;
-    requires org.kordamp.bootstrapfx.core;
-    requires com.almasb.fxgl.all;
-    requires CustomStage;
     requires json.simple;
     requires java.desktop;
     requires com.google.common;
     requires org.apache.commons.codec;
     requires annotations;
+    requires kotlin.stdlib;
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.notes.changeListener;

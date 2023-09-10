@@ -1,66 +1,111 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
-import com.beanloaf.thoughtsdesktop.calendar.objects.Tab;
-import com.beanloaf.thoughtsdesktop.calendar.objects.WeekBlock;
-import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.calendar.handlers.Calendar;
+import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
-import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WeekTab extends Tab {
+    private static final int DEFAULT_START_HOUR = 6;
+    private static final int DEFAULT_END_HOUR = 24;
 
-    public static int START_HOUR = 6;
-    public static int END_HOUR = 24;
 
-    public GridPane weekGrid;
+    public static int START_HOUR = DEFAULT_START_HOUR;
+    public static int END_HOUR = DEFAULT_END_HOUR;
+
+    private LocalDate startDate;
+    private LocalDate endDate;
+
+    public GridPane weekGrid, allDayEventGrid;
     private AnchorPane weekPane;
     private ScrollPane scrollPane;
+    private Label weekTabCloseButton, weekTabNextWeek, weekTabPrevWeek;
+    private Label weekDateLabel;
 
+    private final Calendar calendar;
 
-    private final List<WeekBlock> weekBlockList = new ArrayList<>();
+    private final List<Event> weekEventList = new ArrayList<>();
+    private final Map<Weekday, VBox> allDayEventMap = new ConcurrentHashMap<>();
 
     public WeekTab(final CalendarView view, final TabController tabController) {
         super(view, tabController);
+        this.calendar = view.calendar;
+
         locateNodes();
         attachEvents();
         createGUI();
 
+        changeWeek(calendar.getSelectedDay().getDate());
+    }
 
-        addEventToDay(Weekday.MONDAY, LocalTime.of(11, 0), LocalTime.of(12, 20), "TCSS 360 A", "CP 325");
-        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(11, 0), LocalTime.of(12, 20), "TCSS 360 A", "CP 325");
-        addEventToDay(Weekday.FRIDAY, LocalTime.of(11, 0), LocalTime.of(12, 20), "TCSS 360 A", "CP 325");
-
-        addEventToDay(Weekday.MONDAY, LocalTime.of(15, 40), LocalTime.of(17, 40), "TCSS 372 A", "MLG 311");
-        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(15, 40), LocalTime.of(17, 40), "TCSS 372 A", "MLG 311");
-
-        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(13, 30), LocalTime.of(15, 30), "TCSS 380 A", "MLG 110");
+    public void changeWeek(final LocalDate date) {
+        START_HOUR = DEFAULT_START_HOUR;
+        END_HOUR = DEFAULT_END_HOUR;
 
 
-        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(2, 30), LocalTime.of(4, 30), "test", "desc");
-        addEventToDay(Weekday.WEDNESDAY, LocalTime.of(22, 30), LocalTime.of(23, 30), "test", "desc");
+        weekEventList.clear();
+        for (final Weekday weekday : allDayEventMap.keySet()) {
+            allDayEventMap.get(weekday).getChildren().clear();
+        }
+
+
+        this.startDate = date.minusDays(date.getDayOfWeek().getValue());
+        this.endDate = startDate.plusDays(6);
+
+        final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+        weekDateLabel.setText(String.format("Week(%s - %s)", startDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")), endDate.format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
+        createGrid();
+
+
+        LocalDate d = startDate;
+        for (int i = 0; i < daysBetween; i++) {
+            final CalendarDay day = calendar.getDay(d);
+
+            for (final DayEvent event : day.getEvents()) {
+                addEventToDay(
+                        Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue()),
+                        event.getStartTime(),
+                        event.getEndTime(),
+                        event.getEventTitle(),
+                        event.getDescription());
+            }
+            d = d.plusDays(1);
+        }
+
     }
 
     @Override
     protected void locateNodes() {
         weekPane = (AnchorPane) findNodeById("weekTab");
+        weekTabCloseButton = (Label) findNodeById("weekTabCloseButton");
+        weekDateLabel = (Label) findNodeById("weekDateLabel");
+        weekTabNextWeek = (Label) findNodeById("weekTabNextWeek");
+        weekTabPrevWeek = (Label) findNodeById("weekTabPrevWeek");
+
+        allDayEventGrid = (GridPane) findNodeById("allDayEventGrid");
     }
+
 
     @Override
     protected void attachEvents() {
-
+        weekTabCloseButton.setOnMouseClicked(e -> getTabController().swapTabs(TabController.Tabs.CALENDAR));
+        weekTabNextWeek.setOnMouseClicked(e -> changeWeek(endDate.plusDays(2)));
+        weekTabPrevWeek.setOnMouseClicked(e -> changeWeek(startDate.minusDays(2)));
     }
 
     @Override
@@ -70,12 +115,35 @@ public class WeekTab extends Tab {
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.skinProperty().addListener((observableValue, skin, t1) -> {
-            StackPane stackPane = (StackPane) scrollPane.lookup("ScrollPane .viewport");
+            final StackPane stackPane = (StackPane) scrollPane.lookup("ScrollPane .viewport");
             stackPane.setCache(false);
         });
-        weekPane.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 114, 16, 16, 16));
+        weekPane.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 114, 200, 16, 16));
 
         createGrid();
+
+
+        for (int i = 0; i < 7; i++) {
+            final ScrollPane pane = new ScrollPane();
+            pane.getStyleClass().add("edge-to-edge");
+            pane.fitToWidthProperty().set(true);
+            pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            pane.skinProperty().addListener((observableValue, skin, t1) -> {
+                final StackPane stackPane = (StackPane) pane.lookup("ScrollPane .viewport");
+                stackPane.setCache(false);
+            });
+            allDayEventGrid.add(pane, i + 1, 0);
+
+            final VBox eventContainer = new VBox();
+            eventContainer.getStyleClass().add("events");
+            eventContainer.setMinHeight(0);
+            eventContainer.setSpacing(2);
+
+            pane.setContent(eventContainer);
+
+            allDayEventMap.put(Weekday.getWeekdayByDayOfWeek(i), eventContainer);
+        }
+
 
     }
 
@@ -83,6 +151,7 @@ public class WeekTab extends Tab {
         if (weekGrid != null) {
             weekPane.getChildren().remove(weekGrid);
         }
+
 
         weekGrid = new GridPane();
         weekGrid.setGridLinesVisible(true);
@@ -124,15 +193,34 @@ public class WeekTab extends Tab {
 
     public void addEventToDay(final Weekday weekday, final LocalTime startTime,
                               final LocalTime endTime, final String displayText, final String description) {
-        addEventToDay(new WeekBlock(weekday, startTime, endTime, displayText, description));
+
+        if (endTime != null && startTime != null && endTime.isBefore(startTime))
+            throw new IllegalArgumentException("End time cannot be before start time!");
+
+        final Event event = new Event(displayText).setStartTime(startTime).setEndTime(endTime).setDescription(description).setWeekday(weekday);
+
+        if (startTime == null) {
+            allDayEventMap.get(weekday).getChildren().add(new EventBoxLabel(displayText));
+            this.weekEventList.add(event);
+            return;
+        }
+
+        addEventToDay(event);
     }
 
-    public void addEventToDay(final WeekBlock weekBlock) {
-        this.weekBlockList.add(weekBlock);
+    public void addEventToDay(final Event event) {
+        this.weekEventList.add(event);
+
+        final WeekBlock weekBlock = new WeekBlock(event.getWeekday(), event.getStartTime(), event.getEndTime(), event.getTitle(), event.getDescription());
 
         if (adjustBounds()) {
             createGrid();
-            for (final WeekBlock block : weekBlockList) {
+            for (final Event e : weekEventList) {
+                if (e.getStartTime() == null) continue;
+
+
+                final WeekBlock block = new WeekBlock(e.getWeekday(), e.getStartTime(), e.getEndTime(), e.getTitle(), e.getDescription());
+
                 weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
             }
         } else {
@@ -142,6 +230,7 @@ public class WeekTab extends Tab {
             final int rowSpan = weekBlock.getSpan();
 
             weekGrid.add(weekBlock, columnIndex, rowIndex, columnSpan, rowSpan);
+
         }
 
     }
@@ -153,13 +242,33 @@ public class WeekTab extends Tab {
         LocalTime minTime = null;
         LocalTime maxTime = null;
 
-        for (final WeekBlock block : weekBlockList) {
-            if (minTime == null || block.getStartTime().isBefore(minTime)) minTime = block.getStartTime();
-            if (maxTime == null || block.getEndTime().isAfter(maxTime)) maxTime = block.getEndTime();
+        for (final Event e : weekEventList) {
+            if (e.getStartTime() == null) continue;
+
+            final WeekBlock block = new WeekBlock(e.getWeekday(), e.getStartTime(), e.getEndTime(), e.getTitle(), e.getDescription());
+
+            if (minTime == null) {
+                minTime = block.getStartTime();
+            } else {
+                if (block.getStartTime().isBefore(minTime)) minTime = block.getStartTime();
+                if (block.getEndTime().isBefore(minTime)) minTime = block.getEndTime();
+            }
+
+            if (maxTime == null) {
+                maxTime = block.getEndTime();
+            } else {
+                if (block.getEndTime().isAfter(maxTime)) maxTime = block.getEndTime();
+                if (block.getStartTime().isAfter(maxTime)) maxTime = block.getStartTime();
+            }
+
         }
 
         if (minTime != null) START_HOUR = minTime.getHour() - 1;
         if (maxTime != null) END_HOUR = maxTime.getHour() + 1;
+
+        if (START_HOUR < 0) START_HOUR = 0;
+        if (END_HOUR > 24) END_HOUR = 24;
+
 
         return oldStartHour != START_HOUR || oldEndHour != END_HOUR;
 

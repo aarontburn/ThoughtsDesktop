@@ -8,7 +8,7 @@ import java.util.Set;
 public class JSONHelper {
 
 
-    public JSONObject json;
+    public final JSONObject json;
 
 
 
