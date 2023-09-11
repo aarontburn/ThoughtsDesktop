@@ -11,7 +11,6 @@ public class TabController {
     private final CalendarView view;
     private final Map<Tabs, Node> tabMap = new HashMap<>();
     private ScheduleTab scheduleTab;
-    public WeekTab weekTab;
 
     public TabController(final CalendarView view) {
         this.view = view;
@@ -24,7 +23,6 @@ public class TabController {
 
         tabMap.put(Tabs.SCHEDULE, findNodeById("newScheduleTab"));
         tabMap.put(Tabs.CALENDAR, findNodeById("calendarTab"));
-        tabMap.put(Tabs.WEEK, findNodeById("weekTab"));
 
     }
 
@@ -45,14 +43,8 @@ public class TabController {
         swapTabs(Tabs.SCHEDULE);
     }
 
-    public void displayWeekView() {
-        weekTab = new WeekTab(view, this);
-        swapTabs(Tabs.WEEK);
-    }
-
-
     public enum Tabs {
-        CALENDAR, SCHEDULE, WEEK
+        CALENDAR, SCHEDULE
     }
 
 }

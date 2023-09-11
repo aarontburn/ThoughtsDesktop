@@ -458,7 +458,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <SplitPane fx:id="calendarTab" dividerPositions="0.19989561586638832" prefHeight="160.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="calendarTab" dividerPositions="0.19989561586638832" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
@@ -840,7 +840,7 @@
                   </AnchorPane>
                   <AnchorPane>
                      <children>
-                      <AnchorPane layoutX="0.5" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                      <AnchorPane fx:id="monthView" layoutX="0.5" minHeight="0.0" minWidth="0.0" prefHeight="1076.0" prefWidth="1530.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <GridPane fx:id="calendarFrame" gridLinesVisible="true" layoutX="421.0" layoutY="90.0" prefHeight="986.0" prefWidth="1530.0" style="-fx-background-color: rgb(94, 94, 94);" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="90.0">
                                 <columnConstraints>
@@ -943,34 +943,6 @@
                                     </AnchorPane>
                                  </children>
                               </GridPane>
-                              <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <Label fx:id="calendarMonthYearLabel" text="September, 2023">
-                                       <font>
-                                          <Font size="34.0" />
-                                       </font>
-                                       <padding>
-                                          <Insets left="16.0" right="16.0" top="4.0" />
-                                       </padding>
-                                    </Label>
-                                    <Label fx:id="calendarNextMonthButton" layoutX="364.0" text="↓" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font size="36.0" />
-                                       </font>
-                                    </Label>
-                                    <Label fx:id="calendarPrevMonthButton" layoutX="305.0" text="↑" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                       <font>
-                                          <Font size="36.0" />
-                                       </font>
-                                    </Label>
-                                    <Button fx:id="calendarTestButton" layoutX="460.0" layoutY="10.0" mnemonicParsing="false" styleClass="calendarButton" text="test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="460.0" AnchorPane.topAnchor="0.0" />
-                                    <Button fx:id="weekViewButton" layoutX="1102.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Week" AnchorPane.bottomAnchor="4.0" AnchorPane.topAnchor="4.0">
-                                       <font>
-                                          <Font size="15.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                              </AnchorPane>
                               <GridPane layoutY="55.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -1024,111 +996,121 @@
                               </GridPane>
                            </children>
                         </AnchorPane>
+                        <AnchorPane fx:id="weekView" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <GridPane gridLinesVisible="true" layoutX="16.0" layoutY="80.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Sunday" textAlignment="CENTER" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Tuesday" textAlignment="CENTER" GridPane.columnIndex="3">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Wednesday" textAlignment="CENTER" GridPane.columnIndex="4">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Monday" textAlignment="CENTER" GridPane.columnIndex="2">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Thursday" textAlignment="CENTER" GridPane.columnIndex="5">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Friday" textAlignment="CENTER" GridPane.columnIndex="6">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Saturday" textAlignment="CENTER" GridPane.columnIndex="7">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </GridPane>
+                              <GridPane fx:id="allDayEventGrid" gridLinesVisible="true" layoutX="42.0" layoutY="1005.0" prefHeight="178.0" prefWidth="1888.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="All Day" textAlignment="CENTER">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane fx:id="calendarHeader" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <Label fx:id="calendarTitleLabel" layoutX="106.0" text="September, 2023" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font size="34.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets left="16.0" right="16.0" top="4.0" />
+                                 </padding>
+                              </Label>
+                              <Label fx:id="calendarNextButton" layoutX="59.0" text="↓" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font size="36.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="calendarPrevButton" layoutX="14.0" text="↑" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <font>
+                                    <Font size="36.0" />
+                                 </font>
+                              </Label>
+                              <Button fx:id="calendarTestButton" layoutX="638.0" mnemonicParsing="false" styleClass="calendarButton" text="test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="638.0" AnchorPane.topAnchor="0.0" />
+                              <Button fx:id="weekViewButton" layoutX="1102.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Week" AnchorPane.bottomAnchor="4.0" AnchorPane.topAnchor="4.0">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Button>
+                              <Button fx:id="monthViewButton" layoutX="998.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Month" AnchorPane.bottomAnchor="4.0" AnchorPane.topAnchor="4.0">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </AnchorPane>
                      </children>
                   </AnchorPane>
               </items>
             </SplitPane>
-            <AnchorPane fx:id="weekTab" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <Label fx:id="weekTabCloseButton" text="X" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="8.0">
-                     <font>
-                        <Font size="36.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="weekDateLabel" layoutX="16.0" layoutY="16.0" maxWidth="1.7976931348623157E308" minWidth="0.0" text="Week (9/3/2023 - 9/9/2023)" textOverrun="CLIP" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
-                     <font>
-                        <Font size="36.0" />
-                     </font>
-                     <padding>
-                        <Insets left="16.0" />
-                     </padding>
-                  </Label>
-                  <GridPane gridLinesVisible="true" layoutX="16.0" layoutY="80.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Sunday" textAlignment="CENTER" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Tuesday" textAlignment="CENTER" GridPane.columnIndex="3">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Wednesday" textAlignment="CENTER" GridPane.columnIndex="4">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Monday" textAlignment="CENTER" GridPane.columnIndex="2">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Thursday" textAlignment="CENTER" GridPane.columnIndex="5">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Friday" textAlignment="CENTER" GridPane.columnIndex="6">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Saturday" textAlignment="CENTER" GridPane.columnIndex="7">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </GridPane>
-                  <Label fx:id="weekTabNextWeek" layoutX="630.0" layoutY="16.0" text="↓">
-                     <font>
-                        <Font size="36.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="weekTabPrevWeek" layoutX="585.0" layoutY="16.0" text="↑">
-                     <font>
-                        <Font size="36.0" />
-                     </font>
-                  </Label>
-                  <GridPane fx:id="allDayEventGrid" gridLinesVisible="true" layoutX="42.0" layoutY="1005.0" prefHeight="178.0" prefWidth="1888.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="All Day" textAlignment="CENTER">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </GridPane>
-               </children>
-            </AnchorPane>
          </children>
       </AnchorPane>
       <MenuBar prefWidth="1920.0" />

@@ -32,9 +32,7 @@ import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CalendarView extends ThoughtsView {
 
@@ -49,9 +47,7 @@ public class CalendarView extends ThoughtsView {
     private GridPane calendarFrame; // (7 x 5)
 
     /*  Header  */
-    private Label calendarMonthYearLabel;
-    private Label calendarNextMonthButton, calendarPrevMonthButton;
-    private Button calendarTestButton, calendarNewScheduleButton, weekViewButton;
+    public CalendarRightHeader header = new CalendarRightHeader(this);
 
 
     /*  Left Panel  */
@@ -60,6 +56,11 @@ public class CalendarView extends ThoughtsView {
     private AnchorPane calendarLeftEventPanel, calendarLeftSchedulePanel;
 
 
+    /*  Right Panel */
+    public WeekView weekView;
+    private AnchorPane weekViewPane, monthViewPane;
+    private Map<RightLayouts, AnchorPane> rightLayoutsMap = new HashMap<>();
+
     /*  Event Box   */
     private VBox calendarEventBox;
     private Label calendarDayLabel;
@@ -67,6 +68,7 @@ public class CalendarView extends ThoughtsView {
 
 
     /*  Schedule Box    */
+    private Button calendarNewScheduleButton;
     public VBox calendarScheduleBox;
 
 
@@ -96,20 +98,22 @@ public class CalendarView extends ThoughtsView {
 
         changeMonth(calendar.getCurrentMonth());
         swapLeftPanel(calendarLeftEventPanel);
+        swapRightPanel(RightLayouts.MONTH);
         startup();
 
     }
 
     private void locateNodes() {
+
+
+        /*  Right Panel */
+        weekViewPane = (AnchorPane) findNodeById("weekView");
+        monthViewPane = (AnchorPane) findNodeById("monthView");
+        rightLayoutsMap.put(RightLayouts.MONTH, monthViewPane);
+        rightLayoutsMap.put(RightLayouts.WEEK, weekViewPane);
+
         calendarFrame = (GridPane) findNodeById("calendarFrame");
 
-        /*  Header  */
-        calendarMonthYearLabel = (Label) findNodeById("calendarMonthYearLabel");
-        calendarNextMonthButton = (Label) findNodeById("calendarNextMonthButton");
-        calendarPrevMonthButton = (Label) findNodeById("calendarPrevMonthButton");
-        calendarTestButton = (Button) findNodeById("calendarTestButton");
-        calendarNewScheduleButton = (Button) findNodeById("calendarNewScheduleButton");
-        weekViewButton = (Button) findNodeById("weekViewButton");
 
         /*  Left Panel  */
         calendarEventsButton = (Button) findNodeById("calendarEventsButton");
@@ -125,6 +129,7 @@ public class CalendarView extends ThoughtsView {
 
         /*  Schedule Box    */
         calendarScheduleBox = (VBox) findNodeById("calendarScheduleBox");
+        calendarNewScheduleButton = (Button) findNodeById("calendarNewScheduleButton");
 
 
         /*  Small Event Input   */
@@ -170,12 +175,7 @@ public class CalendarView extends ThoughtsView {
     }
 
     private void attachEvents() {
-        /*  Header  */
-        calendarNextMonthButton.setOnMouseClicked(e -> changeMonth(calendar.getCurrentMonth().getNextMonth()));
-        calendarPrevMonthButton.setOnMouseClicked(e -> changeMonth(calendar.getCurrentMonth().getPreviousMonth()));
-
         calendarNewScheduleButton.setOnAction(e -> tabController.displaySchedule(new ScheduleData()));
-        weekViewButton.setOnAction(e -> tabController.displayWeekView());
 
         /*  Left Panel  */
         calendarEventsButton.setOnAction(e -> swapLeftPanel(calendarLeftEventPanel));
@@ -221,6 +221,18 @@ public class CalendarView extends ThoughtsView {
         calendarScheduleBox.getChildren().clear();
     }
 
+    public void swapRightPanel(final RightLayouts pane) {
+        for (final RightLayouts layout : rightLayoutsMap.keySet()) {
+            rightLayoutsMap.get(layout).setVisible(false);
+        }
+
+        if (pane == RightLayouts.WEEK && weekView == null) {
+            weekView = new WeekView(this);
+        }
+
+        rightLayoutsMap.get(pane).setVisible(true);
+    }
+
     private void swapLeftPanel(final AnchorPane pane) {
         for (final AnchorPane anchorPane : leftLayoutList) {
             anchorPane.setVisible(false);
@@ -231,24 +243,21 @@ public class CalendarView extends ThoughtsView {
     }
 
 
-    private void changeMonth(final CalendarMonth month) {
+    public void changeMonth(final CalendarMonth month) {
         calendar.removeInactiveMonths();
         calendar.setCurrentMonth(month.getMonth(), month.getYear());
         createCalendarGUI();
-
-
     }
 
 
     private void createCalendarGUI() {
         final CalendarMonth currentMonth = calendar.getCurrentMonth();
 
-        this.calendarMonthYearLabel.setText(ThoughtsHelper.toCamelCase(currentMonth.getMonth().toString()) + ", " + currentMonth.getYear());
+        header.setTitleText(ThoughtsHelper.toCamelCase(currentMonth.getMonth().toString()) + ", " + currentMonth.getYear());
         final int monthLength = currentMonth.getMonthLength();
 
         final CalendarMonth prevMonth = calendar.getMonth(currentMonth.getPreviousMonth().getMonth(), currentMonth.getPreviousMonth().getYear());
         final CalendarMonth nextMonth = calendar.getMonth(currentMonth.getNextMonth().getMonth(), currentMonth.getNextMonth().getYear());
-
 
         Platform.runLater(() -> {
             calendarFrame.getChildren().clear();
@@ -371,7 +380,6 @@ public class CalendarView extends ThoughtsView {
 
         }
 
-
         if (!boxExists) Platform.runLater(() -> calendarScheduleBox.getChildren().add(new ScheduleBoxItem(this, data)));
 
 
@@ -477,7 +485,7 @@ public class CalendarView extends ThoughtsView {
             final DayEvent clone = new DayEvent(dayEvent, this);
             calendarEventBox.getChildren().add(clone);
 
-            dayEvent.setClone(clone);
+            dayEvent.addReference(clone);
 
         }
     }
@@ -488,14 +496,21 @@ public class CalendarView extends ThoughtsView {
 
     }
 
+
+
     public void selectEvent(DayEvent event, final boolean editable) {
+
         swapLeftPanel(calendarLeftEventPanel);
 
         event.getStyleClass().add("selected-day-event");
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-day-event");
         selectedEvent = event;
 
-        if (event.isClone) event = event.getClone();
+        if (event.isReference) {
+            for (final DayEvent dayEvent : event.getReferences()) {
+                if (!dayEvent.isReference) event = dayEvent;
+            }
+        }
 
         calendarSmallEventFields.setVisible(true);
 
@@ -518,10 +533,8 @@ public class CalendarView extends ThoughtsView {
         calendarSmallTimeFrom.setTime(startTime);
         calendarSmallTimeTo.setTime(endTime);
 
-
         calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
         calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
-
 
         calendarSmallEventDescriptionInput.setText(event.getDescription());
     }
@@ -553,9 +566,14 @@ public class CalendarView extends ThoughtsView {
     }
 
     public void saveEvent(DayEvent event) {
-        if (event.isClone) event = event.getClone();
-
         event.setEventTitle(calendarSmallEventTitleInput.getText());
+
+        if (event.isReference) {
+            for (final DayEvent dayEvent : event.getReferences()) {
+                if (!dayEvent.isReference) event = dayEvent;
+            }
+        }
+
 
         final LocalDate oldDate = event.getDate();
         if (oldDate != null && !calendarSmallDatePicker.getValue().isEqual(oldDate)) {
@@ -568,10 +586,13 @@ public class CalendarView extends ThoughtsView {
 
         }
 
-
-
         event.setStartTime(calendarSmallTimeFrom.getTime());
-        event.setEndTime(calendarSmallTimeFrom.getTime().isBefore(calendarSmallTimeTo.getTime()) ? calendarSmallTimeTo.getTime() : null);
+        if (calendarSmallTimeFrom.getTime() != null) {
+            event.setEndTime(calendarSmallTimeFrom.getTime().isBefore(calendarSmallTimeTo.getTime()) ? calendarSmallTimeTo.getTime() : null);
+        } else {
+            event.setEndTime(calendarSmallTimeTo.getTime());
+        }
+
 
         event.setDescription(calendarSmallEventDescriptionInput.getText());
 
@@ -602,5 +623,9 @@ public class CalendarView extends ThoughtsView {
 
     }
 
+
+    public enum RightLayouts {
+        MONTH, WEEK
+    }
 
 }

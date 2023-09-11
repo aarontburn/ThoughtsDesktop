@@ -1,10 +1,10 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.calendar.views.WeekTab;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.WeekView;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -16,14 +16,10 @@ public class WeekBlock extends VBox {
     private final Event event;
 
 
-    public WeekBlock(final Weekday weekday, final LocalTime startTime, final LocalTime endTime, final String eventName, final String description) {
+    public WeekBlock(final CalendarView view, final Event event) {
         super();
 
-        this.event = new Event(eventName);
-        event.setStartTime(startTime);
-        event.setEndTime(endTime);
-        event.setWeekday( weekday);
-        event.setDescription(description);
+        this.event = event;
 
 
         /*
@@ -33,14 +29,17 @@ public class WeekBlock extends VBox {
         final String[] colors = new String[]{"green", "black", "blue", "navy", "indigo"};
         String color = colors[new Random().nextInt(colors.length)];
 
-        this.setStyle("-fx-background-color: " + (endTime != null ? color + "" : String.format("linear-gradient(%s, %s)", color, "rgb(60, 63 , 65)")) + ";"
+        this.setStyle("-fx-background-color: " + (event.getEndTime() != null ? color + "" : String.format("linear-gradient(%s, %s)", color, "rgb(60, 63 , 65)")) + ";"
                 + " -fx-border-color: derive(" + color + ", +50%); -fx-border-insets: 4; -fx-border-radius: 5;"
-                + " -fx-border-style: solid solid " + (endTime != null ? " solid" : "none") + " solid;"
+                + " -fx-border-style: solid solid " + (event.getEndTime() != null ? " solid" : "none") + " solid;"
                 + " -fx-background-radius: 3;");
 
-        this.setOnMouseClicked(e -> Logger.log("WeekBlock: " + eventName + " pressed."));
+        this.setOnMouseClicked(e -> {
+            view.selectDay(event.getStartDate());
+            Logger.log("WeekBlock: " + event.getTitle() + " pressed.");
+        });
 
-        final Label nameLabel = new Label(eventName);
+        final Label nameLabel = new Label(event.getTitle());
         nameLabel.setMinHeight(0);
 
         nameLabel.setStyle("-fx-font-size: 18; -fx-padding: 0 0 0 8; -fx-background-color: transparent;");
@@ -50,12 +49,12 @@ public class WeekBlock extends VBox {
         final int span = getSpan();
 
         if (span > 1) {
-            final Label timeLabel = new Label(startTime.format(DateTimeFormatter.ofPattern("h:mm a")) + (endTime == null ? "" : " - " + endTime.format(DateTimeFormatter.ofPattern("h:mm a"))));
+            final Label timeLabel = new Label(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
             timeLabel.setMinHeight(0);
             timeLabel.setStyle("-fx-font-size: 14; -fx-padding: 0 0 0 8; -fx-background-color: transparent;");
             this.getChildren().add(timeLabel);
 
-            final Label descLabel = new Label(description);
+            final Label descLabel = new Label(event.getDescription());
             descLabel.setMinHeight(0);
             descLabel.setStyle("-fx-font-size: 14; -fx-padding: 0 0 0 8; -fx-background-color: transparent;");
             this.getChildren().add(descLabel);
@@ -104,7 +103,7 @@ public class WeekBlock extends VBox {
 
     public int getStartIndex() {
         final LocalTime roundedTime = event.getStartTime().truncatedTo(ChronoUnit.HOURS).plusMinutes(ROUND_TO_LAST * (event.getStartTime().getMinute() / ROUND_TO_LAST));
-        return (int) (ChronoUnit.MINUTES.between(LocalTime.of(WeekTab.START_HOUR, 0), roundedTime) / ROUND_TO_LAST);
+        return (int) (ChronoUnit.MINUTES.between(LocalTime.of(WeekView.START_HOUR, 0), roundedTime) / ROUND_TO_LAST);
     }
 
     public int getSpan() {

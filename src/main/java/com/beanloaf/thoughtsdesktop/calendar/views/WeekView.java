@@ -2,13 +2,16 @@ package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.calendar.handlers.Calendar;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,9 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class WeekTab extends Tab {
+public class WeekView {
     private static final int DEFAULT_START_HOUR = 6;
     private static final int DEFAULT_END_HOUR = 24;
+
+    private final CalendarView view;
 
 
     public static int START_HOUR = DEFAULT_START_HOUR;
@@ -33,82 +38,50 @@ public class WeekTab extends Tab {
     public GridPane weekGrid, allDayEventGrid;
     private AnchorPane weekPane;
     private ScrollPane scrollPane;
-    private Label weekTabCloseButton, weekTabNextWeek, weekTabPrevWeek;
-    private Label weekDateLabel;
 
     private final Calendar calendar;
 
     private final List<Event> weekEventList = new ArrayList<>();
     private final Map<Weekday, VBox> allDayEventMap = new ConcurrentHashMap<>();
 
-    public WeekTab(final CalendarView view, final TabController tabController) {
-        super(view, tabController);
+    public WeekView(final CalendarView view) {
+        this.view = view;
         this.calendar = view.calendar;
 
         locateNodes();
-        attachEvents();
         createGUI();
 
         changeWeek(calendar.getSelectedDay().getDate());
     }
 
-    public void changeWeek(final LocalDate date) {
-        START_HOUR = DEFAULT_START_HOUR;
-        END_HOUR = DEFAULT_END_HOUR;
+    public Pair<LocalDate, LocalDate> getDateRange(final LocalDate date) {
+        final LocalDate start = date.minusDays(date.getDayOfWeek().getValue());
+        final LocalDate end = start.plusDays(6);
 
-
-        weekEventList.clear();
-        for (final Weekday weekday : allDayEventMap.keySet()) {
-            allDayEventMap.get(weekday).getChildren().clear();
-        }
-
-
-        this.startDate = date.minusDays(date.getDayOfWeek().getValue());
-        this.endDate = startDate.plusDays(6);
-
-        final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-
-        weekDateLabel.setText(String.format("Week(%s - %s)", startDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")), endDate.format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
-        createGrid();
-
-
-        LocalDate d = startDate;
-        for (int i = 0; i < daysBetween; i++) {
-            final CalendarDay day = calendar.getDay(d);
-
-            for (final DayEvent event : day.getEvents()) {
-                addEventToDay(
-                        Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue()),
-                        event.getStartTime(),
-                        event.getEndTime(),
-                        event.getEventTitle(),
-                        event.getDescription());
-            }
-            d = d.plusDays(1);
-        }
+        return new Pair<>(start, end);
 
     }
 
-    @Override
+
+    private Node findNodeById(final String nodeId) {
+        return view.findNodeById(nodeId);
+    }
+
     protected void locateNodes() {
-        weekPane = (AnchorPane) findNodeById("weekTab");
-        weekTabCloseButton = (Label) findNodeById("weekTabCloseButton");
-        weekDateLabel = (Label) findNodeById("weekDateLabel");
-        weekTabNextWeek = (Label) findNodeById("weekTabNextWeek");
-        weekTabPrevWeek = (Label) findNodeById("weekTabPrevWeek");
+        weekPane = (AnchorPane) findNodeById("weekView");
 
         allDayEventGrid = (GridPane) findNodeById("allDayEventGrid");
     }
 
 
-    @Override
-    protected void attachEvents() {
-        weekTabCloseButton.setOnMouseClicked(e -> getTabController().swapTabs(TabController.Tabs.CALENDAR));
-        weekTabNextWeek.setOnMouseClicked(e -> changeWeek(endDate.plusDays(2)));
-        weekTabPrevWeek.setOnMouseClicked(e -> changeWeek(startDate.minusDays(2)));
+    public void changeToNextWeek() {
+        changeWeek(endDate.plusDays(2));
     }
 
-    @Override
+    public void changeToPrevWeek() {
+        changeWeek(startDate.minusDays(2));
+    }
+
     protected void createGUI() {
         scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("edge-to-edge");
@@ -155,9 +128,20 @@ public class WeekTab extends Tab {
 
         weekGrid = new GridPane();
         weekGrid.setGridLinesVisible(true);
+
         scrollPane.setContent(weekGrid);
 
         final int columnCount = 8;
+        weekGrid.setOnMouseClicked(e -> {
+            final double cellSize = weekGrid.getWidth() / columnCount;
+            final double x = e.getPickResult().getIntersectedPoint().getX();
+            int cellNum = (int) (x / cellSize);
+            cellNum = Math.max(0, Math.min(columnCount - 1, cellNum));
+            if (cellNum == 0) return;
+            view.selectDay(calendar.getDay(startDate.plusDays(cellNum - 1)));
+        });
+
+
         for (int column = 0; column < columnCount; column++) {
             final ColumnConstraints con = new ColumnConstraints();
             con.setPercentWidth(100.0 / columnCount);
@@ -190,37 +174,67 @@ public class WeekTab extends Tab {
 
     }
 
+    public void changeWeek(final LocalDate date) {
+        START_HOUR = DEFAULT_START_HOUR;
+        END_HOUR = DEFAULT_END_HOUR;
 
-    public void addEventToDay(final Weekday weekday, final LocalTime startTime,
-                              final LocalTime endTime, final String displayText, final String description) {
 
-        if (endTime != null && startTime != null && endTime.isBefore(startTime))
-            throw new IllegalArgumentException("End time cannot be before start time!");
-
-        final Event event = new Event(displayText).setStartTime(startTime).setEndTime(endTime).setDescription(description).setWeekday(weekday);
-
-        if (startTime == null) {
-            allDayEventMap.get(weekday).getChildren().add(new EventBoxLabel(displayText));
-            this.weekEventList.add(event);
-            return;
+        weekEventList.clear();
+        for (final Weekday weekday : allDayEventMap.keySet()) {
+            allDayEventMap.get(weekday).getChildren().clear();
         }
 
-        addEventToDay(event);
+
+        final Pair<LocalDate, LocalDate> startEndRange = getDateRange(date);
+
+        this.startDate = startEndRange.getKey();
+        this.endDate = startEndRange.getValue();
+
+        final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+        view.header.setTitleText(String.format("Week (%s - %s)", startDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")), endDate.format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
+        createGrid();
+
+
+        LocalDate d = startDate;
+        for (int i = 0; i < daysBetween; i++) {
+            final CalendarDay day = calendar.getDay(d);
+
+            for (final DayEvent dayEvent : day.getEvents()) {
+                final Weekday weekday = Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue());
+
+                final Event event = new Event(dayEvent.getEventTitle())
+                        .setStartTime(dayEvent.getStartTime())
+                        .setEndTime(dayEvent.getEndTime())
+                        .setDescription(dayEvent.getDescription())
+                        .setWeekday(weekday)
+                        .setStartDate(dayEvent.getDate());
+
+                if (dayEvent.getStartTime() == null) {
+                    allDayEventMap.get(weekday).getChildren().add(new DayEvent(dayEvent, view));
+                    this.weekEventList.add(event);
+                    continue;
+                }
+
+                addEventToDay(event);
+
+
+            }
+            d = d.plusDays(1);
+        }
+
     }
 
     public void addEventToDay(final Event event) {
         this.weekEventList.add(event);
 
-        final WeekBlock weekBlock = new WeekBlock(event.getWeekday(), event.getStartTime(), event.getEndTime(), event.getTitle(), event.getDescription());
+        final WeekBlock weekBlock = new WeekBlock(view, event);
 
         if (adjustBounds()) {
             createGrid();
             for (final Event e : weekEventList) {
                 if (e.getStartTime() == null) continue;
-
-
-                final WeekBlock block = new WeekBlock(e.getWeekday(), e.getStartTime(), e.getEndTime(), e.getTitle(), e.getDescription());
-
+                final WeekBlock block = new WeekBlock(view, e);
                 weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
             }
         } else {
@@ -245,7 +259,7 @@ public class WeekTab extends Tab {
         for (final Event e : weekEventList) {
             if (e.getStartTime() == null) continue;
 
-            final WeekBlock block = new WeekBlock(e.getWeekday(), e.getStartTime(), e.getEndTime(), e.getTitle(), e.getDescription());
+            final WeekBlock block = new WeekBlock(view, e);
 
             if (minTime == null) {
                 minTime = block.getStartTime();

@@ -12,6 +12,8 @@ import javafx.scene.text.Text;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class DayEvent extends EventBoxLabel {
@@ -22,32 +24,31 @@ public class DayEvent extends EventBoxLabel {
 
 
     private final Event event;
-
     private final String eventID;
 
     private boolean isCompleted;
-
-    private DayEvent clone;
-    public boolean isClone;
-
+    public boolean isReference;
     public final boolean isScheduleEvent;
+
+    private final List<DayEvent> references = new ArrayList<>();
+
 
 
     // Cloning constructor, used to tie the eventbox object to the one in the grid
-    public DayEvent(final DayEvent clone, final CalendarView view) {
-        this(clone.getDate(), clone.getEventTitle(), view, clone.isScheduleEvent);
+    public DayEvent(final DayEvent reference, final CalendarView view) {
+        this(reference.getDate(), reference.getEventTitle(), view, reference.isScheduleEvent);
 
 
-        this.isClone = true;
-        this.clone = clone;
+        this.isReference = true;
+        this.references.add(reference);
 
-        event.setStartTime(clone.event.getStartTime());
-        event.setEndTime(clone.event.getEndTime());
-        event.setDescription(clone.event.getDescription());
+        event.setStartTime(reference.event.getStartTime());
+        event.setEndTime(reference.event.getEndTime());
+        event.setDescription(reference.event.getDescription());
 
-        this.isCompleted = clone.isCompleted;
+        this.isCompleted = reference.isCompleted;
 
-        this.setText(getDisplayTime(event.getStartTime()) + event.getDescription());
+        this.setText(getDisplayTime(event.getStartTime()) + event.getTitle());
     }
 
 
@@ -99,9 +100,10 @@ public class DayEvent extends EventBoxLabel {
         event.setStartTime(startTime);
         final String newText = getDisplayTime(startTime) + event.getTitle();
         setText(newText);
-        if (this.clone != null) {
-            clone.event.setStartTime(startTime);
-            clone.setText(newText);
+
+        for (final DayEvent dayEvent : references) {
+            dayEvent.event.setStartTime(startTime);
+            dayEvent.setText(newText);
         }
 
     }
@@ -109,8 +111,9 @@ public class DayEvent extends EventBoxLabel {
 
     public void setEndTime(final LocalTime endTime) {
         event.setEndTime(endTime);
-        if (this.clone != null) {
-            clone.event.setEndTime(endTime);
+
+        for (final DayEvent dayEvent : references) {
+            dayEvent.event.setEndTime(endTime);
         }
 
     }
@@ -118,32 +121,38 @@ public class DayEvent extends EventBoxLabel {
     @Override
     public void setEventTitle(final String eventTitle) {
         event.setTitle(eventTitle);
-        this.setText(eventTitle);
 
-        if (this.clone != null) {
-            clone.event.setTitle(eventTitle);
-            clone.setText(eventTitle);
+        this.setText(event.getTitle());
+
+        for (final DayEvent dayEvent : references) {
+            dayEvent.event.setTitle(eventTitle);
+            dayEvent.setText(eventTitle);
         }
     }
 
     public void setDescription(final String description) {
         event.setDescription(description);
 
-        if (this.clone != null) clone.event.setDescription(description);
+        for (final DayEvent dayEvent : references) {
+            dayEvent.event.setDescription(description);
+        }
     }
 
     public void setDate(final LocalDate day) {
         event.setStartDate(day);
 
-        if (this.clone != null) clone.event.setStartDate(day);
+        for (final DayEvent dayEvent : references) {
+            dayEvent.event.setStartDate(day);
+        }
     }
 
     public void setCompleted(final boolean isCompleted, final boolean save) {
         this.isCompleted = isCompleted;
-        if (this.clone != null) {
-            clone.isCompleted = isCompleted;
 
-            for (final Node node : clone.getChildren()) {
+
+        for (final DayEvent dayEvent : references) {
+            dayEvent.isCompleted = isCompleted;
+            for (final Node node : dayEvent.getChildren()) {
                 if (node.getClass().getSimpleName().equals("LabeledText")) {
                     final Text text = (Text) node;
                     text.setStrikethrough(isCompleted);
@@ -165,13 +174,13 @@ public class DayEvent extends EventBoxLabel {
         if (save) view.saveEvent(this);
     }
 
-    public void setClone(final DayEvent clone) {
-        this.clone = clone;
+    public void addReference(final DayEvent reference) {
+        this.references.add(reference);
     }
 
 
-    public DayEvent getClone() {
-        return this.clone;
+    public List<DayEvent> getReferences() {
+        return this.references;
     }
 
 
