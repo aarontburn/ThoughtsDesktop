@@ -58,8 +58,7 @@ public class CalendarView extends ThoughtsView {
 
     /*  Right Panel */
     public WeekView weekView;
-    private AnchorPane weekViewPane, monthViewPane;
-    private Map<RightLayouts, AnchorPane> rightLayoutsMap = new HashMap<>();
+    private final Map<RightLayouts, AnchorPane> rightLayoutsMap = new HashMap<>();
 
     /*  Event Box   */
     private VBox calendarEventBox;
@@ -107,8 +106,8 @@ public class CalendarView extends ThoughtsView {
 
 
         /*  Right Panel */
-        weekViewPane = (AnchorPane) findNodeById("weekView");
-        monthViewPane = (AnchorPane) findNodeById("monthView");
+        AnchorPane weekViewPane = (AnchorPane) findNodeById("weekView");
+        AnchorPane monthViewPane = (AnchorPane) findNodeById("monthView");
         rightLayoutsMap.put(RightLayouts.MONTH, monthViewPane);
         rightLayoutsMap.put(RightLayouts.WEEK, weekViewPane);
 
@@ -475,19 +474,22 @@ public class CalendarView extends ThoughtsView {
 
 
     public void selectDay(final CalendarDay day) {
+        if (day == calendar.getSelectedDay()) return;
+
+
         calendar.setSelectedDay(day);
         calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
                 + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
 
         calendarSmallEventFields.setVisible(false);
+
         calendarEventBox.getChildren().clear();
+
         for (final DayEvent dayEvent : day.getEvents()) {
             final DayEvent clone = new DayEvent(dayEvent, this);
             calendarEventBox.getChildren().add(clone);
-
-            dayEvent.addReference(clone);
-
         }
+
     }
 
     public void selectDay(final LocalDate date) {
@@ -495,7 +497,6 @@ public class CalendarView extends ThoughtsView {
         selectDay(month.getDay(date.getDayOfMonth()));
 
     }
-
 
 
     public void selectEvent(DayEvent event, final boolean editable) {
@@ -506,14 +507,7 @@ public class CalendarView extends ThoughtsView {
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-day-event");
         selectedEvent = event;
 
-        if (event.isReference) {
-            for (final DayEvent dayEvent : event.getReferences()) {
-                if (!dayEvent.isReference) event = dayEvent;
-            }
-        }
-
         calendarSmallEventFields.setVisible(true);
-
 
         toggleSmallEventFields(editable);
         calendarSmallSaveEventButton.setVisible(editable);
@@ -568,27 +562,24 @@ public class CalendarView extends ThoughtsView {
     public void saveEvent(DayEvent event) {
         event.setEventTitle(calendarSmallEventTitleInput.getText());
 
-        if (event.isReference) {
-            for (final DayEvent dayEvent : event.getReferences()) {
-                if (!dayEvent.isReference) event = dayEvent;
-            }
-        }
-
-
         final LocalDate oldDate = event.getDate();
         if (oldDate != null && !calendarSmallDatePicker.getValue().isEqual(oldDate)) {
-            deleteEvent(event);
-            event.setDate(calendarSmallDatePicker.getValue());
+            deleteEvent(event, oldDate);
+            event.setStartDate(calendarSmallDatePicker.getValue());
             selectEvent(addEventToCalendarDay(event.getDate(), event), false);
             selectDay(event.getDate());
         } else {
-            event.setDate(calendarSmallDatePicker.getValue());
+            event.setStartDate(calendarSmallDatePicker.getValue());
 
         }
 
         event.setStartTime(calendarSmallTimeFrom.getTime());
         if (calendarSmallTimeFrom.getTime() != null) {
-            event.setEndTime(calendarSmallTimeFrom.getTime().isBefore(calendarSmallTimeTo.getTime()) ? calendarSmallTimeTo.getTime() : null);
+            try {
+                event.setEndTime(calendarSmallTimeFrom.getTime().isBefore(calendarSmallTimeTo.getTime()) ? calendarSmallTimeTo.getTime() : null);
+            } catch (Exception e) {
+                event.setEndTime(null);
+            }
         } else {
             event.setEndTime(calendarSmallTimeTo.getTime());
         }
@@ -609,7 +600,11 @@ public class CalendarView extends ThoughtsView {
     }
 
     private void deleteEvent(final DayEvent event) {
-        calendarJson.removeEventFromJson(selectedEvent);
+        deleteEvent(event, event.getDate());
+    }
+
+    private void deleteEvent(final DayEvent event, final LocalDate oldDate) {
+        calendarJson.removeEventFromJson(selectedEvent, oldDate);
 
         final Month month = event.getDate().getMonth();
         final int year = event.getDate().getYear();
@@ -619,7 +614,6 @@ public class CalendarView extends ThoughtsView {
 
         calendarMonth.getDay(day).removeEvent(event);
         selectDay(calendar.getSelectedDay());
-
 
     }
 

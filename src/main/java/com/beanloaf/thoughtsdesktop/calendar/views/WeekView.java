@@ -55,7 +55,7 @@ public class WeekView {
     }
 
     public Pair<LocalDate, LocalDate> getDateRange(final LocalDate date) {
-        final LocalDate start = date.minusDays(date.getDayOfWeek().getValue());
+        final LocalDate start = date.minusDays(date.getDayOfWeek().getValue() == 7 ? 0 : date.getDayOfWeek().getValue());
         final LocalDate end = start.plusDays(6);
 
         return new Pair<>(start, end);
@@ -174,6 +174,11 @@ public class WeekView {
 
     }
 
+    public void refreshWeek() {
+        changeWeek(startDate);
+
+    }
+
     public void changeWeek(final LocalDate date) {
         START_HOUR = DEFAULT_START_HOUR;
         END_HOUR = DEFAULT_END_HOUR;
@@ -184,17 +189,11 @@ public class WeekView {
             allDayEventMap.get(weekday).getChildren().clear();
         }
 
-
         final Pair<LocalDate, LocalDate> startEndRange = getDateRange(date);
-
         this.startDate = startEndRange.getKey();
         this.endDate = startEndRange.getValue();
-
         final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-
         view.header.setTitleText(String.format("Week (%s - %s)", startDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")), endDate.format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
-        createGrid();
-
 
         LocalDate d = startDate;
         for (int i = 0; i < daysBetween; i++) {
@@ -203,49 +202,43 @@ public class WeekView {
             for (final DayEvent dayEvent : day.getEvents()) {
                 final Weekday weekday = Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue());
 
+                /*
+                TODO: instead of creating new event, all day events could all share the same reference of the same event. This may
+                    improve memory and speed.
+                */
+
                 final Event event = new Event(dayEvent.getEventTitle())
                         .setStartTime(dayEvent.getStartTime())
                         .setEndTime(dayEvent.getEndTime())
                         .setDescription(dayEvent.getDescription())
                         .setWeekday(weekday)
-                        .setStartDate(dayEvent.getDate());
+                        .setStartDate(dayEvent.getDate())
+                        .setLinkedDayEvent(dayEvent)
+                        .setCompleted(dayEvent.isCompleted());
 
+                this.weekEventList.add(event);
                 if (dayEvent.getStartTime() == null) {
                     allDayEventMap.get(weekday).getChildren().add(new DayEvent(dayEvent, view));
-                    this.weekEventList.add(event);
-                    continue;
                 }
-
-                addEventToDay(event);
-
 
             }
             d = d.plusDays(1);
         }
+        addEventsToDay();
+
 
     }
 
-    public void addEventToDay(final Event event) {
-        this.weekEventList.add(event);
+    public void addEventsToDay() {
+        adjustBounds();
+        createGrid();
 
-        final WeekBlock weekBlock = new WeekBlock(view, event);
-
-        if (adjustBounds()) {
-            createGrid();
-            for (final Event e : weekEventList) {
-                if (e.getStartTime() == null) continue;
-                final WeekBlock block = new WeekBlock(view, e);
-                weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
-            }
-        } else {
-            final int columnIndex = weekBlock.getWeekday().getDayOfWeek() + 1;
-            final int rowIndex = weekBlock.getStartIndex();
-            final int columnSpan = 1; // this shouldn't change
-            final int rowSpan = weekBlock.getSpan();
-
-            weekGrid.add(weekBlock, columnIndex, rowIndex, columnSpan, rowSpan);
-
+        for (final Event e : weekEventList) {
+            if (e.getStartTime() == null) continue;
+            final WeekBlock block = new WeekBlock(view, e);
+            weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
         }
+
 
     }
 
@@ -256,23 +249,27 @@ public class WeekView {
         LocalTime minTime = null;
         LocalTime maxTime = null;
 
-        for (final Event e : weekEventList) {
-            if (e.getStartTime() == null) continue;
+        for (final Event event : weekEventList) {
+            if (event.getStartTime() == null) continue;
 
-            final WeekBlock block = new WeekBlock(view, e);
+
+            LocalTime endTime = event.getEndTime();
+            if (endTime == null) endTime = event.getStartTime().plusHours(1);
+
+
 
             if (minTime == null) {
-                minTime = block.getStartTime();
+                minTime = event.getStartTime();
             } else {
-                if (block.getStartTime().isBefore(minTime)) minTime = block.getStartTime();
-                if (block.getEndTime().isBefore(minTime)) minTime = block.getEndTime();
+                if (event.getStartTime().isBefore(minTime)) minTime = event.getStartTime();
+                if (endTime.isBefore(minTime)) minTime = event.getEndTime();
             }
 
             if (maxTime == null) {
-                maxTime = block.getEndTime();
+                maxTime = event.getEndTime();
             } else {
-                if (block.getEndTime().isAfter(maxTime)) maxTime = block.getEndTime();
-                if (block.getStartTime().isAfter(maxTime)) maxTime = block.getStartTime();
+                if (endTime.isAfter(maxTime)) maxTime = event.getEndTime();
+                if (event.getStartTime().isAfter(maxTime)) maxTime = event.getStartTime();
             }
 
         }

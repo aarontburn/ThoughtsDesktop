@@ -204,19 +204,18 @@ public class CalendarJSONHandler {
 
     }
 
-    public void removeEventFromJson(final DayEvent event) {
-        final DayEvent eventToRemove = event; // redundant but we need the extra reference cuz threads
+    public void removeEventFromJson(final DayEvent event, final LocalDate date) {
 
         new Thread(() -> {
-            final String year = String.valueOf(eventToRemove.getDate().getYear());
-            final String month = eventToRemove.getDate().getMonth().toString();
-            final String day = String.valueOf(eventToRemove.getDate().getDayOfMonth());
+            final String year = String.valueOf(event.getDate().getYear());
+            final String month = event.getDate().getMonth().toString();
+            final String day = String.valueOf(date.getDayOfMonth());
 
             JSONObject yearBranch = (JSONObject) root.get(year);
             JSONObject monthBranch = (JSONObject) yearBranch.get(month);
             JSONObject dayBranch = (JSONObject) monthBranch.get(day);
 
-            dayBranch.remove(eventToRemove.getEventID());
+            dayBranch.remove(event.getEventID());
 
             if (dayBranch.size() == 0) {
                 monthBranch.remove(day);

@@ -16,6 +16,22 @@ public class Event {
 
     private Weekday weekday;
 
+
+
+    private boolean isComplete;
+
+    private DayEvent linkedDayEvent;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String id;
+
     public Event(final String title) {
         this.title = title;
     }
@@ -30,6 +46,15 @@ public class Event {
         return this;
     }
 
+
+    public boolean isComplete() {
+        return isComplete;
+    }
+
+    public Event setCompleted(boolean complete) {
+        isComplete = complete;
+        return this;
+    }
     public String getDescription() {
         return description;
     }
@@ -67,7 +92,6 @@ public class Event {
     public Event setStartDate(LocalDate startDate) {
         this.startDate = startDate;
         return this;
-
     }
 
     public LocalDate getEndDate() {
@@ -88,4 +112,15 @@ public class Event {
         this.weekday = weekday;
         return this;
     }
+
+    public Event setLinkedDayEvent(final DayEvent dayEvent) {
+        this.linkedDayEvent = dayEvent;
+        return this;
+    }
+
+    public DayEvent getLinkedDayEvent() {
+        return this.linkedDayEvent;
+    }
+
+
 }

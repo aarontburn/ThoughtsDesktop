@@ -10,9 +10,7 @@ import javafx.util.Duration;
 public class EventBoxLabel extends Label {
 
     private String eventTitle;
-
     private final Tooltip tooltip;
-
 
     public EventBoxLabel(final String eventTitle) {
         super(eventTitle);
@@ -47,7 +45,7 @@ public class EventBoxLabel extends Label {
     }
 
     public void onClick() {
-        Logger.log("EventBoxLabel " + eventTitle + " clicked.");
+        Logger.log("EventBoxLabel '" + eventTitle + "' clicked.");
     }
 
 

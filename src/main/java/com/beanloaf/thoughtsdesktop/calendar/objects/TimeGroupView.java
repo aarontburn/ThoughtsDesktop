@@ -31,7 +31,7 @@ public class TimeGroupView {
 
             try {
                 final int hour = Integer.parseInt(value);
-                hourInput.setDisable(hour > 12);
+                this.periodSelector.setDisable(hour > 12);
 
             } catch (NumberFormatException e) {
                 Logger.log("Failed to convert " + value + " to an integer.");

@@ -44,11 +44,14 @@ public class CalendarRightHeader {
 
     private void attachEvents() {
         weekViewButton.setOnAction(e -> {
+
             view.swapRightPanel(CalendarView.RightLayouts.WEEK);
+
+            if (currentLayout != CalendarView.RightLayouts.WEEK) view.weekView.changeWeek(view.calendar.getSelectedDay().getDate());
             currentLayout = CalendarView.RightLayouts.WEEK;
 
-            final Pair<LocalDate, LocalDate> startEndRange = view.weekView.getDateRange(view.calendar.getSelectedDay().getDate());
 
+            final Pair<LocalDate, LocalDate> startEndRange = view.weekView.getDateRange(view.calendar.getSelectedDay().getDate());
 
             setTitleText(String.format("Week (%s - %s)",
                     startEndRange.getKey().format(DateTimeFormatter.ofPattern("M/d/yyyy")), startEndRange.getValue().format(DateTimeFormatter.ofPattern("M/d/yyyy"))));

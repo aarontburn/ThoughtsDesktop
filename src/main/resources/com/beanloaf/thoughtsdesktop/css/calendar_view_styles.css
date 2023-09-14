@@ -32,7 +32,7 @@
 }
 
 .calendar-day > .viewport {
-    -fx-background-color: rgb(94, 94, 94);
+    -fx-background-color: rgb(60, 63, 65);
 }
 
 .calendar-day > .label {
@@ -56,7 +56,8 @@
 }
 
 .day-event {
-    -fx-border-color: rgba(25, 25, 25, 100);
+    -fx-background-color: rgb(94, 94, 94);
+    -fx-border-color: rgb(120, 120, 120);
     -fx-border-width: 0.75;
     -fx-border-radius: 3;
     -fx-padding: 3;
@@ -105,7 +106,6 @@
 
 .scroll-bar:vertical > .decrement-button,
 .scroll-bar:vertical > .increment-button {
-
     -fx-padding: 0 0 0 0;
 }
 
@@ -113,14 +113,13 @@
 
 
 .thumb {
-    -fx-background-color: rgb(60, 63 ,65);
+    -fx-background-color: rgb(94, 94, 94);
     -fx-padding: 0 0 0 0;
-
 
 }
 
 .scroll-bar:vertical .track {
-    -fx-background-color: rgb(94, 94, 94)rgb(94, 94, 94);
+    -fx-background-color: rgb(60, 63, 65);
 
 }
 

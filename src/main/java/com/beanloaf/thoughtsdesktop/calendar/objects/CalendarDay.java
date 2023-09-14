@@ -103,7 +103,6 @@ public class CalendarDay extends AnchorPane {
     }
 
     public void onClick() {
-
         view.selectDay(this);
     }
 
