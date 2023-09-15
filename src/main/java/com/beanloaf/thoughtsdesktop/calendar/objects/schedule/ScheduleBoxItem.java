@@ -1,6 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
-import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -17,7 +17,7 @@ public class ScheduleBoxItem extends AnchorPane {
     private final Label scheduleNameLabel, startDateLabel, endDateLabel;
     private final CheckBox hideCheckBox;
 
-    public ScheduleBoxItem(final CalendarView view, final ScheduleData data) {
+    public ScheduleBoxItem(final MonthView view, final ScheduleData data) {
         super();
 
         this.data = data;

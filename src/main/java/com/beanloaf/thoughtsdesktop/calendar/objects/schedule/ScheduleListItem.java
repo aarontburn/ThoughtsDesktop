@@ -2,20 +2,18 @@ package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.EventBoxLabel;
-import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.views.ScheduleTab;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
-import javafx.util.Duration;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

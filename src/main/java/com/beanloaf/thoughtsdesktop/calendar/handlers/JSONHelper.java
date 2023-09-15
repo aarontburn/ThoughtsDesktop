@@ -1,6 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
-import com.beanloaf.thoughtsdesktop.calendar.objects.Keys;
+import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
 import org.json.simple.JSONObject;
 
 import java.util.Set;

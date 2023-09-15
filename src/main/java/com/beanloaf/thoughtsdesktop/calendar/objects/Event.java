@@ -1,5 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 

@@ -6,7 +6,7 @@ import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import com.beanloaf.thoughtsdesktop.global_views.HomeView;
 import com.beanloaf.thoughtsdesktop.notes.views.ListView;
 import com.beanloaf.thoughtsdesktop.global_views.NotesMenuBar;
@@ -49,7 +49,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
 
     public HomeView homeView;
-    public CalendarView calendarView;
+    public MonthView monthView;
     public ListView listView;
     public TextView textView;
 
@@ -193,10 +193,10 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             }
 
             case CALENDAR -> {
-                if (calendarView == null) calendarView = new CalendarView(this);
+                if (monthView == null) monthView = new MonthView(this);
                 headerController.setSelectedTab(headerController.headerCalendarButton);
                 toggleLayoutVisibility(calendarFXML);
-                calendarView.onOpen();
+                monthView.onOpen();
 
             }
 

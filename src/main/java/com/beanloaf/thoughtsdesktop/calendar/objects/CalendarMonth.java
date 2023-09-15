@@ -1,7 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 
-import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 
 import java.time.LocalDate;
 import java.time.Month;
@@ -9,7 +9,7 @@ import java.util.*;
 
 public class CalendarMonth {
 
-    private final CalendarView view;
+    private final MonthView view;
     private final Month month;
 
     private final Integer year;
@@ -23,11 +23,11 @@ public class CalendarMonth {
 
 
 
-    public CalendarMonth(final Month month, final CalendarView view) {
+    public CalendarMonth(final Month month, final MonthView view) {
         this(month, Calendar.getInstance().get(Calendar.YEAR), view);
     }
 
-    public CalendarMonth(final Month month, final Integer year, final CalendarView view) {
+    public CalendarMonth(final Month month, final Integer year, final MonthView view) {
         this.month = month;
         this.year = year;
         this.view = view;

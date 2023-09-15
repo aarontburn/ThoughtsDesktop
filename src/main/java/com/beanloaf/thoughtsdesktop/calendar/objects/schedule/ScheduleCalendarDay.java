@@ -1,6 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
-import com.beanloaf.thoughtsdesktop.calendar.objects.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
