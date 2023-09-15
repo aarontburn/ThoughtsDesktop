@@ -3,6 +3,7 @@ package com.beanloaf.thoughtsdesktop.notes.objects;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.notes.views.ListView;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -38,33 +39,34 @@ public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 
         button = new Button(tag);
         button.setOnAction(e -> {
-
             taggedObjects.sort(ThoughtObject::compareTo);
 
             ThoughtsHelper.getInstance().targetEvent(ListView.class, Properties.Data.SELECTED_TAG_ITEM, this);
             this.getStyleClass().add("tagListSelected");
 
-
             final ObservableList<Node> children = listView.itemList.getChildren();
 
-            children.clear();
+            Platform.runLater(() -> {
+                children.clear();
 
-            ListItem firstObj = null;
+                ListItem firstObj = null;
 
-            for (int i = 0; i < taggedObjects.size(); i++) {
+                for (int i = 0; i < taggedObjects.size(); i++) {
+                    final ListItem listItem = new ListItem(taggedObjects.get(i));
+                    if (i == 0) firstObj = listItem;
 
-                final ListItem listItem = new ListItem(taggedObjects.get(i));
-                if (i == 0) firstObj = listItem;
+                    children.add(listItem);
+                }
 
-                children.add(listItem);
-            }
+                if (firstObj != null) {
+                    firstObj.doClick();
+                } else {
+                    ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, new Object());
+                }
+            });
 
 
-            if (firstObj != null) {
-                firstObj.doClick();
-            } else {
-                ThoughtsHelper.getInstance().fireEvent(Properties.Data.SET_TEXT_FIELDS, new Object());
-            }
+
 
         });
 

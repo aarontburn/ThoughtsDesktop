@@ -19,7 +19,7 @@
 <?import javafx.scene.text.Font?>
 
 <TabPane fx:id="settingsTabbedPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@../css/settings_view_styles.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <tabs>
+  <views>
       <Tab text="Home">
          <content>
             <ScrollPane prefHeight="200.0" prefWidth="200.0">
@@ -323,5 +323,5 @@
             </ScrollPane>
          </content>
       </Tab>
-  </tabs>
+  </views>
 </TabPane>

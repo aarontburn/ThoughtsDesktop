@@ -101,7 +101,7 @@ public class HomeView implements ThoughtsChangeListener {
 
 
     private Node findNodeByID(final String nodeID) {
-        return main.findNodeByID(nodeID);
+        return main.findNodeById(nodeID);
     }
 
 

@@ -32,4 +32,10 @@ module com.beanloaf.thoughtsdesktop {
     opens com.beanloaf.thoughtsdesktop.calendar.objects.schedule to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.calendar.enums;
     opens com.beanloaf.thoughtsdesktop.calendar.enums to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel;
+    opens com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children;
+    opens com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.calendar.views.children.overlays;
+    opens com.beanloaf.thoughtsdesktop.calendar.views.children.overlays to javafx.fxml;
 }

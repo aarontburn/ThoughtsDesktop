@@ -1,16 +1,14 @@
-package com.beanloaf.thoughtsdesktop.calendar.views;
+package com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children;
 
-import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
-import com.beanloaf.thoughtsdesktop.calendar.handlers.Calendar;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
-import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJSONHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -35,20 +33,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class MonthView extends ThoughtsView {
+public class MonthView {
+
+    private final RightPanel rightPanel;
+    private final CalendarMain main;
 
 
-    public final Calendar calendar = new Calendar(this);
     public final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
     private DayEvent selectedEvent;
-    public final CalendarJSONHandler calendarJson;
-    public final TabController tabController;
-
 
     private GridPane calendarFrame; // (7 x 5)
-
-    /*  Header  */
-    public CalendarRightHeader header = new CalendarRightHeader(this);
 
 
     /*  Left Panel  */
@@ -56,10 +50,6 @@ public class MonthView extends ThoughtsView {
     private Node[] leftLayoutList;
     private Node calendarLeftEventPanel, calendarLeftSchedulePanel;
 
-
-    /*  Right Panel */
-    public WeekView weekView;
-    private final Map<RightLayouts, Node> rightLayoutsMap = new HashMap<>();
 
     /*  Event Box   */
     private VBox calendarEventBox;
@@ -83,27 +73,24 @@ public class MonthView extends ThoughtsView {
     private Label calendarSmallFinalStartTimeLabel, calendarSmallFinalEndTimeLabel;
     private CheckBox calendarSmallProgressCheckBox;
 
-    public MonthView(final MainApplication main) {
-        super(main);
-        calendarJson = new CalendarJSONHandler(this);
+    public MonthView(final RightPanel rightPanel) {
+        this.rightPanel = rightPanel;
+        this.main = rightPanel.getMain();
 
         locateNodes();
         attachEvents();
 
-        tabController = new TabController(this);
 
-        changeMonth(calendar.getCurrentMonth());
+        changeMonth(this.main.getCalendarHandler().getCurrentMonth());
         swapLeftPanel(calendarLeftEventPanel);
-        swapRightPanel(RightLayouts.MONTH);
-        startup();
+        rightPanel.swapRightPanel(RightPanel.Layouts.MONTH);
+    }
+
+    private Node findNodeById(final String nodeId) {
+        return rightPanel.findNodeById(nodeId);
     }
 
     private void locateNodes() {
-
-
-        /*  Right Panel */
-        rightLayoutsMap.put(RightLayouts.WEEK, findNodeById("weekView"));
-        rightLayoutsMap.put(RightLayouts.MONTH, findNodeById("monthView"));
         calendarFrame = (GridPane) findNodeById("calendarFrame");
 
 
@@ -158,8 +145,8 @@ public class MonthView extends ThoughtsView {
 
     }
 
-    private void startup() {
-        calendar.getDay(LocalDate.now()).onClick();
+    public void startupMonthView() {
+        this.main.getCalendarHandler().getDay(LocalDate.now()).onClick();
     }
 
     public void onOpen() {
@@ -167,7 +154,7 @@ public class MonthView extends ThoughtsView {
     }
 
     private void attachEvents() {
-        calendarNewScheduleButton.setOnAction(e -> tabController.displaySchedule(new ScheduleData()));
+        calendarNewScheduleButton.setOnAction(e -> this.main.swapOverlay(CalendarMain.Overlays.SCHEDULE, new ScheduleData()));
 
         /*  Left Panel  */
         calendarEventsButton.setOnAction(e -> swapLeftPanel(calendarLeftEventPanel));
@@ -184,7 +171,7 @@ public class MonthView extends ThoughtsView {
 
 
         calendarNewEventButton.setOnMouseClicked(e -> {
-            final CalendarDay selectedDay = calendar.getSelectedDay();
+            final CalendarDay selectedDay = this.main.getCalendarHandler().getSelectedDay();
             if (selectedDay != null)
                 selectEvent(addNewEventToCalendarDay(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay()), true);
         });
@@ -194,7 +181,8 @@ public class MonthView extends ThoughtsView {
             if (selectedEvent == null) return;
             saveEvent(selectedEvent);
 
-            selectDay(calendar.getSelectedDay());
+
+            selectDay(this.main.getCalendarHandler().getSelectedDay());
             selectEvent(selectedEvent, false);
         });
 
@@ -210,21 +198,9 @@ public class MonthView extends ThoughtsView {
         });
 
 
-        calendarScheduleBox.getChildren().clear();
+        Platform.runLater(() -> calendarScheduleBox.getChildren().clear());
     }
 
-    public void swapRightPanel(final RightLayouts pane) {
-        for (final RightLayouts layout : rightLayoutsMap.keySet()) {
-            rightLayoutsMap.get(layout).setVisible(false);
-        }
-
-        if (pane == RightLayouts.WEEK && weekView == null) {
-            weekView = new WeekView(this);
-        }
-
-        rightLayoutsMap.get(pane).setVisible(true);
-
-    }
 
     private void swapLeftPanel(final Node pane) {
         for (final Node anchorPane : leftLayoutList) {
@@ -237,20 +213,20 @@ public class MonthView extends ThoughtsView {
 
 
     public void changeMonth(final CalendarMonth month) {
-        calendar.removeInactiveMonths();
-        calendar.setCurrentMonth(month.getMonth(), month.getYear());
+        this.main.getCalendarHandler().removeInactiveMonths();
+        this.main.getCalendarHandler().setCurrentMonth(month.getMonth(), month.getYear());
         createCalendarGUI();
     }
 
 
     private void createCalendarGUI() {
-        final CalendarMonth currentMonth = calendar.getCurrentMonth();
+        final CalendarMonth currentMonth = this.main.getCalendarHandler().getCurrentMonth();
 
-        header.setTitleText(ThoughtsHelper.toCamelCase(currentMonth.getMonth().toString()) + ", " + currentMonth.getYear());
+        rightPanel.setHeaderText(ThoughtsHelper.toCamelCase(currentMonth.getMonth().toString()) + ", " + currentMonth.getYear());
         final int monthLength = currentMonth.getMonthLength();
 
-        final CalendarMonth prevMonth = calendar.getMonth(currentMonth.getPreviousMonth().getMonth(), currentMonth.getPreviousMonth().getYear());
-        final CalendarMonth nextMonth = calendar.getMonth(currentMonth.getNextMonth().getMonth(), currentMonth.getNextMonth().getYear());
+        final CalendarMonth prevMonth = this.main.getCalendarHandler().getMonth(currentMonth.getPreviousMonth().getMonth(), currentMonth.getPreviousMonth().getYear());
+        final CalendarMonth nextMonth = this.main.getCalendarHandler().getMonth(currentMonth.getNextMonth().getMonth(), currentMonth.getNextMonth().getYear());
 
         Platform.runLater(() -> {
             calendarFrame.getChildren().clear();
@@ -268,7 +244,7 @@ public class MonthView extends ThoughtsView {
                 if ((row == 0 && col < currentMonth.getStartingDayOfWeek())) { // first row, before the first day of the month
                     CalendarDay calendarDay = prevMonth.getDay(prevDays);
                     if (calendarDay == null) {
-                        calendarDay = new CalendarDay(prevMonth.getYear(), prevMonth.getMonth(), prevDays, this);
+                        calendarDay = new CalendarDay(prevMonth.getYear(), prevMonth.getMonth(), prevDays, main);
                     }
                     calendarDay.checkIsToday();
                     prevDays++;
@@ -278,7 +254,7 @@ public class MonthView extends ThoughtsView {
                 } else if (day >= monthLength) { // after the last day of the month
                     CalendarDay calendarDay = nextMonth.getDay(overflowDays);
                     if (calendarDay == null) {
-                        calendarDay = new CalendarDay(nextMonth.getYear(), nextMonth.getMonth(), overflowDays, this);
+                        calendarDay = new CalendarDay(nextMonth.getYear(), nextMonth.getMonth(), overflowDays, main);
                     }
                     calendarDay.checkIsToday();
 
@@ -291,7 +267,7 @@ public class MonthView extends ThoughtsView {
 
                     CalendarDay calendarDay = currentMonth.getDay(day);
                     if (calendarDay == null) {
-                        calendarDay = new CalendarDay(currentMonth.getYear(), currentMonth.getMonth(), day, this);
+                        calendarDay = new CalendarDay(currentMonth.getYear(), currentMonth.getMonth(), day, main);
                         currentMonth.addDay(day, calendarDay);
                     }
                     calendarDay.checkIsToday();
@@ -324,7 +300,7 @@ public class MonthView extends ThoughtsView {
 
                 LocalDate date = data.getStartDate();
                 for (int i = 0; i < daysBetween; i++) {
-                    final CalendarDay day = calendar.getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
+                    final CalendarDay day = this.main.getCalendarHandler().getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
                     for (final DayEvent event : day.getEvents()) {
                         if (data.getId() != null && data.getId().equals(event.getEventID())) {
                             Platform.runLater(() -> day.removeEvent(event));
@@ -348,7 +324,7 @@ public class MonthView extends ThoughtsView {
 
             LocalDate date = oldStartDate;
             for (int i = 0; i < daysBetween; i++) {
-                final CalendarDay day = calendar.getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
+                final CalendarDay day = this.main.getCalendarHandler().getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
                 for (final DayEvent event : day.getEvents()) {
                     if (data.getId() != null && data.getId().equals(event.getEventID())) {
                         Platform.runLater(() -> day.removeEvent(event));
@@ -373,7 +349,8 @@ public class MonthView extends ThoughtsView {
 
         }
 
-        if (!boxExists) Platform.runLater(() -> calendarScheduleBox.getChildren().add(new ScheduleBoxItem(this, data)));
+        if (!boxExists)
+            Platform.runLater(() -> calendarScheduleBox.getChildren().add(new ScheduleBoxItem(this.main, data)));
 
 
         addScheduleToCalendarDay(data);
@@ -415,7 +392,7 @@ public class MonthView extends ThoughtsView {
                 if (!isCorrectDay) continue;
 
 
-                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), this, true);
+                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), main, true);
                 dayEvent.setDescription(scheduleEvent.getDescription());
                 dayEvent.setStartTime(scheduleEvent.getStartTime());
                 dayEvent.setEndTime(scheduleEvent.getEndTime());
@@ -436,7 +413,7 @@ public class MonthView extends ThoughtsView {
         final int year = date.getYear();
         final int day = date.getDayOfMonth();
 
-        final CalendarMonth activeMonth = calendar.getMonth(month, year);
+        final CalendarMonth activeMonth = this.main.getCalendarHandler().getMonth(month, year);
 
         if (day > activeMonth.getMonthLength()) throw new IllegalArgumentException("Day out of bounds. " + day);
 
@@ -446,7 +423,7 @@ public class MonthView extends ThoughtsView {
     }
 
     private DayEvent addNewEventToCalendarDay(final int year, final Month month, final int day) {
-        final CalendarMonth activeMonth = calendar.getMonth(month, year);
+        final CalendarMonth activeMonth = this.main.getCalendarHandler().getMonth(month, year);
 
 
         if (day < 0 || day > activeMonth.getMonthLength())
@@ -455,11 +432,11 @@ public class MonthView extends ThoughtsView {
         final CalendarDay calendarDay = activeMonth.getDay(day);
 
 
-        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), "New Event", this, false);
+        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), "New Event", main, false);
         event.setDescription("");
         event.setStartTime(null);
 
-        calendarJson.addEventToJson(event);
+        this.main.getJsonHandler().addEventToJson(event);
         calendarDay.addEvent(event);
 
         return event;
@@ -468,26 +445,28 @@ public class MonthView extends ThoughtsView {
 
 
     public void selectDay(final CalendarDay day) {
-        if (day == calendar.getSelectedDay()) return;
+        if (day == this.main.getCalendarHandler().getSelectedDay()) return;
 
+        this.main.getCalendarHandler().setSelectedDay(day);
 
-        calendar.setSelectedDay(day);
-        calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
-                + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
+        Platform.runLater(() -> {
+            calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
+                    + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
 
-        calendarSmallEventFields.setVisible(false);
+            calendarSmallEventFields.setVisible(false);
+            calendarEventBox.getChildren().clear();
 
-        calendarEventBox.getChildren().clear();
+            for (final DayEvent dayEvent : day.getEvents()) {
+                final DayEvent clone = new DayEvent(dayEvent, main);
+                calendarEventBox.getChildren().add(clone);
+            }
+        });
 
-        for (final DayEvent dayEvent : day.getEvents()) {
-            final DayEvent clone = new DayEvent(dayEvent, this);
-            calendarEventBox.getChildren().add(clone);
-        }
 
     }
 
     public void selectDay(final LocalDate date) {
-        final CalendarMonth month = calendar.getMonth(date.getMonth(), date.getYear());
+        final CalendarMonth month = this.main.getCalendarHandler().getMonth(date.getMonth(), date.getYear());
         selectDay(month.getDay(date.getDayOfMonth()));
 
     }
@@ -587,12 +566,8 @@ public class MonthView extends ThoughtsView {
         calendarSmallSaveEventButton.setVisible(false);
         toggleSmallEventFields(false);
 
-        calendarJson.addEventToJson(event);
-
-        if (header.currentLayout == RightLayouts.WEEK) {
-            weekView.refreshWeek();
-        }
-
+        this.main.getJsonHandler().addEventToJson(event);
+        rightPanel.getWeekView().refreshWeek();
 
 
     }
@@ -602,27 +577,23 @@ public class MonthView extends ThoughtsView {
     }
 
     private void deleteEvent(final DayEvent event, final LocalDate oldDate) {
-        calendarJson.removeEventFromJson(selectedEvent, oldDate);
+        this.main.getJsonHandler().removeEventFromJson(selectedEvent, oldDate);
 
         final Month month = event.getDate().getMonth();
         final int year = event.getDate().getYear();
         final int day = event.getDate().getDayOfMonth();
 
-        final CalendarMonth calendarMonth = calendar.getMonth(month, year);
+        final CalendarMonth calendarMonth = this.main.getCalendarHandler().getMonth(month, year);
 
         calendarMonth.getDay(day).removeEvent(event);
-        selectDay(calendar.getSelectedDay());
+        selectDay(this.main.getCalendarHandler().getSelectedDay());
 
-        if (header.currentLayout == RightLayouts.WEEK) {
-            weekView.refreshWeek();
+        if (rightPanel.getCurrentLayout() == RightPanel.Layouts.WEEK) {
+            rightPanel.getWeekView().refreshWeek();
         }
 
 
     }
 
-
-    public enum RightLayouts {
-        MONTH, WEEK
-    }
 
 }

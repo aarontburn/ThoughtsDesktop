@@ -17,9 +17,6 @@ public class ThoughtsView {
     public ThoughtsView(final MainApplication main, final Scene scene) {
         this.main = main;
         this.scene = scene;
-
-
-
     }
 
     public void setScene(final Scene scene) {
@@ -31,8 +28,7 @@ public class ThoughtsView {
     public Node findNodeById(final String nodeId) {
         if (nodeId.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
 
-
-        return scene == null ? main.findNodeByID(nodeId) : scene.lookup("#" + nodeId);
+        return scene == null ? main.findNodeById(nodeId) : scene.lookup("#" + nodeId);
     }
     
     

@@ -1,13 +1,13 @@
-package com.beanloaf.thoughtsdesktop.calendar.views;
+package com.beanloaf.thoughtsdesktop.calendar.views.children.overlays;
 
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
-import com.beanloaf.thoughtsdesktop.calendar.objects.Tab;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleListItem;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -23,7 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ScheduleTab extends Tab {
+public class ScheduleOverlay {
+
+    private final CalendarMain main;
 
     private final ScheduleData data;
     private ScheduleListItem selectedScheduleListItem;
@@ -66,8 +68,9 @@ public class ScheduleTab extends Tab {
 
 
     // Loading data into the tab
-    public ScheduleTab(final MonthView view, final TabController tabController, final ScheduleData data) {
-        super(view, tabController);
+    public ScheduleOverlay(final CalendarMain main, final ScheduleData data) {
+        this.main = main;
+
         this.data = data;
 
 
@@ -78,11 +81,12 @@ public class ScheduleTab extends Tab {
         startup();
 
         scheduleEventList.getChildren().clear();
-
-
     }
 
-    @Override
+    private Node findNodeById(final String nodeId) {
+        return main.findNodeById(nodeId);
+    }
+
     public void locateNodes() {
         /*  Header  */
         scheduleNameInput = (TextField) findNodeById("scheduleNameInput");
@@ -123,9 +127,8 @@ public class ScheduleTab extends Tab {
         scheduleSaveScheduleButton = (Button) findNodeById("scheduleSaveScheduleButton");
     }
 
-    @Override
     public void attachEvents() {
-        closeButton.setOnMouseClicked(e -> getTabController().swapTabs(TabController.Tabs.CALENDAR));
+        closeButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.CALENDAR));
 
 
         scheduleNewEventButton.setOnAction(e -> {
@@ -154,7 +157,6 @@ public class ScheduleTab extends Tab {
         scheduleSaveScheduleButton.setOnAction(e -> saveScheduleData());
     }
 
-    @Override
     protected void createGUI() {
         scheduleEventList = new VBox();
         scheduleEventList.setSpacing(5);
@@ -310,11 +312,9 @@ public class ScheduleTab extends Tab {
         }
 
 
-        super.getView().calendarJson.writeScheduleData(data);
-
-        super.getTabController().swapTabs(TabController.Tabs.CALENDAR);
-
-        new Thread(() -> super.getView().updateSchedule(data, oldStartDate, oldEndDate)).start();
+        main.getJsonHandler().writeScheduleData(data);
+        main.swapOverlay(CalendarMain.Overlays.CALENDAR);
+        new Thread(() -> main.getRightPanel().getMonthView().updateSchedule(data, oldStartDate, oldEndDate)).start();
 
     }
 

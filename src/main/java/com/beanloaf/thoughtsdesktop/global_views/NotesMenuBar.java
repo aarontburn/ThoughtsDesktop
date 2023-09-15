@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import javafx.application.Platform;
 import javafx.scene.control.*;
 
 import java.awt.Desktop;
@@ -18,7 +19,7 @@ public class NotesMenuBar {
 
     public NotesMenuBar(final MainApplication main) {
         this.main = main;
-        notesMenuBar = (MenuBar) main.findNodeByID("notesMenuBar");
+        notesMenuBar = (MenuBar) main.findNodeById("notesMenuBar");
 
 
         setMenuOperations();
@@ -97,7 +98,7 @@ public class NotesMenuBar {
                 menuItem.setOnAction(event -> menuMap.get(menuName).get(menuOption).run());
                 menu.getItems().add(menuItem);
             }
-            notesMenuBar.getMenus().add(menu);
+            Platform.runLater(() -> notesMenuBar.getMenus().add(menu));
         }
 
 

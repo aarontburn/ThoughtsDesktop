@@ -1,6 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
-import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -17,7 +17,7 @@ public class ScheduleBoxItem extends AnchorPane {
     private final Label scheduleNameLabel, startDateLabel, endDateLabel;
     private final CheckBox hideCheckBox;
 
-    public ScheduleBoxItem(final MonthView view, final ScheduleData data) {
+    public ScheduleBoxItem(final CalendarMain main, final ScheduleData data) {
         super();
 
         this.data = data;
@@ -50,7 +50,7 @@ public class ScheduleBoxItem extends AnchorPane {
         editButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(editButton, null, 16, null, 16));
 
-        editButton.setOnAction(e -> view.tabController.displaySchedule(data));
+        editButton.setOnAction(e -> main.swapOverlay(CalendarMain.Overlays.SCHEDULE, data));
 
 
         final Button deleteButton = new Button("Delete");
@@ -58,7 +58,7 @@ public class ScheduleBoxItem extends AnchorPane {
         deleteButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(deleteButton, null, 16, 16, null));
 
-        deleteButton.setOnAction(e -> view.deleteSchedule(this));
+        deleteButton.setOnAction(e -> main.getRightPanel().getMonthView().deleteSchedule(this));
 
 
 
@@ -66,7 +66,7 @@ public class ScheduleBoxItem extends AnchorPane {
         hideCheckBox.setStyle("-fx-font-family: Lato;");
         hideCheckBox.setText("Hide");
         hideCheckBox.setOnAction(e -> {
-            view.hideSchedule(data, hideCheckBox.isSelected());
+            main.getRightPanel().getMonthView().hideSchedule(data, hideCheckBox.isSelected());
         });
         this.getChildren().add(ThoughtsHelper.setAnchor(hideCheckBox, null, 27, 96, null));
     }

@@ -1,9 +1,10 @@
-package com.beanloaf.thoughtsdesktop.calendar.views;
+package com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
-import com.beanloaf.thoughtsdesktop.calendar.handlers.Calendar;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -26,7 +27,7 @@ public class WeekView {
     private static final int DEFAULT_START_HOUR = 6;
     private static final int DEFAULT_END_HOUR = 24;
 
-    private final MonthView view;
+    private final RightPanel rightPanel;
 
 
     public static int START_HOUR = DEFAULT_START_HOUR;
@@ -39,35 +40,35 @@ public class WeekView {
     private AnchorPane weekPane;
     private ScrollPane scrollPane;
 
-    private final Calendar calendar;
 
     private final List<Event> weekEventList = new ArrayList<>();
     private final Map<Weekday, VBox> allDayEventMap = new ConcurrentHashMap<>();
 
-    public WeekView(final MonthView view) {
-        this.view = view;
-        this.calendar = view.calendar;
-
+    public WeekView(final RightPanel rightPanel) {
+        this.rightPanel = rightPanel;
         locateNodes();
         createGUI();
-
-        changeWeek(calendar.getSelectedDay().getDate());
     }
+
+    public RightPanel getParent() {
+        return this.rightPanel;
+    }
+
+
 
     public Pair<LocalDate, LocalDate> getDateRange(final LocalDate date) {
         final LocalDate start = date.minusDays(date.getDayOfWeek().getValue() == 7 ? 0 : date.getDayOfWeek().getValue());
         final LocalDate end = start.plusDays(6);
 
         return new Pair<>(start, end);
-
     }
 
 
     private Node findNodeById(final String nodeId) {
-        return view.findNodeById(nodeId);
+        return rightPanel.findNodeById(nodeId);
     }
 
-    protected void locateNodes() {
+    private void locateNodes() {
         weekPane = (AnchorPane) findNodeById("weekView");
 
         allDayEventGrid = (GridPane) findNodeById("allDayEventGrid");
@@ -91,36 +92,37 @@ public class WeekView {
             final StackPane stackPane = (StackPane) scrollPane.lookup("ScrollPane .viewport");
             stackPane.setCache(false);
         });
-        weekPane.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 114, 200, 16, 16));
+        Platform.runLater(() -> {
+            weekPane.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 114, 200, 16, 16));
+            createGrid();
+            for (int i = 0; i < 7; i++) {
+                final ScrollPane pane = new ScrollPane();
+                pane.getStyleClass().add("edge-to-edge");
+                pane.fitToWidthProperty().set(true);
+                pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+                pane.skinProperty().addListener((observableValue, skin, t1) -> {
+                    final StackPane stackPane = (StackPane) pane.lookup("ScrollPane .viewport");
+                    stackPane.setCache(false);
+                });
+                allDayEventGrid.add(pane, i + 1, 0);
 
-        createGrid();
+                final VBox eventContainer = new VBox();
+                eventContainer.getStyleClass().add("events");
+                eventContainer.setMinHeight(0);
+                eventContainer.setSpacing(2);
 
+                pane.setContent(eventContainer);
 
-        for (int i = 0; i < 7; i++) {
-            final ScrollPane pane = new ScrollPane();
-            pane.getStyleClass().add("edge-to-edge");
-            pane.fitToWidthProperty().set(true);
-            pane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-            pane.skinProperty().addListener((observableValue, skin, t1) -> {
-                final StackPane stackPane = (StackPane) pane.lookup("ScrollPane .viewport");
-                stackPane.setCache(false);
-            });
-            allDayEventGrid.add(pane, i + 1, 0);
+                allDayEventMap.put(Weekday.getWeekdayByDayOfWeek(i), eventContainer);
+            }
+        });
 
-            final VBox eventContainer = new VBox();
-            eventContainer.getStyleClass().add("events");
-            eventContainer.setMinHeight(0);
-            eventContainer.setSpacing(2);
-
-            pane.setContent(eventContainer);
-
-            allDayEventMap.put(Weekday.getWeekdayByDayOfWeek(i), eventContainer);
-        }
 
 
     }
 
     public void createGrid() {
+
         if (weekGrid != null) {
             weekPane.getChildren().remove(weekGrid);
         }
@@ -138,7 +140,7 @@ public class WeekView {
             int cellNum = (int) (x / cellSize);
             cellNum = Math.max(0, Math.min(columnCount - 1, cellNum));
             if (cellNum == 0) return;
-            view.selectDay(calendar.getDay(startDate.plusDays(cellNum - 1)));
+            rightPanel.getMonthView().selectDay(rightPanel.getMain().getCalendarHandler().getDay(startDate.plusDays(cellNum - 1)));
         });
 
 
@@ -193,11 +195,11 @@ public class WeekView {
         this.startDate = startEndRange.getKey();
         this.endDate = startEndRange.getValue();
         final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        view.header.setTitleText(String.format("Week (%s - %s)", startDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")), endDate.format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
+        rightPanel.setHeaderText(String.format("Week (%s - %s)", startDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")), endDate.format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
 
         LocalDate d = startDate;
         for (int i = 0; i < daysBetween; i++) {
-            final CalendarDay day = calendar.getDay(d);
+            final CalendarDay day = rightPanel.getMain().getCalendarHandler().getDay(d);
 
             for (final DayEvent dayEvent : day.getEvents()) {
                 final Weekday weekday = Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue());
@@ -218,7 +220,7 @@ public class WeekView {
 
                 this.weekEventList.add(event);
                 if (dayEvent.getStartTime() == null) {
-                    allDayEventMap.get(weekday).getChildren().add(new DayEvent(dayEvent, view));
+                    allDayEventMap.get(weekday).getChildren().add(new DayEvent(dayEvent, rightPanel.getMain()));
                 }
 
             }
@@ -230,7 +232,7 @@ public class WeekView {
 
         for (final Event e : weekEventList) {
             if (e.getStartTime() == null) continue;
-            final WeekBlock block = new WeekBlock(view, e);
+            final WeekBlock block = new WeekBlock(this, e);
             weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
         }
 

@@ -1,8 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
-import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
-import com.beanloaf.thoughtsdesktop.calendar.views.WeekView;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children.WeekView;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
@@ -20,7 +19,7 @@ public class WeekBlock extends VBox implements EventLabel {
     private final static String[] COLORS = new String[]{"green", "black", "blue", "navy", "indigo"};
 
 
-    private final MonthView view;
+    private final WeekView weekView;
 
     private final Event event;
 
@@ -37,19 +36,18 @@ public class WeekBlock extends VBox implements EventLabel {
     /*
      * Minimum height for each box is 28 units
      * */
-    public WeekBlock(final MonthView view, final Event event) {
+    public WeekBlock(final WeekView weekView, final Event event) {
         super();
 
         this.event = event;
-        this.view = view;
+        this.weekView = weekView;
         event.getLinkedDayEvent().addReference(this);
 
 
         this.setStyle(this.getCss());
         this.setOnMouseClicked(e -> {
-
-            view.selectDay(event.getStartDate());
-            view.selectEvent(event.getLinkedDayEvent(), false);
+            weekView.getParent().getMonthView().selectDay(event.getStartDate());
+            weekView.getParent().getMonthView().selectEvent(event.getLinkedDayEvent(), false);
             Logger.log("WeekBlock: " + event.getTitle() + " pressed.");
         });
 
@@ -156,10 +154,7 @@ public class WeekBlock extends VBox implements EventLabel {
         if (event.getStartDate().isEqual(date)) return;
 
         event.setStartDate(date);
-        view.weekView.refreshWeek();
-
-
-
+        weekView.refreshWeek();
 
     }
 

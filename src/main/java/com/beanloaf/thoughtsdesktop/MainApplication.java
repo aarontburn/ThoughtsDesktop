@@ -1,12 +1,12 @@
 package com.beanloaf.thoughtsdesktop;
 
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
 import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import com.beanloaf.thoughtsdesktop.global_views.HomeView;
 import com.beanloaf.thoughtsdesktop.notes.views.ListView;
 import com.beanloaf.thoughtsdesktop.global_views.NotesMenuBar;
@@ -15,6 +15,7 @@ import com.beanloaf.thoughtsdesktop.notes.views.TextView;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -37,7 +38,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     private Stage stage;
 
 
-
     private NotesMenuBar notesMenuBar;
     public FirebaseHandler firebaseHandler;
     public SettingsHandler settingsHandler;
@@ -46,14 +46,10 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public GlobalHeaderController headerController;
 
 
-
-
     public HomeView homeView;
-    public MonthView monthView;
+    public CalendarMain calendarMain;
     public ListView listView;
     public TextView textView;
-
-
 
 
     /*  Layouts  */
@@ -75,7 +71,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
         public static Layouts getNextLayout(final Layouts layout) {
             final Layouts[] layouts = values();
-            return layout.layoutNum  == layouts.length - 1 ? layouts[0] : layouts[layout.layoutNum + 1];
+            return layout.layoutNum == layouts.length - 1 ? layouts[0] : layouts[layout.layoutNum + 1];
         }
 
         public static Layouts getPreviousLayout(final Layouts layout) {
@@ -83,9 +79,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             return layout.layoutNum <= 0 ? layouts[layouts.length - 1] : layouts[layout.layoutNum - 1];
         }
     }
-
-
-
 
 
     public static void main(final String[] args) {
@@ -96,7 +89,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     @Override
     public void start(final Stage stage) throws IOException {
         TC.Directories.STORAGE_PATH.mkdirs();
-
 
 
         settingsHandler = new SettingsHandler();
@@ -122,7 +114,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         stage.show();
 
 
-
         scene.getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> {
             homeView.clock.stop();
             firebaseHandler.stopRefresh();
@@ -142,9 +133,9 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
 
         /*  Layouts */
-        homeRoot = (AnchorPane) findNodeByID("homeRoot");
-        notepadFXML = (VBox) findNodeByID("notepadFXML");
-        calendarFXML = (VBox) findNodeByID("calendarFXML");
+        homeRoot = (AnchorPane) findNodeById("homeRoot");
+        notepadFXML = (VBox) findNodeById("notepadFXML");
+        calendarFXML = (VBox) findNodeById("calendarFXML");
         layoutList = new Node[]{homeRoot, notepadFXML, calendarFXML};
         /*  ------  */
 
@@ -154,10 +145,22 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
 
         new Thread(() -> firebaseHandler.startup()).start();
-
         setKeybindings();
-
         swapLayouts(Layouts.HOME);
+
+        homeView = new HomeView(this);
+
+
+        final MainApplication main = this;
+        new Thread(() -> {
+            // TODO: these all need to go into a Notepad class
+            notesMenuBar = new NotesMenuBar(main);
+            textView = new TextView(main);
+            listView = new ListView(main);
+            startup();
+
+            calendarMain = new CalendarMain(main);
+        }).start();
 
 
     }
@@ -174,29 +177,19 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         this.currentLayout = layout;
         switch (layout) {
             case NOTES -> {
-                if (notesMenuBar == null) notesMenuBar = new NotesMenuBar(this);
-                if (textView == null) textView = new TextView(this);
-                if (listView == null) {
-                    listView = new ListView(this);
-                    startup();
-                }
-
                 headerController.setSelectedTab(headerController.headerNotesButton);
                 toggleLayoutVisibility(notepadFXML);
             }
             case HOME -> {
-                if (homeView == null) homeView = new HomeView(this);
-
                 headerController.setSelectedTab(headerController.headerHomeButton);
                 toggleLayoutVisibility(homeRoot);
 
             }
 
             case CALENDAR -> {
-                if (monthView == null) monthView = new MonthView(this);
                 headerController.setSelectedTab(headerController.headerCalendarButton);
                 toggleLayoutVisibility(calendarFXML);
-                monthView.onOpen();
+                if (calendarMain != null) calendarMain.onOpen();
 
             }
 
@@ -249,7 +242,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         listView.unsortedThoughtList.doClick();
     }
 
-    public Node findNodeByID(final String id) {
+    public Node findNodeById(final String id) {
         if (id.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");
 
         return this.scene.lookup("#" + id);

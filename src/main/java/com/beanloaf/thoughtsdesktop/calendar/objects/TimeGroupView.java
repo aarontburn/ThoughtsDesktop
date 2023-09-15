@@ -1,10 +1,12 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.robot.Robot;
+import javafx.util.Pair;
 
 
 import java.time.LocalTime;
@@ -17,6 +19,7 @@ public class TimeGroupView {
 
 
     public TimeGroupView(final TextField hourInput, final TextField minuteInput, final ComboBox<String> periodSelector) {
+
         this.hourInput = CH.setNumbersOnlyTextField(hourInput);
         this.minuteInput = CH.setNumbersOnlyTextField(minuteInput);
         this.periodSelector = CH.setAMPMComboBox(periodSelector);

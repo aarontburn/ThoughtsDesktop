@@ -1,7 +1,9 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
+import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.util.Pair;
 
 import java.time.DateTimeException;
 import java.time.LocalTime;
@@ -16,7 +18,8 @@ public class CH {
     public static ComboBox<String> setAMPMComboBox(final ComboBox<String> comboBox) {
         comboBox.getItems().clear();
         comboBox.getItems().addAll("AM", "PM");
-        comboBox.getSelectionModel().select("PM");
+
+        Platform.runLater(() -> comboBox.getSelectionModel().select("PM"));
 
         return comboBox;
     }

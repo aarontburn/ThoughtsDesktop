@@ -46,8 +46,8 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
 
         ThoughtsHelper.getInstance().addListener(this);
 
-        this.tagList = (VBox) main.findNodeByID("tagList");
-        this.itemList = (VBox) main.findNodeByID("itemList");
+        this.tagList = (VBox) main.findNodeById("tagList");
+        this.itemList = (VBox) main.findNodeById("itemList");
 
 
         final SplitPane listViewContainer = (SplitPane) findNodeById("listViewContainer");
@@ -86,7 +86,7 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
         unsortedThoughtList.clear();
         sortedThoughtList.clear();
         thoughtListByTag.clear();
-        tagList.getChildren().clear();
+
 
         if (unsortedFiles == null) throw new RuntimeException("unsortedFiles is null");
         if (sortedFiles == null) throw new RuntimeException("sortedFiles is null");
@@ -94,7 +94,6 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
 
         for (final File file : unsortedFiles) {
             final ThoughtObject content = readFileContents(file, false);
-
             if (content != null) unsortedThoughtList.add(content);
 
         }
@@ -118,18 +117,22 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
 
         }
 
-        tagList.getChildren().add(unsortedThoughtList);
-        tagList.getChildren().add(sortedThoughtList);
+        Platform.runLater(() -> {
+            tagList.getChildren().clear();
+            tagList.getChildren().add(unsortedThoughtList);
+            tagList.getChildren().add(sortedThoughtList);
 
-        final List<String> set = new ArrayList<>(thoughtListByTag.keySet());
-        set.sort(String.CASE_INSENSITIVE_ORDER);
+            final List<String> set = new ArrayList<>(thoughtListByTag.keySet());
+            set.sort(String.CASE_INSENSITIVE_ORDER);
 
-        for (final String key : set) {
-            final TagListItem tagListItem = thoughtListByTag.get(key);
+            for (final String key : set) {
+                final TagListItem tagListItem = thoughtListByTag.get(key);
+                tagList.getChildren().add(tagListItem);
+            }
+        });
 
-            tagList.getChildren().add(tagListItem);
 
-        }
+
 
 
         unsortedThoughtList.getList().sort(ThoughtObject::compareTo);

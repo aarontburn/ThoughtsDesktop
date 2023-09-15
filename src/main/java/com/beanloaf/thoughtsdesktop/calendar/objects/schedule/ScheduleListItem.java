@@ -3,7 +3,7 @@ package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.EventBoxLabel;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
-import com.beanloaf.thoughtsdesktop.calendar.views.ScheduleTab;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -22,7 +22,7 @@ import java.util.*;
 public class ScheduleListItem extends GridPane {
 
 
-    private final ScheduleTab tab;
+    private final ScheduleOverlay tab;
 
 
     private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
@@ -36,17 +36,17 @@ public class ScheduleListItem extends GridPane {
     private final List<ScheduleLabel> references = new ArrayList<>();
 
 
-    public ScheduleListItem(final ScheduleTab tab, final String scheduleName) {
+    public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName) {
         this(tab, scheduleName, UUID.randomUUID().toString());
 
     }
 
-    public ScheduleListItem(final ScheduleTab tab, final String scheduleName, final String id) {
+    public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName, final String id) {
         this(tab, new ScheduleEvent(scheduleName, id));
     }
 
 
-    public ScheduleListItem(final ScheduleTab tab, final ScheduleEvent event) {
+    public ScheduleListItem(final ScheduleOverlay tab, final ScheduleEvent event) {
         super();
         this.tab = tab;
         this.event = event;

@@ -1,7 +1,8 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
-import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class CalendarDay extends AnchorPane {
 
-    private final MonthView view;
+    private final CalendarMain main;
 
     private final LocalDate date;
 
@@ -28,9 +29,9 @@ public class CalendarDay extends AnchorPane {
     private final List<DayEvent> eventList = new ArrayList<>();
 
 
-    public CalendarDay(final Integer year, final Month month, final Integer day, final MonthView view) {
+    public CalendarDay(final Integer year, final Month month, final Integer day, final CalendarMain main) {
         super();
-        this.view = view;
+        this.main = main;
 
 
         date = day == null ? null : LocalDate.of(year, month, day);
@@ -102,7 +103,7 @@ public class CalendarDay extends AnchorPane {
     }
 
     public void onClick() {
-        view.selectDay(this);
+        main.getRightPanel().getMonthView().selectDay(this);
     }
 
     public Integer getDay() {
@@ -124,7 +125,8 @@ public class CalendarDay extends AnchorPane {
 
     public void addEvent(final DayEvent event) {
         eventList.add(event);
-        eventContainer.getChildren().add(event);
+
+        Platform.runLater(() -> eventContainer.getChildren().add(event));
 
     }
 

@@ -2,7 +2,7 @@ package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
-import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import kotlin.Pair;
 
 import java.time.LocalDate;
@@ -11,17 +11,18 @@ import java.time.Year;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Calendar {
+public class CalendarHandler {
 
-    private final MonthView view;
+    private final CalendarMain main;
     private final Map<Pair<Month, Year>, CalendarMonth> activeMonths = new ConcurrentHashMap<>();
     private CalendarMonth currentMonth;
     private CalendarDay selectedDay;
 
 
 
-    public Calendar(final MonthView view) {
-        this.view = view;
+    public CalendarHandler(final CalendarMain main) {
+        this.main = main;
+
         final LocalDate now = LocalDate.now();
         this.currentMonth = getMonth(now.getMonth(), now.getYear());
     }
@@ -32,7 +33,7 @@ public class Calendar {
 
         CalendarMonth month = activeMonths.get(monthYear);
         if (month == null) {
-            month = new CalendarMonth(date.getMonth(), date.getYear(), view);
+            month = new CalendarMonth(date.getMonth(), date.getYear(), main);
             activeMonths.put(monthYear, month);
         }
 
@@ -44,7 +45,7 @@ public class Calendar {
         CalendarMonth m = activeMonths.get(monthYear);
 
         if (m == null) {
-            m = new CalendarMonth(month, year, view);
+            m = new CalendarMonth(month, year, main);
             activeMonths.put(monthYear, m);
         }
 

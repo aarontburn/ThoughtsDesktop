@@ -2,13 +2,11 @@ package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
-import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
-import javafx.application.Platform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -24,18 +22,18 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CalendarJSONHandler {
+public class CalendarJsonHandler {
 
 
-    private final MonthView view;
+    private final CalendarMain main;
 
     private JSONObject root;
     private final Map<LocalDate, List<DayEvent>> eventMap = new ConcurrentHashMap<>();
 
     private final List<ScheduleData> scheduleDataList = new ArrayList<>();
 
-    public CalendarJSONHandler(final MonthView view) {
-        this.view = view;
+    public CalendarJsonHandler(final CalendarMain main) {
+        this.main = main;
 
         TC.Directories.CALENDAR_PATH.mkdir();
         TC.Directories.CALENDAR_SCHEDULES_PATH.mkdir();
@@ -91,7 +89,7 @@ public class CalendarJSONHandler {
 
                             final LocalDate eventDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum));
 
-                            final DayEvent event = new DayEvent(eventDate, eventTitle, eventID, view, false);
+                            final DayEvent event = new DayEvent(eventDate, eventTitle, eventID, main, false);
                             event.setDescription(description);
                             event.setCompleted(isCompleted != null ? isCompleted : false, false);
 
@@ -137,12 +135,12 @@ public class CalendarJSONHandler {
             Logger.log(e);
         }
 
-        for (final LocalDate date : eventMap.keySet()) {
-            for (final DayEvent event : eventMap.get(date)) {
-                view.addEventToCalendarDay(date, event);
-            }
-        }
 
+
+    }
+
+    public Map<LocalDate, List<DayEvent>> getEventMap() {
+        return this.eventMap;
     }
 
 
@@ -350,20 +348,10 @@ public class CalendarJSONHandler {
 
         }
 
-        new Thread(() -> {
-            for (final ScheduleData data : scheduleDataList) {
-                view.addScheduleToCalendarDay(data);
+    }
 
-                if (view.calendarScheduleBox == null) {
-                    Platform.runLater(() -> view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data)));
-                    continue;
-                }
-
-                Platform.runLater(() -> view.calendarScheduleBox.getChildren().add(new ScheduleBoxItem(view, data)));
-            }
-        }).start();
-
-
+    public List<ScheduleData> getScheduleDataList() {
+        return this.scheduleDataList;
     }
 
     public void writeScheduleData(final ScheduleData data) {

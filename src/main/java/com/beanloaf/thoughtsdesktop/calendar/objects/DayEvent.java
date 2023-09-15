@@ -1,8 +1,8 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -20,7 +20,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
     public final static String DAY_EVENT_ID = "dayEvent";
 
-    private final MonthView view;
+    private final CalendarMain main;
 
 
     private Event event;
@@ -31,8 +31,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
 
     // Cloning constructor, used to tie the eventbox object to the one in the grid
-    public DayEvent(final DayEvent reference, final MonthView view) {
-        this(reference.getDate(), reference.getEventTitle(), view, reference.isScheduleEvent);
+    public DayEvent(final DayEvent reference, final CalendarMain main) {
+        this(reference.getDate(), reference.getEventTitle(), main, reference.isScheduleEvent);
 
         this.isReference = true;
 
@@ -50,18 +50,18 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
 
     // Constructor for creating a NEW event
-    public DayEvent(final LocalDate day, final String eventName, final MonthView view, final boolean isScheduleEvent) {
-        this(day, eventName, UUID.randomUUID().toString(), view, isScheduleEvent);
+    public DayEvent(final LocalDate day, final String eventName, final CalendarMain main, final boolean isScheduleEvent) {
+        this(day, eventName, UUID.randomUUID().toString(), main, isScheduleEvent);
     }
 
 
     // Constructor for reading an EXISTING event from file
     public DayEvent(final LocalDate day, final String eventTitle, final String eventID,
-                    final MonthView view, final boolean isScheduleEvent) {
+                    final CalendarMain main, final boolean isScheduleEvent) {
         super(eventTitle);
         setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(isScheduleEvent ? "icons/schedule-icon.png" : "icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
 
-        this.view = view;
+        this.main = main;
         event = new Event(eventTitle);
         event.setStartDate(day);
 
@@ -89,7 +89,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
     @Override
     public void onClick() {
-        this.view.selectEvent(this, false);
+        this.main.getRightPanel().getMonthView().selectEvent(this, false);
         Logger.log("Event \"" + this.event.getTitle() + "\" was pressed.");
     }
 
@@ -154,7 +154,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
             eventLabel.updateCompletion(isCompleted);
         }
 
-        if (save) view.saveEvent(this);
+        if (save) main.getRightPanel().getMonthView().saveEvent(this);
     }
 
     public void addReference(final EventLabel reference) {
