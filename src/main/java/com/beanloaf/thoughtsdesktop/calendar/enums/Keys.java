@@ -1,4 +1,4 @@
-package com.beanloaf.thoughtsdesktop.calendar.objects;
+package com.beanloaf.thoughtsdesktop.calendar.enums;
 
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 

@@ -1,15 +1,15 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import com.beanloaf.thoughtsdesktop.calendar.views.TabController;
 import javafx.scene.Node;
 
 public abstract class Tab {
 
-    private final CalendarView view;
+    private final MonthView view;
     private final TabController tabController;
 
-    public Tab(final CalendarView view, final TabController tabController) {
+    public Tab(final MonthView view, final TabController tabController) {
         this.view = view;
         this.tabController = tabController;
     }
@@ -20,7 +20,7 @@ public abstract class Tab {
 
     protected abstract void createGUI();
 
-    public CalendarView getView() {
+    public MonthView getView() {
         return this.view;
     }
 

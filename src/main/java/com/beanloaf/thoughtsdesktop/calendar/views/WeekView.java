@@ -1,8 +1,8 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.Calendar;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
@@ -26,7 +26,7 @@ public class WeekView {
     private static final int DEFAULT_START_HOUR = 6;
     private static final int DEFAULT_END_HOUR = 24;
 
-    private final CalendarView view;
+    private final MonthView view;
 
 
     public static int START_HOUR = DEFAULT_START_HOUR;
@@ -44,7 +44,7 @@ public class WeekView {
     private final List<Event> weekEventList = new ArrayList<>();
     private final Map<Weekday, VBox> allDayEventMap = new ConcurrentHashMap<>();
 
-    public WeekView(final CalendarView view) {
+    public WeekView(final MonthView view) {
         this.view = view;
         this.calendar = view.calendar;
 
@@ -224,12 +224,7 @@ public class WeekView {
             }
             d = d.plusDays(1);
         }
-        addEventsToDay();
 
-
-    }
-
-    public void addEventsToDay() {
         adjustBounds();
         createGrid();
 
@@ -242,46 +237,53 @@ public class WeekView {
 
     }
 
-    private boolean adjustBounds() {
-        final int oldStartHour = START_HOUR;
-        final int oldEndHour = END_HOUR;
-
+    private void adjustBounds() {
         LocalTime minTime = null;
         LocalTime maxTime = null;
 
         for (final Event event : weekEventList) {
-            if (event.getStartTime() == null) continue;
+            final LocalTime startTime = event.getStartTime();
 
+            if (startTime == null) {
+                continue;
+            }
 
             LocalTime endTime = event.getEndTime();
-            if (endTime == null) endTime = event.getStartTime().plusHours(1);
-
+            if (endTime == null) {
+                endTime = startTime.plusHours(1);
+            }
 
 
             if (minTime == null) {
-                minTime = event.getStartTime();
+                minTime = startTime;
             } else {
-                if (event.getStartTime().isBefore(minTime)) minTime = event.getStartTime();
-                if (endTime.isBefore(minTime)) minTime = event.getEndTime();
+                if (startTime.isBefore(minTime)) {
+                    minTime = startTime;
+                }
+
+                if (endTime.isBefore(minTime)) {
+                    minTime = endTime;
+                }
             }
 
             if (maxTime == null) {
-                maxTime = event.getEndTime();
+                maxTime = endTime;
             } else {
-                if (endTime.isAfter(maxTime)) maxTime = event.getEndTime();
-                if (event.getStartTime().isAfter(maxTime)) maxTime = event.getStartTime();
+                if (endTime.isAfter(maxTime)) {
+                    maxTime = endTime;
+                }
+
+                if (startTime.isAfter(maxTime)) {
+                    maxTime = startTime;
+                }
             }
 
         }
 
-        if (minTime != null) START_HOUR = minTime.getHour() - 1;
-        if (maxTime != null) END_HOUR = maxTime.getHour() + 1;
+        if (minTime != null) START_HOUR = minTime.getHour() - 2;
+        if (maxTime != null) END_HOUR = maxTime.getHour() + 2;
 
         if (START_HOUR < 0) START_HOUR = 0;
         if (END_HOUR > 24) END_HOUR = 24;
-
-
-        return oldStartHour != START_HOUR || oldEndHour != END_HOUR;
-
     }
 }

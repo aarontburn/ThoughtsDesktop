@@ -1,4 +1,4 @@
-package com.beanloaf.thoughtsdesktop.calendar.objects;
+package com.beanloaf.thoughtsdesktop.calendar.enums;
 
 
 public enum Weekday {

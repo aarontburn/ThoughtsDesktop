@@ -1,12 +1,13 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
+import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import javafx.application.Platform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -26,14 +27,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CalendarJSONHandler {
 
 
-    private final CalendarView view;
+    private final MonthView view;
 
     private JSONObject root;
     private final Map<LocalDate, List<DayEvent>> eventMap = new ConcurrentHashMap<>();
 
     private final List<ScheduleData> scheduleDataList = new ArrayList<>();
 
-    public CalendarJSONHandler(final CalendarView view) {
+    public CalendarJSONHandler(final MonthView view) {
         this.view = view;
 
         TC.Directories.CALENDAR_PATH.mkdir();
@@ -220,6 +221,7 @@ public class CalendarJSONHandler {
             if (dayBranch.size() == 0) {
                 monthBranch.remove(day);
             }
+
             if (monthBranch.size() == 0) {
                 yearBranch.remove(month);
             }

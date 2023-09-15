@@ -6,7 +6,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-
+/**
+ * General class to represent Labels that look similar, such as DayEvent and ScheduleLabel
+ * */
 public class EventBoxLabel extends Label {
 
     private String eventTitle;

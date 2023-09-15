@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter;
 
 public class CalendarRightHeader {
 
-    private final CalendarView view;
+    private final MonthView view;
 
 
-    private CalendarView.RightLayouts currentLayout = CalendarView.RightLayouts.MONTH;
+    public MonthView.RightLayouts currentLayout = MonthView.RightLayouts.MONTH;
 
 
     /*  Components  */
@@ -22,7 +22,7 @@ public class CalendarRightHeader {
     private Button weekViewButton, monthViewButton;
 
 
-    public CalendarRightHeader(final CalendarView view) {
+    public CalendarRightHeader(final MonthView view) {
         this.view = view;
 
         locateNodes();
@@ -44,12 +44,9 @@ public class CalendarRightHeader {
 
     private void attachEvents() {
         weekViewButton.setOnAction(e -> {
-
-            view.swapRightPanel(CalendarView.RightLayouts.WEEK);
-
-            if (currentLayout != CalendarView.RightLayouts.WEEK) view.weekView.changeWeek(view.calendar.getSelectedDay().getDate());
-            currentLayout = CalendarView.RightLayouts.WEEK;
-
+            view.swapRightPanel(MonthView.RightLayouts.WEEK);
+            if (currentLayout != MonthView.RightLayouts.WEEK) view.weekView.changeWeek(view.calendar.getSelectedDay().getDate());
+            currentLayout = MonthView.RightLayouts.WEEK;
 
             final Pair<LocalDate, LocalDate> startEndRange = view.weekView.getDateRange(view.calendar.getSelectedDay().getDate());
 
@@ -57,25 +54,25 @@ public class CalendarRightHeader {
                     startEndRange.getKey().format(DateTimeFormatter.ofPattern("M/d/yyyy")), startEndRange.getValue().format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
         });
         monthViewButton.setOnAction(e -> {
-            view.swapRightPanel(CalendarView.RightLayouts.MONTH);
-            currentLayout = CalendarView.RightLayouts.MONTH;
+            view.swapRightPanel(MonthView.RightLayouts.MONTH);
+            currentLayout = MonthView.RightLayouts.MONTH;
 
             setTitleText(ThoughtsHelper.toCamelCase(view.calendar.getCurrentMonth().getMonth().toString()) + ", " + view.calendar.getCurrentMonth().getYear());
         });
 
 
         calendarNextButton.setOnMouseClicked(e -> {
-            if (currentLayout == CalendarView.RightLayouts.MONTH) {
+            if (currentLayout == MonthView.RightLayouts.MONTH) {
                 view.changeMonth(view.calendar.getCurrentMonth().getNextMonth());
-            } else if (currentLayout == CalendarView.RightLayouts.WEEK) {
+            } else if (currentLayout == MonthView.RightLayouts.WEEK) {
                 view.weekView.changeToNextWeek();
             }
         });
 
         calendarPrevButton.setOnMouseClicked(e -> {
-            if (currentLayout == CalendarView.RightLayouts.MONTH) {
+            if (currentLayout == MonthView.RightLayouts.MONTH) {
                 view.changeMonth(view.calendar.getCurrentMonth().getPreviousMonth());
-            } else if (currentLayout == CalendarView.RightLayouts.WEEK) {
+            } else if (currentLayout == MonthView.RightLayouts.WEEK) {
                 view.weekView.changeToPrevWeek();
             }
         });

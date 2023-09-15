@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class TabController {
 
-    private final CalendarView view;
+    private final MonthView view;
     private final Map<Tabs, Node> tabMap = new HashMap<>();
     private ScheduleTab scheduleTab;
 
-    public TabController(final CalendarView view) {
+    public TabController(final MonthView view) {
         this.view = view;
 
         locateNodes();
@@ -20,7 +20,6 @@ public class TabController {
     }
 
     private void locateNodes() {
-
         tabMap.put(Tabs.SCHEDULE, findNodeById("newScheduleTab"));
         tabMap.put(Tabs.CALENDAR, findNodeById("calendarTab"));
 
@@ -30,11 +29,11 @@ public class TabController {
         return view.findNodeById(nodeId);
     }
 
-    public void swapTabs(final Tabs visiblePopup) {
+    public void swapTabs(final Tabs tab) {
         for (final Tabs tabs : tabMap.keySet()) {
             tabMap.get(tabs).setVisible(false);
         }
-        if (visiblePopup != null) tabMap.get(visiblePopup).setVisible(true);
+        if (tab != null) tabMap.get(tab).setVisible(true);
 
     }
 

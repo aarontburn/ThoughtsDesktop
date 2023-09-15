@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.Calendar;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
@@ -34,7 +35,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class CalendarView extends ThoughtsView {
+public class MonthView extends ThoughtsView {
 
 
     public final Calendar calendar = new Calendar(this);
@@ -52,13 +53,13 @@ public class CalendarView extends ThoughtsView {
 
     /*  Left Panel  */
     private Button calendarEventsButton, calendarScheduleButton;
-    private AnchorPane[] leftLayoutList;
-    private AnchorPane calendarLeftEventPanel, calendarLeftSchedulePanel;
+    private Node[] leftLayoutList;
+    private Node calendarLeftEventPanel, calendarLeftSchedulePanel;
 
 
     /*  Right Panel */
     public WeekView weekView;
-    private final Map<RightLayouts, AnchorPane> rightLayoutsMap = new HashMap<>();
+    private final Map<RightLayouts, Node> rightLayoutsMap = new HashMap<>();
 
     /*  Event Box   */
     private VBox calendarEventBox;
@@ -76,19 +77,15 @@ public class CalendarView extends ThoughtsView {
     private TextField calendarSmallEventTitleInput;
     private DatePicker calendarSmallDatePicker;
     private TimeGroupView calendarSmallTimeFrom, calendarSmallTimeTo;
-
     private TextArea calendarSmallEventDescriptionInput;
     private Button calendarSmallSaveEventButton, calendarSmallEditButton, calendarSmallDeleteButton;
     private HBox calendarSmallStartTimeFields, calendarSmallEndTimeFields;
     private Label calendarSmallFinalStartTimeLabel, calendarSmallFinalEndTimeLabel;
     private CheckBox calendarSmallProgressCheckBox;
-    private boolean calendarSmallProgressCheckBoxReady = true;
 
-
-    public CalendarView(final MainApplication main) {
+    public MonthView(final MainApplication main) {
         super(main);
         calendarJson = new CalendarJSONHandler(this);
-
 
         locateNodes();
         attachEvents();
@@ -99,27 +96,23 @@ public class CalendarView extends ThoughtsView {
         swapLeftPanel(calendarLeftEventPanel);
         swapRightPanel(RightLayouts.MONTH);
         startup();
-
     }
 
     private void locateNodes() {
 
 
         /*  Right Panel */
-        AnchorPane weekViewPane = (AnchorPane) findNodeById("weekView");
-        AnchorPane monthViewPane = (AnchorPane) findNodeById("monthView");
-        rightLayoutsMap.put(RightLayouts.MONTH, monthViewPane);
-        rightLayoutsMap.put(RightLayouts.WEEK, weekViewPane);
-
+        rightLayoutsMap.put(RightLayouts.WEEK, findNodeById("weekView"));
+        rightLayoutsMap.put(RightLayouts.MONTH, findNodeById("monthView"));
         calendarFrame = (GridPane) findNodeById("calendarFrame");
 
 
         /*  Left Panel  */
         calendarEventsButton = (Button) findNodeById("calendarEventsButton");
         calendarScheduleButton = (Button) findNodeById("calendarScheduleButton");
-        calendarLeftEventPanel = (AnchorPane) findNodeById("calendarLeftEventPanel");
-        calendarLeftSchedulePanel = (AnchorPane) findNodeById("calendarLeftSchedulePanel");
-        leftLayoutList = new AnchorPane[]{calendarLeftEventPanel, calendarLeftSchedulePanel};
+        calendarLeftEventPanel = findNodeById("calendarLeftEventPanel");
+        calendarLeftSchedulePanel = findNodeById("calendarLeftSchedulePanel");
+        leftLayoutList = new Node[]{calendarLeftEventPanel, calendarLeftSchedulePanel};
 
         /*  Event Box   */
         calendarEventBox = (VBox) findNodeById("calendarEventBox");
@@ -184,10 +177,10 @@ public class CalendarView extends ThoughtsView {
         /*  Small New Event*/
         calendarSmallEventFields.setVisible(false);
 
-        calendarSmallProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
-            calendarSmallProgressCheckBox.setText(isChecked ? "Completed" : "In-progress");
-            if (calendarSmallProgressCheckBoxReady) selectedEvent.setCompleted(isChecked, true);
-        });
+        calendarSmallProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) ->
+                calendarSmallProgressCheckBox.setText(isChecked ? "Completed" : "In-progress"));
+
+        calendarSmallProgressCheckBox.setOnAction(e -> selectedEvent.setCompleted(calendarSmallProgressCheckBox.isSelected(), true));
 
 
         calendarNewEventButton.setOnMouseClicked(e -> {
@@ -230,10 +223,11 @@ public class CalendarView extends ThoughtsView {
         }
 
         rightLayoutsMap.get(pane).setVisible(true);
+
     }
 
-    private void swapLeftPanel(final AnchorPane pane) {
-        for (final AnchorPane anchorPane : leftLayoutList) {
+    private void swapLeftPanel(final Node pane) {
+        for (final Node anchorPane : leftLayoutList) {
             anchorPane.setVisible(false);
         }
 
@@ -517,9 +511,7 @@ public class CalendarView extends ThoughtsView {
         calendarSmallEventTitleInput.setText(event.getEventTitle());
         calendarSmallDatePicker.setValue(LocalDate.of(event.getDate().getYear(), event.getDate().getMonth(), event.getDate().getDayOfMonth()));
 
-        calendarSmallProgressCheckBoxReady = false;
         calendarSmallProgressCheckBox.setSelected(event.isCompleted());
-        calendarSmallProgressCheckBoxReady = true;
 
         final LocalTime startTime = event.getStartTime();
         final LocalTime endTime = event.getEndTime();
@@ -597,6 +589,12 @@ public class CalendarView extends ThoughtsView {
 
         calendarJson.addEventToJson(event);
 
+        if (header.currentLayout == RightLayouts.WEEK) {
+            weekView.refreshWeek();
+        }
+
+
+
     }
 
     private void deleteEvent(final DayEvent event) {
@@ -614,6 +612,11 @@ public class CalendarView extends ThoughtsView {
 
         calendarMonth.getDay(day).removeEvent(event);
         selectDay(calendar.getSelectedDay());
+
+        if (header.currentLayout == RightLayouts.WEEK) {
+            weekView.refreshWeek();
+        }
+
 
     }
 

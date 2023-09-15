@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
-import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import com.beanloaf.thoughtsdesktop.calendar.views.WeekView;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.scene.control.Label;
@@ -19,7 +20,7 @@ public class WeekBlock extends VBox implements EventLabel {
     private final static String[] COLORS = new String[]{"green", "black", "blue", "navy", "indigo"};
 
 
-    private final CalendarView view;
+    private final MonthView view;
 
     private final Event event;
 
@@ -36,7 +37,7 @@ public class WeekBlock extends VBox implements EventLabel {
     /*
      * Minimum height for each box is 28 units
      * */
-    public WeekBlock(final CalendarView view, final Event event) {
+    public WeekBlock(final MonthView view, final Event event) {
         super();
 
         this.event = event;

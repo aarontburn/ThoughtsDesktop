@@ -2,7 +2,7 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.calendar.views.CalendarView;
+import com.beanloaf.thoughtsdesktop.calendar.views.MonthView;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -20,10 +20,10 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
     public final static String DAY_EVENT_ID = "dayEvent";
 
-    private final CalendarView view;
+    private final MonthView view;
 
 
-    private final Event event;
+    private Event event;
     public boolean isReference;
     public final boolean isScheduleEvent;
 
@@ -31,16 +31,13 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
 
     // Cloning constructor, used to tie the eventbox object to the one in the grid
-    public DayEvent(final DayEvent reference, final CalendarView view) {
+    public DayEvent(final DayEvent reference, final MonthView view) {
         this(reference.getDate(), reference.getEventTitle(), view, reference.isScheduleEvent);
-
 
         this.isReference = true;
 
-
         reference.addReference(this);
         this.references.add(reference);
-
 
         event.setStartTime(reference.event.getStartTime());
         event.setEndTime(reference.event.getEndTime());
@@ -53,13 +50,14 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
 
     // Constructor for creating a NEW event
-    public DayEvent(final LocalDate day, final String eventName, final CalendarView view, final boolean isScheduleEvent) {
+    public DayEvent(final LocalDate day, final String eventName, final MonthView view, final boolean isScheduleEvent) {
         this(day, eventName, UUID.randomUUID().toString(), view, isScheduleEvent);
     }
 
 
     // Constructor for reading an EXISTING event from file
-    public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarView view, final boolean isScheduleEvent) {
+    public DayEvent(final LocalDate day, final String eventTitle, final String eventID,
+                    final MonthView view, final boolean isScheduleEvent) {
         super(eventTitle);
         setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(isScheduleEvent ? "icons/schedule-icon.png" : "icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
 

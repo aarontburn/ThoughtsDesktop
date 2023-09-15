@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.views;
 
 
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.Tab;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDay;
@@ -23,8 +24,6 @@ import java.util.Map;
 
 
 public class ScheduleTab extends Tab {
-
-
 
     private final ScheduleData data;
     private ScheduleListItem selectedScheduleListItem;
@@ -67,7 +66,7 @@ public class ScheduleTab extends Tab {
 
 
     // Loading data into the tab
-    public ScheduleTab(final CalendarView view, final TabController tabController, final ScheduleData data) {
+    public ScheduleTab(final MonthView view, final TabController tabController, final ScheduleData data) {
         super(view, tabController);
         this.data = data;
 
