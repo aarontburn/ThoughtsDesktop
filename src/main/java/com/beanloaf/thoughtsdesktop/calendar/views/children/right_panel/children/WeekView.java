@@ -179,6 +179,8 @@ public class WeekView {
             weekGrid.add(label, 0, row);
         }
 
+        scrollPane.setVvalue(0);
+
     }
 
     public void refreshWeek() {
