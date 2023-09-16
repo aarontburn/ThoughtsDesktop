@@ -8,6 +8,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
@@ -22,11 +23,12 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@../css/calendar_view_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane fx:id="newScheduleTab" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="scheduleOverlay" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <GridPane hgap="8.0" layoutX="257.0" layoutY="5.0" prefHeight="54.0" prefWidth="839.0" AnchorPane.leftAnchor="257.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="4.0">
                      <columnConstraints>
@@ -458,7 +460,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <SplitPane fx:id="calendarTab" dividerPositions="0.19989561586638832" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="calendarOverlay" dividerPositions="0.2" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
@@ -492,7 +494,7 @@
                                           </Label>
                                        </children>
                                     </AnchorPane>
-                                  <AnchorPane fx:id="calendarSmallEventFields" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                  <AnchorPane fx:id="calendarSmallEventFields" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                        <children>
                                           <CheckBox fx:id="calendarSmallProgressCheckBox" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" text="In-progress" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
                                              <font>
@@ -838,7 +840,7 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane>
+                  <AnchorPane minWidth="0.0">
                      <children>
                       <AnchorPane fx:id="monthView" layoutX="0.5" minHeight="0.0" minWidth="0.0" prefHeight="1076.0" prefWidth="1530.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -1081,20 +1083,20 @@
                                     <Font size="34.0" />
                                  </font>
                                  <padding>
-                                    <Insets left="16.0" right="16.0" top="4.0" />
+                                    <Insets left="8.0" right="16.0" top="4.0" />
                                  </padding>
                               </Label>
-                              <Label fx:id="calendarNextButton" layoutX="59.0" text="↓" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <Label fx:id="calendarNextButton" layoutX="73.0" text="↓" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font size="36.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="calendarPrevButton" layoutX="14.0" text="↑" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <Label fx:id="calendarPrevButton" layoutX="34.0" text="↑" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <font>
                                     <Font size="36.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="calendarTestButton" layoutX="638.0" mnemonicParsing="false" styleClass="calendarButton" text="test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="638.0" AnchorPane.topAnchor="0.0" />
+                              <Button fx:id="calendarTestButton" layoutX="1395.0" mnemonicParsing="false" styleClass="calendarButton" text="test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="1395.0" AnchorPane.topAnchor="0.0" />
                               <Button fx:id="weekViewButton" layoutX="910.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Week" AnchorPane.bottomAnchor="4.0" AnchorPane.topAnchor="4.0">
                                  <font>
                                     <Font size="15.0" />
@@ -1105,12 +1107,26 @@
                                     <Font size="15.0" />
                                  </font>
                               </Button>
+                              <Button fx:id="currentButton" layoutX="617.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Current" AnchorPane.bottomAnchor="4.0" AnchorPane.topAnchor="4.0">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Button>
                            </children>
                         </AnchorPane>
                      </children>
                   </AnchorPane>
               </items>
             </SplitPane>
+            <AnchorPane fx:id="loadingOverlay" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <VBox alignment="CENTER" fillWidth="false" minHeight="0.0" minWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <ProgressIndicator centerShape="false" focusTraversable="false" minHeight="0.0" minWidth="0.0" scaleShape="false" VBox.vgrow="NEVER" />
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
       <MenuBar prefWidth="1920.0" />

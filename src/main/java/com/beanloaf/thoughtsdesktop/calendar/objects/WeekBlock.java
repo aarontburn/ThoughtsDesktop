@@ -16,7 +16,10 @@ import java.util.Random;
 
 public class WeekBlock extends VBox implements EventLabel {
 
-    private final static String[] COLORS = new String[]{"green", "black", "blue", "navy", "indigo"};
+    private final static String[] COLORS = new String[]{
+            "green", "black", "blue", "navy", "indigo",
+            "darkblue", "darkgreen", "darkred", "midnightblue", "navy",
+            "purple"};
 
 
     private final WeekView weekView;
@@ -46,11 +49,9 @@ public class WeekBlock extends VBox implements EventLabel {
 
         this.setStyle(this.getCss());
         this.setOnMouseClicked(e -> {
-            weekView.getParent().getMonthView().selectDay(event.getStartDate());
             weekView.getParent().getMonthView().selectEvent(event.getLinkedDayEvent(), false);
             Logger.log("WeekBlock: " + event.getTitle() + " pressed.");
         });
-
 
 
         nameLabel = new Label(DayEvent.getDisplayTime(event.getStartTime()) + event.getTitle());

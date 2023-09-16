@@ -30,7 +30,7 @@ public class CalendarMain extends ThoughtsView {
 
     /*  Full Screen Overlays    */
     public enum Overlays {
-        CALENDAR, SCHEDULE
+        CALENDAR, SCHEDULE, LOADING
     }
 
     private ScheduleOverlay scheduleOverlay;
@@ -40,8 +40,11 @@ public class CalendarMain extends ThoughtsView {
 
     public CalendarMain(final MainApplication main) {
         super(main);
-        this.overlayMap.put(Overlays.CALENDAR, findNodeById("calendarTab"));
-        this.overlayMap.put(Overlays.SCHEDULE, findNodeById("newScheduleTab"));
+        this.overlayMap.put(Overlays.CALENDAR, findNodeById("calendarOverlay"));
+        this.overlayMap.put(Overlays.SCHEDULE, findNodeById("scheduleOverlay"));
+        this.overlayMap.put(Overlays.LOADING, findNodeById("loadingOverlay"));
+
+        swapOverlay(Overlays.LOADING);
 
         this.calendarHandler = new CalendarHandler(this);
         this.calendarJson = new CalendarJsonHandler(this);
@@ -77,6 +80,9 @@ public class CalendarMain extends ThoughtsView {
     private void startup() {
         getRightPanel().getMonthView().startupMonthView();
         getRightPanel().getWeekView().changeWeek(getCalendarHandler().getSelectedDay().getDate());
+
+        rightPanel.swapRightPanel(RightPanel.Layouts.MONTH);
+        swapOverlay(Overlays.CALENDAR);
     }
 
     public void onOpen() {

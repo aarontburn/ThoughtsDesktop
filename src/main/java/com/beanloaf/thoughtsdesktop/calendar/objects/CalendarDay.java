@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CalendarDay extends AnchorPane {
 
@@ -61,29 +63,13 @@ public class CalendarDay extends AnchorPane {
 
         // Triggers when a day event is clicked
         this.setOnMouseClicked(e -> {
-            if (e.getButton().equals(MouseButton.PRIMARY)) {
+            final Node node = (Node) e.getTarget();
+
+            if (node.getId() == null) { // clicking on nothing but the box itself or the date label
                 onClick();
-                final Node node = (Node) e.getTarget();
-
-//                Logger.log(node.getId());
-
-
-                if (node.getId() != null && node.getId().equals(DayEvent.DAY_EVENT_ID)) {
-                    if (node.getClass() == DayEvent.class) {
-                        ((DayEvent) node).onClick();
-                    } else {
-                        ((DayEvent) node.getParent()).onClick();
-
-                    }
-                }
-
             }
 
-
         });
-
-
-
 
         dateText = new Text();
 
@@ -103,7 +89,8 @@ public class CalendarDay extends AnchorPane {
     }
 
     public void onClick() {
-        main.getRightPanel().getMonthView().selectDay(this);
+        Logger.log("calendar day pressed");
+        main.getRightPanel().getMonthView().selectDay(this, true);
     }
 
     public Integer getDay() {
@@ -125,14 +112,19 @@ public class CalendarDay extends AnchorPane {
 
     public void addEvent(final DayEvent event) {
         eventList.add(event);
-
         Platform.runLater(() -> eventContainer.getChildren().add(event));
-
     }
 
     public void removeEvent(final DayEvent event) {
-        eventList.remove(event);
-        eventContainer.getChildren().remove(event);
+        Node nodeToRemove = null;
+        for (final DayEvent dayEvent : eventList) {
+            if (dayEvent.getEventID().equals(event.getEventID())) {
+                nodeToRemove = dayEvent;
+            }
+        }
+
+        eventList.remove(nodeToRemove);
+        eventContainer.getChildren().remove(nodeToRemove);
     }
 
     public void checkIsToday() {
@@ -155,5 +147,16 @@ public class CalendarDay extends AnchorPane {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CalendarDay that = (CalendarDay) o;
+        return Objects.equals(date, that.date);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(date);
+    }
 }

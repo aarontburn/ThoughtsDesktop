@@ -55,7 +55,6 @@ public class WeekView {
     }
 
 
-
     public Pair<LocalDate, LocalDate> getDateRange(final LocalDate date) {
         final LocalDate start = date.minusDays(date.getDayOfWeek().getValue() == 7 ? 0 : date.getDayOfWeek().getValue());
         final LocalDate end = start.plusDays(6);
@@ -118,7 +117,6 @@ public class WeekView {
         });
 
 
-
     }
 
     public void createGrid() {
@@ -127,6 +125,8 @@ public class WeekView {
             weekPane.getChildren().remove(weekGrid);
         }
 
+
+        final LocalTime now = LocalTime.now();
 
         weekGrid = new GridPane();
         weekGrid.setGridLinesVisible(true);
@@ -140,7 +140,7 @@ public class WeekView {
             int cellNum = (int) (x / cellSize);
             cellNum = Math.max(0, Math.min(columnCount - 1, cellNum));
             if (cellNum == 0) return;
-            rightPanel.getMonthView().selectDay(rightPanel.getMain().getCalendarHandler().getDay(startDate.plusDays(cellNum - 1)));
+            rightPanel.getMonthView().selectDay(rightPanel.getMain().getCalendarHandler().getDay(startDate.plusDays(cellNum - 1)), true);
         });
 
 
@@ -166,6 +166,11 @@ public class WeekView {
             final Label label = new Label();
             if (row % 2 == 0) {
                 label.setText(time.format(DateTimeFormatter.ofPattern("h:mm a")));
+
+                if (time.getHour() == now.getHour()) {
+                    // TODO: do something to make the hour stand out
+                }
+
                 time = time.plusHours(1);
             }
             label.setStyle("-fx-font-size: 14");
@@ -195,7 +200,13 @@ public class WeekView {
         this.startDate = startEndRange.getKey();
         this.endDate = startEndRange.getValue();
         final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
-        rightPanel.setHeaderText(String.format("Week (%s - %s)", startDate.format(DateTimeFormatter.ofPattern("M/d/yyyy")), endDate.format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
+
+        if (rightPanel.getCurrentLayout() == RightPanel.Layouts.WEEK) {
+            rightPanel.setHeaderText(String.format("Week (%s - %s)",
+                    startEndRange.getKey().format(DateTimeFormatter.ofPattern("M/d/yyyy")),
+                    startEndRange.getValue().format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
+        }
+
 
         LocalDate d = startDate;
         for (int i = 0; i < daysBetween; i++) {

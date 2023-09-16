@@ -1,8 +1,10 @@
+
 * {
     -fx-background: rgb(60, 63 ,65);
     -fx-text-fill: rgb(209, 209 ,209);
 
 }
+
 
 
 .context-menu {
@@ -107,6 +109,13 @@
 .scroll-bar:vertical > .decrement-button,
 .scroll-bar:vertical > .increment-button {
     -fx-padding: 0 0 0 0;
+}
+
+.split-pane:horizontal > .split-pane-divider {
+   -fx-background-color: rgb(94, 94, 94);
+}
+.split-pane:vertical > .split-pane-divider {
+   -fx-background-color: rgb(94, 94, 94);
 }
 
 

@@ -83,7 +83,7 @@ public class MonthView {
 
         changeMonth(this.main.getCalendarHandler().getCurrentMonth());
         swapLeftPanel(calendarLeftEventPanel);
-        rightPanel.swapRightPanel(RightPanel.Layouts.MONTH);
+
     }
 
     private Node findNodeById(final String nodeId) {
@@ -137,10 +137,8 @@ public class MonthView {
 
         calendarSmallEndTimeFields = (HBox) findNodeById("calendarSmallEndTimeFields");
         calendarSmallStartTimeFields = (HBox) findNodeById("calendarSmallStartTimeFields");
-
         calendarSmallFinalStartTimeLabel = (Label) findNodeById("calendarSmallFinalStartTimeLabel");
         calendarSmallFinalEndTimeLabel = (Label) findNodeById("calendarSmallFinalEndTimeLabel");
-
         calendarSmallProgressCheckBox = (CheckBox) findNodeById("calendarSmallProgressCheckBox");
 
     }
@@ -181,8 +179,7 @@ public class MonthView {
             if (selectedEvent == null) return;
             saveEvent(selectedEvent);
 
-
-            selectDay(this.main.getCalendarHandler().getSelectedDay());
+            selectDay(this.main.getCalendarHandler().getSelectedDay(), false);
             selectEvent(selectedEvent, false);
         });
 
@@ -211,6 +208,10 @@ public class MonthView {
 
     }
 
+
+    public void changeMonth(final LocalDate date) {
+        changeMonth(main.getCalendarHandler().getMonth(date.getMonth(), date.getYear()));
+    }
 
     public void changeMonth(final CalendarMonth month) {
         this.main.getCalendarHandler().removeInactiveMonths();
@@ -444,17 +445,18 @@ public class MonthView {
     }
 
 
-    public void selectDay(final CalendarDay day) {
-        if (day == this.main.getCalendarHandler().getSelectedDay()) return;
+    public void selectDay(final CalendarDay day, final boolean hideEventFields) {
+        Platform.runLater(() -> calendarSmallEventFields.setVisible(!hideEventFields));
 
         this.main.getCalendarHandler().setSelectedDay(day);
 
         Platform.runLater(() -> {
+            // TODO: this breaks somehow when from one scheduleevent to another
+            calendarEventBox.getChildren().clear();
+
             calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
                     + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
 
-            calendarSmallEventFields.setVisible(false);
-            calendarEventBox.getChildren().clear();
 
             for (final DayEvent dayEvent : day.getEvents()) {
                 final DayEvent clone = new DayEvent(dayEvent, main);
@@ -465,15 +467,14 @@ public class MonthView {
 
     }
 
-    public void selectDay(final LocalDate date) {
+    public void selectDay(final LocalDate date, final boolean hideEventFields) {
         final CalendarMonth month = this.main.getCalendarHandler().getMonth(date.getMonth(), date.getYear());
-        selectDay(month.getDay(date.getDayOfMonth()));
-
+        selectDay(month.getDay(date.getDayOfMonth()), hideEventFields);
     }
 
 
-    public void selectEvent(DayEvent event, final boolean editable) {
-
+    public void selectEvent(final DayEvent event, final boolean editable) {
+        selectDay(event.getDate(), false);
         swapLeftPanel(calendarLeftEventPanel);
 
         event.getStyleClass().add("selected-day-event");
@@ -481,7 +482,6 @@ public class MonthView {
         selectedEvent = event;
 
         calendarSmallEventFields.setVisible(true);
-
         toggleSmallEventFields(editable);
         calendarSmallSaveEventButton.setVisible(editable);
         calendarSmallEditButton.setVisible(!editable);
@@ -538,7 +538,6 @@ public class MonthView {
             deleteEvent(event, oldDate);
             event.setStartDate(calendarSmallDatePicker.getValue());
             selectEvent(addEventToCalendarDay(event.getDate(), event), false);
-            selectDay(event.getDate());
         } else {
             event.setStartDate(calendarSmallDatePicker.getValue());
 
@@ -586,7 +585,7 @@ public class MonthView {
         final CalendarMonth calendarMonth = this.main.getCalendarHandler().getMonth(month, year);
 
         calendarMonth.getDay(day).removeEvent(event);
-        selectDay(this.main.getCalendarHandler().getSelectedDay());
+        selectDay(this.main.getCalendarHandler().getSelectedDay(), true);
 
         if (rightPanel.getCurrentLayout() == RightPanel.Layouts.WEEK) {
             rightPanel.getWeekView().refreshWeek();

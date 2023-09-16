@@ -89,8 +89,9 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
     @Override
     public void onClick() {
+        Logger.log("event pressed");
         this.main.getRightPanel().getMonthView().selectEvent(this, false);
-        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed.");
+//        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed.");
     }
 
 
@@ -201,13 +202,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
     }
 
 
-    @Override
-    public boolean equals(final Object other) {
-        if (other.getClass() != this.getClass()) return false;
-
-        return this.event.getId().equals(((DayEvent) other).getEventID());
-
-    }
 
     @Override
     public void updateEventTitle(String eventTitle) {

@@ -519,11 +519,15 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
             case SELECTED_TAG_ITEM -> {
                 selectedTagItem = (TagListItem) eventValue;
 
-                for (final Node node : tagList.getChildren()) {
-                    if (node.getClass() != TagListItem.class) continue;
 
-                    node.getStyleClass().remove("tagListSelected");
+                synchronized (tagList.getChildren()) {
+                    for (final Node node : tagList.getChildren()) {
+                        if (node.getClass() != TagListItem.class) continue;
+
+                        node.getStyleClass().remove("tagListSelected");
+                    }
                 }
+
 
 
             }
