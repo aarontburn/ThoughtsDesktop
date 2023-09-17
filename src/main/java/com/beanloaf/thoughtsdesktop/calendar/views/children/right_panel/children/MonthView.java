@@ -40,8 +40,10 @@ public class MonthView {
 
 
     public final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
-    private DayEvent selectedEvent;
 
+
+
+    private DayEvent selectedEvent;
     private GridPane calendarFrame; // (7 x 5)
 
 
@@ -393,7 +395,7 @@ public class MonthView {
                 if (!isCorrectDay) continue;
 
 
-                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), main, true);
+                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), main, TypedEvent.Types.SCHEDULE);
                 dayEvent.setDescription(scheduleEvent.getDescription());
                 dayEvent.setStartTime(scheduleEvent.getStartTime());
                 dayEvent.setEndTime(scheduleEvent.getEndTime());
@@ -406,6 +408,26 @@ public class MonthView {
         }
 
 
+    }
+
+    public void addCanvasEventsToCalendar(final List<BasicEvent> canvasEvents) {
+        for (final DayEvent storedCanvasEvent : main.getCalendarHandler().getCanvasEvents()) {
+            main.getCalendarHandler().getDay(storedCanvasEvent.getDate()).removeEvent(storedCanvasEvent);
+        }
+
+        main.getCalendarHandler().getCanvasEvents().clear();
+
+        for (final BasicEvent event : canvasEvents) {
+            final DayEvent e = new DayEvent(event.getStartDate(), event.getTitle(), event.getId(), main, TypedEvent.Types.CANVAS);
+            e.setDescription(event.getDescription());
+            e.setStartTime(event.getStartTime());
+            e.setEndTime(event.getEndTime());
+            e.setCompleted(event.isComplete(), false);
+
+
+            addEventToCalendarDay(event.getStartDate(), e);
+            main.getCalendarHandler().addCanvasEvent(e);
+        }
     }
 
 
@@ -433,7 +455,7 @@ public class MonthView {
         final CalendarDay calendarDay = activeMonth.getDay(day);
 
 
-        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), "New Event", main, false);
+        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), "New Event", main, TypedEvent.Types.DAY);
         event.setDescription("");
         event.setStartTime(null);
 
@@ -485,6 +507,10 @@ public class MonthView {
         toggleSmallEventFields(editable);
         calendarSmallSaveEventButton.setVisible(editable);
         calendarSmallEditButton.setVisible(!editable);
+
+
+        calendarSmallDeleteButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);
+        calendarSmallEditButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);
 
 
         calendarSmallEventTitleInput.setText(event.getEventTitle());
@@ -565,7 +591,13 @@ public class MonthView {
         calendarSmallSaveEventButton.setVisible(false);
         toggleSmallEventFields(false);
 
-        this.main.getJsonHandler().addEventToJson(event);
+
+        if (event.getEventType() == TypedEvent.Types.CANVAS) {
+            this.main.getCanvasICalHandler().editCanvasEventCompletion(event.getEventID(), event.isCompleted());
+        } else {
+            this.main.getJsonHandler().addEventToJson(event);
+        }
+
         rightPanel.getWeekView().refreshWeek();
 
 

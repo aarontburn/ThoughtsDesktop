@@ -2,6 +2,8 @@ package com.beanloaf.thoughtsdesktop.global_views;
 
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.handlers.CanvasICalHandler;
+import com.beanloaf.thoughtsdesktop.calendar.objects.ICal;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
@@ -20,46 +22,25 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class SettingsView extends ThoughtsView implements ThoughtsChangeListener {
 
-    private static SettingsView instance;
-
-
-    public static SettingsView getInstance(final MainApplication main) {
-        if (instance == null) {
-            instance = new SettingsView(main);
-        } else {
-
-            // TODO: Fix this part. Will not open if settings window is minimized. This does work but its ugly.
-//            instance.settingsWindow.setMaximized(true);
-//            instance.settingsWindow.setMaximized(false);
-
-            instance.settingsWindow.setAlwaysOnTop(true);
-            instance.settingsWindow.setAlwaysOnTop(false);
-        }
-        return instance;
-    }
-
-    public static boolean isInstanceActive() {
-        return instance != null;
-    }
-
-    public static void closeWindow() {
-        Platform.exit();
-    }
-
 
     private Stage settingsWindow;
-    private Scene scene;
 
     private TabPane settingsTabbedPane;
     /*      General Settings Layout         */
-    private CheckBox lightThemeCheckBox, pullOnStartupCheckBox, pushOnExitCheckBox, matchBraceCheckBox;
+    private CheckBox pullOnStartupCheckBox, pushOnExitCheckBox, matchBraceCheckBox;
     private Spinner<Integer> refreshSpinner;
     private Button revalidateButton;
+
+    /*      Calendar        */
+    private TextField iCalURLTextField;
+    private Button iCalSaveButton;
+    private Label iCalConnectionMessageLabel;
+    private Spinner<Integer> refreshCanvasICalSpinner;
 
 
 
@@ -97,29 +78,12 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
     }
 
 
-    private SettingsView(final MainApplication main) {
+    public SettingsView(final MainApplication main) {
         super(main);
 
         try {
 
             ThoughtsHelper.getInstance().addListener(this);
-
-            final FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("fxml/settings_view.fxml"));
-            final Scene scene = new Scene(fxmlLoader.load(), 900, 600);
-            this.scene = scene;
-
-            setScene(scene);
-
-            this.settingsWindow = new Stage();
-            this.settingsWindow.setResizable(false);
-            settingsWindow.setTitle("Thoughts - Settings");
-            settingsWindow.setScene(scene);
-            settingsWindow.show();
-            settingsWindow.getScene().getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> {
-                instance = null;
-                ThoughtsHelper.getInstance().removeListener(this);
-            });
-
 
             findNodes();
             setLayoutList();
@@ -143,7 +107,6 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
     }
 
 
-
     public void setSelectedTab(final int index) {
         settingsTabbedPane.getSelectionModel().select(index);
 
@@ -157,9 +120,6 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
         // General Settings
         revalidateButton = (Button) findNodeById("revalidateButton");
 
-        lightThemeCheckBox = (CheckBox) findNodeById("lightThemeCheckBox");
-        lightThemeCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.LIGHT_THEME));
-
         pullOnStartupCheckBox = (CheckBox) findNodeById("pullOnStartupCheckBox");
         pullOnStartupCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PULL_ON_STARTUP));
 
@@ -172,6 +132,15 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
 
         matchBraceCheckBox = (CheckBox) findNodeById("matchBraceCheckBox");
         matchBraceCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.MATCH_BRACE));
+
+
+        // Calendar
+        iCalURLTextField = (TextField) findNodeById("iCalURLTextField");
+        iCalSaveButton = (Button) findNodeById("iCalSaveButton");
+        iCalConnectionMessageLabel = (Label) findNodeById("iCalConnectionMessageLabel");
+        refreshCanvasICalSpinner = (Spinner<Integer>) findNodeById("refreshCanvasICalSpinner");
+        refreshCanvasICalSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9));
+
 
         // Login/Register Layout
         loginRegisterLayout = (AnchorPane) findNodeById("loginRegisterLayout");
@@ -210,8 +179,6 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
         // General Settings
         revalidateButton.setOnAction(e -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REVALIDATE_THOUGHT_LIST));
 
-        lightThemeCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) ->
-                main.settingsHandler.changeSetting(SettingsHandler.Settings.LIGHT_THEME, isChecked));
 
         pullOnStartupCheckBox.selectedProperty().addListener((observableValue, oldValue, isChecked) ->
                 main.settingsHandler.changeSetting(SettingsHandler.Settings.PULL_ON_STARTUP, isChecked));
@@ -224,8 +191,38 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
 
 
         refreshSpinner.getValueFactory().setValue(((Double) main.settingsHandler.getSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE)).intValue());
-        refreshSpinner.valueProperty().addListener((observableValue, integer, newValue) -> {
-            main.settingsHandler.changeSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE, newValue);
+        refreshSpinner.valueProperty().addListener((observableValue, integer, newValue) ->
+                main.settingsHandler.changeSetting(SettingsHandler.Settings.DATABASE_REFRESH_RATE, newValue));
+
+        // Calendar
+        final String storedICalUrl = (String) main.settingsHandler.getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL);
+
+        iCalURLTextField.setText(storedICalUrl);
+        new Thread(() -> {
+            if (CanvasICalHandler.checkICalUrl(storedICalUrl)) {
+                Platform.runLater(() -> iCalConnectionMessageLabel.setText("Connected!"));
+
+            } else {
+                Platform.runLater(() -> iCalConnectionMessageLabel.setText("Unable to connect to iCal. Please check the URL."));
+            }
+        }).start();
+
+
+        iCalSaveButton.setOnAction(e -> new Thread(() -> {
+            main.settingsHandler.changeSetting(SettingsHandler.Settings.CANVAS_ICAL_URL, iCalURLTextField.getText());
+            if (CanvasICalHandler.checkICalUrl(iCalURLTextField.getText())) {
+                Platform.runLater(() -> iCalConnectionMessageLabel.setText("Connected!"));
+
+            } else {
+                Platform.runLater(() -> iCalConnectionMessageLabel.setText("Unable to connect to iCal. Please check the URL."));
+            }
+        }).start());
+
+
+        refreshCanvasICalSpinner.getValueFactory().setValue(((Double) main.settingsHandler.getSetting(SettingsHandler.Settings.CANVAS_ICAL_REFRESH_RATE)).intValue());
+        refreshCanvasICalSpinner.valueProperty().addListener((observableValue, integer, newValue) -> {
+            main.settingsHandler.changeSetting(SettingsHandler.Settings.CANVAS_ICAL_REFRESH_RATE, newValue);
+            main.calendarMain.getCanvasICalHandler().setAutoRefresh();
         });
 
 
@@ -280,9 +277,12 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
     }
 
     private void setUserInfo(final ThoughtUser user) {
-        infoDisplayNameField.setText(user.displayName());
-        infoEmailField.setText(user.email());
-        infoUserIDField.setText(user.localId());
+        Platform.runLater(() -> {
+            infoDisplayNameField.setText(user.displayName());
+            infoEmailField.setText(user.email());
+            infoUserIDField.setText(user.localId());
+        });
+
     }
 
 

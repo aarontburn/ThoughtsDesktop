@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.collections.ListChangeListener;
@@ -16,23 +17,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DayEvent extends EventBoxLabel implements EventLabel {
+public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent {
 
     public final static String DAY_EVENT_ID = "dayEvent";
 
     private final CalendarMain main;
 
 
-    private Event event;
-    public boolean isReference;
-    public final boolean isScheduleEvent;
+    private final BasicEvent event;
 
     private final List<EventLabel> references = new ArrayList<>();
 
 
+    public boolean isReference;
+
+
+    private Types eventType;
+
+
+
+
+
+
     // Cloning constructor, used to tie the eventbox object to the one in the grid
     public DayEvent(final DayEvent reference, final CalendarMain main) {
-        this(reference.getDate(), reference.getEventTitle(), main, reference.isScheduleEvent);
+        this(reference.getDate(), reference.getEventTitle(), main, reference.getEventType());
 
         this.isReference = true;
 
@@ -50,22 +59,37 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
 
     // Constructor for creating a NEW event
-    public DayEvent(final LocalDate day, final String eventName, final CalendarMain main, final boolean isScheduleEvent) {
-        this(day, eventName, UUID.randomUUID().toString(), main, isScheduleEvent);
+    public DayEvent(final LocalDate day, final String eventName, final CalendarMain main, final Types eventType) {
+        this(day, eventName, UUID.randomUUID().toString(), main, eventType);
     }
 
 
     // Constructor for reading an EXISTING event from file
     public DayEvent(final LocalDate day, final String eventTitle, final String eventID,
-                    final CalendarMain main, final boolean isScheduleEvent) {
+                    final CalendarMain main, final Types eventType) {
         super(eventTitle);
-        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(isScheduleEvent ? "icons/schedule-icon.png" : "icons/calendar-small-page.png")), 17.5, 17.5, true, true)));
-
         this.main = main;
-        event = new Event(eventTitle);
+
+        this.eventType = eventType;
+
+
+
+
+        String graphic = "icons/calendar-small-page.png";
+        if (eventType == Types.SCHEDULE) {
+            graphic = "icons/schedule-icon.png";
+        } else if (eventType == Types.CANVAS) {
+            graphic = "icons/canvas-icon.png";
+        }
+
+
+        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true)));
+
+        event = new BasicEvent(eventTitle);
         event.setStartDate(day);
 
-        this.isScheduleEvent = isScheduleEvent;
+
+
 
         getToolTip().textProperty().bindBidirectional(this.textProperty());
         this.setId(DAY_EVENT_ID);
@@ -88,10 +112,15 @@ public class DayEvent extends EventBoxLabel implements EventLabel {
 
 
     @Override
+    public Types getEventType() {
+        return this.eventType;
+    }
+
+
+    @Override
     public void onClick() {
-        Logger.log("event pressed");
         this.main.getRightPanel().getMonthView().selectEvent(this, false);
-//        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed.");
+        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed. Type: " + eventType);
     }
 
 

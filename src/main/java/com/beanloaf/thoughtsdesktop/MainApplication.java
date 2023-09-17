@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
@@ -19,6 +20,7 @@ import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
@@ -51,17 +53,19 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     public ListView listView;
     public TextView textView;
 
+    public SettingsView settingsView;
+
 
     /*  Layouts  */
     private Node[] layoutList;
-    private AnchorPane homeRoot;
-    private VBox notepadFXML, calendarFXML;
+    private Node homeRoot, notepadFXML, calendarFXML, settingsFXML;
     public Layouts currentLayout;
 
     public enum Layouts {
         HOME(0),
         NOTES(1),
-        CALENDAR(2);
+        CALENDAR(2),
+        SETTINGS(3);
 
         private final int layoutNum;
 
@@ -91,7 +95,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         TC.Directories.STORAGE_PATH.mkdirs();
 
 
-        settingsHandler = new SettingsHandler();
+        settingsHandler = SettingsHandler.getInstance();
         ThoughtsHelper.getInstance().addListener(this);
 
 
@@ -117,6 +121,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         scene.getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, windowEvent -> {
             homeView.clock.stop();
             firebaseHandler.stopRefresh();
+            calendarMain.getCanvasICalHandler().stopRefresh();
 
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_X, stage.getX());
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_Y, stage.getY());
@@ -126,17 +131,17 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_MAXIMIZED, stage.isMaximized());
 
-
-            if (SettingsView.isInstanceActive()) SettingsView.closeWindow();
-
         });
 
 
         /*  Layouts */
-        homeRoot = (AnchorPane) findNodeById("homeRoot");
-        notepadFXML = (VBox) findNodeById("notepadFXML");
-        calendarFXML = (VBox) findNodeById("calendarFXML");
-        layoutList = new Node[]{homeRoot, notepadFXML, calendarFXML};
+        homeRoot = findNodeById("homeRoot");
+        notepadFXML = findNodeById("notepadFXML");
+        calendarFXML = findNodeById("calendarFXML");
+        settingsFXML = findNodeById("settingsFXML");
+
+
+        layoutList = new Node[]{homeRoot, notepadFXML, calendarFXML, settingsFXML};
         /*  ------  */
 
 
@@ -149,6 +154,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         swapLayouts(Layouts.HOME);
 
         homeView = new HomeView(this);
+        settingsView = new SettingsView(this);
 
 
         final MainApplication main = this;
@@ -190,6 +196,12 @@ public class MainApplication extends Application implements ThoughtsChangeListen
                 headerController.setSelectedTab(headerController.headerCalendarButton);
                 toggleLayoutVisibility(calendarFXML);
                 if (calendarMain != null) calendarMain.onOpen();
+
+            }
+            case SETTINGS -> {
+                headerController.setSelectedTab(headerController.headerSettingsButton);
+                toggleLayoutVisibility(settingsFXML);
+
 
             }
 
@@ -252,10 +264,25 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {
-            case OPEN_HOME_SETTINGS -> SettingsView.getInstance(this);
-            case OPEN_NOTES_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(1);
-            case OPEN_CALENDAR_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(2);
-            case OPEN_CLOUD_SETTINGS -> SettingsView.getInstance(this).setSelectedTab(3);
+            case OPEN_HOME_SETTINGS -> {
+                swapLayouts(Layouts.SETTINGS);
+                settingsView.setSelectedTab(0);
+            }
+            case OPEN_NOTES_SETTINGS -> {
+                swapLayouts(Layouts.SETTINGS);
+                settingsView.setSelectedTab(1);
+
+            }
+            case OPEN_CALENDAR_SETTINGS -> {
+                swapLayouts(Layouts.SETTINGS);
+                settingsView.setSelectedTab(2);
+
+            }
+            case OPEN_CLOUD_SETTINGS -> {
+                swapLayouts(Layouts.SETTINGS);
+                settingsView.setSelectedTab(3);
+
+            }
         }
     }
 }

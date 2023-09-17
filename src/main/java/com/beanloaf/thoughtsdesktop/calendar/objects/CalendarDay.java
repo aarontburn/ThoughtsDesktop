@@ -89,7 +89,6 @@ public class CalendarDay extends AnchorPane {
     }
 
     public void onClick() {
-        Logger.log("calendar day pressed");
         main.getRightPanel().getMonthView().selectDay(this, true);
     }
 
@@ -124,7 +123,9 @@ public class CalendarDay extends AnchorPane {
         }
 
         eventList.remove(nodeToRemove);
-        eventContainer.getChildren().remove(nodeToRemove);
+
+        final Node finalNodeToRemove = nodeToRemove;
+        Platform.runLater(() -> eventContainer.getChildren().remove(finalNodeToRemove));
     }
 
     public void checkIsToday() {

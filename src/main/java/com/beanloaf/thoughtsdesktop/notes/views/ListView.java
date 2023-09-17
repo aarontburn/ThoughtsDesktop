@@ -20,10 +20,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Data.*;
@@ -519,13 +516,9 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
             case SELECTED_TAG_ITEM -> {
                 selectedTagItem = (TagListItem) eventValue;
 
-
-                synchronized (tagList.getChildren()) {
-                    for (final Node node : tagList.getChildren()) {
-                        if (node.getClass() != TagListItem.class) continue;
-
-                        node.getStyleClass().remove("tagListSelected");
-                    }
+                for (Node node : tagList.getChildren()) {
+                    if (node.getClass() != TagListItem.class) continue;
+                    node.getStyleClass().remove("tagListSelected");
                 }
 
 

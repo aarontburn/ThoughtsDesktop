@@ -3,11 +3,15 @@ package com.beanloaf.thoughtsdesktop.calendar.views;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarHandler;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJsonHandler;
+import com.beanloaf.thoughtsdesktop.calendar.handlers.CanvasICalHandler;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -23,6 +27,7 @@ public class CalendarMain extends ThoughtsView {
 
     private final CalendarHandler calendarHandler;
     private final CalendarJsonHandler calendarJson;
+    private final CanvasICalHandler canvasICalHandler;
 
 
     private final RightPanel rightPanel;
@@ -47,11 +52,13 @@ public class CalendarMain extends ThoughtsView {
         swapOverlay(Overlays.LOADING);
 
         this.calendarHandler = new CalendarHandler(this);
+        this.canvasICalHandler = new CanvasICalHandler(this);
         this.calendarJson = new CalendarJsonHandler(this);
         this.rightPanel = new RightPanel(this);
 
 
         Platform.runLater(() -> {
+            // Reading schedules
             for (final ScheduleData data : getJsonHandler().getScheduleDataList()) {
                 getRightPanel().getMonthView().addScheduleToCalendarDay(data);
 
@@ -63,6 +70,7 @@ public class CalendarMain extends ThoughtsView {
                 getRightPanel().getMonthView().calendarScheduleBox.getChildren().add(new ScheduleBoxItem(this, data));
             }
 
+            // Reading calendar.json
             final Map<LocalDate, List<DayEvent>> eventMap = getJsonHandler().getEventMap();
 
             for (final LocalDate date : eventMap.keySet()) {
@@ -73,7 +81,6 @@ public class CalendarMain extends ThoughtsView {
 
             startup();
         });
-
 
     }
 
@@ -119,6 +126,10 @@ public class CalendarMain extends ThoughtsView {
 
     public CalendarHandler getCalendarHandler() {
         return this.calendarHandler;
+    }
+
+    public CanvasICalHandler getCanvasICalHandler() {
+        return this.canvasICalHandler;
     }
 
 

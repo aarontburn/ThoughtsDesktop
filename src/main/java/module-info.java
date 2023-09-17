@@ -9,6 +9,7 @@ module com.beanloaf.thoughtsdesktop {
     requires org.apache.commons.codec;
     requires annotations;
     requires kotlin.stdlib;
+    requires net.sf.biweekly;
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.notes.changeListener;

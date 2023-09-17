@@ -25,6 +25,7 @@ public class TC {
         /*  Calendar    */
         public static final File CALENDAR_PATH = new File(STORAGE_PATH, "/calendar/");
         public static final File CALENDAR_DATA_FILE = new File(CALENDAR_PATH, "calendar.json");
+        public static final File CANVAS_ICAL_DATA_FILE = new File(CALENDAR_PATH, "canvas_ical.json");
         public static final File CALENDAR_SCHEDULES_PATH = new File(CALENDAR_PATH, "/schedules/");
     }
 

@@ -1,9 +1,11 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
+import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
+
 import java.time.LocalDate;
 import java.util.*;
 
-public class ScheduleData {
+public class ScheduleData implements TypedEvent {
 
 
     private String scheduleName = "";
@@ -98,5 +100,10 @@ public class ScheduleData {
                 ", ID: '" + id + '\'' +
                 ", Schedule Event List: " + scheduleEventMap +
                 '}';
+    }
+
+    @Override
+    public Types getEventType() {
+        return Types.SCHEDULE;
     }
 }

@@ -17,11 +17,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SettingsHandler {
 
 
+    private static SettingsHandler instance;
+
     private final Map<Settings, Object> settingPropertyList = new ConcurrentHashMap<>();
 
     public enum Settings {
 
-        LIGHT_THEME("lightTheme", false),
         PULL_ON_STARTUP("pullOnStartup", false),
         PUSH_ON_EXIT("pushOnExit", false),
         MATCH_BRACE("matchBrace", true),
@@ -30,7 +31,9 @@ public class SettingsHandler {
         WINDOW_X("windowX", 0.0),
         WINDOW_Y("windowY", 0.0),
         WINDOW_MAXIMIZED("windowMaximized", false),
-        DATABASE_REFRESH_RATE("databaseRefreshRate", 1)
+        DATABASE_REFRESH_RATE("databaseRefreshRate", 1),
+        CANVAS_ICAL_URL("canvasICalUrl", ""),
+        CANVAS_ICAL_REFRESH_RATE("canvasICalRefreshRate", 1);
         ;
 
         private final String name;
@@ -56,7 +59,16 @@ public class SettingsHandler {
     }
 
 
-    public SettingsHandler() {
+    public static SettingsHandler getInstance() {
+        if (instance == null) {
+            instance = new SettingsHandler();
+        }
+
+        return instance;
+    }
+
+
+    private SettingsHandler() {
         checkSettingsFile();
 
     }

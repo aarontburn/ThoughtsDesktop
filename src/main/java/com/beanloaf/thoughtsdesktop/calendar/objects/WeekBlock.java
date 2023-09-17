@@ -24,7 +24,7 @@ public class WeekBlock extends VBox implements EventLabel {
 
     private final WeekView weekView;
 
-    private final Event event;
+    private final BasicEvent event;
 
 
     private final String color = COLORS[new Random().nextInt(COLORS.length)];
@@ -39,7 +39,7 @@ public class WeekBlock extends VBox implements EventLabel {
     /*
      * Minimum height for each box is 28 units
      * */
-    public WeekBlock(final WeekView weekView, final Event event) {
+    public WeekBlock(final WeekView weekView, final BasicEvent event) {
         super();
 
         this.event = event;

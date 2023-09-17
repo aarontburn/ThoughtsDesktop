@@ -41,7 +41,7 @@ public class WeekView {
     private ScrollPane scrollPane;
 
 
-    private final List<Event> weekEventList = new ArrayList<>();
+    private final List<BasicEvent> weekEventList = new ArrayList<>();
     private final Map<Weekday, VBox> allDayEventMap = new ConcurrentHashMap<>();
 
     public WeekView(final RightPanel rightPanel) {
@@ -222,7 +222,7 @@ public class WeekView {
                     improve memory and speed.
                 */
 
-                final Event event = new Event(dayEvent.getEventTitle())
+                final BasicEvent event = new BasicEvent(dayEvent.getEventTitle())
                         .setStartTime(dayEvent.getStartTime())
                         .setEndTime(dayEvent.getEndTime())
                         .setDescription(dayEvent.getDescription())
@@ -243,7 +243,7 @@ public class WeekView {
         adjustBounds();
         createGrid();
 
-        for (final Event e : weekEventList) {
+        for (final BasicEvent e : weekEventList) {
             if (e.getStartTime() == null) continue;
             final WeekBlock block = new WeekBlock(this, e);
             weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
@@ -256,7 +256,7 @@ public class WeekView {
         LocalTime minTime = null;
         LocalTime maxTime = null;
 
-        for (final Event event : weekEventList) {
+        for (final BasicEvent event : weekEventList) {
             final LocalTime startTime = event.getStartTime();
 
             if (startTime == null) {

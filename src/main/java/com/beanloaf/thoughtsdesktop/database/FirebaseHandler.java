@@ -58,6 +58,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
 
     private boolean eventInProgress;
 
+
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> scheduledTask;
 
@@ -122,7 +123,6 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             registerURL();
 
             setAutoRefresh();
-
 
             Platform.runLater(() -> ThoughtsHelper.getInstance().fireEvent(LOG_IN_SUCCESS, user));
 
@@ -235,6 +235,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 responseBuilder.append(line);
             }
             responseReader.close();
+            connection.disconnect();
 
             final JSONObject json = (JSONObject) new JSONParser()
                     .parse(new StringReader(responseBuilder.toString()));
@@ -366,6 +367,7 @@ public class FirebaseHandler implements ThoughtsChangeListener {
                 writer.write(batchPayload.toString());
                 writer.flush();
                 writer.close();
+                connection.disconnect();
 
                 final int responseCode = connection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {

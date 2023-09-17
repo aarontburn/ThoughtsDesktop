@@ -62,7 +62,6 @@ public class CalendarJsonHandler {
         try {
             final JSONHelper rootHelper = new JSONHelper(root);
 
-
             for (final Object o : rootHelper.getKeys()) {
                 final String year = (String) o;
 
@@ -89,7 +88,7 @@ public class CalendarJsonHandler {
 
                             final LocalDate eventDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum));
 
-                            final DayEvent event = new DayEvent(eventDate, eventTitle, eventID, main, false);
+                            final DayEvent event = new DayEvent(eventDate, eventTitle, eventID, main, TypedEvent.Types.DAY);
                             event.setDescription(description);
                             event.setCompleted(isCompleted != null ? isCompleted : false, false);
 
@@ -145,11 +144,9 @@ public class CalendarJsonHandler {
 
 
     public void addEventToJson(final DayEvent event) {
-        if (event.isScheduleEvent) {
-            Logger.log("Attempted to record a scheduleEvent to json: " + event.getEventTitle());
+        if (event.getEventType() != TypedEvent.Types.DAY) {
             return;
         }
-
 
         new Thread(() -> {
             final String year = String.valueOf(event.getDate().getYear());
