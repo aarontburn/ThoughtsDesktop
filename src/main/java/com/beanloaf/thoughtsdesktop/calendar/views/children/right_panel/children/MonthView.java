@@ -6,6 +6,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.left_panel.LeftPanel;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
@@ -49,13 +50,9 @@ public class MonthView {
 
     /*  Left Panel  */
     private Button calendarEventsButton, calendarScheduleButton;
-    private Node[] leftLayoutList;
-    private Node calendarLeftEventPanel, calendarLeftSchedulePanel;
 
 
     /*  Event Box   */
-    private VBox calendarEventBox;
-    private Label calendarDayLabel;
     private Button calendarNewEventButton;
 
 
@@ -84,7 +81,7 @@ public class MonthView {
 
 
         changeMonth(this.main.getCalendarHandler().getCurrentMonth());
-        swapLeftPanel(calendarLeftEventPanel);
+        main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS);
 
     }
 
@@ -99,13 +96,9 @@ public class MonthView {
         /*  Left Panel  */
         calendarEventsButton = (Button) findNodeById("calendarEventsButton");
         calendarScheduleButton = (Button) findNodeById("calendarScheduleButton");
-        calendarLeftEventPanel = findNodeById("calendarLeftEventPanel");
-        calendarLeftSchedulePanel = findNodeById("calendarLeftSchedulePanel");
-        leftLayoutList = new Node[]{calendarLeftEventPanel, calendarLeftSchedulePanel};
+
 
         /*  Event Box   */
-        calendarEventBox = (VBox) findNodeById("calendarEventBox");
-        calendarDayLabel = (Label) findNodeById("calendarDayLabel");
         calendarNewEventButton = (Button) findNodeById("calendarNewEventButton");
 
         /*  Schedule Box    */
@@ -157,8 +150,8 @@ public class MonthView {
         calendarNewScheduleButton.setOnAction(e -> this.main.swapOverlay(CalendarMain.Overlays.SCHEDULE, new ScheduleData()));
 
         /*  Left Panel  */
-        calendarEventsButton.setOnAction(e -> swapLeftPanel(calendarLeftEventPanel));
-        calendarScheduleButton.setOnAction(e -> swapLeftPanel(calendarLeftSchedulePanel));
+        calendarEventsButton.setOnAction(e -> main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS));
+        calendarScheduleButton.setOnAction(e -> main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.SCHEDULES));
 
 
         /*  Small New Event*/
@@ -201,14 +194,6 @@ public class MonthView {
     }
 
 
-    private void swapLeftPanel(final Node pane) {
-        for (final Node anchorPane : leftLayoutList) {
-            anchorPane.setVisible(false);
-        }
-
-        if (pane != null) pane.setVisible(true);
-
-    }
 
 
     public void changeMonth(final LocalDate date) {
@@ -474,16 +459,18 @@ public class MonthView {
 
         Platform.runLater(() -> {
             // TODO: this breaks somehow when from one scheduleevent to another
-            calendarEventBox.getChildren().clear();
+            main.getLeftPanel().clearEventBox();
 
-            calendarDayLabel.setText(ThoughtsHelper.toCamelCase(day.getMonth().toString()) + " " + day.getDay()
-                    + ThoughtsHelper.getNumberSuffix(day.getDay()) + ", " + day.getYear());
+            main.getLeftPanel().setDateLabel(day.getDate());
 
 
+
+            final List<DayEvent> cloneList = new ArrayList<>();
             for (final DayEvent dayEvent : day.getEvents()) {
-                final DayEvent clone = new DayEvent(dayEvent, main);
-                calendarEventBox.getChildren().add(clone);
+                cloneList.add(new DayEvent(dayEvent, main));
             }
+
+            main.getLeftPanel().addEventToEventBox(cloneList.toArray(new DayEvent[0]));
         });
 
 
@@ -497,7 +484,7 @@ public class MonthView {
 
     public void selectEvent(final DayEvent event, final boolean editable) {
         selectDay(event.getDate(), false);
-        swapLeftPanel(calendarLeftEventPanel);
+        main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS);
 
         event.getStyleClass().add("selected-day-event");
         if (selectedEvent != null) selectedEvent.getStyleClass().remove("selected-day-event");
@@ -600,6 +587,9 @@ public class MonthView {
 
         rightPanel.getWeekView().refreshWeek();
 
+        main.getCalendarHandler().getDay(event.getDate()).sortEvents();
+        main.getLeftPanel().sortEventBox();
+
 
     }
 
@@ -619,7 +609,7 @@ public class MonthView {
         calendarMonth.getDay(day).removeEvent(event);
         selectDay(this.main.getCalendarHandler().getSelectedDay(), true);
 
-        if (rightPanel.getCurrentLayout() == RightPanel.Layouts.WEEK) {
+        if (rightPanel.getCurrentLayout() == RightPanel.RightLayouts.WEEK) {
             rightPanel.getWeekView().refreshWeek();
         }
 

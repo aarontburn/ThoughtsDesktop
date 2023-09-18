@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
@@ -16,6 +17,7 @@ import javafx.scene.text.TextAlignment;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -109,9 +111,17 @@ public class CalendarDay extends AnchorPane {
         return this.date;
     }
 
+    public void sortEvents() {
+        FXCollections.sort(eventContainer.getChildren(), DayEvent.getDayEventComparator());
+
+    }
+
     public void addEvent(final DayEvent event) {
         eventList.add(event);
-        Platform.runLater(() -> eventContainer.getChildren().add(event));
+        Platform.runLater(() -> {
+            eventContainer.getChildren().add(event);
+            sortEvents();
+        });
     }
 
     public void removeEvent(final DayEvent event) {

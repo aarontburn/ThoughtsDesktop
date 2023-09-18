@@ -4,7 +4,6 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children.MonthView;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children.WeekView;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -13,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.util.Pair;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,12 +20,12 @@ public class RightPanel {
 
     private final CalendarMain main;
 
-    public enum Layouts {
+    public enum RightLayouts {
         MONTH, WEEK
     }
 
-    private Layouts currentLayout = Layouts.MONTH;
-    private final Map<Layouts, Node> layoutMap = new HashMap<>();
+    private RightLayouts currentLayout = RightLayouts.MONTH;
+    private final Map<RightLayouts, Node> layoutMap = new HashMap<>();
 
 
     private final MonthView monthView;
@@ -42,8 +40,8 @@ public class RightPanel {
     public RightPanel(final CalendarMain main) {
         this.main = main;
 
-        layoutMap.put(Layouts.MONTH, findNodeById("monthView"));
-        layoutMap.put(Layouts.WEEK, findNodeById("weekView"));
+        layoutMap.put(RightLayouts.MONTH, findNodeById("monthView"));
+        layoutMap.put(RightLayouts.WEEK, findNodeById("weekView"));
 
         locateNodes();
         attachEvents();
@@ -83,37 +81,37 @@ public class RightPanel {
 
         weekViewButton.setOnAction(e -> {
             weekView.changeWeek(getMain().getCalendarHandler().getSelectedDay().getDate());
-            swapRightPanel(Layouts.WEEK);
+            swapRightPanel(RightLayouts.WEEK);
         });
         monthViewButton.setOnAction(e -> {
-            swapRightPanel(Layouts.MONTH);
+            swapRightPanel(RightLayouts.MONTH);
         });
 
 
         calendarNextButton.setOnMouseClicked(e -> {
-            if (currentLayout == Layouts.MONTH) {
+            if (currentLayout == RightLayouts.MONTH) {
                 this.getMonthView().changeMonth(getMain().getCalendarHandler().getCurrentMonth().getNextMonth());
-            } else if (currentLayout == RightPanel.Layouts.WEEK) {
+            } else if (currentLayout == RightLayouts.WEEK) {
                 this.getWeekView().changeToNextWeek();
             }
         });
 
         calendarPrevButton.setOnMouseClicked(e -> {
-            if (currentLayout == Layouts.MONTH) {
+            if (currentLayout == RightLayouts.MONTH) {
                 this.getMonthView().changeMonth(getMain().getCalendarHandler().getCurrentMonth().getPreviousMonth());
-            } else if (currentLayout == Layouts.WEEK) {
+            } else if (currentLayout == RightLayouts.WEEK) {
                 this.getWeekView().changeToPrevWeek();
             }
         });
     }
 
     public void updateHeaderText() {
-        if (currentLayout == Layouts.MONTH) {
+        if (currentLayout == RightLayouts.MONTH) {
             final CalendarMonth calendarMonth = getMain().getCalendarHandler().getCurrentMonth();
             this.setHeaderText(ThoughtsHelper.toCamelCase(calendarMonth.getMonth().toString()) + ", " + calendarMonth.getYear());
 
 
-        } else if (currentLayout == Layouts.WEEK) {
+        } else if (currentLayout == RightLayouts.WEEK) {
             final Pair<LocalDate, LocalDate> startEndRange = weekView.getDateRange(getMain().getCalendarHandler().getSelectedDay().getDate());
             this.setHeaderText(String.format("Week (%s - %s)",
                     startEndRange.getKey().format(DateTimeFormatter.ofPattern("M/d/yyyy")),
@@ -126,10 +124,10 @@ public class RightPanel {
         Platform.runLater(() -> calendarTitleLabel.setText(text));
     }
 
-    public void swapRightPanel(final Layouts swapToLayout) {
+    public void swapRightPanel(final RightLayouts swapToLayout) {
         if (swapToLayout == null) throw new IllegalArgumentException("swapToLayout cannot be null");
         currentLayout = swapToLayout;
-        for (final Layouts layout : layoutMap.keySet()) {
+        for (final RightLayouts layout : layoutMap.keySet()) {
             layoutMap.get(layout).setVisible(false);
         }
         updateHeaderText();
@@ -145,7 +143,7 @@ public class RightPanel {
         return this.weekView;
     }
 
-    public Layouts getCurrentLayout() {
+    public RightLayouts getCurrentLayout() {
         return this.currentLayout;
     }
 

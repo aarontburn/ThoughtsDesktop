@@ -228,7 +228,7 @@ public class CanvasICalHandler {
             }
 
 
-            Logger.log("Caching canvas events to canvas_ical.json");
+            Logger.log("Caching Canvas events to canvas_ical.json");
             try {
                 TC.Directories.CALENDAR_PATH.mkdir();
                 TC.Directories.CANVAS_ICAL_DATA_FILE.createNewFile();

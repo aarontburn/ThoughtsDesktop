@@ -203,7 +203,7 @@ public class WeekView {
         this.endDate = startEndRange.getValue();
         final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
-        if (rightPanel.getCurrentLayout() == RightPanel.Layouts.WEEK) {
+        if (rightPanel.getCurrentLayout() == RightPanel.RightLayouts.WEEK) {
             rightPanel.setHeaderText(String.format("Week (%s - %s)",
                     startEndRange.getKey().format(DateTimeFormatter.ofPattern("M/d/yyyy")),
                     startEndRange.getValue().format(DateTimeFormatter.ofPattern("M/d/yyyy"))));

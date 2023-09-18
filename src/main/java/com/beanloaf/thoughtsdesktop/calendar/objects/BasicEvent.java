@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class BasicEvent implements TypedEvent {
@@ -172,4 +173,7 @@ public class BasicEvent implements TypedEvent {
     public int hashCode() {
         return Objects.hash(title, description, startTime, endTime, startDate, endDate, weekday, isComplete, eventType, id);
     }
+
+
+
 }

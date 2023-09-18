@@ -9,6 +9,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.left_panel.LeftPanel;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
@@ -31,6 +32,7 @@ public class CalendarMain extends ThoughtsView {
 
 
     private final RightPanel rightPanel;
+    private final LeftPanel leftPanel;
 
 
     /*  Full Screen Overlays    */
@@ -54,6 +56,7 @@ public class CalendarMain extends ThoughtsView {
         this.calendarHandler = new CalendarHandler(this);
         this.canvasICalHandler = new CanvasICalHandler(this);
         this.calendarJson = new CalendarJsonHandler(this);
+        this.leftPanel = new LeftPanel(this);
         this.rightPanel = new RightPanel(this);
 
 
@@ -88,7 +91,7 @@ public class CalendarMain extends ThoughtsView {
         getRightPanel().getMonthView().startupMonthView();
         getRightPanel().getWeekView().changeWeek(getCalendarHandler().getSelectedDay().getDate());
 
-        rightPanel.swapRightPanel(RightPanel.Layouts.MONTH);
+        rightPanel.swapRightPanel(RightPanel.RightLayouts.MONTH);
         swapOverlay(Overlays.CALENDAR);
     }
 
@@ -117,6 +120,10 @@ public class CalendarMain extends ThoughtsView {
 
     public RightPanel getRightPanel() {
         return this.rightPanel;
+    }
+
+    public LeftPanel getLeftPanel() {
+        return this.leftPanel;
     }
 
 

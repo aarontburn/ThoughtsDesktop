@@ -23,7 +23,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1080.0" prefWidth="1920.0" stylesheets="@../css/calendar_view_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane VBox.vgrow="ALWAYS">
@@ -475,18 +474,11 @@
                                                 <VBox fx:id="calendarEventBox" prefHeight="34.0" prefWidth="339.0" spacing="3.0" styleClass="event-box" />
                                              </content>
                                           </ScrollPane>
-                                          <HBox alignment="CENTER_RIGHT" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="48.0">
-                                             <children>
-                                                <Button fx:id="calendarNewEventButton" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendarButton" text="New Event">
-                                                   <HBox.margin>
-                                                      <Insets right="16.0" />
-                                                   </HBox.margin>
-                                                   <font>
-                                                      <Font name="Lato Regular" size="15.0" />
-                                                   </font>
-                                                </Button>
-                                             </children>
-                                          </HBox>
+                                          <Button fx:id="calendarNewEventButton" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendarButton" text="New Event" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="48.0">
+                                             <font>
+                                                <Font name="Lato Regular" size="15.0" />
+                                             </font>
+                                          </Button>
                                           <Label fx:id="calendarDayLabel" alignment="CENTER" text="September 1st, 2023" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
                                              <font>
                                                 <Font size="23.0" />
@@ -679,14 +671,14 @@
                               </SplitPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="calendarLeftSchedulePanel" prefHeight="986.0" prefWidth="380.0" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftSchedulePanel" prefHeight="986.0" prefWidth="380.0" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Label alignment="CENTER" layoutX="184.0" layoutY="39.0" text="Schedules" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
+                              <Label alignment="CENTER" layoutX="184.0" layoutY="39.0" text="Schedules" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.0">
                                  <font>
                                     <Font size="23.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="calendarNewScheduleButton" layoutX="249.0" layoutY="45.0" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendarButton" text="New Schedule" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="48.0">
+                              <Button fx:id="calendarNewScheduleButton" layoutX="249.0" layoutY="45.0" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendarButton" text="New Schedule" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="51.0">
                                  <font>
                                     <Font name="Lato Regular" size="15.0" />
                                  </font>

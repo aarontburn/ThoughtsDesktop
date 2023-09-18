@@ -1,7 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.collections.ListChangeListener;
@@ -9,15 +8,17 @@ import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent {
+public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, Comparable<DayEvent> {
 
     public final static String DAY_EVENT_ID = "dayEvent";
 
@@ -277,4 +278,39 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent {
             }
         }
     }
+
+    @Override
+    public int compareTo(@NotNull DayEvent other) {
+        // Compare by startDate if both events have non-null startDate
+        if (this.getStartTime() != null && other.getStartTime() != null) {
+            return this.getStartTime().compareTo(other.getStartTime());
+        }
+
+        // Compare by name if at least one of the events has a null startDate
+        if (this.getStartTime() == null && other.getStartTime() == null) {
+            // If both have null startDate, sort by name
+            return this.getEventTitle().compareTo(other.getEventTitle());
+        } else if (this.getStartTime() == null) {
+            // If only this event has a null startDate, it comes after the other
+            return 1;
+        } else {
+            // If only the other event has a null startDate, it comes before this one
+            return -1;
+        }
+    }
+
+    public static Comparator<Node> getDayEventComparator() {
+        return (o1, o2) -> {
+            if (o1.getClass() != DayEvent.class && o2.getClass() != DayEvent.class) {
+                return 0;
+            }
+
+            final DayEvent event1 = (DayEvent) o1;
+            final DayEvent event2 = (DayEvent) o2;
+
+            return event1.compareTo(event2);
+        };
+
+    }
+
 }
