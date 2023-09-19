@@ -321,14 +321,16 @@ public class MonthView {
 
 
     public void selectDay(final CalendarDay day, final boolean hideEventFields) {
-        Platform.runLater(() -> main.getLeftPanel().setEventFieldsVisibility(!hideEventFields));
-
+        if (this.main.getCalendarHandler().getSelectedDay() != null) {
+            this.main.getCalendarHandler().getSelectedDay().setStyle("");
+        }
         this.main.getCalendarHandler().setSelectedDay(day);
+        day.setStyle("-fx-border-color: white; -fx-border-radius: 5;");
+
 
         Platform.runLater(() -> {
-            // TODO: this breaks somehow when from one scheduleevent to another
+            main.getLeftPanel().setEventFieldsVisibility(!hideEventFields);
             main.getLeftPanel().clearEventBox();
-
             main.getLeftPanel().setDateLabel(day.getDate());
 
 

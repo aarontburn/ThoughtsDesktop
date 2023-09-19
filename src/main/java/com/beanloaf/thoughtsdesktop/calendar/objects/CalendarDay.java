@@ -136,9 +136,7 @@ public class CalendarDay extends AnchorPane {
     }
 
     public void checkIsToday() {
-
         final LocalDate now = LocalDate.now();
-
         final String style = "-fx-border-color: rgb(41, 163, 211); -fx-border-radius: 5;";
 
         if (date.isEqual(now)) {
