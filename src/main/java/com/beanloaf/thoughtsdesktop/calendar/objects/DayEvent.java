@@ -21,24 +21,14 @@ import java.util.UUID;
 public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, Comparable<DayEvent> {
 
     public final static String DAY_EVENT_ID = "dayEvent";
-
     private final CalendarMain main;
 
-
     private final BasicEvent event;
-
     private final List<EventLabel> references = new ArrayList<>();
-
-
     public boolean isReference;
-
-
     private final Types eventType;
 
-
-
-
-
+    private String color;
 
     // Cloning constructor, used to tie the eventbox object to the one in the grid
     public DayEvent(final DayEvent reference, final CalendarMain main) {
@@ -48,6 +38,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
         reference.addReference(this);
         this.references.add(reference);
+        this.color = reference.color;
 
         event.setStartTime(reference.event.getStartTime());
         event.setEndTime(reference.event.getEndTime());
@@ -72,7 +63,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         this.main = main;
 
         this.eventType = eventType;
-
+        this.color = Colors.getRandomColor();
 
 
 
@@ -82,20 +73,16 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         } else if (eventType == Types.CANVAS) {
             graphic = "icons/canvas-icon.png";
         }
-
-
         setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true)));
 
-        event = new BasicEvent(eventTitle);
-        event.setStartDate(day);
-
+        this.event = new BasicEvent(eventTitle);
+        this.event.setStartDate(day);
+        this.event.setId(eventID);
+        this.setId(DAY_EVENT_ID);
 
 
 
         getToolTip().textProperty().bindBidirectional(this.textProperty());
-        this.setId(DAY_EVENT_ID);
-        this.event.setId(eventID);
-
 
         this.getChildren().addListener((ListChangeListener<Node>) change -> {
             for (final Node node : getChildren()) {
@@ -193,7 +180,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
 
-
     @Override
     public String getEventTitle() {
         return this.event.getTitle();
@@ -224,14 +210,16 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
     public static String getDisplayTime(final LocalTime time) {
-        String formattedTime = "";
-        if (time != null) {
-            formattedTime = time.format(DateTimeFormatter.ofPattern("h:mm a")).replace(" AM", "a").replace(" PM", "p") + " | ";
-        }
-        return formattedTime;
+        return time == null ? "" : time.format(DateTimeFormatter.ofPattern("h:mm a")).replace(" AM", "a").replace(" PM", "p") + " | ";
     }
 
+    public String getDisplayColor() {
+        return this.color;
+    }
 
+    public void setDisplayColor(final String color) {
+        this.color = color;
+    }
 
     @Override
     public void updateEventTitle(String eventTitle) {
@@ -281,20 +269,15 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     @Override
     public int compareTo(@NotNull DayEvent other) {
-        // Compare by startDate if both events have non-null startDate
         if (this.getStartTime() != null && other.getStartTime() != null) {
             return this.getStartTime().compareTo(other.getStartTime());
         }
 
-        // Compare by name if at least one of the events has a null startDate
         if (this.getStartTime() == null && other.getStartTime() == null) {
-            // If both have null startDate, sort by name
             return this.getEventTitle().compareTo(other.getEventTitle());
         } else if (this.getStartTime() == null) {
-            // If only this event has a null startDate, it comes after the other
             return 1;
         } else {
-            // If only the other event has a null startDate, it comes before this one
             return -1;
         }
     }

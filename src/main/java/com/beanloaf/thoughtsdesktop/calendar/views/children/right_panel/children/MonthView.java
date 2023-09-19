@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class MonthView {
 
@@ -30,12 +32,6 @@ public class MonthView {
     public final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
 
     private GridPane calendarFrame; // (7 x 5)
-
-
-
-
-
-
 
 
     public MonthView(final RightPanel rightPanel) {
@@ -179,6 +175,9 @@ public class MonthView {
             addScheduleToCalendarDay(data);
         }
 
+        Platform.runLater(() -> {
+            main.getRightPanel().getWeekView().refreshWeek();
+        });
 
     }
 
@@ -259,6 +258,7 @@ public class MonthView {
                 dayEvent.setDescription(scheduleEvent.getDescription());
                 dayEvent.setStartTime(scheduleEvent.getStartTime());
                 dayEvent.setEndTime(scheduleEvent.getEndTime());
+                dayEvent.setDisplayColor(scheduleEvent.getDisplayColor());
 
                 LocalDate finalStartDate = startDate;
                 Platform.runLater(() -> addEventToCalendarDay(finalStartDate, dayEvent));
@@ -270,14 +270,14 @@ public class MonthView {
 
     }
 
-    public void addCanvasEventsToCalendar(final List<BasicEvent> canvasEvents) {
+    public void addCanvasEventsToCalendar(final List<BasicEvent> newCanvasEvents) {
         for (final DayEvent storedCanvasEvent : main.getCalendarHandler().getCanvasEvents()) {
             main.getCalendarHandler().getDay(storedCanvasEvent.getDate()).removeEvent(storedCanvasEvent);
         }
 
         main.getCalendarHandler().getCanvasEvents().clear();
 
-        for (final BasicEvent event : canvasEvents) {
+        for (final BasicEvent event : newCanvasEvents) {
             final DayEvent e = new DayEvent(event.getStartDate(), event.getTitle(), event.getId(), main, TypedEvent.Types.CANVAS);
             e.setDescription(event.getDescription());
             e.setStartTime(event.getStartTime());
@@ -292,28 +292,16 @@ public class MonthView {
 
 
     public DayEvent addEventToCalendarDay(final LocalDate date, final DayEvent event) {
-        final Month month = date.getMonth();
-        final int year = date.getYear();
-        final int day = date.getDayOfMonth();
-
-        final CalendarMonth activeMonth = this.main.getCalendarHandler().getMonth(month, year);
-
-        if (day > activeMonth.getMonthLength()) throw new IllegalArgumentException("Day out of bounds. " + day);
-
-        activeMonth.getDay(day).addEvent(event);
-
+        this.main.getCalendarHandler().getMonth(date).getDay(date.getDayOfMonth()).addEvent(event);
         return event;
     }
 
     public DayEvent addNewEventToCalendarDay(final LocalDate date) {
-        final CalendarDay calendarDay = this.main.getCalendarHandler().getDay(date);
-
-        final DayEvent event = new DayEvent(LocalDate.of(calendarDay.getYear(), calendarDay.getMonth(), calendarDay.getDay()), "New Event", main, TypedEvent.Types.DAY);
+        final DayEvent event = new DayEvent(date, "New Event", main, TypedEvent.Types.DAY);
         event.setDescription("");
         event.setStartTime(null);
-
         this.main.getJsonHandler().addEventToJson(event);
-        calendarDay.addEvent(event);
+        this.main.getCalendarHandler().getDay(date).addEvent(event);
 
         return event;
 
@@ -332,7 +320,6 @@ public class MonthView {
             main.getLeftPanel().setEventFieldsVisibility(!hideEventFields);
             main.getLeftPanel().clearEventBox();
             main.getLeftPanel().setDateLabel(day.getDate());
-
 
 
             final List<DayEvent> cloneList = new ArrayList<>();
@@ -357,18 +344,23 @@ public class MonthView {
         main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS);
 
         event.getStyleClass().add("selected-day-event");
-        if (main.getCalendarHandler().getSelectedEvent() != null) main.getCalendarHandler().getSelectedEvent().getStyleClass().remove("selected-day-event");
+        if (main.getCalendarHandler().getSelectedEvent() != null) {
+            main.getCalendarHandler().getSelectedEvent().getStyleClass().remove("selected-day-event");
+        }
         main.getCalendarHandler().setSelectedEvent(event);
 
         main.getLeftPanel().onSelectEvent(event, editable);
     }
 
 
-
     public void saveEvent(DayEvent event) {
         final BasicEvent inputFields = main.getLeftPanel().getEventInputFields();
 
+
+
+
         event.setEventTitle(inputFields.getTitle());
+        event.setDescription(inputFields.getDescription());
 
         final LocalDate oldDate = event.getDate();
         if (oldDate != null && !inputFields.getStartDate().isEqual(oldDate)) {
@@ -378,7 +370,6 @@ public class MonthView {
         } else {
             event.setStartDate(inputFields.getStartDate());
         }
-
 
         event.setStartTime(inputFields.getStartTime());
         if (inputFields.getStartTime() != null) {
@@ -390,12 +381,9 @@ public class MonthView {
         } else {
             event.setEndTime(inputFields.getEndTime());
         }
-        event.setDescription(inputFields.getDescription());
-
 
         main.getLeftPanel().setFinalStartEndTimeLabel(event);
         main.getLeftPanel().toggleSmallEventFields(false);
-
 
         if (event.getEventType() == TypedEvent.Types.CANVAS) {
             this.main.getCanvasICalHandler().editCanvasEventCompletion(event.getEventID(), event.isCompleted());

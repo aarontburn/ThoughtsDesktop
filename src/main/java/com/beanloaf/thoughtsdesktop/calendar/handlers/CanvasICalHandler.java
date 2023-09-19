@@ -207,7 +207,12 @@ public class CanvasICalHandler {
         }
         cacheCanvasEventsToJson(iCalCanvasEventsList);
 
-        main.getRightPanel().getMonthView().addCanvasEventsToCalendar(iCalCanvasEventsList);
+
+        if (main.getRightPanel() == null) {
+            main.queuedTasks.add(() -> main.getRightPanel().getMonthView().addCanvasEventsToCalendar(iCalCanvasEventsList));
+        } else {
+            main.getRightPanel().getMonthView().addCanvasEventsToCalendar(iCalCanvasEventsList);
+        }
 
     }
 

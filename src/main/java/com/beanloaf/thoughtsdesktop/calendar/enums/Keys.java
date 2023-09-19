@@ -14,7 +14,9 @@ public enum Keys {
     END_DATE,
     ID,
     SCHEDULE_EVENTS,
-    TITLE;
+    TITLE,
+    DISPLAY_COLOR,
+    ;
 
 
     @Override

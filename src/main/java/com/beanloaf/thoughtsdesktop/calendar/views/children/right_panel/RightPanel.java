@@ -13,10 +13,13 @@ import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RightPanel {
+
 
     private final CalendarMain main;
 
@@ -48,6 +51,9 @@ public class RightPanel {
 
         this.monthView = new MonthView(this);
         this.weekView = new WeekView(this);
+
+
+
     }
 
     public Node findNodeById(final String nodeId) {

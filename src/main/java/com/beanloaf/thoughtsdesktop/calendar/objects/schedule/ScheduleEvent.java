@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.objects.Colors;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -19,11 +20,13 @@ public class ScheduleEvent {
     private LocalTime endTime;
     private String description = "";
     private final String id;
+    private String displayColor;
 
 
     public ScheduleEvent(final String scheduleEventName, final String id) {
         this.scheduleEventName = scheduleEventName;
         this.id = id;
+        this.displayColor = Colors.getRandomColor();
     }
 
     public void setScheduleEventName(final String newName) {
@@ -42,16 +45,13 @@ public class ScheduleEvent {
         return this.description;
     }
 
-
     public void setStartTime(final LocalTime startTime) {
         this.startTime = startTime;
     }
 
-
     public void setEndTime(final LocalTime endTime) {
         this.endTime = endTime;
     }
-
 
 
     public LocalTime getStartTime() {
@@ -76,6 +76,7 @@ public class ScheduleEvent {
 
 
 
+
     public void removeAllWeekdays() {
         this.weekdays.clear();
     }
@@ -94,6 +95,14 @@ public class ScheduleEvent {
     public List<Weekday> getWeekdays() {
         Collections.sort(weekdays);
         return this.weekdays;
+    }
+
+    public String getDisplayColor() {
+        return this.displayColor;
+    }
+
+    public void setDisplayColor(final String color) {
+        this.displayColor = color;
     }
 
     @Override

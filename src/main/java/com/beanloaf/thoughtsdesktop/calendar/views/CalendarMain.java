@@ -15,6 +15,7 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 public class CalendarMain extends ThoughtsView {
 
-
+    public List<Runnable> queuedTasks = new ArrayList<>();
     private final CalendarHandler calendarHandler;
     private final CalendarJsonHandler calendarJson;
     private final CanvasICalHandler canvasICalHandler;
@@ -72,6 +73,11 @@ public class CalendarMain extends ThoughtsView {
 
             startup();
         });
+
+        for (final Runnable runnable : queuedTasks) {
+            runnable.run();
+        }
+        queuedTasks.clear();
 
     }
 

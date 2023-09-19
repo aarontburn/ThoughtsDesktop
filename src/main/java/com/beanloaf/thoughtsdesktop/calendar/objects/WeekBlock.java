@@ -12,22 +12,17 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Random;
 
 public class WeekBlock extends VBox implements EventLabel {
 
-    private final static String[] COLORS = new String[]{
-            "green", "black", "blue", "navy", "indigo",
-            "darkblue", "darkgreen", "darkred", "midnightblue", "navy",
-            "purple"};
+
 
 
     private final WeekView weekView;
-
     private final BasicEvent event;
 
+    private final String color;
 
-    private final String color = COLORS[new Random().nextInt(COLORS.length)];
 
     /*  Components  */
     private final Label nameLabel;
@@ -43,6 +38,7 @@ public class WeekBlock extends VBox implements EventLabel {
 
         this.event = event;
         this.weekView = weekView;
+        this.color = event.getLinkedDayEvent().getDisplayColor();
         event.getLinkedDayEvent().addReference(this);
 
 
