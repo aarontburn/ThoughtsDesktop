@@ -3,7 +3,6 @@ package com.beanloaf.thoughtsdesktop.global_views;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CanvasICalHandler;
-import com.beanloaf.thoughtsdesktop.calendar.objects.ICal;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.database.ThoughtUser;
@@ -12,8 +11,6 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -22,9 +19,9 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+@SuppressWarnings("unchecked")
 public class SettingsView extends ThoughtsView implements ThoughtsChangeListener {
 
 
@@ -113,7 +110,6 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
 
     }
 
-
     private void findNodes() {
         settingsTabbedPane = (TabPane) findNodeById("settingsTabbedPane");
 
@@ -122,7 +118,6 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
 
         pullOnStartupCheckBox = (CheckBox) findNodeById("pullOnStartupCheckBox");
         pullOnStartupCheckBox.selectedProperty().set((Boolean) main.settingsHandler.getSetting(SettingsHandler.Settings.PULL_ON_STARTUP));
-
         refreshSpinner = (Spinner<Integer>) findNodeById("refreshSpinner");
         refreshSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 9));
 
@@ -212,6 +207,9 @@ public class SettingsView extends ThoughtsView implements ThoughtsChangeListener
             main.settingsHandler.changeSetting(SettingsHandler.Settings.CANVAS_ICAL_URL, iCalURLTextField.getText());
             if (CanvasICalHandler.checkICalUrl(iCalURLTextField.getText())) {
                 Platform.runLater(() -> iCalConnectionMessageLabel.setText("Connected!"));
+
+                main.calendarMain.getCanvasICalHandler().stopRefresh();
+                main.calendarMain.getCanvasICalHandler().setAutoRefresh();
 
             } else {
                 Platform.runLater(() -> iCalConnectionMessageLabel.setText("Unable to connect to iCal. Please check the URL."));

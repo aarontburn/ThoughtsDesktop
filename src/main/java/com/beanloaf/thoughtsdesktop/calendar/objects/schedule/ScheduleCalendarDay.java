@@ -14,13 +14,11 @@ public class ScheduleCalendarDay extends AnchorPane {
 
     private final VBox scheduleContainer;
     private final List<ScheduleEvent> scheduleEventList = new ArrayList<>();
-    private final Weekday weekday;
 
 
 
-    public ScheduleCalendarDay(final Weekday weekday) {
+    public ScheduleCalendarDay() {
         super();
-        this.weekday = weekday;
 
 
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);

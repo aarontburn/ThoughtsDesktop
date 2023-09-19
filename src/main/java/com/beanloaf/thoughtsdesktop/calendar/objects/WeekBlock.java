@@ -33,7 +33,6 @@ public class WeekBlock extends VBox implements EventLabel {
     private final Label nameLabel;
     private Label timeLabel;
     private Label descLabel;
-    private Tooltip tooltip;
 
 
     /*
@@ -60,7 +59,7 @@ public class WeekBlock extends VBox implements EventLabel {
         nameLabel.setUnderline(true);
         this.getChildren().add(nameLabel);
 
-        tooltip = new Tooltip();
+        final Tooltip tooltip = new Tooltip();
         tooltip.setStyle("-fx-font-size: 15");
         tooltip.setShowDelay(Duration.seconds(0.5));
         tooltip.textProperty().bindBidirectional(nameLabel.textProperty());

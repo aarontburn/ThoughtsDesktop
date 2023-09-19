@@ -65,10 +65,12 @@ public class ScheduleBoxItem extends AnchorPane {
         hideCheckBox = new CheckBox();
         hideCheckBox.setStyle("-fx-font-family: Lato;");
         hideCheckBox.setText("Hide");
-        hideCheckBox.setOnAction(e -> {
-            main.getRightPanel().getMonthView().hideSchedule(data, hideCheckBox.isSelected());
-        });
+        hideCheckBox.setOnAction(e -> main.getRightPanel().getMonthView().hideSchedule(data, hideCheckBox.isSelected()));
         this.getChildren().add(ThoughtsHelper.setAnchor(hideCheckBox, null, 27, 96, null));
+    }
+
+    public ScheduleData getScheduleData() {
+        return this.data;
     }
 
     public void updateScheduleNameLabel() {
@@ -89,7 +91,6 @@ public class ScheduleBoxItem extends AnchorPane {
 
     public void setHidden(final boolean isHidden) {
         hideCheckBox.setSelected(isHidden);
-
     }
 
 }

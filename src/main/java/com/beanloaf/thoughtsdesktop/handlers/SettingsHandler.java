@@ -33,7 +33,7 @@ public class SettingsHandler {
         WINDOW_MAXIMIZED("windowMaximized", false),
         DATABASE_REFRESH_RATE("databaseRefreshRate", 1),
         CANVAS_ICAL_URL("canvasICalUrl", ""),
-        CANVAS_ICAL_REFRESH_RATE("canvasICalRefreshRate", 1);
+        CANVAS_ICAL_REFRESH_RATE("canvasICalRefreshRate", 1)
         ;
 
         private final String name;
@@ -100,10 +100,8 @@ public class SettingsHandler {
                     return;
                 }
 
-
                 for (final Object key : data.keySet()) {
                     final Settings enumKey = Settings.getEnumByString(key.toString());
-
                     settingPropertyList.put(enumKey, data.get(enumKey.getName()));
                 }
 

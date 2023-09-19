@@ -34,6 +34,8 @@ import java.util.concurrent.TimeUnit;
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Data.*;
 
+
+@SuppressWarnings("unchecked")
 public class FirebaseHandler implements ThoughtsChangeListener {
 
 
@@ -93,14 +95,12 @@ public class FirebaseHandler implements ThoughtsChangeListener {
             JSONObject data = null;
             try {
                 data = (JSONObject) new JSONParser().parse(new StringReader(stringBuilder.toString()));
-            } catch (ParseException e) {
+            } catch (ParseException ignored) {
 
             }
 
-            if (data == null) {
-                Logger.log(data);
-                return;
-            }
+            if (data == null) return;
+
 
             final String email = (String) data.get("email");
             final String password = (String) data.get("password");

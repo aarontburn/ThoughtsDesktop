@@ -1,7 +1,6 @@
 package com.beanloaf.thoughtsdesktop;
 
 
-import com.beanloaf.thoughtsdesktop.calendar.handlers.CanvasICalHandler;
 
 public class test {
 

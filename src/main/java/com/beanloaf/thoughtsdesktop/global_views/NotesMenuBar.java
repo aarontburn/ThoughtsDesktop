@@ -14,11 +14,9 @@ import java.util.Map;
 
 public class NotesMenuBar {
 
-    private final MainApplication main;
     private final MenuBar notesMenuBar;
 
     public NotesMenuBar(final MainApplication main) {
-        this.main = main;
         notesMenuBar = (MenuBar) main.findNodeById("notesMenuBar");
 
 

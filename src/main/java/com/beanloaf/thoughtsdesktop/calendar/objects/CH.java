@@ -3,7 +3,6 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import javafx.application.Platform;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.util.Pair;
 
 import java.time.DateTimeException;
 import java.time.LocalTime;

@@ -5,14 +5,11 @@ import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarHandler;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJsonHandler;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CanvasICalHandler;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
-import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
-import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.left_panel.LeftPanel;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -40,9 +37,6 @@ public class CalendarMain extends ThoughtsView {
         CALENDAR, SCHEDULE, LOADING
     }
 
-    private ScheduleOverlay scheduleOverlay;
-
-
     private final Map<Overlays, Node> overlayMap = new HashMap<>();
 
     public CalendarMain(final MainApplication main) {
@@ -64,13 +58,7 @@ public class CalendarMain extends ThoughtsView {
             // Reading schedules
             for (final ScheduleData data : getJsonHandler().getScheduleDataList()) {
                 getRightPanel().getMonthView().addScheduleToCalendarDay(data);
-
-                if (getRightPanel().getMonthView().calendarScheduleBox == null) {
-                    getRightPanel().getMonthView().calendarScheduleBox.getChildren().add(new ScheduleBoxItem(this, data));
-                    continue;
-                }
-
-                getRightPanel().getMonthView().calendarScheduleBox.getChildren().add(new ScheduleBoxItem(this, data));
+                getLeftPanel().addScheduleBoxItem(new ScheduleBoxItem(this, data));
             }
 
             // Reading calendar.json
@@ -112,7 +100,7 @@ public class CalendarMain extends ThoughtsView {
         }
 
         if (swapToOverlay == Overlays.SCHEDULE) {
-            scheduleOverlay = new ScheduleOverlay(this, (ScheduleData) arguments);
+            final ScheduleOverlay scheduleOverlay = new ScheduleOverlay(this, (ScheduleData) arguments);
         }
 
         overlayMap.get(swapToOverlay).setVisible(true);

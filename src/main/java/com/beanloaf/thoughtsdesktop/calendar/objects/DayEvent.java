@@ -33,7 +33,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     public boolean isReference;
 
 
-    private Types eventType;
+    private final Types eventType;
 
 
 

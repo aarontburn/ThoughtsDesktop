@@ -26,8 +26,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
+
+@SuppressWarnings("unchecked")
 public class CanvasICalHandler {
 
     private final CalendarMain main;
@@ -45,7 +50,9 @@ public class CanvasICalHandler {
 
         TC.Directories.CALENDAR_PATH.mkdir();
 
-        setAutoRefresh();
+        if (checkICalUrl((String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL))) {
+            setAutoRefresh();
+        }
 
     }
 
@@ -61,60 +68,57 @@ public class CanvasICalHandler {
 
                 final String uid = (String) o;
                 final JSONHelper eventBranch = dataHelper.getBranch(uid);
-                for (final Object k : eventBranch.getKeys()) {
 
-                    final String eventTitle = eventBranch.getString(Keys.TITLE);
-                    final String startTime = eventBranch.getString(Keys.START_TIME);
-                    final String startDate = eventBranch.getString(Keys.START_DATE);
-                    final String endTime = eventBranch.getString(Keys.END_TIME);
-                    final String description = eventBranch.getString(Keys.DESCRIPTION);
-                    final Boolean isCompleted = eventBranch.getBoolean(Keys.COMPLETED);
+                final String startTime = eventBranch.getString(Keys.START_TIME);
+                final String startDate = eventBranch.getString(Keys.START_DATE);
+                final String endTime = eventBranch.getString(Keys.END_TIME);
+                final String description = eventBranch.getString(Keys.DESCRIPTION);
+                final Boolean isCompleted = eventBranch.getBoolean(Keys.COMPLETED);
 
-                    event.setTitle(eventTitle);
-                    event.setId(uid);
-                    event.setDescription(description == null ? "" : description);
-                    event.setCompleted(isCompleted != null && isCompleted);
+                event.setTitle(eventBranch.getString(Keys.TITLE));
+                event.setId(uid);
+                event.setDescription(description == null ? "" : description);
+                event.setCompleted(isCompleted != null && isCompleted);
 
 
-                    if (startTime == null) {
+                if (startTime == null) {
+                    event.setStartTime(null);
+                } else {
+                    try {
+                        final LocalTime parsedStartTime = LocalTime.parse(startTime);
+                        event.setStartTime(parsedStartTime);
+                    } catch (DateTimeParseException parseException) {
                         event.setStartTime(null);
-                    } else {
-                        try {
-                            final LocalTime parsedStartTime = LocalTime.parse(startTime);
-                            event.setStartTime(parsedStartTime);
-                        } catch (DateTimeParseException parseException) {
-                            event.setStartTime(null);
-                        }
                     }
+                }
 
 
-                    if (endTime == null) {
+                if (endTime == null) {
+                    event.setEndTime(null);
+                } else {
+                    try {
+                        final LocalTime parsedEndTime = LocalTime.parse(endTime);
+                        event.setEndTime(parsedEndTime);
+                    } catch (DateTimeParseException parseException) {
                         event.setEndTime(null);
-                    } else {
-                        try {
-                            final LocalTime parsedEndTime = LocalTime.parse(endTime);
-                            event.setEndTime(parsedEndTime);
-                        } catch (DateTimeParseException parseException) {
-                            event.setEndTime(null);
-                        }
                     }
+                }
 
-                    if (startDate == null) {
+                if (startDate == null) {
+                    event.setStartDate(null);
+                } else {
+                    try {
+                        final LocalDate parsedStartDate = LocalDate.parse(startDate);
+                        event.setStartDate(parsedStartDate);
+                    } catch (DateTimeParseException parseException) {
                         event.setStartDate(null);
-                    } else {
-                        try {
-                            final LocalDate parsedStartDate = LocalDate.parse(startDate);
-                            event.setStartDate(parsedStartDate);
-                        } catch (DateTimeParseException parseException) {
-                            event.setStartDate(null);
-                        }
                     }
                 }
 
                 cachedCanvasEvents.put(uid, event);
             }
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
 
@@ -128,8 +132,7 @@ public class CanvasICalHandler {
 
         iCalCanvasEventsList.clear();
         try {
-            final HttpURLConnection connection = (HttpURLConnection) new URL((String)
-                    SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL)).openConnection();
+            final HttpURLConnection connection = (HttpURLConnection) new URL((String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL)).openConnection();
 
             final int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {

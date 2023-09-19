@@ -14,7 +14,7 @@ public class ScheduleEvent {
 
     private final List<Weekday> weekdays = new ArrayList<>();
 
-    private String scheduleEventName = "";
+    private String scheduleEventName;
     private LocalTime startTime;
     private LocalTime endTime;
     private String description = "";

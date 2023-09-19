@@ -288,6 +288,7 @@ public class TextView extends ThoughtsView implements ThoughtsChangeListener {
         ThoughtsHelper.getInstance().isChangingTextFields = false;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
         switch (eventName) {

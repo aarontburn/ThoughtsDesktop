@@ -4,7 +4,6 @@ import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Comparator;
 import java.util.Objects;
 
 public class BasicEvent implements TypedEvent {

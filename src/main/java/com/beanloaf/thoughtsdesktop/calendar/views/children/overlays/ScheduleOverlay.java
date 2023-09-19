@@ -87,6 +87,8 @@ public class ScheduleOverlay {
         return main.findNodeById(nodeId);
     }
 
+
+    @SuppressWarnings("unchecked")
     public void locateNodes() {
         /*  Header  */
         scheduleNameInput = (TextField) findNodeById("scheduleNameInput");
@@ -194,7 +196,7 @@ public class ScheduleOverlay {
         for (int i = 0; i < scheduleWeekGrid.getColumnCount(); i++) {
             final Weekday weekday = Weekday.values()[i];
 
-            final ScheduleCalendarDay day = new ScheduleCalendarDay(weekday);
+            final ScheduleCalendarDay day = new ScheduleCalendarDay();
             weekdayMap.put(weekday, day);
             scheduleWeekGrid.add(day, i, 1);
         }

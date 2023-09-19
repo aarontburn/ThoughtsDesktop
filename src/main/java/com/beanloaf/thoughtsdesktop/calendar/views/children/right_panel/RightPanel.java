@@ -83,9 +83,7 @@ public class RightPanel {
             weekView.changeWeek(getMain().getCalendarHandler().getSelectedDay().getDate());
             swapRightPanel(RightLayouts.WEEK);
         });
-        monthViewButton.setOnAction(e -> {
-            swapRightPanel(RightLayouts.MONTH);
-        });
+        monthViewButton.setOnAction(e -> swapRightPanel(RightLayouts.MONTH));
 
 
         calendarNextButton.setOnMouseClicked(e -> {

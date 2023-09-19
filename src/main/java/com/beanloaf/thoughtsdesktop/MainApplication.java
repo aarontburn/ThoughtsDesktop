@@ -1,7 +1,6 @@
 package com.beanloaf.thoughtsdesktop;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
@@ -16,16 +15,12 @@ import com.beanloaf.thoughtsdesktop.notes.views.TextView;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
-import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -37,8 +32,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
 
     private Scene scene;
-    private Stage stage;
-
 
     private NotesMenuBar notesMenuBar;
     public FirebaseHandler firebaseHandler;
@@ -106,7 +99,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
 
         this.scene = scene;
-        this.stage = stage;
 
         stage.setTitle("Thoughts");
         stage.setScene(scene);
