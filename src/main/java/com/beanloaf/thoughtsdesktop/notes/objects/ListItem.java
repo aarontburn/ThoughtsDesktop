@@ -1,7 +1,7 @@
 package com.beanloaf.thoughtsdesktop.notes.objects;
 
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -9,7 +9,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper.setAnchor;
+import static com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper.setAnchor;
 
 public class ListItem extends AnchorPane {
 

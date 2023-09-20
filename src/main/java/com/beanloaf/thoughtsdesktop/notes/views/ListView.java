@@ -7,7 +7,7 @@ import com.beanloaf.thoughtsdesktop.database.FirebaseHandler;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.notes.objects.ListItem;
 import com.beanloaf.thoughtsdesktop.notes.objects.TagListItem;
 import com.beanloaf.thoughtsdesktop.notes.objects.ThoughtObject;
@@ -24,7 +24,7 @@ import java.util.*;
 
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Data.*;
-import static com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper.readFileContents;
+import static com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper.readFileContents;
 
 public class ListView extends ThoughtsView implements ThoughtsChangeListener {
 

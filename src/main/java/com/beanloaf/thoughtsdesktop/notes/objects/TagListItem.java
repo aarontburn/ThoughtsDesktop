@@ -2,7 +2,7 @@ package com.beanloaf.thoughtsdesktop.notes.objects;
 
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import com.beanloaf.thoughtsdesktop.notes.views.ListView;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -13,7 +13,7 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper.setAnchor;
+import static com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper.setAnchor;
 
 public class TagListItem extends AnchorPane implements Comparable<TagListItem> {
 

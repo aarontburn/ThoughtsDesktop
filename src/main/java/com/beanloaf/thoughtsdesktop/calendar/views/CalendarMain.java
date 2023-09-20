@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class CalendarMain extends ThoughtsView {
 
-    public List<Runnable> queuedTasks = new ArrayList<>();
+    public final List<Runnable> queuedTasks = new ArrayList<>();
     private final CalendarHandler calendarHandler;
     private final CalendarJsonHandler calendarJson;
     private final CanvasICalHandler canvasICalHandler;
@@ -99,7 +99,9 @@ public class CalendarMain extends ThoughtsView {
     }
 
     public void swapOverlay(final Overlays swapToOverlay, final Object arguments) {
-        if (swapToOverlay == null) throw new IllegalArgumentException("swapToOverlay cannot be null.");
+        if (swapToOverlay == null) {
+            throw new IllegalArgumentException("swapToOverlay cannot be null.");
+        }
 
         for (final Overlays overlay : overlayMap.keySet()) {
             overlayMap.get(overlay).setVisible(false);

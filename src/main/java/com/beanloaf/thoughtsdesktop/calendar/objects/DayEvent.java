@@ -3,6 +3,7 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -28,9 +29,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     public boolean isReference;
     private final Types eventType;
 
-    private String color;
 
-    // Cloning constructor, used to tie the eventbox object to the one in the grid
+    // Cloning constructor, used to tie the event-box object to the one in the grid
     public DayEvent(final DayEvent reference, final CalendarMain main) {
         this(reference.getDate(), reference.getEventTitle(), main, reference.getEventType());
 
@@ -38,13 +38,13 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
         reference.addReference(this);
         this.references.add(reference);
-        this.color = reference.color;
 
         event.setStartTime(reference.event.getStartTime());
         event.setEndTime(reference.event.getEndTime());
         event.setDescription(reference.event.getDescription());
         event.setId(reference.getEventID());
         event.setCompleted(reference.event.isComplete());
+        this.event.setDisplayColor(reference.event.getDisplayColor());
 
         this.setText(getDisplayTime(event.getStartTime()) + event.getTitle());
     }
@@ -63,7 +63,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         this.main = main;
 
         this.eventType = eventType;
-        this.color = Colors.getRandomColor();
 
 
 
@@ -78,6 +77,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         this.event = new BasicEvent(eventTitle);
         this.event.setStartDate(day);
         this.event.setId(eventID);
+        this.event.setDisplayColor(ThoughtsHelper.getRandomColor());
+
         this.setId(DAY_EVENT_ID);
 
 
@@ -214,11 +215,11 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
     public String getDisplayColor() {
-        return this.color;
+        return this.event.getDisplayColor();
     }
 
     public void setDisplayColor(final String color) {
-        this.color = color;
+        this.event.setDisplayColor(color);
     }
 
     @Override

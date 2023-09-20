@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;

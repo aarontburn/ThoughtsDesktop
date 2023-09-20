@@ -3,19 +3,22 @@ package com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.childre
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ public class WeekView {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    public GridPane weekGrid, allDayEventGrid;
+    public GridPane weekGrid, allDayEventGrid, weekNameGrid;
     private AnchorPane weekPane;
     private ScrollPane scrollPane;
 
@@ -69,8 +72,8 @@ public class WeekView {
 
     private void locateNodes() {
         weekPane = (AnchorPane) findNodeById("weekView");
-
         allDayEventGrid = (GridPane) findNodeById("allDayEventGrid");
+        weekNameGrid = (GridPane) findNodeById("weekNameGrid");
     }
 
 
@@ -111,7 +114,6 @@ public class WeekView {
                 eventContainer.setSpacing(2);
 
                 pane.setContent(eventContainer);
-
                 allDayEventMap.put(Weekday.getWeekdayByDayOfWeek(i), eventContainer);
             }
         });
@@ -120,11 +122,9 @@ public class WeekView {
     }
 
     public void createGrid() {
-
         if (weekGrid != null) {
             weekPane.getChildren().remove(weekGrid);
         }
-
 
         final LocalTime now = LocalTime.now();
 
@@ -140,8 +140,19 @@ public class WeekView {
             int cellNum = (int) (x / cellSize);
             cellNum = Math.max(0, Math.min(columnCount - 1, cellNum));
             if (cellNum == 0) return;
-            rightPanel.getMonthView().selectDay(rightPanel.getMain().getCalendarHandler().getDay(startDate.plusDays(cellNum - 1)), true);
+
+
+            final LocalDate selectedDay = startDate.plusDays(cellNum - 1);
+            rightPanel.getMonthView().selectDay(rightPanel.getMain().getCalendarHandler().getDay(selectedDay), true);
+
+            if (!selectedDay.getMonth().equals(rightPanel.getMain().getCalendarHandler().getCurrentMonth().getMonth())) {
+                rightPanel.getMonthView().changeMonth(rightPanel.getMain().getCalendarHandler().getMonth(selectedDay));
+            }
         });
+
+
+
+
 
 
         for (int column = 0; column < columnCount; column++) {
@@ -207,6 +218,24 @@ public class WeekView {
             rightPanel.setHeaderText(String.format("Week (%s - %s)",
                     startEndRange.getKey().format(DateTimeFormatter.ofPattern("M/d/yyyy")),
                     startEndRange.getValue().format(DateTimeFormatter.ofPattern("M/d/yyyy"))));
+        }
+
+        final Month currentMonth = rightPanel.getMain().getCalendarHandler().getCurrentMonth().getMonth();
+
+        if (!this.startDate.getMonth().equals(currentMonth) && !this.endDate.getMonth().equals(currentMonth) ) {
+            rightPanel.getMonthView().changeMonth(rightPanel.getMain().getCalendarHandler().getMonth(this.startDate));
+        }
+
+
+        weekNameGrid.getChildren().clear();
+        for (int i = 1; i < 8; i++) {
+            final Label nameLabel = new Label(Weekday.getWeekdayByDayOfWeek(i - 1).getLongAbbreviation() + " (" + startDate.plusDays(i - 1).format(DateTimeFormatter.ofPattern("M/d")) + ")");
+            nameLabel.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
+            nameLabel.setTextAlignment(TextAlignment.CENTER);
+            nameLabel.setAlignment(Pos.CENTER);
+            nameLabel.setMaxWidth(Double.MAX_VALUE);
+            nameLabel.setMaxHeight(Double.MAX_VALUE);
+            weekNameGrid.add(nameLabel, i, 0);
         }
 
 

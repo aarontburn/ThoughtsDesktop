@@ -4,7 +4,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
-import kotlin.Pair;
+import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.time.Month;

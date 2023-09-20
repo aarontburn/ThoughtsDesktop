@@ -1,6 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.enums;
 
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 
 public enum Keys {
     EVENT_NAME,

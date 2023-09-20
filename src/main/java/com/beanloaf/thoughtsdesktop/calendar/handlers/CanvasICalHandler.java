@@ -9,6 +9,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -34,6 +35,11 @@ import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unchecked")
 public class CanvasICalHandler {
+
+    private final static LocalTime CANVAS_DEFAULT_START_TIME = LocalTime.of(0, 0);
+    private final static LocalTime CANVAS_DEFAULT_END_TIME = LocalTime.of(23, 59);
+
+
 
     private final CalendarMain main;
 
@@ -74,12 +80,13 @@ public class CanvasICalHandler {
                 final String endTime = eventBranch.getString(Keys.END_TIME);
                 final String description = eventBranch.getString(Keys.DESCRIPTION);
                 final Boolean isCompleted = eventBranch.getBoolean(Keys.COMPLETED);
+                final String displayColor = eventBranch.getString(Keys.DISPLAY_COLOR);
 
                 event.setTitle(eventBranch.getString(Keys.TITLE));
                 event.setId(uid);
                 event.setDescription(description == null ? "" : description);
                 event.setCompleted(isCompleted != null && isCompleted);
-
+                event.setDisplayColor(displayColor == null ? ThoughtsHelper.getRandomColor() : displayColor);
 
                 if (startTime == null) {
                     event.setStartTime(null);
@@ -160,7 +167,7 @@ public class CanvasICalHandler {
                 if (event.getDateStart() != null) {
                     final LocalDateTime startDateTime = LocalDateTime.ofInstant(event.getDateStart().getValue().toInstant(), ZoneId.systemDefault());
 
-                    if (!startDateTime.toLocalTime().equals(LocalTime.of(0, 0))) {
+                    if (!startDateTime.toLocalTime().equals(CANVAS_DEFAULT_START_TIME)) {
                         startTime = startDateTime.toLocalTime();
                     }
                     startDate = startDateTime.toLocalDate();
@@ -170,7 +177,10 @@ public class CanvasICalHandler {
 
                 if (event.getDateEnd() != null) {
                     final LocalDateTime endDateTime = LocalDateTime.ofInstant(event.getDateEnd().getValue().toInstant(), ZoneId.systemDefault());
-                    endTime = endDateTime.toLocalTime();
+
+                    if (!endDateTime.toLocalTime().equals(CANVAS_DEFAULT_END_TIME)) {
+                        endTime = endDateTime.toLocalTime();
+                    }
                 }
 
 
@@ -203,6 +213,7 @@ public class CanvasICalHandler {
             final BasicEvent cachedEvent = cachedCanvasEvents.get(event.getId());
             if (cachedEvent != null) {
                 event.setCompleted(cachedEvent.isComplete());
+                event.setDisplayColor(cachedEvent.getDisplayColor());
             }
         }
         cacheCanvasEventsToJson(iCalCanvasEventsList);
@@ -231,6 +242,7 @@ public class CanvasICalHandler {
                 eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.DESCRIPTION, event.getDescription());
                 eventBranch.put(Keys.COMPLETED, event.isComplete());
+                eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor());
 
                 root.put(event.getId(), eventBranch);
             }

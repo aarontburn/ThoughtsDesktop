@@ -4,7 +4,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children.MonthView;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children.WeekView;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -13,9 +13,7 @@ import javafx.util.Pair;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class RightPanel {
@@ -82,6 +80,7 @@ public class RightPanel {
             monthView.changeMonth(now);
 
             updateHeaderText();
+            getMonthView().selectDay(now, true);
         });
 
 
@@ -112,7 +111,7 @@ public class RightPanel {
     public void updateHeaderText() {
         if (currentLayout == RightLayouts.MONTH) {
             final CalendarMonth calendarMonth = getMain().getCalendarHandler().getCurrentMonth();
-            this.setHeaderText(ThoughtsHelper.toCamelCase(calendarMonth.getMonth().toString()) + ", " + calendarMonth.getYear());
+            this.setHeaderText(ThoughtsHelper.toCamelCase(calendarMonth.getMonth().toString()) + " " + calendarMonth.getYear());
 
 
         } else if (currentLayout == RightLayouts.WEEK) {

@@ -8,7 +8,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.left_panel.LeftPanel;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Platform;
@@ -19,9 +19,9 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MonthView {
 
@@ -83,7 +83,10 @@ public class MonthView {
     private void createCalendarGUI() {
         final CalendarMonth currentMonth = this.main.getCalendarHandler().getCurrentMonth();
 
-        rightPanel.setHeaderText(ThoughtsHelper.toCamelCase(currentMonth.getMonth().toString()) + ", " + currentMonth.getYear());
+        if (rightPanel.getCurrentLayout() == RightPanel.RightLayouts.MONTH) {
+            rightPanel.setHeaderText(ThoughtsHelper.toCamelCase(currentMonth.getMonth().toString()) + " " + currentMonth.getYear());
+        }
+
         final int monthLength = currentMonth.getMonthLength();
 
         final CalendarMonth prevMonth = this.main.getCalendarHandler().getMonth(currentMonth.getPreviousMonth().getMonth(), currentMonth.getPreviousMonth().getYear());
@@ -175,9 +178,7 @@ public class MonthView {
             addScheduleToCalendarDay(data);
         }
 
-        Platform.runLater(() -> {
-            main.getRightPanel().getWeekView().refreshWeek();
-        });
+        Platform.runLater(() -> main.getRightPanel().getWeekView().refreshWeek());
 
     }
 
@@ -283,6 +284,7 @@ public class MonthView {
             e.setStartTime(event.getStartTime());
             e.setEndTime(event.getEndTime());
             e.setCompleted(event.isComplete(), false);
+            e.setDisplayColor(event.getDisplayColor());
 
 
             addEventToCalendarDay(event.getStartDate(), e);
@@ -348,7 +350,6 @@ public class MonthView {
             main.getCalendarHandler().getSelectedEvent().getStyleClass().remove("selected-day-event");
         }
         main.getCalendarHandler().setSelectedEvent(event);
-
         main.getLeftPanel().onSelectEvent(event, editable);
     }
 

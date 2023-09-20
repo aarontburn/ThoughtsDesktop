@@ -1,7 +1,8 @@
-package com.beanloaf.thoughtsdesktop.notes.changeListener;
+package com.beanloaf.thoughtsdesktop.handlers;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.notes.objects.ThoughtObject;
 import com.google.common.base.CaseFormat;
 import javafx.scene.Node;
@@ -14,8 +15,13 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class ThoughtsHelper {
+
+    private static final Random rand = new Random();
+
+    private static final int MAX_RGB = 128;
 
     private ThoughtsHelper() {
     }
@@ -190,6 +196,14 @@ public class ThoughtsHelper {
 
         return "th";
 
+    }
+
+
+    /**
+     * Generates a random DARK color, with a max value of any RGB of 128.
+     * */
+    public static String getRandomColor() {
+        return String.format("rgb(%s, %s, %s)", rand.nextInt(MAX_RGB), rand.nextInt(MAX_RGB), rand.nextInt(MAX_RGB));
     }
 
 }

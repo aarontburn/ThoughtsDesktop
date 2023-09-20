@@ -68,7 +68,7 @@ public class ScheduleListItem extends GridPane {
             final Weekday weekday = Weekday.values()[i];
 
 
-            final Label eventLabel = new Label(weekday.getAbbreviation());
+            final Label eventLabel = new Label(weekday.getShortAbbreviation());
             eventLabel.setAlignment(Pos.CENTER);
             eventLabel.maxWidthProperty().setValue(10000);
             weekdayPane.add(eventLabel, i, 0);

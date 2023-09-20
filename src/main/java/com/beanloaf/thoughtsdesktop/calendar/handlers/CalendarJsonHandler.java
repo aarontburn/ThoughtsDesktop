@@ -1,11 +1,13 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
-import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -38,8 +40,8 @@ public class CalendarJsonHandler {
 
     private final List<ScheduleData> scheduleDataList = new ArrayList<>();
 
-    public CalendarJsonHandler(final CalendarMain main) {
-        this.main = main;
+    public CalendarJsonHandler(final CalendarMain m) {
+        this.main = m;
 
         TC.Directories.CALENDAR_PATH.mkdir();
         TC.Directories.CALENDAR_SCHEDULES_PATH.mkdir();
@@ -48,7 +50,9 @@ public class CalendarJsonHandler {
             TC.Directories.CALENDAR_DATA_FILE.createNewFile();
             this.root = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.CALENDAR_DATA_FILE.toPath())));
 
-            if (root == null) root = new JSONObject();
+            if (root == null) {
+                root = new JSONObject();
+            }
 
         } catch (Exception e) {
             TC.Directories.CALENDAR_DATA_FILE.delete();
@@ -90,7 +94,7 @@ public class CalendarJsonHandler {
                             final String startTime = json.getString(Keys.START_TIME);
                             final String endTime = json.getString(Keys.END_TIME);
                             final Boolean isCompleted = json.getBoolean(Keys.COMPLETED);
-                            final String displayColor = json.getString(Keys.DISPLAY_COLOR) == null ? Colors.getRandomColor() : json.getString(Keys.DISPLAY_COLOR);
+                            final String displayColor = json.getString(Keys.DISPLAY_COLOR) == null ? ThoughtsHelper.getRandomColor() : json.getString(Keys.DISPLAY_COLOR);
 
 
                             final LocalDate eventDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum));
@@ -141,7 +145,6 @@ public class CalendarJsonHandler {
             // Delete and rerun?
             Logger.log(e);
         }
-
 
 
     }
@@ -200,7 +203,7 @@ public class CalendarJsonHandler {
             eventBranch.put(Keys.DESCRIPTION, event.getDescription());
             eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
             eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
-            eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? Colors.getRandomColor() : event.getDisplayColor());
+            eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? ThoughtsHelper.getRandomColor() : event.getDisplayColor());
             eventBranch.put(Keys.COMPLETED, completed);
 
             saveCalendarJSON();
@@ -259,7 +262,9 @@ public class CalendarJsonHandler {
     private void readSchedules() {
         final File[] scheduleFiles = TC.Directories.CALENDAR_SCHEDULES_PATH.listFiles();
 
-        if (scheduleFiles == null) throw new RuntimeException("scheduledFiles is null");
+        if (scheduleFiles == null) {
+            throw new RuntimeException("scheduledFiles is null");
+        }
 
 
         for (final File file : scheduleFiles) {
@@ -309,7 +314,7 @@ public class CalendarJsonHandler {
                     final String scheduleEventDescription = eventJson.getString(Keys.DESCRIPTION);
                     final String scheduleEventStartTime = eventJson.getString(Keys.START_TIME);
                     final String scheduleEventEndTime = eventJson.getString(Keys.END_TIME);
-                    final String scheduleColor = eventJson.getString(Keys.DISPLAY_COLOR) == null ? Colors.getRandomColor() : eventJson.getString(Keys.DISPLAY_COLOR);
+                    final String scheduleColor = eventJson.getString(Keys.DISPLAY_COLOR) == null ? ThoughtsHelper.getRandomColor() : eventJson.getString(Keys.DISPLAY_COLOR);
 
                     final Object[] a = ((JSONArray) JSONValue.parse(eventJson.getString(Keys.DAYS))).toArray();
                     final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
@@ -394,7 +399,7 @@ public class CalendarJsonHandler {
                 eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.DESCRIPTION, schedule.getDescription());
-                eventBranch.put(Keys.DISPLAY_COLOR, schedule.getDisplayColor() == null ? Colors.getRandomColor() : schedule.getDisplayColor());
+                eventBranch.put(Keys.DISPLAY_COLOR, schedule.getDisplayColor() == null ? ThoughtsHelper.getRandomColor() : schedule.getDisplayColor());
             }
 
             try (FileOutputStream fWriter = new FileOutputStream(scheduleFile)) {

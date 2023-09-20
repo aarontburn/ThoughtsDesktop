@@ -1,14 +1,12 @@
 module com.beanloaf.thoughtsdesktop {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.web;
 
     requires json.simple;
     requires java.desktop;
     requires com.google.common;
     requires org.apache.commons.codec;
     requires annotations;
-    requires kotlin.stdlib;
     requires net.sf.biweekly;
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;
@@ -39,4 +37,6 @@ module com.beanloaf.thoughtsdesktop {
     opens com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.children to javafx.fxml;
     exports com.beanloaf.thoughtsdesktop.calendar.views.children.overlays;
     opens com.beanloaf.thoughtsdesktop.calendar.views.children.overlays to javafx.fxml;
+    exports com.beanloaf.thoughtsdesktop.handlers;
+    opens com.beanloaf.thoughtsdesktop.handlers to javafx.fxml;
 }

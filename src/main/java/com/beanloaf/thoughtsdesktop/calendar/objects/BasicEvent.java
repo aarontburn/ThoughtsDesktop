@@ -10,26 +10,16 @@ public class BasicEvent implements TypedEvent {
 
     private String title;
     private String description;
-
+    private String id;
     private LocalTime startTime;
     private LocalTime endTime;
-
     private LocalDate startDate;
     private LocalDate endDate;
-
     private Weekday weekday;
-
-
-
     private boolean isComplete;
-
     private DayEvent linkedDayEvent;
-
     private Types eventType = Types.BASIC;
-
-
-
-    private String id;
+    private String color;
 
 
     public BasicEvent() {
@@ -68,6 +58,7 @@ public class BasicEvent implements TypedEvent {
         isComplete = complete;
         return this;
     }
+
     public String getDescription() {
         return description;
     }
@@ -135,6 +126,26 @@ public class BasicEvent implements TypedEvent {
         return this.linkedDayEvent;
     }
 
+    public BasicEvent setDisplayColor(final String color) {
+        this.color = color;
+        return this;
+    }
+
+    public String getDisplayColor() {
+        return this.color;
+    }
+
+
+    @Override
+    public Types getEventType() {
+        return this.eventType;
+    }
+
+    public BasicEvent setEventType(final Types type) {
+        this.eventType = type;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "Event {" +
@@ -150,15 +161,6 @@ public class BasicEvent implements TypedEvent {
                 '}';
     }
 
-    @Override
-    public Types getEventType() {
-        return this.eventType;
-    }
-
-    public BasicEvent setEventType(final Types type) {
-        this.eventType = type;
-        return this;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -172,7 +174,6 @@ public class BasicEvent implements TypedEvent {
     public int hashCode() {
         return Objects.hash(title, description, startTime, endTime, startDate, endDate, weekday, isComplete, eventType, id);
     }
-
 
 
 }

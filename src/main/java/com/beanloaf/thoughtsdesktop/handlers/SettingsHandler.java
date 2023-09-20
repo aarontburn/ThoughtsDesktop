@@ -1,7 +1,6 @@
 package com.beanloaf.thoughtsdesktop.handlers;
 
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
-import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
