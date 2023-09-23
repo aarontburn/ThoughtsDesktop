@@ -86,7 +86,7 @@ public class CalendarMain extends ThoughtsView {
         getRightPanel().getWeekView().changeWeek(getCalendarHandler().getSelectedDay().getDate());
 
         rightPanel.swapRightPanel(RightPanel.RightLayouts.MONTH);
-        swapOverlay(Overlays.EVENT);
+        swapOverlay(Overlays.CALENDAR);
     }
 
     public void onOpen() {

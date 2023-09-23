@@ -168,7 +168,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
             eventLabel.updateCompletion(isCompleted);
         }
 
-        if (save) main.getRightPanel().getMonthView().saveEvent(this);
+        if (save) main.getRightPanel().getMonthView().saveEvent(this, main.getLeftPanel().getEventInputFields());
     }
 
     public void addReference(final EventLabel reference) {

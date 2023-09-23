@@ -356,9 +356,7 @@ public class MonthView {
     }
 
 
-    public void saveEvent(DayEvent event) {
-        final BasicEvent inputFields = main.getLeftPanel().getEventInputFields();
-
+    public void saveEvent(final DayEvent event, final BasicEvent inputFields) {
         event.setEventTitle(inputFields.getTitle());
         event.setDescription(inputFields.getDescription());
 

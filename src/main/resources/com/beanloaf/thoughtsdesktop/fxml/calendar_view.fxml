@@ -122,7 +122,7 @@
                                                       <Insets top="-2.0" />
                                                    </padding>
                                                 </Label>
-                                                <ComboBox fx:id="scheduleAMPMSelectorFrom1" layoutX="142.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
+                                                <ComboBox fx:id="eventAMPMSelectorFrom" layoutX="142.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                        </children>
@@ -141,12 +141,12 @@
                                                       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                                                    </rowConstraints>
                                                    <children>
-                                                      <TextField fx:id="scheduleHourInputTo1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="60.0">
+                                                      <TextField fx:id="eventHourInputTo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="60.0">
                                                          <GridPane.margin>
                                                             <Insets right="8.0" />
                                                          </GridPane.margin>
                                                       </TextField>
-                                                      <TextField fx:id="scheduleMinuteInputTo1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="53.0" GridPane.columnIndex="2">
+                                                      <TextField fx:id="eventMinuteInputTo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="53.0" GridPane.columnIndex="2">
                                                          <GridPane.margin>
                                                             <Insets left="8.0" />
                                                          </GridPane.margin>
@@ -169,7 +169,7 @@
                                                       <Insets left="4.0" top="2.0" />
                                                    </padding>
                                                 </Label>
-                                                <ComboBox fx:id="scheduleAMPMSelectorTo1" layoutX="142.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
+                                                <ComboBox fx:id="eventAMPMSelectorTo" layoutX="142.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
                                              </children>
                                           </AnchorPane>
                                        </children>
@@ -469,17 +469,17 @@
                                           </HBox>
                                        </children>
                                     </VBox>
+                                    <Button fx:id="saveEventButton" layoutX="722.0" layoutY="676.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="32.0" AnchorPane.rightAnchor="16.0">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Button>
                                  </children>
                               </AnchorPane>
                            </children>
                         </AnchorPane>
                      </children>
                   </GridPane>
-                  <Button layoutX="1777.0" layoutY="54.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" styleClass="calendarButton" text="Save" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="54.0">
-                     <font>
-                        <Font size="18.0" />
-                     </font>
-                  </Button>
                </children>
             </AnchorPane>
             <AnchorPane fx:id="scheduleOverlay" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

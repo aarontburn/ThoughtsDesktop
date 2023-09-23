@@ -32,6 +32,8 @@ public class LeftPanel {
 
     private final CalendarMain main;
 
+
+    private LeftLayouts currentLayout;
     public enum LeftLayouts {
         EVENTS, SCHEDULES
     }
@@ -78,6 +80,7 @@ public class LeftPanel {
         locateNodes();
         attachEvents();
 
+        swapLeftPanel(LeftLayouts.EVENTS);
         Platform.runLater(() -> calendarScheduleBox.getChildren().clear());
 
     }
@@ -165,7 +168,7 @@ public class LeftPanel {
             if (main.getCalendarHandler().getSelectedEvent() == null) {
                 return;
             }
-            main.getRightPanel().getMonthView().saveEvent(main.getCalendarHandler().getSelectedEvent());
+            main.getRightPanel().getMonthView().saveEvent(main.getCalendarHandler().getSelectedEvent(), main.getLeftPanel().getEventInputFields());
             main.getRightPanel().getMonthView().selectEvent(main.getCalendarHandler().getSelectedEvent(), false);
         });
 
@@ -233,7 +236,7 @@ public class LeftPanel {
         for (final LeftLayouts layout : layoutMap.keySet()) {
             layoutMap.get(layout).setVisible(false);
         }
-
+        currentLayout = swapToLayout;
         layoutMap.get(swapToLayout).setVisible(true);
     }
 
@@ -312,6 +315,10 @@ public class LeftPanel {
     public void deleteSchedule(final ScheduleBoxItem item) {
         this.calendarScheduleBox.getChildren().remove(item);
 
+    }
+
+    public LeftLayouts getCurrentLayout() {
+        return this.currentLayout;
     }
 
 

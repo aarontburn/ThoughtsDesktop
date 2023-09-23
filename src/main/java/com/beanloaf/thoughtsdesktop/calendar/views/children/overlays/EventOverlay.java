@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.views.children.overlays;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TimeGroupView;
@@ -17,6 +18,7 @@ import java.util.*;
 public class EventOverlay {
 
     private final CalendarMain main;
+    private final DayEvent event;
 
 
     private RepeatTab currentRepeatMode;
@@ -29,7 +31,7 @@ public class EventOverlay {
     private DatePicker eventDatePicker;
     private TextArea eventDescInput;
     private TimeGroupView eventHourFrom, eventHourTo;
-
+    private Button saveEventButton;
 
 
     private Node repeatPane;
@@ -67,6 +69,7 @@ public class EventOverlay {
 
     public EventOverlay(final CalendarMain main, final DayEvent event) {
         this.main = main;
+        this.event = event;
 
         locateNodes();
         attachEvents();
@@ -81,6 +84,12 @@ public class EventOverlay {
     }
 
     private void startup() {
+        eventTitleInput.setText(event.getEventTitle());
+        eventDatePicker.setValue(event.getDate());
+        eventDescInput.setText(event.getDescription());
+        eventHourFrom.setTime(event.getStartTime());
+        eventHourTo.setTime(event.getEndTime());
+
 
 
     }
@@ -92,11 +101,25 @@ public class EventOverlay {
 
     private void locateNodes() {
         closeButton = (Label) findNodeById("closeEventOverlayButton");
+        saveEventButton = (Button) findNodeById("saveEventButton");
 
-        repeatPane = findNodeById("repeatPane");
+        eventTitleInput = (TextField) findNodeById("eventTitleInput");
+        eventDatePicker = (DatePicker) findNodeById("eventDatePicker");
+        eventDescInput = (TextArea) findNodeById("eventDescInput");
+
+        eventHourFrom = new TimeGroupView(
+                (TextField) findNodeById("eventHourInputFrom"),
+                (TextField) findNodeById("eventMinuteInputFrom"),
+                (ComboBox<String>) findNodeById("eventAMPMSelectorFrom"));
+
+        eventHourTo = new TimeGroupView(
+                (TextField) findNodeById("eventHourInputTo"),
+                (TextField) findNodeById("eventMinuteInputTo"),
+                (ComboBox<String>) findNodeById("eventAMPMSelectorTo"));
+
+
         repeatCheckBox = (CheckBox) findNodeById("repeatCheckBox");
-
-
+        repeatPane = findNodeById("repeatPane");
         repeatTabMap.put(RepeatTab.DAILY, findNodeById("dailyRepeatPane"));
         repeatTabMap.put(RepeatTab.WEEKLY, findNodeById("weeklyRepeatPane"));
         repeatTabMap.put(RepeatTab.MONTHLY, findNodeById("monthlyRepeatPane"));
@@ -107,9 +130,6 @@ public class EventOverlay {
                 (ComboBox<String>) findNodeById("repeatTypeComboBox"),
                 "Daily", "Weekly", "Monthly", "Yearly");
 
-        eventDescInput = (TextArea) findNodeById("eventDescInput");
-        eventTitleInput = (TextField) findNodeById("eventTitleInput");
-        eventDatePicker = (DatePicker) findNodeById("eventDatePicker");
 
         /*  Daily   */
         dailyNumInput = (TextField) findNodeById("dailyNumInput");
@@ -174,13 +194,19 @@ public class EventOverlay {
     private void attachEvents() {
         closeButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.CALENDAR));
 
+        saveEventButton.setOnAction(e -> {
+            main.getRightPanel().getMonthView().saveEvent(event, getEventInputFields());
+            main.swapOverlay(CalendarMain.Overlays.CALENDAR);
+        });
+
         repeatCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) ->
                 repeatPane.setDisable(!isChecked));
 
         repeatTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, swappedTo) -> {
-            swapRepeatTab(RepeatTab.valueOf(swappedTo.toUpperCase()));
+            if (swappedTo != null) {
+                swapRepeatTab(RepeatTab.valueOf(swappedTo.toUpperCase()));
+            }
         });
-
         /*  Daily   */
 
         /*  ---------   */
@@ -216,6 +242,21 @@ public class EventOverlay {
         }
         repeatTabMap.get(visibleTab).setVisible(true);
         currentRepeatMode = visibleTab;
+    }
+
+    public BasicEvent getEventInputFields() {
+        final BasicEvent event = new BasicEvent();
+
+        event.setTitle(eventTitleInput.getText());
+        event.setStartDate(eventDatePicker.getValue());
+        event.setStartTime(eventHourFrom.getTime());
+        event.setEndTime(eventHourTo.getTime());
+        event.setDescription(eventDescInput.getText());
+
+        return event;
+
+
+
     }
 
 

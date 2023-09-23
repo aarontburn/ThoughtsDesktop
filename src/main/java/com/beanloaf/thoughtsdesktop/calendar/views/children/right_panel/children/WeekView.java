@@ -2,6 +2,7 @@ package com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.childre
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.left_panel.LeftPanel;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.application.Platform;
@@ -148,6 +149,8 @@ public class WeekView {
             if (!selectedDay.getMonth().equals(rightPanel.getMain().getCalendarHandler().getCurrentMonth().getMonth())) {
                 rightPanel.getMonthView().changeMonth(rightPanel.getMain().getCalendarHandler().getMonth(selectedDay));
             }
+
+            rightPanel.getMain().getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS);
         });
 
 
