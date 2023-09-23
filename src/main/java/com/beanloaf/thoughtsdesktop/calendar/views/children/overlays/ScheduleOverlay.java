@@ -94,7 +94,7 @@ public class ScheduleOverlay {
         scheduleNameInput = (TextField) findNodeById("scheduleNameInput");
         scheduleStartDate = (DatePicker) findNodeById("scheduleStartDate");
         scheduleEndDate = (DatePicker) findNodeById("scheduleEndDate");
-        closeButton = (Label) findNodeById("closeButton");
+        closeButton = (Label) findNodeById("closeScheduleOverlayButton");
 
 
 

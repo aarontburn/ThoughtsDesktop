@@ -8,6 +8,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.left_panel.LeftPanel;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.EventOverlay;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
 import com.beanloaf.thoughtsdesktop.notes.views.ThoughtsView;
@@ -35,7 +36,7 @@ public class CalendarMain extends ThoughtsView {
 
     /*  Full Screen Overlays    */
     public enum Overlays {
-        CALENDAR, SCHEDULE, LOADING
+        CALENDAR, SCHEDULE, LOADING, EVENT
     }
 
     private final Map<Overlays, Node> overlayMap = new HashMap<>();
@@ -45,8 +46,7 @@ public class CalendarMain extends ThoughtsView {
         this.overlayMap.put(Overlays.CALENDAR, findNodeById("calendarOverlay"));
         this.overlayMap.put(Overlays.SCHEDULE, findNodeById("scheduleOverlay"));
         this.overlayMap.put(Overlays.LOADING, findNodeById("loadingOverlay"));
-
-        swapOverlay(Overlays.LOADING);
+        this.overlayMap.put(Overlays.EVENT, findNodeById("eventOverlay"));
 
         this.calendarHandler = new CalendarHandler(this);
         this.canvasICalHandler = new CanvasICalHandler(this);
@@ -86,7 +86,7 @@ public class CalendarMain extends ThoughtsView {
         getRightPanel().getWeekView().changeWeek(getCalendarHandler().getSelectedDay().getDate());
 
         rightPanel.swapRightPanel(RightPanel.RightLayouts.MONTH);
-        swapOverlay(Overlays.CALENDAR);
+        swapOverlay(Overlays.EVENT);
     }
 
     public void onOpen() {
@@ -109,6 +109,8 @@ public class CalendarMain extends ThoughtsView {
 
         if (swapToOverlay == Overlays.SCHEDULE) {
             final ScheduleOverlay scheduleOverlay = new ScheduleOverlay(this, (ScheduleData) arguments);
+        } else if (swapToOverlay == Overlays.EVENT) {
+            final EventOverlay eventOverlay = new EventOverlay(this, (DayEvent) arguments);
         }
 
         overlayMap.get(swapToOverlay).setVisible(true);

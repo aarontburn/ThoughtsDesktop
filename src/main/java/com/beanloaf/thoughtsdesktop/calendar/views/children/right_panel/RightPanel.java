@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.SplitPane;
 import javafx.util.Pair;
 
 import java.time.LocalDate;
@@ -51,7 +52,6 @@ public class RightPanel {
         this.weekView = new WeekView(this);
 
 
-
     }
 
     public Node findNodeById(final String nodeId) {
@@ -73,6 +73,8 @@ public class RightPanel {
     }
 
     private void attachEvents() {
+
+
         currentButton.setOnAction(e -> {
             final LocalDate now = LocalDate.now();
 

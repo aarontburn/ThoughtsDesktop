@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
@@ -27,6 +28,460 @@
    <children>
       <AnchorPane VBox.vgrow="ALWAYS">
          <children>
+            <AnchorPane fx:id="eventOverlay" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Label maxWidth="1.7976931348623157E308" minWidth="0.0" text="Event" textOverrun="CLIP" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="8.0">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                     <padding>
+                        <Insets left="16.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="closeEventOverlayButton" text="X" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="8.0">
+                     <font>
+                        <Font size="36.0" />
+                     </font>
+                  </Label>
+                  <GridPane layoutX="444.0" layoutY="116.0" prefHeight="932.0" prefWidth="1856.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="32.0" AnchorPane.topAnchor="116.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                           <children>
+                              <VBox layoutX="16.0" layoutY="6.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="8.0">
+                                 <children>
+                                    <Label text="Event Title:">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="eventTitleInput" prefHeight="54.0" prefWidth="1826.0" style="-fx-font-size: 22;">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </TextField>
+                                 </children>
+                              </VBox>
+                              <VBox layoutX="16.0" layoutY="96.0" prefHeight="58.0" prefWidth="547.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="108.0">
+                                 <children>
+                                    <Label text="Date:">
+                                       <font>
+                                          <Font name="Lato Regular" size="20.0" />
+                                       </font>
+                                    </Label>
+                                    <DatePicker fx:id="eventDatePicker" maxWidth="1.7976931348623157E308" prefHeight="33.0" prefWidth="316.0" />
+                                 </children>
+                              </VBox>
+                              <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutX="16.0" layoutY="180.0" prefHeight="72.0" prefWidth="413.0" vgap="8.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="188.0">
+                                 <children>
+                                    <HBox alignment="CENTER" prefHeight="32.0" prefWidth="197.0">
+                                       <children>
+                                          <AnchorPane>
+                                             <children>
+                                                <GridPane layoutX="56.0" layoutY="9.0" prefHeight="31.0" prefWidth="94.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="0.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <TextField fx:id="eventHourInputFrom" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="60.0">
+                                                         <GridPane.margin>
+                                                            <Insets right="8.0" />
+                                                         </GridPane.margin>
+                                                      </TextField>
+                                                      <TextField fx:id="eventMinuteInputFrom" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="53.0" GridPane.columnIndex="2">
+                                                         <GridPane.margin>
+                                                            <Insets left="8.0" />
+                                                         </GridPane.margin>
+                                                      </TextField>
+                                                      <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="51.0" prefWidth="22.0" text=":" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                                         <font>
+                                                            <Font size="32.0" />
+                                                         </font>
+                                                         <GridPane.margin>
+                                                            <Insets bottom="8.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                   </children>
+                                                </GridPane>
+                                                <Label alignment="TOP_CENTER" contentDisplay="BOTTOM" layoutY="9.0" prefHeight="32.0" prefWidth="32.0" text="\@" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <font>
+                                                      <Font size="25.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets top="-2.0" />
+                                                   </padding>
+                                                </Label>
+                                                <ComboBox fx:id="scheduleAMPMSelectorFrom1" layoutX="142.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
+                                    <HBox alignment="CENTER" fillHeight="false" prefHeight="32.0" prefWidth="197.0">
+                                       <children>
+                                          <AnchorPane>
+                                             <children>
+                                                <GridPane layoutX="56.0" layoutY="9.0" prefHeight="31.0" prefWidth="94.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="0.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="50.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <TextField fx:id="scheduleHourInputTo1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="60.0">
+                                                         <GridPane.margin>
+                                                            <Insets right="8.0" />
+                                                         </GridPane.margin>
+                                                      </TextField>
+                                                      <TextField fx:id="scheduleMinuteInputTo1" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="31.0" prefWidth="53.0" GridPane.columnIndex="2">
+                                                         <GridPane.margin>
+                                                            <Insets left="8.0" />
+                                                         </GridPane.margin>
+                                                      </TextField>
+                                                      <Label alignment="TOP_CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="51.0" prefWidth="22.0" text=":" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                                                         <font>
+                                                            <Font size="32.0" />
+                                                         </font>
+                                                         <GridPane.margin>
+                                                            <Insets bottom="8.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                   </children>
+                                                </GridPane>
+                                                <Label alignment="TOP_CENTER" contentDisplay="BOTTOM" layoutY="9.0" prefHeight="32.0" prefWidth="32.0" text="to" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <font>
+                                                      <Font size="20.0" />
+                                                   </font>
+                                                   <padding>
+                                                      <Insets left="4.0" top="2.0" />
+                                                   </padding>
+                                                </Label>
+                                                <ComboBox fx:id="scheduleAMPMSelectorTo1" layoutX="142.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                                 <padding>
+                                    <Insets left="8.0" />
+                                 </padding>
+                              </FlowPane>
+                              <Label layoutX="16.0" layoutY="260.0" text="Description">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextArea fx:id="eventDescInput" layoutX="16.0" layoutY="285.0" prefHeight="618.0" prefWidth="896.0" styleClass="text-field" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="285.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" layoutX="16.0" layoutY="8.0" spacing="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="8.0">
+                                 <children>
+                                    <CheckBox fx:id="repeatCheckBox" mnemonicParsing="false">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label text="Repeat">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <AnchorPane fx:id="repeatPane" layoutX="231.0" layoutY="259.0" prefHeight="887.0" prefWidth="928.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="64.0">
+                                 <children>
+                                    <VBox layoutX="28.0" layoutY="24.0" spacing="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                             <children>
+                                                <Label text="Repeat">
+                                                   <font>
+                                                      <Font size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <ComboBox fx:id="repeatTypeComboBox" prefWidth="150.0" promptText="monthly" />
+                                             </children>
+                                          </HBox>
+                                          <AnchorPane prefHeight="172.0" prefWidth="896.0">
+                                             <children>
+                                                <AnchorPane fx:id="dailyRepeatPane" layoutY="16.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="12.0">
+                                                         <children>
+                                                            <Label text="Every">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <TextField fx:id="dailyNumInput" alignment="CENTER" prefHeight="31.0" prefWidth="45.0" text="1" />
+                                                            <Label text="days">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </AnchorPane>
+                                                <AnchorPane fx:id="weeklyRepeatPane" layoutX="10.0" layoutY="26.0" prefHeight="0.0" prefWidth="896.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="12.0">
+                                                         <children>
+                                                            <Label text="Every">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <TextField fx:id="weeklyNumInput" alignment="CENTER" prefHeight="31.0" prefWidth="45.0" text="1" />
+                                                            <Label text="weeks on">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                      <FlowPane fx:id="weeklyDayOfWeekPane" hgap="24.0" layoutY="43.0" prefHeight="58.0" prefWidth="896.0" vgap="16.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                         <children>
+                                                            <CheckBox mnemonicParsing="false" text="Sun">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </CheckBox>
+                                                            <CheckBox mnemonicParsing="false" text="Mon">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </CheckBox>
+                                                            <CheckBox mnemonicParsing="false" text="Tue">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </CheckBox>
+                                                            <CheckBox mnemonicParsing="false" text="Wed">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </CheckBox>
+                                                            <CheckBox mnemonicParsing="false" text="Thu">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </CheckBox>
+                                                            <CheckBox mnemonicParsing="false" text="Fri">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </CheckBox>
+                                                            <CheckBox mnemonicParsing="false" text="Sat">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </CheckBox>
+                                                         </children>
+                                                         <padding>
+                                                            <Insets top="16.0" />
+                                                         </padding>
+                                                      </FlowPane>
+                                                   </children>
+                                                </AnchorPane>
+                                                <AnchorPane fx:id="monthlyRepeatPane" layoutX="20.0" layoutY="36.0" prefHeight="0.0" prefWidth="896.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="12.0">
+                                                         <children>
+                                                            <Label text="Every">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <TextField fx:id="monthlyNumInput" alignment="CENTER" prefHeight="31.0" prefWidth="45.0" text="1" />
+                                                            <Label text="months">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox fx:id="monthlyDayHBox" alignment="CENTER_LEFT" layoutX="48.0" layoutY="66.0" AnchorPane.leftAnchor="32.0" AnchorPane.topAnchor="48.0">
+                                                         <children>
+                                                            <RadioButton fx:id="monthlyDayRadioButton" mnemonicParsing="false">
+                                                               <font>
+                                                                  <Font size="10.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets right="16.0" />
+                                                               </HBox.margin>
+                                                            </RadioButton>
+                                                            <Label text="On the">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <TextField fx:id="monthlyDayInput" alignment="CENTER" prefHeight="31.0" prefWidth="45.0" text="1">
+                                                               <HBox.margin>
+                                                                  <Insets left="8.0" right="4.0" />
+                                                               </HBox.margin>
+                                                            </TextField>
+                                                            <Label fx:id="monthlySuffixLabel" text="st">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox fx:id="monthlyWeekdayHBox" alignment="CENTER_LEFT" layoutX="48.0" layoutY="109.0" AnchorPane.leftAnchor="32.0" AnchorPane.topAnchor="88.0">
+                                                         <children>
+                                                            <RadioButton fx:id="monthlyWeekdayRadioButton" mnemonicParsing="false">
+                                                               <font>
+                                                                  <Font size="10.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets right="16.0" />
+                                                               </HBox.margin>
+                                                            </RadioButton>
+                                                            <Label text="On the">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <ComboBox fx:id="monthlyWeekdayNumComboBox" prefHeight="25.0" prefWidth="100.0" promptText="first">
+                                                               <HBox.margin>
+                                                                  <Insets left="16.0" />
+                                                               </HBox.margin>
+                                                            </ComboBox>
+                                                            <ComboBox fx:id="monthlyWeekdayComboBox" prefHeight="25.0" prefWidth="125.0" promptText="Monday">
+                                                               <HBox.margin>
+                                                                  <Insets left="12.0" />
+                                                               </HBox.margin>
+                                                            </ComboBox>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </AnchorPane>
+                                                <AnchorPane fx:id="yearlyRepeatPane" layoutX="30.0" layoutY="46.0" prefHeight="0.0" prefWidth="896.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <HBox alignment="CENTER_LEFT" spacing="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="12.0">
+                                                         <children>
+                                                            <Label text="Every">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <TextField fx:id="yearlyNumInput" alignment="CENTER" prefHeight="31.0" prefWidth="45.0" text="1" />
+                                                            <Label text="year(s)">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox alignment="CENTER_LEFT" layoutX="35.0" layoutY="50.0" spacing="16.0" AnchorPane.leftAnchor="32.0" AnchorPane.topAnchor="48.0">
+                                                         <children>
+                                                            <Label text="in">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <ComboBox fx:id="yearlyMonthComboBox" prefWidth="150.0" promptText="January" />
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox fx:id="yearlyDayHBox" alignment="CENTER_LEFT" layoutX="68.0" layoutY="127.0" AnchorPane.leftAnchor="64.0" AnchorPane.topAnchor="88.0">
+                                                         <children>
+                                                            <RadioButton fx:id="yearlyDayRadioButton" mnemonicParsing="false">
+                                                               <font>
+                                                                  <Font size="10.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets right="16.0" />
+                                                               </HBox.margin>
+                                                            </RadioButton>
+                                                            <Label text="On the">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <TextField fx:id="yearlyDayInput" alignment="CENTER" prefHeight="31.0" prefWidth="45.0" text="1">
+                                                               <HBox.margin>
+                                                                  <Insets left="8.0" right="4.0" />
+                                                               </HBox.margin>
+                                                            </TextField>
+                                                            <Label fx:id="yearlySuffixLabel" text="st">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox fx:id="yearlyWeekdayHBox" alignment="CENTER_LEFT" layoutX="68.0" layoutY="87.0" AnchorPane.leftAnchor="64.0" AnchorPane.topAnchor="128.0">
+                                                         <children>
+                                                            <RadioButton fx:id="yearlyWeekdayRadioButton" mnemonicParsing="false">
+                                                               <font>
+                                                                  <Font size="10.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets right="16.0" />
+                                                               </HBox.margin>
+                                                            </RadioButton>
+                                                            <Label text="On the">
+                                                               <font>
+                                                                  <Font size="20.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <ComboBox fx:id="yearlyWeekdayNumComboBox" prefHeight="25.0" prefWidth="100.0" promptText="first">
+                                                               <HBox.margin>
+                                                                  <Insets left="16.0" />
+                                                               </HBox.margin>
+                                                            </ComboBox>
+                                                            <ComboBox fx:id="yearlyWeekdayComboBox" prefHeight="25.0" prefWidth="125.0" promptText="Monday">
+                                                               <HBox.margin>
+                                                                  <Insets left="12.0" />
+                                                               </HBox.margin>
+                                                            </ComboBox>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </AnchorPane>
+                                          <HBox alignment="CENTER_LEFT" spacing="16.0">
+                                             <children>
+                                                <Label text="until">
+                                                   <font>
+                                                      <Font size="20.0" />
+                                                   </font>
+                                                </Label>
+                                                <DatePicker />
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </GridPane>
+                  <Button layoutX="1777.0" layoutY="54.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" styleClass="calendarButton" text="Save" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="54.0">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+            </AnchorPane>
             <AnchorPane fx:id="scheduleOverlay" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <GridPane hgap="8.0" layoutX="257.0" layoutY="5.0" prefHeight="54.0" prefWidth="839.0" AnchorPane.leftAnchor="257.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="4.0">
@@ -98,51 +553,7 @@
                                   <RowConstraints minHeight="10.0" percentHeight="90.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
-                                    <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
-                                       <content>
-                                          <VBox nodeOrientation="LEFT_TO_RIGHT" styleClass="events">
-                                             <children>
-                                                <Label maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" text="6:30 PM Meet with Group 342" wrapText="true">
-                                                   <font>
-                                                      <Font size="20.0" />
-                                                   </font>
-                                                   <VBox.margin>
-                                                      <Insets />
-                                                   </VBox.margin>
-                                                   <padding>
-                                                      <Insets bottom="4.0" top="4.0" />
-                                                   </padding>
-                                                </Label>
-                                                <Label maxWidth="1.7976931348623157E308" minHeight="0.0" text="Event 2" VBox.vgrow="NEVER">
-                                                   <font>
-                                                      <Font size="17.0" />
-                                                   </font>
-                                                   <padding>
-                                                      <Insets bottom="4.0" top="4.0" />
-                                                   </padding>
-                                                </Label>
-                                                <Label minHeight="0.0" text="Event 3" VBox.vgrow="ALWAYS">
-                                                   <font>
-                                                      <Font size="20.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label minHeight="0.0" text="Event 3">
-                                                   <font>
-                                                      <Font size="20.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label minHeight="0.0" text="Event 3">
-                                                   <font>
-                                                      <Font size="20.0" />
-                                                   </font>
-                                                </Label>
-                                             </children>
-                                             <padding>
-                                                <Insets bottom="32.0" top="32.0" />
-                                             </padding>
-                                          </VBox>
-                                       </content>
-                                    </ScrollPane>
+                                    <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
                                     <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                     <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                                     <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
@@ -191,102 +602,6 @@
                                     <ScrollPane fitToWidth="true" layoutX="112.0" layoutY="32.0" prefHeight="224.0" prefWidth="552.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
                                        <content>
                                           <VBox prefHeight="41.0" prefWidth="785.0" spacing="7.0">
-                                             <children>
-                                                <GridPane>
-                                                   <columnConstraints>
-                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-                                                      <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-                                                   </columnConstraints>
-                                                   <rowConstraints>
-                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                                   </rowConstraints>
-                                                   <children>
-                                                      <GridPane prefHeight="39.0" prefWidth="336.0" GridPane.columnIndex="1" GridPane.vgrow="NEVER">
-                                                        <columnConstraints>
-                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                        </columnConstraints>
-                                                        <rowConstraints>
-                                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                          <RowConstraints minHeight="10.0" percentHeight="60.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                        </rowConstraints>
-                                                         <children>
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.rowIndex="1" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Su" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="M" GridPane.columnIndex="1" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Tu" GridPane.columnIndex="2" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="W" GridPane.columnIndex="3" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Th" GridPane.columnIndex="4" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="F" GridPane.columnIndex="5" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Sa" GridPane.columnIndex="6" />
-                                                         </children>
-                                                      </GridPane>
-                                                      <Label text="ENG 101">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </GridPane>
-                                                <GridPane>
-                                                   <columnConstraints>
-                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-                                                   </columnConstraints>
-                                                   <rowConstraints>
-                                                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                                                   </rowConstraints>
-                                                   <children>
-                                                      <GridPane prefHeight="39.0" prefWidth="336.0" GridPane.columnIndex="1">
-                                                         <columnConstraints>
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                         </columnConstraints>
-                                                         <rowConstraints>
-                                                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                            <RowConstraints minHeight="10.0" percentHeight="60.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                         </rowConstraints>
-                                                         <children>
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.rowIndex="1" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Su" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                                                            <CheckBox alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="M" GridPane.columnIndex="1" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Tu" GridPane.columnIndex="2" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="W" GridPane.columnIndex="3" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Th" GridPane.columnIndex="4" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="F" GridPane.columnIndex="5" />
-                                                            <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Sa" GridPane.columnIndex="6" />
-                                                         </children>
-                                                      </GridPane>
-                                                      <Label text="ENG 101">
-                                                         <font>
-                                                            <Font size="15.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </GridPane>
-                                             </children>
                                              <padding>
                                                 <Insets top="5.0" />
                                              </padding>
@@ -452,16 +767,16 @@
                         <Insets left="16.0" />
                      </padding>
                   </Label>
-                  <Label fx:id="closeButton" text="X" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="8.0">
+                  <Label fx:id="closeScheduleOverlayButton" text="X" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="8.0">
                      <font>
                         <Font size="36.0" />
                      </font>
                   </Label>
                </children>
             </AnchorPane>
-            <SplitPane fx:id="calendarOverlay" dividerPositions="0.2" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="calendarOverlay" dividerPositions="0.2" prefHeight="160.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
+                <AnchorPane fx:id="left" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
                         <AnchorPane fx:id="calendarLeftEventPanel" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
@@ -665,6 +980,11 @@
                                                 <Insets right="15.0" />
                                              </padding>
                                           </FlowPane>
+                                          <Label fx:id="expandEventButton" layoutX="332.0" layoutY="18.0" text="↗" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
+                                             <font>
+                                                <Font size="24.0" />
+                                             </font>
+                                          </Label>
                                        </children>
                                     </AnchorPane>
                                 </items>
@@ -725,7 +1045,7 @@
                               </ScrollPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="64.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        <AnchorPane fx:id="leftButtonBar" prefHeight="64.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
                               <HBox alignment="CENTER" layoutX="99.0" layoutY="-18.0" prefHeight="100.0" prefWidth="200.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
@@ -745,7 +1065,7 @@
                         </AnchorPane>
                      </children>
                   </AnchorPane>
-                  <AnchorPane minWidth="0.0">
+                  <AnchorPane fx:id="right" minWidth="0.0">
                      <children>
                       <AnchorPane fx:id="monthView" layoutX="0.5" minHeight="0.0" minWidth="0.0" prefHeight="1076.0" prefWidth="1530.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>

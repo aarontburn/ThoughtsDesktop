@@ -1,7 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
-import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public class ScheduleEvent {
     public ScheduleEvent(final String scheduleEventName, final String id) {
         this.scheduleEventName = scheduleEventName;
         this.id = id;
-        this.displayColor = ThoughtsHelper.getRandomColor();
+        this.displayColor = CH.getRandomColor();
     }
 
     public void setScheduleEventName(final String newName) {
@@ -67,7 +67,7 @@ public class ScheduleEvent {
     }
 
     public void addWeekday(final String weekdayString) {
-        addWeekday(Weekday.getWeekdayByString(weekdayString));
+        addWeekday(Weekday.valueOf(weekdayString.toUpperCase()));
     }
 
     public void addWeekday(final Weekday weekday) {

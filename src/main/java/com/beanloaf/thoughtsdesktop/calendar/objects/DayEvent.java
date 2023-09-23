@@ -3,7 +3,6 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
@@ -23,66 +22,49 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public final static String DAY_EVENT_ID = "dayEvent";
     private final CalendarMain main;
-
     private final BasicEvent event;
     private final List<EventLabel> references = new ArrayList<>();
-    public boolean isReference;
-    private final Types eventType;
-
 
     // Cloning constructor, used to tie the event-box object to the one in the grid
-    public DayEvent(final DayEvent reference, final CalendarMain main) {
-        this(reference.getDate(), reference.getEventTitle(), main, reference.getEventType());
-
-        this.isReference = true;
-
+    public DayEvent(@NotNull final DayEvent reference, final CalendarMain main) {
+        this(reference.event, main);
         reference.addReference(this);
         this.references.add(reference);
-
-        event.setStartTime(reference.event.getStartTime());
-        event.setEndTime(reference.event.getEndTime());
-        event.setDescription(reference.event.getDescription());
-        event.setId(reference.getEventID());
-        event.setCompleted(reference.event.isComplete());
-        this.event.setDisplayColor(reference.event.getDisplayColor());
-
         this.setText(getDisplayTime(event.getStartTime()) + event.getTitle());
     }
 
-
     // Constructor for creating a NEW event
-    public DayEvent(final LocalDate day, final String eventName, final CalendarMain main, final Types eventType) {
-        this(day, eventName, UUID.randomUUID().toString(), main, eventType);
+    public DayEvent(final LocalDate day, final String eventTitle, final CalendarMain main, final Types eventType) {
+        this(day, eventTitle, UUID.randomUUID().toString(), main, eventType);
     }
 
-
     // Constructor for reading an EXISTING event from file
-    public DayEvent(final LocalDate day, final String eventTitle, final String eventID,
-                    final CalendarMain main, final Types eventType) {
-        super(eventTitle);
+    public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarMain main, final Types eventType) {
+        this(new BasicEvent(eventTitle)
+                        .setStartDate(day)
+                        .setId(eventID)
+                        .setDisplayColor(CH.getRandomColor())
+                        .setEventType(eventType),
+                main);
+    }
+
+    private DayEvent(final BasicEvent event, final CalendarMain main) {
+        super(event.getTitle());
         this.main = main;
-
-        this.eventType = eventType;
-
-
-
-        String graphic = "icons/calendar-small-page.png";
-        if (eventType == Types.SCHEDULE) {
-            graphic = "icons/schedule-icon.png";
-        } else if (eventType == Types.CANVAS) {
-            graphic = "icons/canvas-icon.png";
-        }
-        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true)));
-
-        this.event = new BasicEvent(eventTitle);
-        this.event.setStartDate(day);
-        this.event.setId(eventID);
-        this.event.setDisplayColor(ThoughtsHelper.getRandomColor());
-
+        this.event = event;
         this.setId(DAY_EVENT_ID);
 
+        String graphic = "icons/calendar-small-page.png";
+        if (event.getEventType() == Types.SCHEDULE) {
+            graphic = "icons/schedule-icon.png";
+        } else if (event.getEventType() == Types.CANVAS) {
+            graphic = "icons/canvas-icon.png";
+        }
+
+        this.updateDisplayColor(event.getDisplayColor());
 
 
+        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true)));
         getToolTip().textProperty().bindBidirectional(this.textProperty());
 
         this.getChildren().addListener((ListChangeListener<Node>) change -> {
@@ -95,33 +77,38 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
             }
         });
 
+
         this.setOnMouseClicked(e -> onClick());
+
 
     }
 
 
     @Override
     public Types getEventType() {
-        return this.eventType;
+        return this.event.getEventType();
     }
 
 
     @Override
     public void onClick() {
         this.main.getRightPanel().getMonthView().selectEvent(this, false);
-        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed. Type: " + eventType);
+        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed. Type: " + event.getEventType());
     }
 
 
     public void setEventTitle(final String eventTitle) {
-        this.updateEventTitle(eventTitle);
+        this.event.setTitle(eventTitle);
 
+        this.updateEventTitle(eventTitle);
         for (final EventLabel eventLabel : references) {
             eventLabel.updateEventTitle(eventTitle);
         }
     }
 
     public void setDescription(final String description) {
+        this.event.setDescription(description);
+
         this.updateDescription(description);
 
         for (final EventLabel eventLabel : references) {
@@ -130,6 +117,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
     public void setStartDate(final LocalDate date) {
+        this.event.setStartDate(date);
+
         this.updateStartDate(date);
 
         for (final EventLabel eventLabel : references) {
@@ -139,7 +128,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setEndDate(final LocalDate date) {
         // This should not be used.
-
+        this.event.setEndDate(date);
         this.updateEndDate(date);
 
         for (final EventLabel eventLabel : references) {
@@ -149,6 +138,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
 
     public void setStartTime(final LocalTime startTime) {
+        this.event.setStartTime(startTime);
+
         this.updateStartTime(startTime);
 
         for (final EventLabel eventLabel : references) {
@@ -157,6 +148,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
     public void setEndTime(final LocalTime endTime) {
+        this.event.setEndTime(endTime);
+
         this.updateEndTime(endTime);
 
         for (final EventLabel eventLabel : references) {
@@ -167,7 +160,9 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
 
     public void setCompleted(final boolean isCompleted, final boolean save) {
-        updateCompletion(isCompleted);
+        this.event.setCompleted(isCompleted);
+
+        this.updateCompletion(isCompleted);
 
         for (final EventLabel eventLabel : references) {
             eventLabel.updateCompletion(isCompleted);
@@ -220,52 +215,61 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setDisplayColor(final String color) {
         this.event.setDisplayColor(color);
+
+        this.updateDisplayColor(color);
+        for (final EventLabel eventLabel : references) {
+            eventLabel.updateDisplayColor(color);
+        }
     }
 
     @Override
     public void updateEventTitle(String eventTitle) {
-        event.setTitle(eventTitle);
         this.setText(getDisplayTime(getStartTime()) + eventTitle);
     }
 
     @Override
     public void updateDescription(String description) {
-        this.event.setDescription(description);
     }
 
     @Override
     public void updateStartDate(LocalDate date) {
-        this.event.setStartDate(date);
     }
 
     @Override
     public void updateEndDate(LocalDate date) {
         // This should not be used.
-        this.event.setEndDate(date);
 
     }
 
     @Override
     public void updateStartTime(LocalTime time) {
-        this.event.setStartTime(time);
         this.setText(getDisplayTime(time) + event.getTitle());
     }
 
     @Override
     public void updateEndTime(LocalTime time) {
-        this.event.setEndTime(time);
+
     }
+
 
     @Override
     public void updateCompletion(boolean isComplete) {
-        this.event.setCompleted(isComplete);
-
         for (final Node node : this.getChildren()) {
             if (node.getClass().getSimpleName().equals("LabeledText")) {
                 final Text text = (Text) node;
                 text.setStrikethrough(isComplete);
             }
         }
+    }
+
+    @Override
+    public void updateDisplayColor(String color) {
+        this.setStyle("-fx-border-color: derive(" + event.getDisplayColor() + ", -25%); -fx-background-color: derive(" + event.getDisplayColor() + ", +15%)");
+    }
+
+
+    public BasicEvent getEvent() {
+        return this.event;
     }
 
     @Override
@@ -281,6 +285,9 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         } else {
             return -1;
         }
+
+
+
     }
 
     public static Comparator<Node> getDayEventComparator() {

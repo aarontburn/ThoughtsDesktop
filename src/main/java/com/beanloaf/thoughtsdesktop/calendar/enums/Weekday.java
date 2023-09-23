@@ -1,6 +1,11 @@
 package com.beanloaf.thoughtsdesktop.calendar.enums;
 
 
+import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public enum Weekday {
 
     SUNDAY("Su", "Sun", 0),
@@ -33,16 +38,6 @@ public enum Weekday {
         return this.dayOfWeek;
     }
 
-    public static Weekday getWeekdayByString(String s) {
-        s = s.toUpperCase();
-
-        for (final Weekday weekday : Weekday.values()) {
-            if (weekday.name().equals(s)) return weekday;
-        }
-
-        throw new IllegalArgumentException("Invalid weekday passed: " + s);
-    }
-
     public static Weekday getWeekdayByDayOfWeek(final int dayOfWeek) {
         if (dayOfWeek == 7) return SUNDAY;
         if (dayOfWeek < 0 || dayOfWeek > 6)
@@ -53,5 +48,18 @@ public enum Weekday {
         }
 
         throw new IllegalArgumentException("How did you get here? " + dayOfWeek);
+    }
+
+
+    public static List<String> getFullWeekdayNames() {
+        final List<String> l = new ArrayList<>();
+
+        for (final Weekday weekday : values()) {
+            l.add(ThoughtsHelper.toCamelCase(weekday.toString()));
+        }
+
+
+        return l;
+
     }
 }

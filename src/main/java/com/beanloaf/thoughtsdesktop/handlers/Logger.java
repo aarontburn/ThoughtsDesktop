@@ -9,6 +9,7 @@ public class Logger {
     // TODO: dump log output to a visual console or file
 
     public static void log(final Object text) {
+
         if (text instanceof Exception) {
             logException((Exception) text);
             return;
@@ -19,7 +20,9 @@ public class Logger {
     }
 
     public static void logException(final Exception e) {
+
         System.err.println(getTimeStamp() + e.getClass() + ": " + e.getLocalizedMessage());
+
         for (StackTraceElement traceElement : e.getStackTrace())
             System.err.println("\tat " + traceElement);
 

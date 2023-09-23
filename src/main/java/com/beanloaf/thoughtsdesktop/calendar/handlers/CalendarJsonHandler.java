@@ -1,13 +1,13 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -94,7 +94,7 @@ public class CalendarJsonHandler {
                             final String startTime = json.getString(Keys.START_TIME);
                             final String endTime = json.getString(Keys.END_TIME);
                             final Boolean isCompleted = json.getBoolean(Keys.COMPLETED);
-                            final String displayColor = json.getString(Keys.DISPLAY_COLOR) == null ? ThoughtsHelper.getRandomColor() : json.getString(Keys.DISPLAY_COLOR);
+                            final String displayColor = json.getString(Keys.DISPLAY_COLOR) == null ? CH.getRandomColor() : json.getString(Keys.DISPLAY_COLOR);
 
 
                             final LocalDate eventDate = LocalDate.of(Integer.parseInt(year), Month.valueOf(month.toUpperCase(Locale.ENGLISH)), Integer.parseInt(dayNum));
@@ -203,7 +203,7 @@ public class CalendarJsonHandler {
             eventBranch.put(Keys.DESCRIPTION, event.getDescription());
             eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
             eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
-            eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? ThoughtsHelper.getRandomColor() : event.getDisplayColor());
+            eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? CH.getRandomColor() : event.getDisplayColor());
             eventBranch.put(Keys.COMPLETED, completed);
 
             saveCalendarJSON();
@@ -284,6 +284,7 @@ public class CalendarJsonHandler {
                 final ScheduleData scheduleData = new ScheduleData(scheduleId);
                 scheduleData.setScheduleName(scheduleName);
 
+
                 if (startDate == null) {
                     scheduleData.setStartDate(null);
                 } else {
@@ -314,7 +315,7 @@ public class CalendarJsonHandler {
                     final String scheduleEventDescription = eventJson.getString(Keys.DESCRIPTION);
                     final String scheduleEventStartTime = eventJson.getString(Keys.START_TIME);
                     final String scheduleEventEndTime = eventJson.getString(Keys.END_TIME);
-                    final String scheduleColor = eventJson.getString(Keys.DISPLAY_COLOR) == null ? ThoughtsHelper.getRandomColor() : eventJson.getString(Keys.DISPLAY_COLOR);
+                    final String scheduleColor = eventJson.getString(Keys.DISPLAY_COLOR) == null ? CH.getRandomColor() : eventJson.getString(Keys.DISPLAY_COLOR);
 
                     final Object[] a = ((JSONArray) JSONValue.parse(eventJson.getString(Keys.DAYS))).toArray();
                     final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
@@ -399,7 +400,7 @@ public class CalendarJsonHandler {
                 eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.DESCRIPTION, schedule.getDescription());
-                eventBranch.put(Keys.DISPLAY_COLOR, schedule.getDisplayColor() == null ? ThoughtsHelper.getRandomColor() : schedule.getDisplayColor());
+                eventBranch.put(Keys.DISPLAY_COLOR, schedule.getDisplayColor() == null ? CH.getRandomColor() : schedule.getDisplayColor());
             }
 
             try (FileOutputStream fWriter = new FileOutputStream(scheduleFile)) {

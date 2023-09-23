@@ -21,7 +21,7 @@ public class WeekBlock extends VBox implements EventLabel {
     private final WeekView weekView;
     private final BasicEvent event;
 
-    private final String color;
+    private String color;
 
 
     /*  Components  */
@@ -142,7 +142,10 @@ public class WeekBlock extends VBox implements EventLabel {
 
     @Override
     public void updateDescription(String description) {
-        this.descLabel.setText(description);
+        if (this.descLabel != null) {
+            this.descLabel.setText(description);
+        }
+
     }
 
     @Override
@@ -165,13 +168,19 @@ public class WeekBlock extends VBox implements EventLabel {
     public void updateStartTime(LocalTime time) {
         event.setStartTime(time);
         this.nameLabel.setText(DayEvent.getDisplayTime(time) + event.getTitle());
-        this.timeLabel.setText(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
+
+        if (this.timeLabel != null) {
+            this.timeLabel.setText(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
+        }
     }
 
     @Override
     public void updateEndTime(LocalTime time) {
         event.setEndTime(time);
-        this.timeLabel.setText(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
+
+        if (this.timeLabel != null) {
+            this.timeLabel.setText(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
+        }
     }
 
     @Override
@@ -179,6 +188,13 @@ public class WeekBlock extends VBox implements EventLabel {
         event.setCompleted(isComplete);
         this.setStyle(getCss());
 
+
+    }
+
+    @Override
+    public void updateDisplayColor(String color) {
+        this.color = event.getLinkedDayEvent().getDisplayColor();
+        this.setStyle(this.getCss());
 
     }
 }

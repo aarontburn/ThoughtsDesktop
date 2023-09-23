@@ -178,7 +178,9 @@ public class MonthView {
             addScheduleToCalendarDay(data);
         }
 
-        Platform.runLater(() -> main.getRightPanel().getWeekView().refreshWeek());
+        if (main.getRightPanel().getCurrentLayout() == RightPanel.RightLayouts.WEEK) {
+            Platform.runLater(() -> main.getRightPanel().getWeekView().refreshWeek());
+        }
 
     }
 
@@ -261,7 +263,7 @@ public class MonthView {
                 dayEvent.setEndTime(scheduleEvent.getEndTime());
                 dayEvent.setDisplayColor(scheduleEvent.getDisplayColor());
 
-                LocalDate finalStartDate = startDate;
+                final LocalDate finalStartDate = startDate;
                 Platform.runLater(() -> addEventToCalendarDay(finalStartDate, dayEvent));
 
             }
@@ -357,9 +359,6 @@ public class MonthView {
     public void saveEvent(DayEvent event) {
         final BasicEvent inputFields = main.getLeftPanel().getEventInputFields();
 
-
-
-
         event.setEventTitle(inputFields.getTitle());
         event.setDescription(inputFields.getDescription());
 
@@ -392,7 +391,9 @@ public class MonthView {
             this.main.getJsonHandler().addEventToJson(event);
         }
 
-        rightPanel.getWeekView().refreshWeek();
+        if (rightPanel.getCurrentLayout() == RightPanel.RightLayouts.WEEK) {
+            rightPanel.getWeekView().refreshWeek();
+        }
 
         main.getCalendarHandler().getDay(event.getDate()).sortEvents();
         main.getLeftPanel().sortEventBox();

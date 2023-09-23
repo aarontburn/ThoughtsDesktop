@@ -4,10 +4,14 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.HPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -16,8 +20,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -61,6 +64,8 @@ public class LeftPanel {
     private HBox calendarSmallStartTimeFields, calendarSmallEndTimeFields;
     private Label calendarSmallFinalStartTimeLabel, calendarSmallFinalEndTimeLabel;
     private CheckBox calendarSmallProgressCheckBox;
+    private Label expandEventButton;
+
 
 
 
@@ -95,6 +100,7 @@ public class LeftPanel {
 
 
         /*  Small Event Input   */
+        expandEventButton = (Label) findNodeById("expandEventButton");
         calendarSmallEventFields = findNodeById("calendarSmallEventFields");
         calendarSmallEventTitleInput = (TextField) findNodeById("calendarSmallEventTitleInput");
         calendarSmallDatePicker = (DatePicker) findNodeById("calendarSmallDatePicker");
@@ -141,6 +147,11 @@ public class LeftPanel {
         });
 
         /*  Small New Event*/
+        expandEventButton.setOnMouseClicked(e -> {
+            main.swapOverlay(CalendarMain.Overlays.EVENT, main.getCalendarHandler().getSelectedEvent());
+
+        });
+
         calendarSmallEventFields.setVisible(false);
 
         calendarSmallProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) ->
@@ -151,15 +162,17 @@ public class LeftPanel {
 
         calendarSmallSaveEventButton.setVisible(false);
         calendarSmallSaveEventButton.setOnAction(e -> {
-            if (main.getCalendarHandler().getSelectedEvent() == null) return;
+            if (main.getCalendarHandler().getSelectedEvent() == null) {
+                return;
+            }
             main.getRightPanel().getMonthView().saveEvent(main.getCalendarHandler().getSelectedEvent());
-
-            main.getRightPanel().getMonthView().selectDay(this.main.getCalendarHandler().getSelectedDay(), false);
             main.getRightPanel().getMonthView().selectEvent(main.getCalendarHandler().getSelectedEvent(), false);
         });
 
         calendarSmallDeleteButton.setOnAction(e -> {
-            if (main.getCalendarHandler().getSelectedEvent() == null) return;
+            if (main.getCalendarHandler().getSelectedEvent() == null) {
+                return;
+            }
             main.getRightPanel().getMonthView().deleteEvent(main.getCalendarHandler().getSelectedEvent());
         });
 
@@ -183,9 +196,13 @@ public class LeftPanel {
 
 
         if (isDisabled) {
-            if (!styles.contains(disableDatePickerStyle)) styles.add(disableDatePickerStyle);
+            if (!styles.contains(disableDatePickerStyle)) {
+                styles.add(disableDatePickerStyle);
+            }
         } else {
-            while (styles.contains(disableDatePickerStyle)) styles.remove(disableDatePickerStyle);
+            while (styles.contains(disableDatePickerStyle)) {
+                styles.remove(disableDatePickerStyle);
+            }
         }
 
         calendarSmallStartTimeFields.setVisible(isEnabled);
@@ -209,7 +226,9 @@ public class LeftPanel {
 
 
     public void swapLeftPanel(final LeftLayouts swapToLayout) {
-        if (swapToLayout == null) throw new IllegalArgumentException("swapToLayout cannot be null");
+        if (swapToLayout == null) {
+            throw new IllegalArgumentException("swapToLayout cannot be null");
+        }
 
         for (final LeftLayouts layout : layoutMap.keySet()) {
             layoutMap.get(layout).setVisible(false);
@@ -258,6 +277,7 @@ public class LeftPanel {
     public void onSelectEvent(final DayEvent event, final boolean editable) {
         calendarSmallEventFields.setVisible(true);
         toggleSmallEventFields(editable);
+
         calendarSmallSaveEventButton.setVisible(editable);
         calendarSmallEditButton.setVisible(!editable);
         calendarSmallDeleteButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);

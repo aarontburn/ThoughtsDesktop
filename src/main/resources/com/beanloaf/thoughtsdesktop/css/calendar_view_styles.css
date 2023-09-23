@@ -60,12 +60,11 @@
 .day-event {
     -fx-background-color: rgb(94, 94, 94);
     -fx-border-color: rgb(120, 120, 120);
-    -fx-border-width: 0.75;
+    -fx-border-width: 1;
     -fx-border-radius: 3;
+    -fx-background-radius: 3;
     -fx-padding: 3;
-
 }
-
 
 
 .selected-day-event {

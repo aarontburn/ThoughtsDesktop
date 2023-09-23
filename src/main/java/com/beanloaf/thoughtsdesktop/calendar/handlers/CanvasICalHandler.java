@@ -5,11 +5,11 @@ import biweekly.ICalendar;
 import biweekly.component.VEvent;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
-import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -53,7 +53,6 @@ public class CanvasICalHandler {
     public CanvasICalHandler(final CalendarMain main) {
         this.main = main;
 
-
         TC.Directories.CALENDAR_PATH.mkdir();
 
         if (checkICalUrl((String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL))) {
@@ -63,6 +62,7 @@ public class CanvasICalHandler {
     }
 
     private Map<String, BasicEvent> readCanvasEventsFromJson() {
+
         final Map<String, BasicEvent> cachedCanvasEvents = new HashMap<>();
         try {
             final JSONObject data = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.CANVAS_ICAL_DATA_FILE.toPath())));
@@ -86,7 +86,7 @@ public class CanvasICalHandler {
                 event.setId(uid);
                 event.setDescription(description == null ? "" : description);
                 event.setCompleted(isCompleted != null && isCompleted);
-                event.setDisplayColor(displayColor == null ? ThoughtsHelper.getRandomColor() : displayColor);
+                event.setDisplayColor(displayColor == null ? CH.getRandomColor() : displayColor);
 
                 if (startTime == null) {
                     event.setStartTime(null);

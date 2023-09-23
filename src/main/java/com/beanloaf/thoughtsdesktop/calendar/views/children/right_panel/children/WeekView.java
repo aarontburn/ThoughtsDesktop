@@ -151,10 +151,6 @@ public class WeekView {
         });
 
 
-
-
-
-
         for (int column = 0; column < columnCount; column++) {
             final ColumnConstraints con = new ColumnConstraints();
             con.setPercentWidth(100.0 / columnCount);
@@ -169,7 +165,7 @@ public class WeekView {
         for (int row = 0; row < rowCount; row++) {
             final RowConstraints con = new RowConstraints();
             con.setPercentHeight(100.0 / rowCount);
-            con.setMinHeight(30);
+            con.setMinHeight(33);
             con.setValignment(VPos.TOP);
             weekGrid.getRowConstraints().add(con);
 
@@ -222,7 +218,7 @@ public class WeekView {
 
         final Month currentMonth = rightPanel.getMain().getCalendarHandler().getCurrentMonth().getMonth();
 
-        if (!this.startDate.getMonth().equals(currentMonth) && !this.endDate.getMonth().equals(currentMonth) ) {
+        if (!this.startDate.getMonth().equals(currentMonth) && !this.endDate.getMonth().equals(currentMonth)) {
             rightPanel.getMonthView().changeMonth(rightPanel.getMain().getCalendarHandler().getMonth(this.startDate));
         }
 
@@ -246,21 +242,16 @@ public class WeekView {
             for (final DayEvent dayEvent : day.getEvents()) {
                 final Weekday weekday = Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue());
 
-                /*
-                TODO: instead of creating new event, all day events could all share the same reference of the same event. This may
-                    improve memory and speed.
-                */
 
-                final BasicEvent event = new BasicEvent(dayEvent.getEventTitle())
+                this.weekEventList.add(new BasicEvent(dayEvent.getEventTitle())
                         .setStartTime(dayEvent.getStartTime())
                         .setEndTime(dayEvent.getEndTime())
                         .setDescription(dayEvent.getDescription())
                         .setWeekday(weekday)
                         .setStartDate(dayEvent.getDate())
                         .setLinkedDayEvent(dayEvent)
-                        .setCompleted(dayEvent.isCompleted());
+                        .setCompleted(dayEvent.isCompleted()));
 
-                this.weekEventList.add(event);
                 if (dayEvent.getStartTime() == null) {
                     allDayEventMap.get(weekday).getChildren().add(new DayEvent(dayEvent, rightPanel.getMain()));
                 }

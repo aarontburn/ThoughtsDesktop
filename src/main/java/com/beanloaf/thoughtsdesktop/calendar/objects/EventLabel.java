@@ -16,6 +16,7 @@ public interface EventLabel {
     void updateStartTime(final LocalTime time);
     void updateEndTime(final LocalTime time);
     void updateCompletion(final boolean isComplete);
+    void updateDisplayColor(final String color);
 
 
 }

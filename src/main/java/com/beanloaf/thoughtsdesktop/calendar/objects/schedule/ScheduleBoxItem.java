@@ -10,6 +10,8 @@ import javafx.scene.layout.AnchorPane;
 import java.time.format.DateTimeFormatter;
 
 public class ScheduleBoxItem extends AnchorPane {
+    public static final int PREF_WIDTH = 400;
+
 
     private final ScheduleData data;
 
@@ -32,7 +34,6 @@ public class ScheduleBoxItem extends AnchorPane {
         scheduleNameLabel.setStyle("-fx-font-size: 18px");
         this.getChildren().add(ThoughtsHelper.setAnchor(scheduleNameLabel, 16, null, 16, null));
 
-
         startDateLabel = new Label();
         updateStartDateLabelText();
         startDateLabel.setStyle("-fx-font-size: 16");
@@ -49,7 +50,6 @@ public class ScheduleBoxItem extends AnchorPane {
         editButton.getStyleClass().add("calendarButton");
         editButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(editButton, null, 16, null, 16));
-
         editButton.setOnAction(e -> main.swapOverlay(CalendarMain.Overlays.SCHEDULE, data));
 
 
@@ -57,9 +57,7 @@ public class ScheduleBoxItem extends AnchorPane {
         deleteButton.getStyleClass().add("calendarButton");
         deleteButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(deleteButton, null, 16, 16, null));
-
         deleteButton.setOnAction(e -> main.getRightPanel().getMonthView().deleteSchedule(this));
-
 
 
         hideCheckBox = new CheckBox();

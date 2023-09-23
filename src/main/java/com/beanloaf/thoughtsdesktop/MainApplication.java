@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
@@ -124,6 +125,8 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             settingsHandler.changeSetting(SettingsHandler.Settings.WINDOW_MAXIMIZED, stage.isMaximized());
 
         });
+
+
 
 
         /*  Layouts */
