@@ -158,7 +158,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             notesMenuBar = new NotesMenuBar(main);
             textView = new TextView(main);
             listView = new ListView(main);
-            startup();
 
             calendarMain = new CalendarMain(main);
         }).start();
@@ -241,13 +240,8 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         // TODO: this doesn't trigger
         keybindings.put(new KeyCharacterCombination(KeyCode.F5.getChar()),
                 () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH));
-
-
     }
 
-    public void startup() {
-        listView.unsortedThoughtList.doClick();
-    }
 
     public Node findNodeById(final String id) {
         if (id.charAt(0) == '#') throw new IllegalArgumentException("ID's cannot start with #");

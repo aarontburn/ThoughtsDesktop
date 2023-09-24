@@ -23,6 +23,7 @@ public class TimeGroupView {
         this.periodSelector = CH.setAMPMComboBox(periodSelector);
 
 
+
         attachEvents();
     }
 

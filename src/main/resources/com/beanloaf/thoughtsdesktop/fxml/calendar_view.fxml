@@ -28,7 +28,7 @@
    <children>
       <AnchorPane VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane fx:id="eventOverlay" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="eventOverlay" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label maxWidth="1.7976931348623157E308" minWidth="0.0" text="Event" textOverrun="CLIP" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="8.0">
                      <font>
@@ -774,13 +774,13 @@
                   </Label>
                </children>
             </AnchorPane>
-            <SplitPane fx:id="calendarOverlay" dividerPositions="0.2" prefHeight="160.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="calendarOverlay" dividerPositions="0.25" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane fx:id="left" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
                         <AnchorPane fx:id="calendarLeftEventPanel" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <SplitPane dividerPositions="0.4236602628918099" orientation="VERTICAL" prefHeight="993.0" prefWidth="343.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <SplitPane dividerPositions="0.24305555555555555" orientation="VERTICAL" prefHeight="993.0" prefWidth="343.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="340.0" prefWidth="376.0">
                                        <children>
@@ -803,61 +803,42 @@
                                     </AnchorPane>
                                   <AnchorPane fx:id="calendarSmallEventFields" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                                        <children>
+                                          <Label fx:id="expandEventButton" layoutX="332.0" layoutY="18.0" text="↗" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
+                                             <font>
+                                                <Font size="24.0" />
+                                             </font>
+                                          </Label>
                                           <CheckBox fx:id="calendarSmallProgressCheckBox" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" text="In-progress" AnchorPane.leftAnchor="16.0" AnchorPane.topAnchor="16.0">
                                              <font>
                                                 <Font name="Lato Regular" size="15.0" />
                                              </font>
                                           </CheckBox>
-                                          <Label alignment="CENTER" layoutY="57.0" text="Title" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="57.0">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="calendarSmallEventTitleInput" layoutX="8.0" layoutY="77.0" style="-fx-font-size: 18;" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="77.0" />
-                                          <Label alignment="CENTER" layoutY="128.0" text="Date" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="128.0">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                          </Label>
-                                          <DatePicker fx:id="calendarSmallDatePicker" layoutX="8.0" layoutY="148.0" styleClass="text-field" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="148.0" />
-                                          <Label alignment="CENTER" layoutY="191.0" text="Time" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="188.0">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                          </Label>
-                                          <TextArea fx:id="calendarSmallEventDescriptionInput" layoutY="320.0" prefHeight="248.0" prefWidth="677.0" styleClass="text-field" text="test" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="320.0" />
-                                          <Label alignment="CENTER" layoutY="300.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="300.0">
-                                             <font>
-                                                <Font size="16.0" />
-                                             </font>
-                                          </Label>
-                                          <HBox alignment="CENTER" layoutX="16.0" layoutY="593.0" spacing="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                          <VBox alignment="CENTER" layoutY="57.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="57.0">
                                              <children>
-                                                <Button fx:id="calendarSmallDeleteButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Delete" textOverrun="CLIP">
+                                                <Label alignment="CENTER" text="Title" textAlignment="CENTER" wrapText="true">
                                                    <font>
-                                                      <Font size="18.0" />
+                                                      <Font size="16.0" />
                                                    </font>
-                                                </Button>
-                                                <AnchorPane>
-                                                   <children>
-                                                      <Button fx:id="calendarSmallEditButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Edit" textOverrun="CLIP">
-                                                         <font>
-                                                            <Font size="18.0" />
-                                                         </font>
-                                                      </Button>
-                                                      <Button fx:id="calendarSmallSaveEventButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Save" textOverrun="CLIP">
-                                                         <font>
-                                                            <Font size="18.0" />
-                                                         </font>
-                                                      </Button>
-                                                   </children>
-                                                </AnchorPane>
+                                                </Label>
+                                                <TextField fx:id="calendarSmallEventTitleInput" style="-fx-font-size: 18;" />
                                              </children>
-                                          </HBox>
-                                          <FlowPane alignment="CENTER" hgap="8.0" vgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0">
-                                             <padding>
-                                                <Insets right="15.0" />
-                                             </padding>
+                                          </VBox>
+                                          <VBox alignment="CENTER" layoutY="128.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="128.0">
+                                             <children>
+                                                <Label alignment="CENTER" text="Date" textAlignment="CENTER">
+                                                   <font>
+                                                      <Font size="16.0" />
+                                                   </font>
+                                                </Label>
+                                                <DatePicker fx:id="calendarSmallDatePicker" maxWidth="1.7976931348623157E308" styleClass="text-field" />
+                                             </children>
+                                          </VBox>
+                                          <Label fx:id="calendarTimeLabel" alignment="CENTER" layoutY="191.0" text="Time" textAlignment="CENTER" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="188.0">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <FlowPane alignment="CENTER" hgap="8.0" vgap="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="210.0">
                                              <children>
                                                 <Label fx:id="calendarSmallFinalStartTimeLabel" alignment="CENTER" text="\@ 11:59 PM" textAlignment="CENTER">
                                                    <font>
@@ -871,7 +852,7 @@
                                                 </Label>
                                              </children>
                                           </FlowPane>
-                                          <FlowPane alignment="CENTER" layoutY="211.0" vgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="210.0">
+                                          <FlowPane alignment="TOP_CENTER" columnHalignment="CENTER" layoutY="210.0" vgap="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="210.0">
                                              <children>
                                                 <AnchorPane>
                                                    <children>
@@ -960,7 +941,7 @@
                                                                         </Label>
                                                                      </children>
                                                                   </GridPane>
-                                                                  <Label alignment="TOP_CENTER" layoutY="9.0" prefHeight="32.0" prefWidth="32.0" text="to" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                  <Label alignment="TOP_CENTER" layoutY="9.0" prefHeight="32.0" prefWidth="32.0" text="till" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <font>
                                                                         <Font size="20.0" />
                                                                      </font>
@@ -976,15 +957,36 @@
                                                    </children>
                                                 </AnchorPane>
                                              </children>
-                                             <padding>
-                                                <Insets right="15.0" />
-                                             </padding>
                                           </FlowPane>
-                                          <Label fx:id="expandEventButton" layoutX="332.0" layoutY="18.0" text="↗" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0">
+                                          <Label fx:id="calendarDescriptionLabel" alignment="CENTER" layoutX="8.0" layoutY="253.0" text="Description" textAlignment="CENTER" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="253.0">
                                              <font>
-                                                <Font size="24.0" />
+                                                <Font size="16.0" />
                                              </font>
                                           </Label>
+                                          <TextArea fx:id="calendarSmallEventDescriptionInput" layoutX="60.0" layoutY="329.0" prefHeight="381.0" prefWidth="537.0" styleClass="text-field" wrapText="true" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="276.0" />
+                                          <HBox alignment="CENTER" layoutX="16.0" layoutY="593.0" spacing="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                             <children>
+                                                <Button fx:id="calendarSmallDeleteButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Delete" textOverrun="CLIP">
+                                                   <font>
+                                                      <Font size="18.0" />
+                                                   </font>
+                                                </Button>
+                                                <AnchorPane>
+                                                   <children>
+                                                      <Button fx:id="calendarSmallEditButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Edit" textOverrun="CLIP">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button fx:id="calendarSmallSaveEventButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Save" textOverrun="CLIP">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                          </HBox>
                                        </children>
                                     </AnchorPane>
                                 </items>

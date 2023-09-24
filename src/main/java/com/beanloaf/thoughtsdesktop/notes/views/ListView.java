@@ -66,6 +66,10 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
 
 
         refreshThoughtList();
+
+
+        unsortedThoughtList.doClick();
+
     }
 
     private void refreshThoughtList() {
@@ -514,14 +518,15 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
             }
             case SORT -> sort((ThoughtObject) eventValue);
             case SELECTED_TAG_ITEM -> {
-                selectedTagItem = (TagListItem) eventValue;
+                // TODO: This throws a ConcurrentModificationException
 
+                selectedTagItem = (TagListItem) eventValue;
                 for (Node node : tagList.getChildren()) {
-                    if (node.getClass() != TagListItem.class) continue;
+                    if (node.getClass() != TagListItem.class) {
+                        continue;
+                    }
                     node.getStyleClass().remove("tagListSelected");
                 }
-
-
 
             }
             case DELETE -> delete((ThoughtObject) eventValue);

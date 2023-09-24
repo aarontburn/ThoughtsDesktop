@@ -185,8 +185,8 @@ public class CanvasICalHandler {
 
 
                 String desc = "";
-                if (!event.getLocation().getValue().equals("")) {
-                    desc += "Location/Address: " + event.getLocation().getValue() + "\n\n";
+                if (event.getLocation() != null && !event.getLocation().getValue().equals("")) {
+                    desc += "Location: " + event.getLocation().getValue() + "\n\n";
                 }
                 if (event.getDescription() != null) {
                     desc += event.getDescription().getValue();
@@ -242,7 +242,7 @@ public class CanvasICalHandler {
                 eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                 eventBranch.put(Keys.DESCRIPTION, event.getDescription());
                 eventBranch.put(Keys.COMPLETED, event.isComplete());
-                eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor());
+                eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? CH.getRandomColor() : event.getDisplayColor());
 
                 root.put(event.getId(), eventBranch);
             }

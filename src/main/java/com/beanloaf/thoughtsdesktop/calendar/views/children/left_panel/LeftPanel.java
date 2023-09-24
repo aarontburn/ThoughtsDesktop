@@ -38,7 +38,7 @@ public class LeftPanel {
         EVENTS, SCHEDULES
     }
 
-    private final Map<LeftLayouts, Node> layoutMap = new HashMap<>();
+    private final Map<LeftLayouts, AnchorPane> layoutMap = new HashMap<>();
 
 
 
@@ -64,7 +64,7 @@ public class LeftPanel {
     private TextArea calendarSmallEventDescriptionInput;
     private Button calendarSmallSaveEventButton, calendarSmallEditButton, calendarSmallDeleteButton;
     private HBox calendarSmallStartTimeFields, calendarSmallEndTimeFields;
-    private Label calendarSmallFinalStartTimeLabel, calendarSmallFinalEndTimeLabel;
+    private Label calendarSmallFinalStartTimeLabel, calendarSmallFinalEndTimeLabel, calendarDescriptionLabel, calendarTimeLabel;
     private CheckBox calendarSmallProgressCheckBox;
     private Label expandEventButton;
 
@@ -74,8 +74,8 @@ public class LeftPanel {
     public LeftPanel(final CalendarMain main) {
         this.main = main;
 
-        layoutMap.put(LeftLayouts.EVENTS, findNodeById("calendarLeftEventPanel"));
-        layoutMap.put(LeftLayouts.SCHEDULES, findNodeById("calendarLeftSchedulePanel"));
+        layoutMap.put(LeftLayouts.EVENTS, (AnchorPane) findNodeById("calendarLeftEventPanel"));
+        layoutMap.put(LeftLayouts.SCHEDULES, (AnchorPane) findNodeById("calendarLeftSchedulePanel"));
 
         locateNodes();
         attachEvents();
@@ -103,6 +103,9 @@ public class LeftPanel {
 
 
         /*  Small Event Input   */
+        calendarDescriptionLabel = (Label) findNodeById("calendarDescriptionLabel");
+        calendarTimeLabel = (Label) findNodeById("calendarTimeLabel");
+
         expandEventButton = (Label) findNodeById("expandEventButton");
         calendarSmallEventFields = findNodeById("calendarSmallEventFields");
         calendarSmallEventTitleInput = (TextField) findNodeById("calendarSmallEventTitleInput");
@@ -130,10 +133,65 @@ public class LeftPanel {
         calendarSmallFinalStartTimeLabel = (Label) findNodeById("calendarSmallFinalStartTimeLabel");
         calendarSmallFinalEndTimeLabel = (Label) findNodeById("calendarSmallFinalEndTimeLabel");
         calendarSmallProgressCheckBox = (CheckBox) findNodeById("calendarSmallProgressCheckBox");
+    }
+
+
+    private void resizeDescriptionBox(final boolean isWrapping, final boolean toTop) {
+        if (isWrapping) {
+            ThoughtsHelper.setAnchor(
+                    calendarSmallEventDescriptionInput, 313,
+                    AnchorPane.getBottomAnchor(calendarSmallEventDescriptionInput),
+                    AnchorPane.getLeftAnchor(calendarSmallEventDescriptionInput),
+                    AnchorPane.getRightAnchor(calendarSmallEventDescriptionInput));
+
+            ThoughtsHelper.setAnchor(
+                    calendarDescriptionLabel, 290,
+                    AnchorPane.getBottomAnchor(calendarDescriptionLabel),
+                    AnchorPane.getLeftAnchor(calendarDescriptionLabel),
+                    AnchorPane.getRightAnchor(calendarDescriptionLabel));
+
+        } else {
+            ThoughtsHelper.setAnchor(
+                    calendarSmallEventDescriptionInput, toTop ? 212 : 276,
+                    AnchorPane.getBottomAnchor(calendarSmallEventDescriptionInput),
+                    AnchorPane.getLeftAnchor(calendarSmallEventDescriptionInput),
+                    AnchorPane.getRightAnchor(calendarSmallEventDescriptionInput));
+
+            ThoughtsHelper.setAnchor(
+                    calendarDescriptionLabel, toTop ? 188 : 253,
+                    AnchorPane.getBottomAnchor(calendarDescriptionLabel),
+                    AnchorPane.getLeftAnchor(calendarDescriptionLabel),
+                    AnchorPane.getRightAnchor(calendarDescriptionLabel));
+        }
 
     }
 
+    private void setDescriptionBoxHeight() {
+        if (!calendarSmallEndTimeFields.isVisible()
+                && calendarSmallFinalEndTimeLabel.getText().isEmpty()
+                && calendarSmallFinalStartTimeLabel.getText().isEmpty()) {
+
+            calendarTimeLabel.setVisible(false);
+            resizeDescriptionBox(false, true);
+
+
+        } else {
+            calendarTimeLabel.setVisible(true);
+            if (!calendarSmallEndTimeFields.isVisible()) {  // 448 is when wrapping occurs when editing, 280 when not editing
+                resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 280, false); // wrapping for final label
+            } else {
+                resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 448, false); // wrapping for input fields
+            }
+
+        }
+    }
+
     private void attachEvents() {
+
+        calendarSmallEndTimeFields.visibleProperty().addListener((observableValue, aBoolean, isVisible) -> setDescriptionBoxHeight());
+        layoutMap.get(LeftLayouts.EVENTS).widthProperty().addListener((observableValue, number, width) -> setDescriptionBoxHeight());
+
+
         calendarNewScheduleButton.setOnAction(e -> this.main.swapOverlay(CalendarMain.Overlays.SCHEDULE, new ScheduleData()));
 
 
@@ -214,7 +272,7 @@ public class LeftPanel {
         calendarSmallFinalStartTimeLabel.setVisible(isDisabled);
         calendarSmallFinalEndTimeLabel.setVisible(isDisabled);
 
-        calendarSmallEventDescriptionInput.setDisable(isDisabled);
+        calendarSmallEventDescriptionInput.setEditable(isEnabled);
 
     }
 
@@ -298,6 +356,8 @@ public class LeftPanel {
         calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
         calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
 
+
+        setDescriptionBoxHeight();
     }
 
     public void setEventFieldsVisibility(final boolean isVisible) {
