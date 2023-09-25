@@ -21,9 +21,11 @@ public class ScheduleEvent {
     private String description = "";
     private final String id;
     private String displayColor;
+    private final String parentScheduleName;
 
 
-    public ScheduleEvent(final String scheduleEventName, final String id) {
+    public ScheduleEvent(final String parentScheduleName, final String scheduleEventName, final String id) {
+        this.parentScheduleName = parentScheduleName;
         this.scheduleEventName = scheduleEventName;
         this.id = id;
         this.displayColor = CH.getRandomColor();
@@ -74,7 +76,9 @@ public class ScheduleEvent {
         if (!this.weekdays.contains(weekday)) this.weekdays.add(weekday);
     }
 
-
+    public String getParentScheduleName() {
+        return this.parentScheduleName;
+    }
 
 
     public void removeAllWeekdays() {

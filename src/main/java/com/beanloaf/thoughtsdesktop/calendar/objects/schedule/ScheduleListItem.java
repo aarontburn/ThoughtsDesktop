@@ -23,26 +23,21 @@ public class ScheduleListItem extends GridPane {
 
 
     private final ScheduleOverlay tab;
-
-
     private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
-
     private final List<Weekday> weekdays = new ArrayList<>();
-
     private final ScheduleEvent event;
-
     private final Label displayText;
-
     private final List<ScheduleLabel> references = new ArrayList<>();
+    private String parentScheduleName;
 
 
-    public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName) {
-        this(tab, scheduleName, UUID.randomUUID().toString());
+    public ScheduleListItem(final String parentScheduleName, final ScheduleOverlay tab, final String scheduleName) {
+        this(parentScheduleName, tab, scheduleName, UUID.randomUUID().toString());
 
     }
 
-    public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName, final String id) {
-        this(tab, new ScheduleEvent(scheduleName, id));
+    public ScheduleListItem(final String parentScheduleName, final ScheduleOverlay tab, final String scheduleName, final String id) {
+        this(tab, new ScheduleEvent(parentScheduleName, scheduleName, id));
     }
 
 

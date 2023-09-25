@@ -51,7 +51,7 @@ public class WeekBlock extends VBox implements EventLabel {
 
         nameLabel = new Label(DayEvent.getDisplayTime(event.getStartTime()) + event.getTitle());
         nameLabel.setMinHeight(0);
-        nameLabel.setStyle("-fx-font-size: 18; -fx-padding: 0 0 0 8; -fx-background-color: transparent;");
+        nameLabel.setStyle("-fx-font-size: 18; -fx-padding: 0 0 0 4; -fx-background-color: transparent;");
         nameLabel.setUnderline(true);
         this.getChildren().add(nameLabel);
 
@@ -66,12 +66,12 @@ public class WeekBlock extends VBox implements EventLabel {
         if (span > 1) {
             timeLabel = new Label(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
             timeLabel.setMinHeight(0);
-            timeLabel.setStyle("-fx-font-size: 14; -fx-padding: 0 0 0 8; -fx-background-color: transparent;");
+            timeLabel.setStyle("-fx-font-size: 14; -fx-padding: 0 0 0 4; -fx-background-color: transparent;");
             this.getChildren().add(timeLabel);
 
             descLabel = new Label(event.getDescription());
             descLabel.setMinHeight(0);
-            descLabel.setStyle("-fx-font-size: 14; -fx-padding: 0 0 0 8; -fx-background-color: transparent;");
+            descLabel.setStyle("-fx-font-size: 14; -fx-padding: 0 0 0 4; -fx-background-color: transparent;");
             this.getChildren().add(descLabel);
         }
 

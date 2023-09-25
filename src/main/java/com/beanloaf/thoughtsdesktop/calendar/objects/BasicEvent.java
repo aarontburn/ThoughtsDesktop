@@ -4,7 +4,7 @@ import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Objects;
+import java.util.*;
 
 public class BasicEvent implements TypedEvent {
 
@@ -20,6 +20,7 @@ public class BasicEvent implements TypedEvent {
     private DayEvent linkedDayEvent;
     private Types eventType = Types.BASIC;
     private String color;
+    private String altText;
 
 
     public BasicEvent() {
@@ -145,6 +146,17 @@ public class BasicEvent implements TypedEvent {
         this.eventType = type;
         return this;
     }
+
+
+    public BasicEvent setAltText(final String altText) {
+        this.altText = altText;
+        return this;
+    }
+
+    public String getAltText() {
+        return this.altText;
+    }
+
 
     @Override
     public String toString() {

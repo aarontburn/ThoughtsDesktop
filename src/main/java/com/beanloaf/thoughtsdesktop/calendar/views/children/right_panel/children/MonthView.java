@@ -254,10 +254,12 @@ public class MonthView {
                     }
                 }
 
-                if (!isCorrectDay) continue;
+                if (!isCorrectDay) {
+                    continue;
+                }
 
 
-                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), main, TypedEvent.Types.SCHEDULE);
+                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), main, TypedEvent.Types.SCHEDULE, schedule.getScheduleName());
                 dayEvent.setDescription(scheduleEvent.getDescription());
                 dayEvent.setStartTime(scheduleEvent.getStartTime());
                 dayEvent.setEndTime(scheduleEvent.getEndTime());
@@ -281,12 +283,13 @@ public class MonthView {
         main.getCalendarHandler().getCanvasEvents().clear();
 
         for (final BasicEvent event : newCanvasEvents) {
-            final DayEvent e = new DayEvent(event.getStartDate(), event.getTitle(), event.getId(), main, TypedEvent.Types.CANVAS);
+            final DayEvent e = new DayEvent(event.getStartDate(), event.getTitle(), event.getId(), main, TypedEvent.Types.CANVAS, event.getAltText());
             e.setDescription(event.getDescription());
             e.setStartTime(event.getStartTime());
             e.setEndTime(event.getEndTime());
             e.setCompleted(event.isComplete(), false);
             e.setDisplayColor(event.getDisplayColor());
+            ;
 
 
             addEventToCalendarDay(event.getStartDate(), e);

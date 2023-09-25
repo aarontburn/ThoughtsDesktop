@@ -132,9 +132,8 @@ public class ScheduleOverlay {
     public void attachEvents() {
         closeButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.CALENDAR));
 
-
         scheduleNewEventButton.setOnAction(e -> {
-            final ScheduleListItem scheduleListItem = new ScheduleListItem(this, "New Scheduled Event");
+            final ScheduleListItem scheduleListItem = new ScheduleListItem(data.getScheduleName(), this, "New Scheduled Event");
 
             addScheduleEventToListView(scheduleListItem);
             setInputFields(scheduleListItem);

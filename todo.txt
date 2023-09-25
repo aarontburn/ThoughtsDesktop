@@ -23,8 +23,10 @@ Home Screen:
 
 Calendar:
     -   Setting to choose to end week with Sunday or Saturday
-    -   Hide schedules without deleting them
     -   Shift-click events marks them as complete
+
+    -   Hide canvas events
+    -   Repeats events logic
 
 
 

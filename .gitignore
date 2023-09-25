@@ -44,3 +44,4 @@ storage/
 storage/user.json
 test.json
 .idea/checkstyleidea-libs/readme.txt
+out/

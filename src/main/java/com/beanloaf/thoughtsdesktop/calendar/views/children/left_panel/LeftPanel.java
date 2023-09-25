@@ -4,14 +4,10 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -57,15 +53,16 @@ public class LeftPanel {
 
 
     /*  Small Event Input */
-    private Node calendarSmallEventFields;
-    private TextField calendarSmallEventTitleInput;
-    private DatePicker calendarSmallDatePicker;
-    private TimeGroupView calendarSmallTimeStart, calendarSmallTimeEnd;
-    private TextArea calendarSmallEventDescriptionInput;
-    private Button calendarSmallSaveEventButton, calendarSmallEditButton, calendarSmallDeleteButton;
-    private HBox calendarSmallStartTimeFields, calendarSmallEndTimeFields;
-    private Label calendarSmallFinalStartTimeLabel, calendarSmallFinalEndTimeLabel, calendarDescriptionLabel, calendarTimeLabel;
-    private CheckBox calendarSmallProgressCheckBox;
+    private Node calendarEventFields;
+    private TextField calendarEventTitleInput;
+    private DatePicker calendarDatePicker;
+    private TimeGroupView calendarTimeStart, calendarTimeEnd;
+    private TextArea calendarDescriptionInput;
+    private Button calendarSaveEventButton, calendarEditButton, calendarDeleteButton;
+    private HBox calendarStartTimeFields, calendarEndTimeFields;
+    private Label calendarFinalStartTimeLabel, calendarFinalEndTimeLabel,
+            calendarDescriptionLabel, calendarTimeLabel, calendarSourceLabel;
+    private CheckBox calendarProgressCheckBox;
     private Label expandEventButton;
 
 
@@ -102,47 +99,47 @@ public class LeftPanel {
         calendarNewEventButton = (Button) findNodeById("calendarNewEventButton");
 
 
-        /*  Small Event Input   */
+        /*  Event Input   */
         calendarDescriptionLabel = (Label) findNodeById("calendarDescriptionLabel");
         calendarTimeLabel = (Label) findNodeById("calendarTimeLabel");
+        calendarSourceLabel = (Label) findNodeById("calendarSourceLabel");
 
         expandEventButton = (Label) findNodeById("expandEventButton");
-        calendarSmallEventFields = findNodeById("calendarSmallEventFields");
-        calendarSmallEventTitleInput = (TextField) findNodeById("calendarSmallEventTitleInput");
-        calendarSmallDatePicker = (DatePicker) findNodeById("calendarSmallDatePicker");
+        calendarEventFields = findNodeById("calendarEventFields");
+        calendarEventTitleInput = (TextField) findNodeById("calendarEventTitleInput");
+        calendarDatePicker = (DatePicker) findNodeById("calendarDatePicker");
 
-        calendarSmallTimeStart = new TimeGroupView(
-                (TextField) findNodeById("calendarSmallHourInputFrom"),
-                (TextField) findNodeById("calendarSmallMinuteInputFrom"),
-                (ComboBox<String>) findNodeById("calendarSmallAMPMSelectorFrom"));
+        calendarTimeStart = new TimeGroupView(
+                (TextField) findNodeById("calendarHourInputFrom"),
+                (TextField) findNodeById("calendarMinuteInputFrom"),
+                (ComboBox<String>) findNodeById("calendarAMPMSelectorFrom"));
 
-        calendarSmallTimeEnd = new TimeGroupView(
-                (TextField) findNodeById("calendarSmallHourInputTo"),
-                (TextField) findNodeById("calendarSmallMinuteInputTo"),
-                (ComboBox<String>) findNodeById("calendarSmallAMPMSelectorTo"));
-
-
-        calendarSmallEventDescriptionInput = (TextArea) findNodeById("calendarSmallEventDescriptionInput");
-        calendarSmallSaveEventButton = (Button) findNodeById("calendarSmallSaveEventButton");
-        calendarSmallEditButton = (Button) findNodeById("calendarSmallEditButton");
-        calendarSmallDeleteButton = (Button) findNodeById("calendarSmallDeleteButton");
+        calendarTimeEnd = new TimeGroupView(
+                (TextField) findNodeById("calendarHourInputTo"),
+                (TextField) findNodeById("calendarMinuteInputTo"),
+                (ComboBox<String>) findNodeById("calendarAMPMSelectorTo"));
 
 
-        calendarSmallEndTimeFields = (HBox) findNodeById("calendarSmallEndTimeFields");
-        calendarSmallStartTimeFields = (HBox) findNodeById("calendarSmallStartTimeFields");
-        calendarSmallFinalStartTimeLabel = (Label) findNodeById("calendarSmallFinalStartTimeLabel");
-        calendarSmallFinalEndTimeLabel = (Label) findNodeById("calendarSmallFinalEndTimeLabel");
-        calendarSmallProgressCheckBox = (CheckBox) findNodeById("calendarSmallProgressCheckBox");
+        calendarDescriptionInput = (TextArea) findNodeById("calendarDescriptionInput");
+        calendarSaveEventButton = (Button) findNodeById("calendarSaveEventButton");
+        calendarEditButton = (Button) findNodeById("calendarEditButton");
+        calendarDeleteButton = (Button) findNodeById("calendarDeleteButton");
+
+        calendarStartTimeFields = (HBox) findNodeById("calendarStartTimeFields");
+        calendarEndTimeFields = (HBox) findNodeById("calendarEndTimeFields");
+        calendarFinalStartTimeLabel = (Label) findNodeById("calendarFinalStartTimeLabel");
+        calendarFinalEndTimeLabel = (Label) findNodeById("calendarFinalEndTimeLabel");
+        calendarProgressCheckBox = (CheckBox) findNodeById("calendarProgressCheckBox");
     }
 
 
     private void resizeDescriptionBox(final boolean isWrapping, final boolean toTop) {
         if (isWrapping) {
             ThoughtsHelper.setAnchor(
-                    calendarSmallEventDescriptionInput, 313,
-                    AnchorPane.getBottomAnchor(calendarSmallEventDescriptionInput),
-                    AnchorPane.getLeftAnchor(calendarSmallEventDescriptionInput),
-                    AnchorPane.getRightAnchor(calendarSmallEventDescriptionInput));
+                    calendarDescriptionInput, 313,
+                    AnchorPane.getBottomAnchor(calendarDescriptionInput),
+                    AnchorPane.getLeftAnchor(calendarDescriptionInput),
+                    AnchorPane.getRightAnchor(calendarDescriptionInput));
 
             ThoughtsHelper.setAnchor(
                     calendarDescriptionLabel, 290,
@@ -152,10 +149,10 @@ public class LeftPanel {
 
         } else {
             ThoughtsHelper.setAnchor(
-                    calendarSmallEventDescriptionInput, toTop ? 212 : 276,
-                    AnchorPane.getBottomAnchor(calendarSmallEventDescriptionInput),
-                    AnchorPane.getLeftAnchor(calendarSmallEventDescriptionInput),
-                    AnchorPane.getRightAnchor(calendarSmallEventDescriptionInput));
+                    calendarDescriptionInput, toTop ? 212 : 276,
+                    AnchorPane.getBottomAnchor(calendarDescriptionInput),
+                    AnchorPane.getLeftAnchor(calendarDescriptionInput),
+                    AnchorPane.getRightAnchor(calendarDescriptionInput));
 
             ThoughtsHelper.setAnchor(
                     calendarDescriptionLabel, toTop ? 188 : 253,
@@ -167,9 +164,9 @@ public class LeftPanel {
     }
 
     private void setDescriptionBoxHeight() {
-        if (!calendarSmallEndTimeFields.isVisible()
-                && calendarSmallFinalEndTimeLabel.getText().isEmpty()
-                && calendarSmallFinalStartTimeLabel.getText().isEmpty()) {
+        if (!calendarEndTimeFields.isVisible()
+                && calendarFinalEndTimeLabel.getText().isEmpty()
+                && calendarFinalStartTimeLabel.getText().isEmpty()) {
 
             calendarTimeLabel.setVisible(false);
             resizeDescriptionBox(false, true);
@@ -177,18 +174,19 @@ public class LeftPanel {
 
         } else {
             calendarTimeLabel.setVisible(true);
-            if (!calendarSmallEndTimeFields.isVisible()) {  // 448 is when wrapping occurs when editing, 280 when not editing
+            if (!calendarEndTimeFields.isVisible()) {  // 448 is when wrapping occurs when editing, 280 when not editing
                 resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 280, false); // wrapping for final label
             } else {
                 resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 448, false); // wrapping for input fields
             }
+
 
         }
     }
 
     private void attachEvents() {
 
-        calendarSmallEndTimeFields.visibleProperty().addListener((observableValue, aBoolean, isVisible) -> setDescriptionBoxHeight());
+        calendarEndTimeFields.visibleProperty().addListener((observableValue, aBoolean, isVisible) -> setDescriptionBoxHeight());
         layoutMap.get(LeftLayouts.EVENTS).widthProperty().addListener((observableValue, number, width) -> setDescriptionBoxHeight());
 
 
@@ -213,16 +211,16 @@ public class LeftPanel {
 
         });
 
-        calendarSmallEventFields.setVisible(false);
+        calendarEventFields.setVisible(false);
 
-        calendarSmallProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) ->
-                calendarSmallProgressCheckBox.setText(isChecked ? "Completed" : "In-progress"));
+        calendarProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) ->
+                calendarProgressCheckBox.setText(isChecked ? "Completed" : "In-progress"));
 
-        calendarSmallProgressCheckBox.setOnAction(e -> main.getCalendarHandler().getSelectedEvent().setCompleted(calendarSmallProgressCheckBox.isSelected(), true));
+        calendarProgressCheckBox.setOnAction(e -> main.getCalendarHandler().getSelectedEvent().setCompleted(calendarProgressCheckBox.isSelected(), true));
 
 
-        calendarSmallSaveEventButton.setVisible(false);
-        calendarSmallSaveEventButton.setOnAction(e -> {
+        calendarSaveEventButton.setVisible(false);
+        calendarSaveEventButton.setOnAction(e -> {
             if (main.getCalendarHandler().getSelectedEvent() == null) {
                 return;
             }
@@ -230,7 +228,7 @@ public class LeftPanel {
             main.getRightPanel().getMonthView().selectEvent(main.getCalendarHandler().getSelectedEvent(), false);
         });
 
-        calendarSmallDeleteButton.setOnAction(e -> {
+        calendarDeleteButton.setOnAction(e -> {
             if (main.getCalendarHandler().getSelectedEvent() == null) {
                 return;
             }
@@ -238,21 +236,21 @@ public class LeftPanel {
         });
 
 
-        calendarSmallEditButton.setOnAction(e -> {
+        calendarEditButton.setOnAction(e -> {
             toggleSmallEventFields(true);
-            calendarSmallSaveEventButton.setVisible(true);
+            calendarSaveEventButton.setVisible(true);
         });
 
     }
 
     public void toggleSmallEventFields(final boolean isEnabled) {
         final boolean isDisabled = !isEnabled;
-        calendarSmallEventTitleInput.setDisable(isDisabled);
-        calendarSmallDatePicker.setDisable(isDisabled);
-        calendarSmallSaveEventButton.setVisible(isEnabled);
+        calendarEventTitleInput.setDisable(isDisabled);
+        calendarDatePicker.setDisable(isDisabled);
+        calendarSaveEventButton.setVisible(isEnabled);
 
 
-        final ObservableList<String> styles = calendarSmallDatePicker.getStyleClass();
+        final ObservableList<String> styles = calendarDatePicker.getStyleClass();
         final String disableDatePickerStyle = "non-editable-date-picker";
 
 
@@ -266,13 +264,13 @@ public class LeftPanel {
             }
         }
 
-        calendarSmallStartTimeFields.setVisible(isEnabled);
-        calendarSmallEndTimeFields.setVisible(isEnabled);
+        calendarStartTimeFields.setVisible(isEnabled);
+        calendarEndTimeFields.setVisible(isEnabled);
 
-        calendarSmallFinalStartTimeLabel.setVisible(isDisabled);
-        calendarSmallFinalEndTimeLabel.setVisible(isDisabled);
+        calendarFinalStartTimeLabel.setVisible(isDisabled);
+        calendarFinalEndTimeLabel.setVisible(isDisabled);
 
-        calendarSmallEventDescriptionInput.setEditable(isEnabled);
+        calendarDescriptionInput.setEditable(isEnabled);
 
     }
 
@@ -319,11 +317,11 @@ public class LeftPanel {
     public BasicEvent getEventInputFields() {
         final BasicEvent event = new BasicEvent();
 
-        event.setTitle(calendarSmallEventTitleInput.getText());
-        event.setStartDate(calendarSmallDatePicker.getValue());
-        event.setStartTime(calendarSmallTimeStart.getTime());
-        event.setEndTime(calendarSmallTimeEnd.getTime());
-        event.setDescription(calendarSmallEventDescriptionInput.getText());
+        event.setTitle(calendarEventTitleInput.getText());
+        event.setStartDate(calendarDatePicker.getValue());
+        event.setStartTime(calendarTimeStart.getTime());
+        event.setEndTime(calendarTimeEnd.getTime());
+        event.setDescription(calendarDescriptionInput.getText());
 
         return event;
     }
@@ -331,37 +329,47 @@ public class LeftPanel {
     public void setFinalStartEndTimeLabel(final DayEvent event) {
         final LocalTime startTime = event.getStartTime();
         final LocalTime endTime = event.getStartTime();
-        calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
-        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
     }
 
     public void onSelectEvent(final DayEvent event, final boolean editable) {
-        calendarSmallEventFields.setVisible(true);
+        calendarEventFields.setVisible(true);
         toggleSmallEventFields(editable);
 
-        calendarSmallSaveEventButton.setVisible(editable);
-        calendarSmallEditButton.setVisible(!editable);
-        calendarSmallDeleteButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);
-        calendarSmallEditButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);
+        calendarSaveEventButton.setVisible(editable);
+        calendarEditButton.setVisible(!editable);
+        calendarDeleteButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);
+        calendarEditButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);
 
 
-        calendarSmallEventTitleInput.setText(event.getEventTitle());
-        calendarSmallEventDescriptionInput.setText(event.getDescription());
-        calendarSmallDatePicker.setValue(LocalDate.of(event.getDate().getYear(), event.getDate().getMonth(), event.getDate().getDayOfMonth()));
-        calendarSmallProgressCheckBox.setSelected(event.isCompleted());
+        calendarEventTitleInput.setText(event.getEventTitle());
+        calendarDescriptionInput.setText(event.getDescription());
+        calendarDatePicker.setValue(LocalDate.of(event.getDate().getYear(), event.getDate().getMonth(), event.getDate().getDayOfMonth()));
+        calendarProgressCheckBox.setSelected(event.isCompleted());
         final LocalTime startTime = event.getStartTime();
         final LocalTime endTime = event.getEndTime();
-        calendarSmallTimeStart.setTime(startTime);
-        calendarSmallTimeEnd.setTime(endTime);
-        calendarSmallFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
-        calendarSmallFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarTimeStart.setTime(startTime);
+        calendarTimeEnd.setTime(endTime);
+        calendarFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+        calendarFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
+
+
+
+        if (event.getEventType() == TypedEvent.Types.CANVAS) {
+            calendarSourceLabel.setText("Canvas: " + event.getEvent().getAltText());
+        } else if (event.getEventType() == TypedEvent.Types.SCHEDULE) {
+            calendarSourceLabel.setText(event.getAltText());
+        } else {
+            calendarSourceLabel.setText("Calendar");
+        }
 
 
         setDescriptionBoxHeight();
     }
 
     public void setEventFieldsVisibility(final boolean isVisible) {
-        this.calendarSmallEventFields.setVisible(isVisible);
+        this.calendarEventFields.setVisible(isVisible);
     }
 
     public ObservableList<Node> getScheduleBoxChildren() {

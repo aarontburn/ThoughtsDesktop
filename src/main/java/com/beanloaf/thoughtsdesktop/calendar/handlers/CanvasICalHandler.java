@@ -158,6 +158,7 @@ public class CanvasICalHandler {
 
             final ICalendar iCal = Biweekly.parse(responseBuilder.toString()).first();
 
+
             for (final VEvent event : iCal.getEvents()) {
                 LocalDate startDate = null;
                 LocalTime startTime = null;
@@ -192,13 +193,18 @@ public class CanvasICalHandler {
                     desc += event.getDescription().getValue();
                 }
 
+                final String eventTitle = event.getSummary().getValue();
+
                 final BasicEvent e = new BasicEvent(event.getSummary().getValue())
                         .setId(event.getUid().getValue())
                         .setStartDate(startDate)
                         .setStartTime(startTime)
                         .setEndTime(endTime)
                         .setDescription(desc)
-                        .setEventType(TypedEvent.Types.CANVAS);
+                        .setEventType(TypedEvent.Types.CANVAS)
+                        .setDisplayColor(CH.getRandomColor())
+                        .setAltText(eventTitle.substring(eventTitle.lastIndexOf('[')).replace("[", "").replace("]", ""))
+                        ;
 
                 iCalCanvasEventsList.add(e);
 

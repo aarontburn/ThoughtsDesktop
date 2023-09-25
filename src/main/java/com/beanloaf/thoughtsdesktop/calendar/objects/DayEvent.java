@@ -48,6 +48,11 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
                 main);
     }
 
+    public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarMain main, final Types eventType, final String altText) {
+        this(day, eventTitle, eventID, main, eventType);
+        this.event.setAltText(altText);
+    }
+
     private DayEvent(final BasicEvent event, final CalendarMain main) {
         super(event.getTitle());
         this.main = main;
@@ -60,19 +65,16 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         } else if (event.getEventType() == Types.CANVAS) {
             graphic = "icons/canvas-icon.png";
         }
+        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true)));
 
         this.updateDisplayColor(event.getDisplayColor());
-
-
-        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true)));
-        getToolTip().textProperty().bindBidirectional(this.textProperty());
+        super.getToolTip().textProperty().bindBidirectional(this.textProperty());
 
         this.getChildren().addListener((ListChangeListener<Node>) change -> {
             for (final Node node : getChildren()) {
                 node.setId(DAY_EVENT_ID);
                 if (node.getClass().getSimpleName().equals("LabeledText")) {
-                    final Text text = (Text) node;
-                    text.setStrikethrough(this.event.isComplete());
+                    ((Text) node).setStrikethrough(this.event.isComplete());
                 }
             }
         });
@@ -99,8 +101,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setEventTitle(final String eventTitle) {
         this.event.setTitle(eventTitle);
-
         this.updateEventTitle(eventTitle);
+
         for (final EventLabel eventLabel : references) {
             eventLabel.updateEventTitle(eventTitle);
         }
@@ -108,7 +110,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setDescription(final String description) {
         this.event.setDescription(description);
-
         this.updateDescription(description);
 
         for (final EventLabel eventLabel : references) {
@@ -118,7 +119,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setStartDate(final LocalDate date) {
         this.event.setStartDate(date);
-
         this.updateStartDate(date);
 
         for (final EventLabel eventLabel : references) {
@@ -139,7 +139,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setStartTime(final LocalTime startTime) {
         this.event.setStartTime(startTime);
-
         this.updateStartTime(startTime);
 
         for (final EventLabel eventLabel : references) {
@@ -149,7 +148,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setEndTime(final LocalTime endTime) {
         this.event.setEndTime(endTime);
-
         this.updateEndTime(endTime);
 
         for (final EventLabel eventLabel : references) {
@@ -161,14 +159,15 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setCompleted(final boolean isCompleted, final boolean save) {
         this.event.setCompleted(isCompleted);
-
         this.updateCompletion(isCompleted);
 
         for (final EventLabel eventLabel : references) {
             eventLabel.updateCompletion(isCompleted);
         }
 
-        if (save) main.getRightPanel().getMonthView().saveEvent(this, main.getLeftPanel().getEventInputFields());
+        if (save) {
+            main.getRightPanel().getMonthView().saveEvent(this, main.getLeftPanel().getEventInputFields());
+        }
     }
 
     public void addReference(final EventLabel reference) {
@@ -270,6 +269,10 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public BasicEvent getEvent() {
         return this.event;
+    }
+
+    public String getAltText() {
+        return this.event.getAltText();
     }
 
     @Override

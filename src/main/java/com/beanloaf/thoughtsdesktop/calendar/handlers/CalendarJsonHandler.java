@@ -320,7 +320,7 @@ public class CalendarJsonHandler {
                     final Object[] a = ((JSONArray) JSONValue.parse(eventJson.getString(Keys.DAYS))).toArray();
                     final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
 
-                    final ScheduleEvent scheduleEvent = new ScheduleEvent(scheduleEventName, scheduleEventID);
+                    final ScheduleEvent scheduleEvent = new ScheduleEvent(scheduleData.getScheduleName(), scheduleEventName, scheduleEventID);
                     scheduleEvent.setDescription(scheduleEventDescription);
                     scheduleEvent.setDisplayColor(scheduleColor);
 
