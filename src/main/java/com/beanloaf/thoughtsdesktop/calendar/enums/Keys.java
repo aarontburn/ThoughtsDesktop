@@ -16,6 +16,8 @@ public enum Keys {
     SCHEDULE_EVENTS,
     TITLE,
     DISPLAY_COLOR,
+    CLASSES,
+    EVENTS,
     ;
 
 

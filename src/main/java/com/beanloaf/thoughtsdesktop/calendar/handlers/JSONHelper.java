@@ -47,6 +47,10 @@ public class JSONHelper {
         return json.keySet();
     }
 
+    public JSONObject getJson() {
+        return this.json;
+    }
+
 
 
 }

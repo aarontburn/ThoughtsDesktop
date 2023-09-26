@@ -11,6 +11,7 @@ import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.res.TC;
+import javafx.util.Pair;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -40,10 +41,10 @@ public class CanvasICalHandler {
     private final static LocalTime CANVAS_DEFAULT_END_TIME = LocalTime.of(23, 59);
 
 
-
     private final CalendarMain main;
 
     private final List<BasicEvent> iCalCanvasEventsList = new ArrayList<>();
+    private final Map<String, Map<String, Object>> classMap = new HashMap<>();
 
 
     private ScheduledExecutorService scheduler;
@@ -61,72 +62,69 @@ public class CanvasICalHandler {
 
     }
 
-    private Map<String, BasicEvent> readCanvasEventsFromJson() {
+    private Map<String, Map<String, Object>> readCanvasEventsFromJson() {
 
-        final Map<String, BasicEvent> cachedCanvasEvents = new HashMap<>();
+        final Map<String, Map<String, Object>> cachedCanvasEvents = new HashMap<>();
+
         try {
             final JSONObject data = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.CANVAS_ICAL_DATA_FILE.toPath())));
             final JSONHelper dataHelper = new JSONHelper(data);
 
+            for (final Object c : dataHelper.getKeys()) { // Class Name
+                final String className = (String) c;
+                final JSONHelper classBranch = dataHelper.getBranch(c);
 
-            for (final Object o : dataHelper.getKeys()) {
-                final BasicEvent event = new BasicEvent();
+                final String classColor = classBranch.getString(Keys.DISPLAY_COLOR);
+                cachedCanvasEvents.computeIfAbsent(className, k -> new HashMap<>()).put(Keys.DISPLAY_COLOR.toString(), classColor);
 
-                final String uid = (String) o;
-                final JSONHelper eventBranch = dataHelper.getBranch(uid);
+                for (final Object e : classBranch.getKeys()) { // Event UID and Display Color
+                    if (e.equals(Keys.DISPLAY_COLOR.toString())) {
+                        continue;
+                    }
 
-                final String startTime = eventBranch.getString(Keys.START_TIME);
-                final String startDate = eventBranch.getString(Keys.START_DATE);
-                final String endTime = eventBranch.getString(Keys.END_TIME);
-                final String description = eventBranch.getString(Keys.DESCRIPTION);
-                final Boolean isCompleted = eventBranch.getBoolean(Keys.COMPLETED);
-                final String displayColor = eventBranch.getString(Keys.DISPLAY_COLOR);
+                    final JSONHelper eventBranch = classBranch.getBranch(e);
 
-                event.setTitle(eventBranch.getString(Keys.TITLE));
-                event.setId(uid);
-                event.setDescription(description == null ? "" : description);
-                event.setCompleted(isCompleted != null && isCompleted);
-                event.setDisplayColor(displayColor == null ? CH.getRandomColor() : displayColor);
+                    final BasicEvent event = new BasicEvent();
+                    final String uid = (String) e;
+                    final String startTime = eventBranch.getString(Keys.START_TIME);
+                    final String startDate = eventBranch.getString(Keys.START_DATE);
+                    final String endTime = eventBranch.getString(Keys.END_TIME);
+                    final String description = eventBranch.getString(Keys.DESCRIPTION);
+                    final Boolean isCompleted = eventBranch.getBoolean(Keys.COMPLETED);
 
-                if (startTime == null) {
-                    event.setStartTime(null);
-                } else {
+                    event.setTitle(eventBranch.getString(Keys.TITLE));
+                    event.setId(uid);
+                    event.setDescription(description == null ? "" : description);
+                    event.setCompleted(isCompleted != null && isCompleted);
+                    event.setDisplayColor(classColor == null ? CH.getRandomColor() : classColor);
+
                     try {
-                        final LocalTime parsedStartTime = LocalTime.parse(startTime);
-                        event.setStartTime(parsedStartTime);
+                        event.setStartTime(startTime == null ? null : LocalTime.parse(startTime));
                     } catch (DateTimeParseException parseException) {
                         event.setStartTime(null);
                     }
-                }
 
-
-                if (endTime == null) {
-                    event.setEndTime(null);
-                } else {
                     try {
-                        final LocalTime parsedEndTime = LocalTime.parse(endTime);
-                        event.setEndTime(parsedEndTime);
+                        event.setEndTime(endTime == null ? null : LocalTime.parse(endTime));
                     } catch (DateTimeParseException parseException) {
                         event.setEndTime(null);
                     }
-                }
 
-                if (startDate == null) {
-                    event.setStartDate(null);
-                } else {
                     try {
-                        final LocalDate parsedStartDate = LocalDate.parse(startDate);
-                        event.setStartDate(parsedStartDate);
+                        event.setStartDate(startDate == null ? null : LocalDate.parse(startDate));
                     } catch (DateTimeParseException parseException) {
                         event.setStartDate(null);
                     }
+
+
+                    cachedCanvasEvents.computeIfAbsent(className, k -> new HashMap<>()).put(uid, event);
                 }
 
-                cachedCanvasEvents.put(uid, event);
             }
 
-        } catch (Exception ignored) {
 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return cachedCanvasEvents;
@@ -138,6 +136,7 @@ public class CanvasICalHandler {
         Logger.log("Refreshing Canvas iCal...");
 
         iCalCanvasEventsList.clear();
+        classMap.clear();
         try {
             final HttpURLConnection connection = (HttpURLConnection) new URL((String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL)).openConnection();
 
@@ -167,18 +166,14 @@ public class CanvasICalHandler {
 
                 if (event.getDateStart() != null) {
                     final LocalDateTime startDateTime = LocalDateTime.ofInstant(event.getDateStart().getValue().toInstant(), ZoneId.systemDefault());
-
                     if (!startDateTime.toLocalTime().equals(CANVAS_DEFAULT_START_TIME)) {
                         startTime = startDateTime.toLocalTime();
                     }
                     startDate = startDateTime.toLocalDate();
-
-
                 }
 
                 if (event.getDateEnd() != null) {
                     final LocalDateTime endDateTime = LocalDateTime.ofInstant(event.getDateEnd().getValue().toInstant(), ZoneId.systemDefault());
-
                     if (!endDateTime.toLocalTime().equals(CANVAS_DEFAULT_END_TIME)) {
                         endTime = endDateTime.toLocalTime();
                     }
@@ -194,35 +189,66 @@ public class CanvasICalHandler {
                 }
 
                 final String eventTitle = event.getSummary().getValue();
-
-                final BasicEvent e = new BasicEvent(event.getSummary().getValue())
+                final BasicEvent e = new BasicEvent(eventTitle)
                         .setId(event.getUid().getValue())
                         .setStartDate(startDate)
                         .setStartTime(startTime)
                         .setEndTime(endTime)
                         .setDescription(desc)
                         .setEventType(TypedEvent.Types.CANVAS)
-                        .setDisplayColor(CH.getRandomColor())
-                        .setAltText(eventTitle.substring(eventTitle.lastIndexOf('[')).replace("[", "").replace("]", ""))
-                        ;
+                        .setDisplayColor(CH.getRandomColor());
+
+                try {
+                    final String className = eventTitle.substring(eventTitle.lastIndexOf('[')).replace("[", "").replace("]", "");
+                    e.setAltText(className);
+
+
+
+                    classMap.computeIfAbsent(className, k -> new HashMap<>()).put(event.getUid().getValue(), e);
+                } catch (Exception ignored) {
+                    classMap.computeIfAbsent(Keys.EVENTS.name(), k -> new HashMap<>()).put(event.getUid().getValue(), e);
+                }
 
                 iCalCanvasEventsList.add(e);
-
             }
-
         } catch (Exception e) {
             Logger.log(e);
         }
 
-        final Map<String, BasicEvent> cachedCanvasEvents = readCanvasEventsFromJson();
-        for (final BasicEvent event : iCalCanvasEventsList) {
-            final BasicEvent cachedEvent = cachedCanvasEvents.get(event.getId());
-            if (cachedEvent != null) {
-                event.setCompleted(cachedEvent.isComplete());
-                event.setDisplayColor(cachedEvent.getDisplayColor());
+        /*
+         * <class name>: {
+         *      "Display Color": rgb(r, g, b),
+         *      <uid>: {
+         *          <event details>
+         *      }
+         * }
+         * */
+        final Map<String, Map<String, Object>> cachedCanvasEvents = readCanvasEventsFromJson();
+
+
+        for (final String className : classMap.keySet()) {
+            final Map<String, Object> newEventMap = classMap.get(className);
+            final Map<String, Object> cachedEventMap = cachedCanvasEvents.get(className);
+
+            final String cachedColor = (String) cachedEventMap.get(Keys.DISPLAY_COLOR.toString());
+            if (cachedColor != null) {
+                newEventMap.put(Keys.DISPLAY_COLOR.toString(), cachedColor);
+            }
+
+            for (final String uid : newEventMap.keySet()) {
+                if (uid.equals(Keys.DISPLAY_COLOR.toString())) {
+                    continue;
+                }
+                final BasicEvent event = (BasicEvent) newEventMap.get(uid);
+                final BasicEvent cachedEvent = (BasicEvent) cachedEventMap.get(uid);
+                if (cachedEvent != null) {
+                    event.setCompleted(cachedEvent.isComplete());
+                    event.setDisplayColor(cachedColor);
+                }
             }
         }
-        cacheCanvasEventsToJson(iCalCanvasEventsList);
+
+        cacheCanvasEventsToJson();
 
 
         if (main.getRightPanel() == null) {
@@ -233,24 +259,38 @@ public class CanvasICalHandler {
 
     }
 
-    private void cacheCanvasEventsToJson(final List<BasicEvent> eventsToCache) {
+    private void cacheCanvasEventsToJson() {
         new Thread(() -> {
             final JSONObject root = new JSONObject();
-            for (final BasicEvent event : eventsToCache) {
-                final JSONObject eventBranch = new JSONObject();
 
-                final LocalTime startTime = event.getStartTime();
-                final LocalTime endTime = event.getEndTime();
+            for (final String className : classMap.keySet()) {  // CLASS NAME
+                final JSONObject classJson = new JSONObject();
+                root.put(className, classJson);
 
-                eventBranch.put(Keys.TITLE, event.getTitle());
-                eventBranch.put(Keys.START_DATE, event.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-                eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
-                eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
-                eventBranch.put(Keys.DESCRIPTION, event.getDescription());
-                eventBranch.put(Keys.COMPLETED, event.isComplete());
-                eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? CH.getRandomColor() : event.getDisplayColor());
+                final Map<String, Object> contentMap = classMap.get(className);
+                classJson.put(Keys.DISPLAY_COLOR.toString(), contentMap.get(Keys.DISPLAY_COLOR.toString()));
 
-                root.put(event.getId(), eventBranch);
+                for (final Object o : contentMap.values()) {
+                    if (o.getClass() != BasicEvent.class) {
+                        continue;
+                    }
+
+                    final BasicEvent e = (BasicEvent) o;
+
+                    final JSONObject classEvent = new JSONObject();
+                    classJson.put(e.getId(), classEvent);
+
+                    final LocalTime startTime = e.getStartTime();
+                    final LocalTime endTime = e.getEndTime();
+
+                    classEvent.put(Keys.TITLE, e.getTitle());
+                    classEvent.put(Keys.START_DATE, e.getStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                    classEvent.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
+                    classEvent.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
+                    classEvent.put(Keys.DESCRIPTION, e.getDescription());
+                    classEvent.put(Keys.COMPLETED, e.isComplete());
+                }
+
             }
 
 
@@ -276,9 +316,11 @@ public class CanvasICalHandler {
                 break;
             }
         }
-        if (!found) Logger.log("ERROR: Could not find cached canvas event by UID: " + uid);
+        if (!found) {
+            Logger.log("ERROR: Could not find cached canvas event by UID: " + uid);
+        }
 
-        cacheCanvasEventsToJson(iCalCanvasEventsList);
+        cacheCanvasEventsToJson();
     }
 
 

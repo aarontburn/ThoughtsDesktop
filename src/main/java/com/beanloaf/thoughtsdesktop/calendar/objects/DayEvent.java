@@ -59,13 +59,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         this.event = event;
         this.setId(DAY_EVENT_ID);
 
-        String graphic = "icons/calendar-small-page.png";
-        if (event.getEventType() == Types.SCHEDULE) {
-            graphic = "icons/schedule-icon.png";
-        } else if (event.getEventType() == Types.CANVAS) {
-            graphic = "icons/canvas-icon.png";
-        }
-        setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true)));
+        setGraphic(getEventIcon(getEventType()));
 
         this.updateDisplayColor(event.getDisplayColor());
         super.getToolTip().textProperty().bindBidirectional(this.textProperty());
@@ -206,6 +200,16 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public static String getDisplayTime(final LocalTime time) {
         return time == null ? "" : time.format(DateTimeFormatter.ofPattern("h:mm a")).replace(" AM", "a").replace(" PM", "p") + " | ";
+    }
+
+    public static ImageView getEventIcon(final TypedEvent.Types type) {
+        String graphic = "icons/calendar-small-page.png";
+        if (type == Types.SCHEDULE) {
+            graphic = "icons/schedule-icon.png";
+        } else if (type == Types.CANVAS) {
+            graphic = "icons/canvas-icon.png";
+        }
+        return new ImageView(new Image(String.valueOf(MainApplication.class.getResource(graphic)), 17.5, 17.5, true, true));
     }
 
     public String getDisplayColor() {

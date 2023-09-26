@@ -778,7 +778,7 @@
               <items>
                 <AnchorPane fx:id="left" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
-                        <AnchorPane fx:id="calendarLeftEventPanel" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftEventPanel" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <SplitPane dividerPositions="0.45" orientation="VERTICAL" prefHeight="993.0" prefWidth="343.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <items>
@@ -838,14 +838,14 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <FlowPane alignment="CENTER" hgap="8.0" vgap="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="210.0">
+                                          <FlowPane alignment="CENTER" vgap="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="210.0">
                                              <children>
-                                                <Label fx:id="calendarFinalStartTimeLabel" alignment="CENTER" text="\@ 11:59 PM" textAlignment="CENTER">
+                                                <Label fx:id="calendarFinalStartTimeLabel" alignment="CENTER" prefHeight="32.0" prefWidth="150.0" text="\@ 1:00 AM" textAlignment="CENTER">
                                                    <font>
                                                       <Font name="Lato Regular" size="25.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="calendarFinalEndTimeLabel" alignment="CENTER" text="till 11:59 AM" textAlignment="CENTER">
+                                                <Label fx:id="calendarFinalEndTimeLabel" alignment="CENTER" prefHeight="32.0" prefWidth="150.0" text="till 2:15 PM" textAlignment="CENTER">
                                                    <font>
                                                       <Font name="Lato Regular" size="25.0" />
                                                    </font>
@@ -1052,6 +1052,33 @@
                               </ScrollPane>
                            </children>
                         </AnchorPane>
+                        <AnchorPane fx:id="calendarLeftCanvasPanel" layoutX="10.0" layoutY="10.0" prefHeight="986.0" prefWidth="380.0" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="90.0" layoutY="51.0" prefHeight="962.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="86.0">
+                                 <content>
+                                    <VBox maxWidth="1.7976931348623157E308" prefWidth="378.0" spacing="5.0">
+                                       <padding>
+                                          <Insets left="8.0" right="8.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                              </ScrollPane>
+                              <HBox alignment="CENTER" layoutY="17.0" spacing="12.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0">
+                                 <children>
+                                    <Label alignment="CENTER" text="Canvas" textAlignment="CENTER">
+                                       <font>
+                                          <Font size="23.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="canvasRefreshButton" alignment="CENTER" contentDisplay="CENTER" text="⟳">
+                                       <font>
+                                          <Font size="23.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </AnchorPane>
                         <AnchorPane fx:id="leftButtonBar" prefHeight="64.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                            <children>
                               <HBox alignment="CENTER" layoutX="99.0" layoutY="-18.0" prefHeight="100.0" prefWidth="200.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -1062,6 +1089,11 @@
                                        </font>
                                     </Button>
                                     <Button fx:id="calendarScheduleButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendarButton" text="Schedules">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Button>
+                                    <Button fx:id="calendarCanvasButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendarButton" text="Canvas">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -1328,7 +1360,6 @@
                                     <Font size="36.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="calendarTestButton" layoutX="835.0" mnemonicParsing="false" styleClass="calendarButton" text="test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="835.0" AnchorPane.topAnchor="0.0" />
                               <Button fx:id="weekViewButton" layoutX="1358.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Week" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="106.0" AnchorPane.topAnchor="4.0">
                                  <font>
                                     <Font size="15.0" />

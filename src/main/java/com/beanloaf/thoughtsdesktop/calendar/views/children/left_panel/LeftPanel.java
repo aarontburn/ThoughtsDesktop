@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -31,7 +32,7 @@ public class LeftPanel {
 
     private LeftLayouts currentLayout;
     public enum LeftLayouts {
-        EVENTS, SCHEDULES
+        EVENTS, SCHEDULES, CANVAS
     }
 
     private final Map<LeftLayouts, AnchorPane> layoutMap = new HashMap<>();
@@ -39,12 +40,16 @@ public class LeftPanel {
 
 
     /*  Components */
+    /*  Canvas  */
+    private Label canvasRefreshButton;
+
+
     /*  Schedule Box    */
     private Button calendarNewScheduleButton;
     public VBox calendarScheduleBox;
 
 
-    private Button calendarEventsButton, calendarScheduleButton;
+    private Button calendarEventsButton, calendarScheduleButton, calendarCanvasButton;
 
     /*  Event Box   */
     private VBox calendarEventBox;
@@ -73,6 +78,7 @@ public class LeftPanel {
 
         layoutMap.put(LeftLayouts.EVENTS, (AnchorPane) findNodeById("calendarLeftEventPanel"));
         layoutMap.put(LeftLayouts.SCHEDULES, (AnchorPane) findNodeById("calendarLeftSchedulePanel"));
+        layoutMap.put(LeftLayouts.CANVAS, (AnchorPane) findNodeById("calendarLeftCanvasPanel"));
 
         locateNodes();
         attachEvents();
@@ -87,7 +93,11 @@ public class LeftPanel {
         /*  Left Panel  */
         calendarEventsButton = (Button) findNodeById("calendarEventsButton");
         calendarScheduleButton = (Button) findNodeById("calendarScheduleButton");
+        calendarCanvasButton = (Button) findNodeById("calendarCanvasButton");
 
+
+        /*  Canvas  */
+        canvasRefreshButton = (Label) findNodeById("canvasRefreshButton");
 
         /*  Schedule Box    */
         calendarScheduleBox = (VBox) findNodeById("calendarScheduleBox");
@@ -164,6 +174,7 @@ public class LeftPanel {
     }
 
     private void setDescriptionBoxHeight() {
+//        Logger.log(layoutMap.get(LeftLayouts.EVENTS).getWidth());
         if (!calendarEndTimeFields.isVisible()
                 && calendarFinalEndTimeLabel.getText().isEmpty()
                 && calendarFinalStartTimeLabel.getText().isEmpty()) {
@@ -174,8 +185,8 @@ public class LeftPanel {
 
         } else {
             calendarTimeLabel.setVisible(true);
-            if (!calendarEndTimeFields.isVisible()) {  // 448 is when wrapping occurs when editing, 280 when not editing
-                resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 280, false); // wrapping for final label
+            if (!calendarEndTimeFields.isVisible()) {  // 448 is when wrapping occurs when editing, 320 when not editing
+                resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 320, false); // wrapping for final label
             } else {
                 resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 448, false); // wrapping for input fields
             }
@@ -194,22 +205,25 @@ public class LeftPanel {
 
 
         /*  Left Panel  */
-        calendarEventsButton.setOnAction(e -> main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS));
-        calendarScheduleButton.setOnAction(e -> main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.SCHEDULES));
-
+        calendarEventsButton.setOnAction(e -> main.getLeftPanel().swapLeftPanel(LeftLayouts.EVENTS));
+        calendarScheduleButton.setOnAction(e -> main.getLeftPanel().swapLeftPanel(LeftLayouts.SCHEDULES));
+        calendarCanvasButton.setOnAction(e -> main.getLeftPanel().swapLeftPanel(LeftLayouts.CANVAS));
 
 
         calendarNewEventButton.setOnMouseClicked(e -> {
             final CalendarDay selectedDay = this.main.getCalendarHandler().getSelectedDay();
-            if (selectedDay != null)
+
+            if (selectedDay != null) {
                 main.getRightPanel().getMonthView().selectEvent(main.getRightPanel().getMonthView().addNewEventToCalendarDay(selectedDay.getDate()), true);
+            }
         });
+
+        /*  Canvas  */
+        canvasRefreshButton.setOnMouseClicked(e -> main.getCanvasICalHandler().refresh());
+
 
         /*  Small New Event*/
-        expandEventButton.setOnMouseClicked(e -> {
-            main.swapOverlay(CalendarMain.Overlays.EVENT, main.getCalendarHandler().getSelectedEvent());
-
-        });
+        expandEventButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.EVENT, main.getCalendarHandler().getSelectedEvent()));
 
         calendarEventFields.setVisible(false);
 
@@ -357,11 +371,14 @@ public class LeftPanel {
 
 
         if (event.getEventType() == TypedEvent.Types.CANVAS) {
-            calendarSourceLabel.setText("Canvas: " + event.getEvent().getAltText());
+            calendarSourceLabel.setText("Canvas" + (event.getEvent().getAltText() == null ? "" : ": " + event.getEvent().getAltText()));
+            calendarSourceLabel.setGraphic(DayEvent.getEventIcon(TypedEvent.Types.CANVAS));
         } else if (event.getEventType() == TypedEvent.Types.SCHEDULE) {
             calendarSourceLabel.setText(event.getAltText());
+            calendarSourceLabel.setGraphic(DayEvent.getEventIcon(TypedEvent.Types.SCHEDULE));
         } else {
             calendarSourceLabel.setText("Calendar");
+            calendarSourceLabel.setGraphic(DayEvent.getEventIcon(TypedEvent.Types.DAY));
         }
 
 

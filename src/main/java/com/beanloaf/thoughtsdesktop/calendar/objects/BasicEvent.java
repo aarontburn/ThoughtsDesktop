@@ -160,17 +160,18 @@ public class BasicEvent implements TypedEvent {
 
     @Override
     public String toString() {
-        return "Event {" +
-                "title: '" + title + '\'' +
-                ", description: '" + description + '\'' +
-                ", startTime: " + startTime +
-                ", endTime: " + endTime +
-                ", startDate: " + startDate +
-                ", endDate: " + endDate +
-                ", weekday: " + weekday +
-                ", isComplete: " + isComplete +
-                ", id: '" + id + '\'' +
-                '}';
+        return "title: " + title;
+//        return "Event {" +
+//                "title: '" + title + '\'' +
+//                ", description: '" + description + '\'' +
+//                ", startTime: " + startTime +
+//                ", endTime: " + endTime +
+//                ", startDate: " + startDate +
+//                ", endDate: " + endDate +
+//                ", weekday: " + weekday +
+//                ", isComplete: " + isComplete +
+//                ", id: '" + id + '\'' +
+//                '}';
     }
 
 
