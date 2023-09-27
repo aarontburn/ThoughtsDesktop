@@ -15,18 +15,14 @@ import java.util.Objects;
 public class CanvasBoxItem extends AnchorPane {
 
     private final CalendarMain main;
-
-    private CanvasClass canvasClass;
-
-
     private final Label classNameLabel, colorLabel;
     private final Button randomizeColorButton;
     private final CheckBox hideCheckBox;
+    private CanvasClass canvasClass;
 
     public CanvasBoxItem(final CalendarMain main, final CanvasClass canvasClass) {
         this.main = main;
         this.canvasClass = canvasClass;
-
 
 
         this.getStyleClass().add("schedule-box-item");
@@ -34,8 +30,6 @@ public class CanvasBoxItem extends AnchorPane {
 
         classNameLabel = new Label(
                 canvasClass.getClassName().equals(Keys.EVENTS.name()) ? "Personal Events" : canvasClass.getClassName());
-
-
 
 
         classNameLabel.setStyle("-fx-font-size: 18");
@@ -51,14 +45,16 @@ public class CanvasBoxItem extends AnchorPane {
 
         colorLabel = new Label();
         colorLabel.setPrefSize(24, 24);
-        colorLabel.setStyle("-fx-background-radius: 5; -fx-background-color: " + canvasClass.getColor());
+        colorLabel.setStyle(
+                "-fx-border-color: black; " +
+                        "-fx-border-radius: 5; " +
+                        "-fx-background-radius: 5; " +
+                        "-fx-background-color: " + canvasClass.getColor());
         colorHBox.getChildren().add(colorLabel);
 
         randomizeColorButton = new Button("Randomize Color");
         randomizeColorButton.getStyleClass().add("calendarButton");
         colorHBox.getChildren().add(randomizeColorButton);
-
-
 
 
         final HBox hideHBox = new HBox(8);
@@ -80,6 +76,15 @@ public class CanvasBoxItem extends AnchorPane {
         return this.canvasClass;
     }
 
+    public void setCanvasClass(final CanvasClass canvasClass) {
+        this.canvasClass = canvasClass;
+        colorLabel.setStyle(
+                "-fx-border-color: black; " +
+                        "-fx-border-radius: 5;" +
+                        "-fx-background-radius: 5; " +
+                        "-fx-background-color: " + canvasClass.getColor());
+    }
+
     private void attachEvents() {
         hideCheckBox.setOnAction(e -> {
 
@@ -90,7 +95,11 @@ public class CanvasBoxItem extends AnchorPane {
 
             canvasClass.setColor(newColor);
 
-            colorLabel.setStyle("-fx-background-radius: 5; -fx-background-color: " + newColor);
+            colorLabel.setStyle(
+                    "-fx-border-color: black; " +
+                            "-fx-border-radius: 5; " +
+                            "-fx-background-radius: 5; " +
+                            "-fx-background-color: " + newColor);
 
             for (final String uid : canvasClass.getUidList()) {
                 final BasicEvent event = canvasClass.getEvent(uid);
@@ -101,13 +110,6 @@ public class CanvasBoxItem extends AnchorPane {
 
         });
     }
-
-
-    public void setCanvasClass(final CanvasClass canvasClass) {
-        this.canvasClass = canvasClass;
-        colorLabel.setStyle("-fx-background-radius: 5; -fx-background-color: " + canvasClass.getColor());
-    }
-
 
     @Override
     public boolean equals(Object o) {

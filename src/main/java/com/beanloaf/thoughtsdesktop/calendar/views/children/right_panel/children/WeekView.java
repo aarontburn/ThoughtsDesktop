@@ -12,6 +12,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -30,23 +31,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WeekView {
     private static final int DEFAULT_START_HOUR = 6;
     private static final int DEFAULT_END_HOUR = 24;
-
-    private final RightPanel rightPanel;
-
-
     public static int START_HOUR = DEFAULT_START_HOUR;
     public static int END_HOUR = DEFAULT_END_HOUR;
-
-    private LocalDate startDate;
-    private LocalDate endDate;
-
-    public GridPane weekGrid, allDayEventGrid, weekNameGrid;
-    private AnchorPane weekPane;
-    private ScrollPane scrollPane;
-
-
+    private final RightPanel rightPanel;
     private final List<BasicEvent> weekEventList = new ArrayList<>();
     private final Map<Weekday, VBox> allDayEventMap = new ConcurrentHashMap<>();
+    public GridPane weekGrid, allDayEventGrid, weekNameGrid;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private AnchorPane weekPane;
+    private ScrollPane scrollPane;
 
     public WeekView(final RightPanel rightPanel) {
         this.rightPanel = rightPanel;
@@ -72,7 +66,7 @@ public class WeekView {
     }
 
     private void locateNodes() {
-        weekPane = (AnchorPane) findNodeById("weekView");
+        weekPane = (AnchorPane) findNodeById("weekPane");
         allDayEventGrid = (GridPane) findNodeById("allDayEventGrid");
         weekNameGrid = (GridPane) findNodeById("weekNameGrid");
     }
@@ -96,7 +90,7 @@ public class WeekView {
             stackPane.setCache(false);
         });
         Platform.runLater(() -> {
-            weekPane.getChildren().add(ThoughtsHelper.setAnchor(scrollPane, 114, 200, 16, 16));
+            weekPane.getChildren().add(0, ThoughtsHelper.setAnchor(scrollPane, 0, 0, 0, 0));
             createGrid();
             for (int i = 0; i < 7; i++) {
                 final ScrollPane pane = new ScrollPane();
@@ -131,7 +125,6 @@ public class WeekView {
 
         weekGrid = new GridPane();
         weekGrid.setGridLinesVisible(true);
-
         scrollPane.setContent(weekGrid);
 
         final int columnCount = 8;
@@ -140,7 +133,9 @@ public class WeekView {
             final double x = e.getPickResult().getIntersectedPoint().getX();
             int cellNum = (int) (x / cellSize);
             cellNum = Math.max(0, Math.min(columnCount - 1, cellNum));
-            if (cellNum == 0) return;
+            if (cellNum == 0) { // clicking on the time column
+                return;
+            }
 
 
             final LocalDate selectedDay = startDate.plusDays(cellNum - 1);
