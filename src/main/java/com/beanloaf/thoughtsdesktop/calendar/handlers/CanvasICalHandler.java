@@ -6,12 +6,12 @@ import biweekly.component.VEvent;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CanvasClass;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.res.TC;
-import javafx.util.Pair;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -19,14 +19,14 @@ import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -43,8 +43,7 @@ public class CanvasICalHandler {
 
     private final CalendarMain main;
 
-    private final List<BasicEvent> iCalCanvasEventsList = new ArrayList<>();
-    private final Map<String, Map<String, Object>> classMap = new HashMap<>();
+    private final Map<String, CanvasClass> classMap = new HashMap<>();
 
 
     private ScheduledExecutorService scheduler;
@@ -62,9 +61,9 @@ public class CanvasICalHandler {
 
     }
 
-    private Map<String, Map<String, Object>> readCanvasEventsFromJson() {
+    private Map<String, CanvasClass> readCanvasEventsFromJson() {
 
-        final Map<String, Map<String, Object>> cachedCanvasEvents = new HashMap<>();
+        final Map<String, CanvasClass> cachedCanvasEvents = new HashMap<>();
 
         try {
             final JSONObject data = (JSONObject) JSONValue.parse(new String(Files.readAllBytes(TC.Directories.CANVAS_ICAL_DATA_FILE.toPath())));
@@ -75,7 +74,7 @@ public class CanvasICalHandler {
                 final JSONHelper classBranch = dataHelper.getBranch(c);
 
                 final String classColor = classBranch.getString(Keys.DISPLAY_COLOR);
-                cachedCanvasEvents.computeIfAbsent(className, k -> new HashMap<>()).put(Keys.DISPLAY_COLOR.toString(), classColor);
+                cachedCanvasEvents.computeIfAbsent(className, k -> new CanvasClass(className, classColor));
 
                 for (final Object e : classBranch.getKeys()) { // Event UID and Display Color
                     if (e.equals(Keys.DISPLAY_COLOR.toString())) {
@@ -116,15 +115,13 @@ public class CanvasICalHandler {
                         event.setStartDate(null);
                     }
 
-
-                    cachedCanvasEvents.computeIfAbsent(className, k -> new HashMap<>()).put(uid, event);
+                    cachedCanvasEvents.computeIfAbsent(className, k -> new CanvasClass(className, classColor)).addEvent(event);
                 }
 
             }
-
-
+        } catch (NoSuchFileException ignored) {
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.log(e);
         }
 
         return cachedCanvasEvents;
@@ -135,7 +132,6 @@ public class CanvasICalHandler {
     public void refresh() {
         Logger.log("Refreshing Canvas iCal...");
 
-        iCalCanvasEventsList.clear();
         classMap.clear();
         try {
             final HttpURLConnection connection = (HttpURLConnection) new URL((String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL)).openConnection();
@@ -202,15 +198,17 @@ public class CanvasICalHandler {
                     final String className = eventTitle.substring(eventTitle.lastIndexOf('[')).replace("[", "").replace("]", "");
                     e.setAltText(className);
 
-
-
-                    classMap.computeIfAbsent(className, k -> new HashMap<>()).put(event.getUid().getValue(), e);
+                    classMap.computeIfAbsent(className, k -> new CanvasClass(className, CH.getRandomColor()));
+                    classMap.get(className).addEvent(e);
                 } catch (Exception ignored) {
-                    classMap.computeIfAbsent(Keys.EVENTS.name(), k -> new HashMap<>()).put(event.getUid().getValue(), e);
+                    classMap.computeIfAbsent(Keys.EVENTS.name(), k -> new CanvasClass(Keys.EVENTS.name(), CH.getRandomColor()));
+                    classMap.get(Keys.EVENTS.name()).addEvent(e);
                 }
 
-                iCalCanvasEventsList.add(e);
             }
+        } catch (MalformedURLException ignored) {
+
+
         } catch (Exception e) {
             Logger.log(e);
         }
@@ -223,43 +221,58 @@ public class CanvasICalHandler {
          *      }
          * }
          * */
-        final Map<String, Map<String, Object>> cachedCanvasEvents = readCanvasEventsFromJson();
+        final Map<String, CanvasClass> cachedCanvasEvents = readCanvasEventsFromJson();
 
 
         for (final String className : classMap.keySet()) {
-            final Map<String, Object> newEventMap = classMap.get(className);
-            final Map<String, Object> cachedEventMap = cachedCanvasEvents.get(className);
+            final CanvasClass newCanvasClass = classMap.get(className);
+            final CanvasClass cachedCanvasClass = cachedCanvasEvents.get(className);
 
-            final String cachedColor = (String) cachedEventMap.get(Keys.DISPLAY_COLOR.toString());
-            if (cachedColor != null) {
-                newEventMap.put(Keys.DISPLAY_COLOR.toString(), cachedColor);
+
+            String color = newCanvasClass.getColor();
+            if (cachedCanvasClass != null) {
+                color = cachedCanvasClass.getColor();
             }
+            if (color == null) {
+                color = CH.getRandomColor();
+            }
+            newCanvasClass.setColor(color);
 
-            for (final String uid : newEventMap.keySet()) {
+            for (final String uid : newCanvasClass.getUidList()) {
                 if (uid.equals(Keys.DISPLAY_COLOR.toString())) {
                     continue;
                 }
-                final BasicEvent event = (BasicEvent) newEventMap.get(uid);
-                final BasicEvent cachedEvent = (BasicEvent) cachedEventMap.get(uid);
-                if (cachedEvent != null) {
-                    event.setCompleted(cachedEvent.isComplete());
-                    event.setDisplayColor(cachedColor);
+                final BasicEvent event = newCanvasClass.getEvent(uid);
+
+                if (cachedCanvasClass != null) {
+                    final BasicEvent cachedEvent = cachedCanvasClass.getEvent(uid);
+                    if (cachedEvent != null) {
+                        event.setCompleted(cachedEvent.isComplete());
+                    }
                 }
+                event.setDisplayColor(color);
             }
         }
 
         cacheCanvasEventsToJson();
 
-
         if (main.getRightPanel() == null) {
-            main.queuedTasks.add(() -> main.getRightPanel().getMonthView().addCanvasEventsToCalendar(iCalCanvasEventsList));
+            main.queuedTasks.add(() -> main.getRightPanel().getMonthView().addCanvasEventsToCalendar(classMap));
         } else {
-            main.getRightPanel().getMonthView().addCanvasEventsToCalendar(iCalCanvasEventsList);
+            main.getRightPanel().getMonthView().addCanvasEventsToCalendar(classMap);
         }
 
+
+        if (main.getLeftPanel() == null) {
+            main.queuedTasks.add(() -> main.getLeftPanel().addCanvasBoxes(classMap));
+        } else {
+            main.getLeftPanel().addCanvasBoxes(classMap);
+        }
     }
 
-    private void cacheCanvasEventsToJson() {
+
+
+    public void cacheCanvasEventsToJson() {
         new Thread(() -> {
             final JSONObject root = new JSONObject();
 
@@ -267,16 +280,10 @@ public class CanvasICalHandler {
                 final JSONObject classJson = new JSONObject();
                 root.put(className, classJson);
 
-                final Map<String, Object> contentMap = classMap.get(className);
-                classJson.put(Keys.DISPLAY_COLOR.toString(), contentMap.get(Keys.DISPLAY_COLOR.toString()));
+                final CanvasClass canvasClass = classMap.get(className);
+                classJson.put(Keys.DISPLAY_COLOR.toString(), canvasClass.getColor());
 
-                for (final Object o : contentMap.values()) {
-                    if (o.getClass() != BasicEvent.class) {
-                        continue;
-                    }
-
-                    final BasicEvent e = (BasicEvent) o;
-
+                for (final BasicEvent e : canvasClass.getEvents()) {
                     final JSONObject classEvent = new JSONObject();
                     classJson.put(e.getId(), classEvent);
 
@@ -293,7 +300,6 @@ public class CanvasICalHandler {
 
             }
 
-
             Logger.log("Caching Canvas events to canvas_ical.json");
             try {
                 TC.Directories.CALENDAR_PATH.mkdir();
@@ -305,22 +311,6 @@ public class CanvasICalHandler {
                 Logger.log(e);
             }
         }).start();
-    }
-
-    public void editCanvasEventCompletion(final String uid, final boolean isComplete) {
-        boolean found = false;
-        for (final BasicEvent event : iCalCanvasEventsList) {
-            if (event.getId().equals(uid)) {
-                event.setCompleted(isComplete);
-                found = true;
-                break;
-            }
-        }
-        if (!found) {
-            Logger.log("ERROR: Could not find cached canvas event by UID: " + uid);
-        }
-
-        cacheCanvasEventsToJson();
     }
 
 
@@ -338,7 +328,7 @@ public class CanvasICalHandler {
         scheduledTask = scheduler.scheduleAtFixedRate(
                 () -> {
                     try {
-                        refresh();
+                        new Thread(this::refresh).start();
                     } catch (Exception e) {
                         Logger.log(e);
                     }

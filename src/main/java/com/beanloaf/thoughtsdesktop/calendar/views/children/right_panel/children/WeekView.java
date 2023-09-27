@@ -246,14 +246,7 @@ public class WeekView {
                 final Weekday weekday = Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue());
 
 
-                this.weekEventList.add(new BasicEvent(dayEvent.getEventTitle())
-                        .setStartTime(dayEvent.getStartTime())
-                        .setEndTime(dayEvent.getEndTime())
-                        .setDescription(dayEvent.getDescription())
-                        .setWeekday(weekday)
-                        .setStartDate(dayEvent.getDate())
-                        .setLinkedDayEvent(dayEvent)
-                        .setCompleted(dayEvent.isCompleted()));
+                this.weekEventList.add(dayEvent.getEvent().setWeekday(weekday));
 
                 if (dayEvent.getStartTime() == null) {
                     allDayEventMap.get(weekday).getChildren().add(new DayEvent(dayEvent, rightPanel.getMain()));

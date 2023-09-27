@@ -36,15 +36,15 @@ public class WeekBlock extends VBox implements EventLabel {
     public WeekBlock(final WeekView weekView, final BasicEvent event) {
         super();
 
-        this.event = event;
+        this.event = event.addReference(this);
         this.weekView = weekView;
-        this.color = event.getLinkedDayEvent().getDisplayColor();
-        event.getLinkedDayEvent().addReference(this);
+        this.color = event.getDisplayColor();
+
 
 
         this.setStyle(this.getCss());
         this.setOnMouseClicked(e -> {
-            weekView.getParent().getMonthView().selectEvent(event.getLinkedDayEvent(), false);
+            weekView.getParent().getMonthView().selectEvent(event, false);
             Logger.log("WeekBlock: " + event.getTitle() + " pressed.");
         });
 
@@ -136,7 +136,6 @@ public class WeekBlock extends VBox implements EventLabel {
 
     @Override
     public void updateEventTitle(String title) {
-        event.setTitle(title);
         this.nameLabel.setText(DayEvent.getDisplayTime(event.getStartTime()) + title);
     }
 
@@ -150,9 +149,10 @@ public class WeekBlock extends VBox implements EventLabel {
 
     @Override
     public void updateStartDate(LocalDate date) {
-        if (event.getStartDate().isEqual(date)) return;
+        if (event.getStartDate().isEqual(date)) {
+            return;
+        }
 
-        event.setStartDate(date);
         weekView.refreshWeek();
 
     }
@@ -160,13 +160,11 @@ public class WeekBlock extends VBox implements EventLabel {
     @Override
     public void updateEndDate(LocalDate date) {
         // This should not be used.
-        event.setEndDate(date);
 
     }
 
     @Override
     public void updateStartTime(LocalTime time) {
-        event.setStartTime(time);
         this.nameLabel.setText(DayEvent.getDisplayTime(time) + event.getTitle());
 
         if (this.timeLabel != null) {
@@ -176,8 +174,6 @@ public class WeekBlock extends VBox implements EventLabel {
 
     @Override
     public void updateEndTime(LocalTime time) {
-        event.setEndTime(time);
-
         if (this.timeLabel != null) {
             this.timeLabel.setText(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
         }
@@ -185,7 +181,6 @@ public class WeekBlock extends VBox implements EventLabel {
 
     @Override
     public void updateCompletion(boolean isComplete) {
-        event.setCompleted(isComplete);
         this.setStyle(getCss());
 
 
@@ -193,8 +188,6 @@ public class WeekBlock extends VBox implements EventLabel {
 
     @Override
     public void updateDisplayColor(String color) {
-        this.color = event.getLinkedDayEvent().getDisplayColor();
         this.setStyle(this.getCss());
-
     }
 }

@@ -14,8 +14,6 @@ public class ScheduleBoxItem extends AnchorPane {
 
 
     private final ScheduleData data;
-
-
     private final Label scheduleNameLabel, startDateLabel, endDateLabel;
     private final CheckBox hideCheckBox;
 

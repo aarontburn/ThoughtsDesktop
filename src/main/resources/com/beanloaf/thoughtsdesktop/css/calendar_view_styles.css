@@ -228,12 +228,18 @@
     -fx-border-color: rgba(25, 25, 25, 100);
     -fx-border-width: 0.75;
     -fx-border-radius: 3;
-
 }
 
 .schedule-box-item:hover {
     -fx-border-color: rgb(41, 163, 211);
 }
+
+
+.color-picker {
+    -fx-background-color: rgb(97, 97, 97);
+
+}
+
 
 
 

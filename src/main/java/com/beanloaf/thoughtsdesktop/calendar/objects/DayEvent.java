@@ -23,13 +23,12 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     public final static String DAY_EVENT_ID = "dayEvent";
     private final CalendarMain main;
     private final BasicEvent event;
-    private final List<EventLabel> references = new ArrayList<>();
 
     // Cloning constructor, used to tie the event-box object to the one in the grid
     public DayEvent(@NotNull final DayEvent reference, final CalendarMain main) {
         this(reference.event, main);
         reference.addReference(this);
-        this.references.add(reference);
+        addReference(reference);
         this.setText(getDisplayTime(event.getStartTime()) + event.getTitle());
     }
 
@@ -53,11 +52,13 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         this.event.setAltText(altText);
     }
 
-    private DayEvent(final BasicEvent event, final CalendarMain main) {
+    public DayEvent(final BasicEvent event, final CalendarMain main) {
         super(event.getTitle());
         this.main = main;
-        this.event = event;
+        this.event = event.addReference(this);
         this.setId(DAY_EVENT_ID);
+
+
 
         setGraphic(getEventIcon(getEventType()));
 
@@ -89,65 +90,36 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     @Override
     public void onClick() {
         this.main.getRightPanel().getMonthView().selectEvent(this, false);
-        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed. Type: " + event.getEventType());
+        Logger.log("Event \"" + this.event.getTitle() + "\" was pressed. Color: " + event.getDisplayColor());
     }
 
 
     public void setEventTitle(final String eventTitle) {
         this.event.setTitle(eventTitle);
         this.updateEventTitle(eventTitle);
-
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateEventTitle(eventTitle);
-        }
     }
 
     public void setDescription(final String description) {
         this.event.setDescription(description);
         this.updateDescription(description);
-
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateDescription(description);
-        }
     }
 
     public void setStartDate(final LocalDate date) {
         this.event.setStartDate(date);
         this.updateStartDate(date);
 
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateStartDate(date);
-        }
+
     }
-
-    public void setEndDate(final LocalDate date) {
-        // This should not be used.
-        this.event.setEndDate(date);
-        this.updateEndDate(date);
-
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateEndDate(date);
-        }
-    }
-
 
     public void setStartTime(final LocalTime startTime) {
         this.event.setStartTime(startTime);
         this.updateStartTime(startTime);
 
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateStartTime(startTime);
-        }
     }
 
     public void setEndTime(final LocalTime endTime) {
         this.event.setEndTime(endTime);
         this.updateEndTime(endTime);
-
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateEndTime(endTime);
-        }
-
     }
 
 
@@ -155,9 +127,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         this.event.setCompleted(isCompleted);
         this.updateCompletion(isCompleted);
 
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateCompletion(isCompleted);
-        }
 
         if (save) {
             main.getRightPanel().getMonthView().saveEvent(this, main.getLeftPanel().getEventInputFields());
@@ -165,7 +134,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
     public void addReference(final EventLabel reference) {
-        this.references.add(reference);
+        this.event.addReference(reference);
     }
 
 
@@ -218,11 +187,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     public void setDisplayColor(final String color) {
         this.event.setDisplayColor(color);
-
-        this.updateDisplayColor(color);
-        for (final EventLabel eventLabel : references) {
-            eventLabel.updateDisplayColor(color);
-        }
     }
 
     @Override
@@ -267,7 +231,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     @Override
     public void updateDisplayColor(String color) {
-        this.setStyle("-fx-border-color: derive(" + event.getDisplayColor() + ", -25%); -fx-background-color: derive(" + event.getDisplayColor() + ", +15%)");
+        this.setStyle("-fx-border-color: derive(" + event.getDisplayColor() + ", -25%); -fx-background-color: " + event.getDisplayColor() + ";");
     }
 
 

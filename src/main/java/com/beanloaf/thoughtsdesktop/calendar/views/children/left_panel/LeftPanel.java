@@ -5,7 +5,9 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
+import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,8 +24,7 @@ import javafx.scene.layout.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LeftPanel {
 
@@ -31,6 +32,7 @@ public class LeftPanel {
 
 
     private LeftLayouts currentLayout;
+
     public enum LeftLayouts {
         EVENTS, SCHEDULES, CANVAS
     }
@@ -38,18 +40,18 @@ public class LeftPanel {
     private final Map<LeftLayouts, AnchorPane> layoutMap = new HashMap<>();
 
 
-
     /*  Components */
+    private Button calendarEventsButton, calendarScheduleButton, calendarCanvasButton;
+
     /*  Canvas  */
     private Label canvasRefreshButton;
+    private VBox canvasBox;
 
 
     /*  Schedule Box    */
     private Button calendarNewScheduleButton;
     public VBox calendarScheduleBox;
 
-
-    private Button calendarEventsButton, calendarScheduleButton, calendarCanvasButton;
 
     /*  Event Box   */
     private VBox calendarEventBox;
@@ -71,8 +73,6 @@ public class LeftPanel {
     private Label expandEventButton;
 
 
-
-
     public LeftPanel(final CalendarMain main) {
         this.main = main;
 
@@ -84,7 +84,10 @@ public class LeftPanel {
         attachEvents();
 
         swapLeftPanel(LeftLayouts.EVENTS);
-        Platform.runLater(() -> calendarScheduleBox.getChildren().clear());
+        Platform.runLater(() -> {
+            calendarScheduleBox.getChildren().clear();
+            canvasBox.getChildren().clear();
+        });
 
     }
 
@@ -98,6 +101,7 @@ public class LeftPanel {
 
         /*  Canvas  */
         canvasRefreshButton = (Label) findNodeById("canvasRefreshButton");
+        canvasBox = (VBox) findNodeById("canvasBox");
 
         /*  Schedule Box    */
         calendarScheduleBox = (VBox) findNodeById("calendarScheduleBox");
@@ -219,7 +223,14 @@ public class LeftPanel {
         });
 
         /*  Canvas  */
-        canvasRefreshButton.setOnMouseClicked(e -> main.getCanvasICalHandler().refresh());
+        canvasRefreshButton.setOnMouseClicked(e -> {
+            if (((String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL)).isEmpty()) {
+                ThoughtsHelper.getInstance().fireEvent(Properties.Actions.OPEN_CALENDAR_SETTINGS);
+                return;
+            }
+
+            main.getCanvasICalHandler().refresh();
+        });
 
 
         /*  Small New Event*/
@@ -347,7 +358,7 @@ public class LeftPanel {
         calendarFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
     }
 
-    public void onSelectEvent(final DayEvent event, final boolean editable) {
+    public void onSelectEvent(final BasicEvent event, final boolean editable) {
         calendarEventFields.setVisible(true);
         toggleSmallEventFields(editable);
 
@@ -357,10 +368,10 @@ public class LeftPanel {
         calendarEditButton.setDisable(event.getEventType() != TypedEvent.Types.DAY);
 
 
-        calendarEventTitleInput.setText(event.getEventTitle());
+        calendarEventTitleInput.setText(event.getTitle());
         calendarDescriptionInput.setText(event.getDescription());
-        calendarDatePicker.setValue(LocalDate.of(event.getDate().getYear(), event.getDate().getMonth(), event.getDate().getDayOfMonth()));
-        calendarProgressCheckBox.setSelected(event.isCompleted());
+        calendarDatePicker.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDayOfMonth()));
+        calendarProgressCheckBox.setSelected(event.isComplete());
         final LocalTime startTime = event.getStartTime();
         final LocalTime endTime = event.getEndTime();
         calendarTimeStart.setTime(startTime);
@@ -369,9 +380,8 @@ public class LeftPanel {
         calendarFinalEndTimeLabel.setText(endTime == null ? "" : "till " + endTime.format(DateTimeFormatter.ofPattern("h:mm a")));
 
 
-
         if (event.getEventType() == TypedEvent.Types.CANVAS) {
-            calendarSourceLabel.setText("Canvas" + (event.getEvent().getAltText() == null ? "" : ": " + event.getEvent().getAltText()));
+            calendarSourceLabel.setText("Canvas" + (event.getAltText() == null ? "" : ": " + event.getAltText()));
             calendarSourceLabel.setGraphic(DayEvent.getEventIcon(TypedEvent.Types.CANVAS));
         } else if (event.getEventType() == TypedEvent.Types.SCHEDULE) {
             calendarSourceLabel.setText(event.getAltText());
@@ -399,20 +409,27 @@ public class LeftPanel {
 
     public void deleteSchedule(final ScheduleBoxItem item) {
         this.calendarScheduleBox.getChildren().remove(item);
+    }
 
+
+    public void addCanvasBoxes(final Map<String, CanvasClass> classMap) {
+        final List<CanvasBoxItem> canvasBoxItemList = new ArrayList<>();
+        final ObservableList<Node> existingBoxes = this.canvasBox.getChildren();
+
+        for (final CanvasClass canvasClass : classMap.values()) {
+            final CanvasBoxItem canvasBoxItem = new CanvasBoxItem(main, canvasClass);
+
+            if (!existingBoxes.contains(canvasBoxItem)) {
+                canvasBoxItemList.add(canvasBoxItem);
+            }
+        }
+
+        Platform.runLater(() -> this.canvasBox.getChildren().addAll(canvasBoxItemList));
     }
 
     public LeftLayouts getCurrentLayout() {
         return this.currentLayout;
     }
-
-
-
-
-
-
-
-
 
 
 }

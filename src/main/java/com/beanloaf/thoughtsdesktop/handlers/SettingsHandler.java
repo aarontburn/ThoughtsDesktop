@@ -170,7 +170,6 @@ public class SettingsHandler {
 
         if (returnValue == null) returnValue = setting.defaultState;
 
-
         if (returnValue instanceof Double) {
             return returnValue;
         } else if (returnValue instanceof Long) {

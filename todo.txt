@@ -27,6 +27,7 @@ Calendar:
 
     -   Hide canvas events
     -   Repeats events logic
+    -   Solo schedule/canvas
 
 
 

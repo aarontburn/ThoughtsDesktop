@@ -265,7 +265,6 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             case OPEN_CALENDAR_SETTINGS -> {
                 swapLayouts(Layouts.SETTINGS);
                 settingsView.setSelectedTab(2);
-
             }
             case OPEN_CLOUD_SETTINGS -> {
                 swapLayouts(Layouts.SETTINGS);

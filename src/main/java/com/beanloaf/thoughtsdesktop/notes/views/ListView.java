@@ -520,13 +520,18 @@ public class ListView extends ThoughtsView implements ThoughtsChangeListener {
             case SELECTED_TAG_ITEM -> {
                 // TODO: This throws a ConcurrentModificationException
 
-                selectedTagItem = (TagListItem) eventValue;
-                for (Node node : tagList.getChildren()) {
-                    if (node.getClass() != TagListItem.class) {
-                        continue;
+                try {
+                    selectedTagItem = (TagListItem) eventValue;
+                    for (Node node : tagList.getChildren()) {
+                        if (node.getClass() != TagListItem.class) {
+                            continue;
+                        }
+                        node.getStyleClass().remove("tagListSelected");
                     }
-                    node.getStyleClass().remove("tagListSelected");
+                } catch (ConcurrentModificationException ignored) {
+                    Logger.log("ConcurrentModificationException was thrown by ListView");
                 }
+
 
             }
             case DELETE -> delete((ThoughtObject) eventValue);

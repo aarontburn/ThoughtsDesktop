@@ -1,6 +1,8 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import javafx.beans.property.StringProperty;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,6 +23,9 @@ public class BasicEvent implements TypedEvent {
     private Types eventType = Types.BASIC;
     private String color;
     private String altText;
+
+
+    private List<EventLabel> referenceList = new ArrayList<>();
 
 
     public BasicEvent() {
@@ -57,6 +62,11 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setCompleted(boolean complete) {
         isComplete = complete;
+
+        for (final EventLabel ref : referenceList) {
+            ref.updateCompletion(complete);
+        }
+
         return this;
     }
 
@@ -66,6 +76,10 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setDescription(String description) {
         this.description = description;
+
+        for (final EventLabel ref : referenceList) {
+            ref.updateDescription(description);
+        }
         return this;
 
     }
@@ -76,6 +90,10 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setStartTime(LocalTime startTime) {
         this.startTime = startTime;
+
+        for (final EventLabel ref : referenceList) {
+            ref.updateStartTime(startTime);
+        }
         return this;
 
     }
@@ -86,6 +104,10 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+
+        for (final EventLabel ref : referenceList) {
+            ref.updateEndTime(endTime);
+        }
         return this;
 
     }
@@ -96,6 +118,10 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+
+        for (final EventLabel ref : referenceList) {
+            ref.updateStartDate(startDate);
+        }
         return this;
     }
 
@@ -105,6 +131,10 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+
+        for (final EventLabel ref : referenceList) {
+            ref.updateEndDate(endDate);
+        }
         return this;
 
     }
@@ -115,6 +145,7 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setWeekday(Weekday weekday) {
         this.weekday = weekday;
+
         return this;
     }
 
@@ -129,6 +160,9 @@ public class BasicEvent implements TypedEvent {
 
     public BasicEvent setDisplayColor(final String color) {
         this.color = color;
+        for (final EventLabel ref : referenceList) {
+            ref.updateDisplayColor(color);
+        }
         return this;
     }
 
@@ -158,20 +192,29 @@ public class BasicEvent implements TypedEvent {
     }
 
 
+    public BasicEvent addReference(final EventLabel reference) {
+        this.referenceList.add(reference);
+
+        return this;
+    }
+
+    public List<EventLabel> getReferences() {
+        return this.referenceList;
+    }
+
     @Override
     public String toString() {
-        return "title: " + title;
-//        return "Event {" +
-//                "title: '" + title + '\'' +
-//                ", description: '" + description + '\'' +
-//                ", startTime: " + startTime +
-//                ", endTime: " + endTime +
-//                ", startDate: " + startDate +
-//                ", endDate: " + endDate +
-//                ", weekday: " + weekday +
-//                ", isComplete: " + isComplete +
-//                ", id: '" + id + '\'' +
-//                '}';
+        return "Event {" +
+                "title: '" + title + '\'' +
+                ", description: '" + description + '\'' +
+                ", startTime: " + startTime +
+                ", endTime: " + endTime +
+                ", startDate: " + startDate +
+                ", endDate: " + endDate +
+                ", weekday: " + weekday +
+                ", isComplete: " + isComplete +
+                ", id: '" + id + '\'' +
+                '}';
     }
 
 
