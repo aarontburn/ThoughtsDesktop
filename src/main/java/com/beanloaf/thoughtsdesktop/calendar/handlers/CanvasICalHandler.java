@@ -270,8 +270,6 @@ public class CanvasICalHandler {
         }
     }
 
-
-
     public void cacheCanvasEventsToJson() {
         new Thread(() -> {
             final JSONObject root = new JSONObject();

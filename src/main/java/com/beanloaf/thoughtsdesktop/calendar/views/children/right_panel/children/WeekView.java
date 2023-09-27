@@ -260,7 +260,9 @@ public class WeekView {
         createGrid();
 
         for (final BasicEvent e : weekEventList) {
-            if (e.getStartTime() == null) continue;
+            if (e.getStartTime() == null) {
+                continue;
+            }
             final WeekBlock block = new WeekBlock(this, e);
             weekGrid.add(block, block.getWeekday().getDayOfWeek() + 1, block.getStartIndex(), 1, block.getSpan());
         }

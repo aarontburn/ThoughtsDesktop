@@ -241,7 +241,7 @@ public class LeftPanel {
         calendarProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) ->
                 calendarProgressCheckBox.setText(isChecked ? "Completed" : "In-progress"));
 
-        calendarProgressCheckBox.setOnAction(e -> main.getCalendarHandler().getSelectedEvent().setCompleted(calendarProgressCheckBox.isSelected(), true));
+        calendarProgressCheckBox.setOnAction(e -> main.getCalendarHandler().getSelectedEvent().setCompleted(calendarProgressCheckBox.isSelected()));
 
 
         calendarSaveEventButton.setVisible(false);
@@ -351,7 +351,7 @@ public class LeftPanel {
         return event;
     }
 
-    public void setFinalStartEndTimeLabel(final DayEvent event) {
+    public void setFinalStartEndTimeLabel(final BasicEvent event) {
         final LocalTime startTime = event.getStartTime();
         final LocalTime endTime = event.getStartTime();
         calendarFinalStartTimeLabel.setText(startTime == null ? "" : "@ " + startTime.format(DateTimeFormatter.ofPattern("h:mm a")));
@@ -421,10 +421,30 @@ public class LeftPanel {
 
             if (!existingBoxes.contains(canvasBoxItem)) {
                 canvasBoxItemList.add(canvasBoxItem);
+            } else {
+                ((CanvasBoxItem) existingBoxes.get(existingBoxes.indexOf(canvasBoxItem))).setCanvasClass(canvasClass);
             }
         }
 
-        Platform.runLater(() -> this.canvasBox.getChildren().addAll(canvasBoxItemList));
+
+        final List<Node> nodesToRemove = new ArrayList<>();
+        for (final Node n : this.canvasBox.getChildren()) {
+            if (n.getClass() != CanvasBoxItem.class) {
+                continue;
+            }
+
+            final CanvasBoxItem canvasBoxItem = (CanvasBoxItem) n;
+            if (classMap.get(canvasBoxItem.getCanvasClass().getClassName()) == null) {
+                nodesToRemove.add(n);
+            }
+
+
+        }
+
+        Platform.runLater(() -> {
+            this.canvasBox.getChildren().addAll(canvasBoxItemList);
+            this.canvasBox.getChildren().removeAll(nodesToRemove);
+        });
     }
 
     public LeftLayouts getCurrentLayout() {

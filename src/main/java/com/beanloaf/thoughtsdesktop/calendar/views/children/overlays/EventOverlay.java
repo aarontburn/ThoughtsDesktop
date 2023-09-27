@@ -195,7 +195,7 @@ public class EventOverlay {
         closeButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.CALENDAR));
 
         saveEventButton.setOnAction(e -> {
-            main.getRightPanel().getMonthView().saveEvent(event, getEventInputFields());
+            main.getRightPanel().getMonthView().saveEvent(event.getEvent(), getEventInputFields());
             main.swapOverlay(CalendarMain.Overlays.CALENDAR);
         });
 

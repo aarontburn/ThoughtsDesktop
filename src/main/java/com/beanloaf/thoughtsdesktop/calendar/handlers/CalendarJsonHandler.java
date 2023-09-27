@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
@@ -154,16 +155,16 @@ public class CalendarJsonHandler {
     }
 
 
-    public void addEventToJson(final DayEvent event) {
+    public void addEventToJson(final BasicEvent event) {
         if (event.getEventType() != TypedEvent.Types.DAY) {
             return;
         }
 
         new Thread(() -> {
-            final String year = String.valueOf(event.getDate().getYear());
-            final String month = event.getDate().getMonth().toString();
-            final String day = String.valueOf(event.getDate().getDayOfMonth());
-            final boolean completed = event.isCompleted();
+            final String year = String.valueOf(event.getStartDate().getYear());
+            final String month = event.getStartDate().getMonth().toString();
+            final String day = String.valueOf(event.getStartDate().getDayOfMonth());
+            final boolean completed = event.isComplete();
 
 
             JSONObject yearBranch = (JSONObject) root.get(year);
@@ -187,19 +188,19 @@ public class CalendarJsonHandler {
                 monthBranch.put(day, dayBranch);
             }
 
-            JSONObject eventBranch = (JSONObject) dayBranch.get(event.getEventID());
+            JSONObject eventBranch = (JSONObject) dayBranch.get(event.getId());
 
             if (eventBranch == null) {
                 eventBranch = new JSONObject();
 
-                dayBranch.put(event.getEventID(), eventBranch);
+                dayBranch.put(event.getId(), eventBranch);
             }
 
             final LocalTime startTime = event.getStartTime();
             final LocalTime endTime = event.getEndTime();
             eventBranch.clear();
 
-            eventBranch.put(Keys.TITLE, event.getEventTitle());
+            eventBranch.put(Keys.TITLE, event.getTitle());
             eventBranch.put(Keys.DESCRIPTION, event.getDescription());
             eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
             eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
@@ -212,18 +213,18 @@ public class CalendarJsonHandler {
 
     }
 
-    public void removeEventFromJson(final DayEvent event, final LocalDate date) {
+    public void removeEventFromJson(final BasicEvent event, final LocalDate date) {
 
         new Thread(() -> {
-            final String year = String.valueOf(event.getDate().getYear());
-            final String month = event.getDate().getMonth().toString();
+            final String year = String.valueOf(event.getStartDate().getYear());
+            final String month = event.getStartDate().getMonth().toString();
             final String day = String.valueOf(date.getDayOfMonth());
 
             JSONObject yearBranch = (JSONObject) root.get(year);
             JSONObject monthBranch = (JSONObject) yearBranch.get(month);
             JSONObject dayBranch = (JSONObject) monthBranch.get(day);
 
-            dayBranch.remove(event.getEventID());
+            dayBranch.remove(event.getId());
 
             if (dayBranch.size() == 0) {
                 monthBranch.remove(day);
@@ -236,7 +237,6 @@ public class CalendarJsonHandler {
             if (yearBranch.size() == 0) {
                 root.remove(year);
             }
-
 
             saveCalendarJSON();
 

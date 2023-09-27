@@ -121,10 +121,10 @@ public class CalendarDay extends AnchorPane {
         });
     }
 
-    public void removeEvent(final DayEvent event) {
+    public void removeEvent(final BasicEvent event) {
         Node nodeToRemove = null;
         for (final DayEvent dayEvent : eventList) {
-            if (dayEvent.getEventID().equals(event.getEventID())) {
+            if (dayEvent.getEventID().equals(event.getId())) {
                 nodeToRemove = dayEvent;
             }
         }

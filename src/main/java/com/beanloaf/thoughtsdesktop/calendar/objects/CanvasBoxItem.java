@@ -16,7 +16,7 @@ public class CanvasBoxItem extends AnchorPane {
 
     private final CalendarMain main;
 
-    private final CanvasClass canvasClass;
+    private CanvasClass canvasClass;
 
 
     private final Label classNameLabel, colorLabel;
@@ -76,6 +76,10 @@ public class CanvasBoxItem extends AnchorPane {
 
     }
 
+    public CanvasClass getCanvasClass() {
+        return this.canvasClass;
+    }
+
     private void attachEvents() {
         hideCheckBox.setOnAction(e -> {
 
@@ -96,6 +100,12 @@ public class CanvasBoxItem extends AnchorPane {
             main.getCanvasICalHandler().cacheCanvasEventsToJson();
 
         });
+    }
+
+
+    public void setCanvasClass(final CanvasClass canvasClass) {
+        this.canvasClass = canvasClass;
+        colorLabel.setStyle("-fx-background-radius: 5; -fx-background-color: " + canvasClass.getColor());
     }
 
 

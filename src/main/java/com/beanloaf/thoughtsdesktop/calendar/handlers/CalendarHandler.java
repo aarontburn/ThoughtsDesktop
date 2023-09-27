@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
@@ -20,9 +21,9 @@ public class CalendarHandler {
     private final Map<Pair<Month, Year>, CalendarMonth> activeMonths = new ConcurrentHashMap<>();
     private CalendarMonth currentMonth;
     private CalendarDay selectedDay;
-    private DayEvent selectedEvent;
+    private BasicEvent selectedEvent;
 
-    private final List<DayEvent> canvasEvents = new ArrayList<>();
+    private final List<BasicEvent> canvasEvents = new ArrayList<>();
 
 
 
@@ -89,19 +90,19 @@ public class CalendarHandler {
     }
 
 
-    public List<DayEvent> getCanvasEvents() {
+    public List<BasicEvent> getCanvasEvents() {
         return canvasEvents;
     }
 
-    public void addCanvasEvent(final DayEvent event) {
+    public void addCanvasEvent(final BasicEvent event) {
         this.canvasEvents.add(event);
     }
 
-    public void setSelectedEvent(final DayEvent event) {
+    public void setSelectedEvent(final BasicEvent event) {
         this.selectedEvent = event;
     }
 
-    public DayEvent getSelectedEvent() {
+    public BasicEvent getSelectedEvent() {
         return this.selectedEvent;
     }
 }

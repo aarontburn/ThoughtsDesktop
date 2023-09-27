@@ -53,12 +53,10 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
     public DayEvent(final BasicEvent event, final CalendarMain main) {
-        super(event.getTitle());
+        super(getDisplayTime(event.getStartTime()) + event.getTitle());
         this.main = main;
         this.event = event.addReference(this);
         this.setId(DAY_EVENT_ID);
-
-
 
         setGraphic(getEventIcon(getEventType()));
 
@@ -129,7 +127,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
 
         if (save) {
-            main.getRightPanel().getMonthView().saveEvent(this, main.getLeftPanel().getEventInputFields());
+            main.getRightPanel().getMonthView().saveEvent(this.event, main.getLeftPanel().getEventInputFields());
         }
     }
 

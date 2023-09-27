@@ -21,8 +21,6 @@ public class WeekBlock extends VBox implements EventLabel {
     private final WeekView weekView;
     private final BasicEvent event;
 
-    private String color;
-
 
     /*  Components  */
     private final Label nameLabel;
@@ -38,7 +36,7 @@ public class WeekBlock extends VBox implements EventLabel {
 
         this.event = event.addReference(this);
         this.weekView = weekView;
-        this.color = event.getDisplayColor();
+
 
 
 
@@ -79,21 +77,13 @@ public class WeekBlock extends VBox implements EventLabel {
     }
 
     private String getCss() {
-        final String color = event.isComplete() ? "rgb(75, 75, 75)" : this.color;
+        final String color = event.isComplete() ? "rgb(75, 75, 75)" : this.event.getDisplayColor();
 
         return "-fx-background-color: " + (event.getEndTime() != null ? color + "" : String.format("linear-gradient(%s, %s)", color, "rgb(60, 63 , 65)")) + ";"
                 + " -fx-border-color: derive(" + color + ", +50%); -fx-border-insets: 4; -fx-border-radius: 5;"
                 + " -fx-border-style: solid solid " + (event.getEndTime() != null ? " solid" : "none") + " solid;"
                 + " -fx-background-radius: 3;";
 
-    }
-
-    public String getEventName() {
-        return event.getTitle();
-    }
-
-    public String getDescription() {
-        return event.getDescription();
     }
 
     public Weekday getWeekday() {
@@ -110,9 +100,15 @@ public class WeekBlock extends VBox implements EventLabel {
     public int getSpan() {
         final LocalTime maxTime = LocalTime.of(23, 30);
 
-        if (event.getStartTime() == null) return 0;
-        if (event.getStartTime().equals(maxTime) || event.getStartTime().isAfter(maxTime)) return 1;
-        if (event.getEndTime() == null) return 2;
+        if (event.getStartTime() == null) {
+            return 0;
+        }
+        if (event.getStartTime().equals(maxTime) || event.getStartTime().isAfter(maxTime)) {
+            return 1;
+        }
+        if (event.getEndTime() == null) {
+            return 2;
+        }
 
 
         final LocalTime roundedStartTime = event.getStartTime().truncatedTo(ChronoUnit.HOURS).plusMinutes(ROUND_TO_LAST * (event.getStartTime().getMinute() / ROUND_TO_LAST));
@@ -154,7 +150,6 @@ public class WeekBlock extends VBox implements EventLabel {
         }
 
         weekView.refreshWeek();
-
     }
 
     @Override
@@ -188,6 +183,6 @@ public class WeekBlock extends VBox implements EventLabel {
 
     @Override
     public void updateDisplayColor(String color) {
-        this.setStyle(this.getCss());
+        this.setStyle(getCss());
     }
 }
