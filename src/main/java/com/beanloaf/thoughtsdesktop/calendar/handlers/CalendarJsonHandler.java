@@ -312,27 +312,27 @@ public class CalendarJsonHandler {
                     final Object[] a = ((JSONArray) JSONValue.parse(eventJson.getString(Keys.DAYS))).toArray();
                     final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
 
-                    final ScheduleEvent scheduleEvent = new ScheduleEvent(scheduleData.getScheduleName(), scheduleEventName, scheduleEventID);
-                    scheduleEvent.setDescription(scheduleEventDescription);
-                    scheduleEvent.setDisplayColor(scheduleColor == null ? CH.getRandomColor() : scheduleColor);
+                    final BasicEvent event = new BasicEvent(scheduleEventName);
+                    event.setId(scheduleEventID);
+                    event.setDescription(scheduleEventDescription);
+                    event.setDisplayColor(scheduleColor == null ? CH.getRandomColor() : scheduleColor);
+
+                    try {
+                        event.setStartTime(scheduleEventStartTime == null ? null : LocalTime.parse(scheduleEventStartTime));
+                    } catch (DateTimeParseException parseException) {
+                        event.setStartTime(null);
+                    }
+
+                    try {
+                        event.setEndTime(scheduleEventEndTime == null ? null : LocalTime.parse(scheduleEventEndTime));
+                    } catch (DateTimeParseException parseException) {
+                        event.setEndTime(null);
+                    }
+
 
                     for (final String weekday : scheduleEventWeekdayStrings) {
-                        scheduleEvent.addWeekday(weekday);
+                        scheduleData.addEvent(weekday, event);
                     }
-
-                    try {
-                        scheduleEvent.setStartTime(scheduleEventStartTime == null ? null : LocalTime.parse(scheduleEventStartTime));
-                    } catch (DateTimeParseException parseException) {
-                        scheduleEvent.setStartTime(null);
-                    }
-
-                    try {
-                        scheduleEvent.setEndTime(scheduleEventEndTime == null ? null : LocalTime.parse(scheduleEventEndTime));
-                    } catch (DateTimeParseException parseException) {
-                        scheduleEvent.setEndTime(null);
-                    }
-
-                    scheduleData.addEvent(scheduleEvent);
 
                 }
                 scheduleDataList.add(scheduleData);

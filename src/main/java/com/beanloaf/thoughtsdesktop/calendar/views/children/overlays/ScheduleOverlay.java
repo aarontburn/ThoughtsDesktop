@@ -133,7 +133,7 @@ public class ScheduleOverlay {
         closeButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.CALENDAR));
 
         scheduleNewEventButton.setOnAction(e -> {
-            final ScheduleListItem scheduleListItem = new ScheduleListItem(data.getScheduleName(), this, "New Scheduled Event");
+            final ScheduleListItem scheduleListItem = new ScheduleListItem(this, "New Scheduled Event");
 
             addScheduleEventToListView(scheduleListItem);
             setInputFields(scheduleListItem);
@@ -222,7 +222,12 @@ public class ScheduleOverlay {
         scheduleTimeTo.setDisabled(true);
 
 
-        for (final ScheduleEvent event : data.getScheduleEventList()) {
+        final Map<Weekday, Map<String, BasicEvent>> scheduleMap = data.getScheduleEventList();
+        for (final Weekday weekday : data.getScheduleEventList().keySet()) {
+
+
+
+
             final ScheduleListItem listItem = new ScheduleListItem(this, event);
 
             for (final Weekday weekday : event.getWeekdays()) {

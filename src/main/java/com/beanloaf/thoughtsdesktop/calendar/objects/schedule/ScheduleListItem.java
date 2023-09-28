@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.EventBoxLabel;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
@@ -25,23 +26,21 @@ public class ScheduleListItem extends GridPane {
     private final ScheduleOverlay tab;
     private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
     private final List<Weekday> weekdays = new ArrayList<>();
-    private final ScheduleEvent event;
+    private final BasicEvent event;
     private final Label displayText;
     private final List<ScheduleLabel> references = new ArrayList<>();
-    private String parentScheduleName;
 
-
-    public ScheduleListItem(final String parentScheduleName, final ScheduleOverlay tab, final String scheduleName) {
-        this(parentScheduleName, tab, scheduleName, UUID.randomUUID().toString());
+    public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName) {
+        this(tab, scheduleName, UUID.randomUUID().toString());
 
     }
 
-    public ScheduleListItem(final String parentScheduleName, final ScheduleOverlay tab, final String scheduleName, final String id) {
-        this(tab, new ScheduleEvent(parentScheduleName, scheduleName, id));
+    public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName, final String id) {
+        this(tab, new BasicEvent(scheduleName).setId(id));
     }
 
 
-    public ScheduleListItem(final ScheduleOverlay tab, final ScheduleEvent event) {
+    public ScheduleListItem(final ScheduleOverlay tab, final BasicEvent event) {
         super();
         this.tab = tab;
         this.event = event;
@@ -49,7 +48,7 @@ public class ScheduleListItem extends GridPane {
         this.getStyleClass().add("schedule");
 
 
-        displayText = new Label(event.getScheduleEventName());
+        displayText = new Label(event.getTitle());
         displayText.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
         this.add(displayText, 0, 0);
 
@@ -120,7 +119,7 @@ public class ScheduleListItem extends GridPane {
         tab.setInputFields(this);
     }
 
-    public ScheduleEvent getEvent() {
+    public BasicEvent getEvent() {
         return this.event;
     }
 
@@ -130,9 +129,8 @@ public class ScheduleListItem extends GridPane {
     }
 
     public void setScheduleEventName(final String newName) {
-        event.setScheduleEventName(newName);
+        event.setTitle(newName);
         displayText.setText(newName);
-
 
         for (final ScheduleLabel scheduleLabel : references) {
             scheduleLabel.updateText();
@@ -140,7 +138,7 @@ public class ScheduleListItem extends GridPane {
     }
 
     public String getScheduleEventName() {
-        return event.getScheduleEventName();
+        return event.getTitle();
     }
 
     public void setDescription(final String newDescription) {

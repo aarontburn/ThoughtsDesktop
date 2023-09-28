@@ -1,6 +1,9 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -13,8 +16,7 @@ public class ScheduleData implements TypedEvent {
     private LocalDate startDate, endDate;
     private final String id;
 
-    private final Map<String, ScheduleEvent> scheduleEventMap = new HashMap<>();
-
+    private final Map<Weekday, Map<String, BasicEvent>> scheduleEventMap = new HashMap<>();
     private final List<ScheduleBoxItem> references = new ArrayList<>();
 
 
@@ -26,12 +28,17 @@ public class ScheduleData implements TypedEvent {
         this.id = id;
     }
 
-    public void addEvent(final ScheduleEvent event) {
-        scheduleEventMap.put(event.getId(), event);
+    public void addEvent(final Weekday weekday, final BasicEvent event) {
+        scheduleEventMap.computeIfAbsent(weekday, k -> new HashMap<>()).put(event.getId(), event);
+    }
+
+    public void addEvent(final String weekdayString, final BasicEvent event) {
+        addEvent(Weekday.valueOf(weekdayString), event);
     }
 
     public void setEvents(final List<ScheduleListItem> listItems) {
         scheduleEventMap.clear();
+
 
         for (final ScheduleListItem l : listItems) {
             scheduleEventMap.put(l.getEvent().getId(), l.getEvent());
@@ -39,13 +46,20 @@ public class ScheduleData implements TypedEvent {
 
     }
 
-    public ScheduleEvent getEvent(final String eventId) {
-        return scheduleEventMap.get(eventId);
+    public BasicEvent getEvent(final String eventId) {
+        for (final Map<String, BasicEvent> uidEventMap : scheduleEventMap.values()) {
+            if (uidEventMap.get(eventId) != null) {
+                return uidEventMap.get(eventId);
+            }
+        }
+
+        Logger.log("Error: Could not find event with uid: " + eventId + " from ScheduleData: " + scheduleName);
+        return null;
     }
 
 
-    public List<ScheduleEvent> getScheduleEventList() {
-        return new ArrayList<>(this.scheduleEventMap.values());
+    public Map<Weekday, Map<String, BasicEvent>> getScheduleEventList() {
+        return this.scheduleEventMap;
     }
 
 
