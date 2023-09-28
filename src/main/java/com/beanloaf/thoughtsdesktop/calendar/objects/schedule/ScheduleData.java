@@ -9,6 +9,7 @@ public class ScheduleData implements TypedEvent {
 
 
     private String scheduleName = "";
+    private String displayColor;
     private LocalDate startDate, endDate;
     private final String id;
 
@@ -90,6 +91,16 @@ public class ScheduleData implements TypedEvent {
             reference.updateEndDateLabelText();
         }
     }
+
+
+    public void setDisplayColor(final String color) {
+        this.displayColor = color;
+    }
+
+    public String getDisplayColor() {
+        return this.displayColor;
+    }
+
 
     @Override
     public String toString() {

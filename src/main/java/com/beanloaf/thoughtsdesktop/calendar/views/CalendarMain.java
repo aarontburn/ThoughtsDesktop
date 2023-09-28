@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarHandler;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CalendarJsonHandler;
 import com.beanloaf.thoughtsdesktop.calendar.handlers.CanvasICalHandler;
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
@@ -110,7 +111,7 @@ public class CalendarMain extends ThoughtsView {
         if (swapToOverlay == Overlays.SCHEDULE) {
             final ScheduleOverlay scheduleOverlay = new ScheduleOverlay(this, (ScheduleData) arguments);
         } else if (swapToOverlay == Overlays.EVENT) {
-            final EventOverlay eventOverlay = new EventOverlay(this, (DayEvent) arguments);
+            final EventOverlay eventOverlay = new EventOverlay(this, (BasicEvent) arguments);
         }
 
         overlayMap.get(swapToOverlay).setVisible(true);

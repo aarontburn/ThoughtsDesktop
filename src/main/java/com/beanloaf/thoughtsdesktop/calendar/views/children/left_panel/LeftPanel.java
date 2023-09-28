@@ -241,7 +241,10 @@ public class LeftPanel {
         calendarProgressCheckBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) ->
                 calendarProgressCheckBox.setText(isChecked ? "Completed" : "In-progress"));
 
-        calendarProgressCheckBox.setOnAction(e -> main.getCalendarHandler().getSelectedEvent().setCompleted(calendarProgressCheckBox.isSelected()));
+        calendarProgressCheckBox.setOnAction(e -> {
+            main.getCalendarHandler().getSelectedEvent().setCompleted(calendarProgressCheckBox.isSelected());
+            main.getCanvasICalHandler().cacheCanvasEventsToJson();
+        });
 
 
         calendarSaveEventButton.setVisible(false);

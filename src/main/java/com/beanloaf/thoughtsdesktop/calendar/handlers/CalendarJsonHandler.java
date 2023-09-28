@@ -35,11 +35,9 @@ public class CalendarJsonHandler {
 
 
     private final CalendarMain main;
-
-    private JSONObject root;
     private final Map<LocalDate, List<DayEvent>> eventMap = new ConcurrentHashMap<>();
-
     private final List<ScheduleData> scheduleDataList = new ArrayList<>();
+    private JSONObject root;
 
     public CalendarJsonHandler(final CalendarMain m) {
         this.main = m;
@@ -275,6 +273,7 @@ public class CalendarJsonHandler {
                 final String startDate = scheduleRoot.getString(Keys.START_DATE);
                 final String endDate = scheduleRoot.getString(Keys.END_DATE);
                 final String scheduleId = file.getName().replace(".json", "");
+                final String displayColor = scheduleRoot.getString(Keys.DISPLAY_COLOR);
                 if (!scheduleId.equals(scheduleRoot.getString(Keys.ID))) {
                     Logger.log("WARNING: ID of " + scheduleName + " does not match file name: " + file.getName());
                 }
@@ -283,26 +282,19 @@ public class CalendarJsonHandler {
 
                 final ScheduleData scheduleData = new ScheduleData(scheduleId);
                 scheduleData.setScheduleName(scheduleName);
+                scheduleData.setDisplayColor(displayColor == null ? CH.getRandomColor() : displayColor);
 
 
-                if (startDate == null) {
+                try {
+                    scheduleData.setStartDate(startDate == null ? null : LocalDate.parse(startDate));
+                } catch (DateTimeParseException parseException) {
                     scheduleData.setStartDate(null);
-                } else {
-                    try {
-                        scheduleData.setStartDate(LocalDate.parse(startDate));
-                    } catch (DateTimeParseException parseException) {
-                        scheduleData.setStartDate(null);
-                    }
                 }
 
-                if (endDate == null) {
+                try {
+                    scheduleData.setEndDate(endDate == null ? null : LocalDate.parse(endDate));
+                } catch (DateTimeParseException parseException) {
                     scheduleData.setEndDate(null);
-                } else {
-                    try {
-                        scheduleData.setEndDate(LocalDate.parse(endDate));
-                    } catch (DateTimeParseException parseException) {
-                        scheduleData.setEndDate(null);
-                    }
                 }
 
 
@@ -315,45 +307,35 @@ public class CalendarJsonHandler {
                     final String scheduleEventDescription = eventJson.getString(Keys.DESCRIPTION);
                     final String scheduleEventStartTime = eventJson.getString(Keys.START_TIME);
                     final String scheduleEventEndTime = eventJson.getString(Keys.END_TIME);
-                    final String scheduleColor = eventJson.getString(Keys.DISPLAY_COLOR) == null ? CH.getRandomColor() : eventJson.getString(Keys.DISPLAY_COLOR);
+                    final String scheduleColor = eventJson.getString(Keys.DISPLAY_COLOR);
 
                     final Object[] a = ((JSONArray) JSONValue.parse(eventJson.getString(Keys.DAYS))).toArray();
                     final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
 
                     final ScheduleEvent scheduleEvent = new ScheduleEvent(scheduleData.getScheduleName(), scheduleEventName, scheduleEventID);
                     scheduleEvent.setDescription(scheduleEventDescription);
-                    scheduleEvent.setDisplayColor(scheduleColor);
+                    scheduleEvent.setDisplayColor(scheduleColor == null ? CH.getRandomColor() : scheduleColor);
 
                     for (final String weekday : scheduleEventWeekdayStrings) {
                         scheduleEvent.addWeekday(weekday);
                     }
 
-                    if (scheduleEventStartTime == null) {
+                    try {
+                        scheduleEvent.setStartTime(scheduleEventStartTime == null ? null : LocalTime.parse(scheduleEventStartTime));
+                    } catch (DateTimeParseException parseException) {
                         scheduleEvent.setStartTime(null);
-                    } else {
-                        try {
-                            scheduleEvent.setStartTime(LocalTime.parse(scheduleEventStartTime));
-                        } catch (DateTimeParseException parseException) {
-                            scheduleEvent.setStartTime(null);
-                        }
                     }
 
-                    if (scheduleEventEndTime == null) {
+                    try {
+                        scheduleEvent.setEndTime(scheduleEventEndTime == null ? null : LocalTime.parse(scheduleEventEndTime));
+                    } catch (DateTimeParseException parseException) {
                         scheduleEvent.setEndTime(null);
-                    } else {
-                        try {
-                            scheduleEvent.setEndTime(LocalTime.parse(scheduleEventEndTime));
-                        } catch (DateTimeParseException parseException) {
-                            scheduleEvent.setEndTime(null);
-                        }
                     }
 
                     scheduleData.addEvent(scheduleEvent);
 
-
                 }
                 scheduleDataList.add(scheduleData);
-
 
             } catch (Exception e) {
                 Logger.log(e);
@@ -383,6 +365,7 @@ public class CalendarJsonHandler {
             json.put(Keys.START_DATE, data.getStartDate() != null ? data.getStartDate().toString() : "");
             json.put(Keys.END_DATE, data.getEndDate() != null ? data.getEndDate().toString() : "");
             json.put(Keys.ID, data.getId());
+            json.put(Keys.DISPLAY_COLOR, data.getDisplayColor());
 
             final JSONObject scheduleEventBranch = new JSONObject();
             json.put(Keys.SCHEDULE_EVENTS, scheduleEventBranch);
@@ -390,7 +373,6 @@ public class CalendarJsonHandler {
             for (final ScheduleEvent schedule : data.getScheduleEventList()) {
                 final JSONObject eventBranch = new JSONObject();
                 scheduleEventBranch.put(schedule.getId(), eventBranch);
-
 
                 final LocalTime startTime = schedule.getStartTime();
                 final LocalTime endTime = schedule.getEndTime();

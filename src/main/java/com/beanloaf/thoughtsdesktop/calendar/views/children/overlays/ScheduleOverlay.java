@@ -275,7 +275,9 @@ public class ScheduleOverlay {
     }
 
     private void saveScheduleEvent() {
-        if (selectedScheduleListItem == null) return;
+        if (selectedScheduleListItem == null) {
+            return;
+        }
 
         selectedScheduleListItem.setScheduleEventName(scheduleEventTitleInput.getText());
         selectedScheduleListItem.setDescription(scheduleEventDescriptionInput.getText());

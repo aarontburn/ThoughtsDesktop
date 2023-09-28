@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -37,6 +38,7 @@ public class CanvasBoxItem extends AnchorPane {
 
 
         final HBox colorHBox = new HBox(16);
+        colorHBox.setAlignment(Pos.CENTER_LEFT);
         this.getChildren().add(ThoughtsHelper.setAnchor(colorHBox, 48, null, 32, null));
 
         final Label colorTextLabel = new Label("Color: ");

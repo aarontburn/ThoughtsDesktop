@@ -28,7 +28,7 @@
    <children>
       <AnchorPane VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane fx:id="eventOverlay" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="eventOverlay" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label maxWidth="1.7976931348623157E308" minWidth="0.0" text="Event" textOverrun="CLIP" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="8.0">
                      <font>
@@ -184,7 +184,10 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <TextArea fx:id="eventDescInput" layoutX="16.0" layoutY="285.0" prefHeight="618.0" prefWidth="896.0" styleClass="text-field" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="285.0" />
+                              <TextArea fx:id="eventDescInput" layoutX="16.0" layoutY="285.0" prefHeight="618.0" prefWidth="896.0" styleClass="text-field" wrapText="true" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="285.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font></TextArea>
                            </children>
                         </AnchorPane>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
@@ -469,13 +472,13 @@
                                           </HBox>
                                        </children>
                                     </VBox>
-                                    <Button fx:id="saveEventButton" layoutX="722.0" layoutY="676.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="32.0" AnchorPane.rightAnchor="16.0">
-                                       <font>
-                                          <Font size="18.0" />
-                                       </font>
-                                    </Button>
                                  </children>
                               </AnchorPane>
+                              <Button fx:id="saveEventButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="32.0" AnchorPane.rightAnchor="16.0">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Button>
                            </children>
                         </AnchorPane>
                      </children>
@@ -774,7 +777,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <SplitPane fx:id="calendarOverlay" dividerPositions="0.24425887265135698" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="calendarOverlay" dividerPositions="0.24425887265135698" focusTraversable="false" prefHeight="160.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane fx:id="left" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>

@@ -247,6 +247,9 @@ public class CanvasICalHandler {
                 if (cachedCanvasClass != null) {
                     final BasicEvent cachedEvent = cachedCanvasClass.getEvent(uid);
                     if (cachedEvent != null) {
+                        if (className.equals(Keys.EVENTS.name())) {
+                            Logger.log(cachedEvent);
+                        }
                         event.setCompleted(cachedEvent.isComplete());
                     }
                 }

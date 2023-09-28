@@ -3,22 +3,32 @@ package com.beanloaf.thoughtsdesktop.calendar.views.children.overlays;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
-import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TimeGroupView;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
 import java.time.Month;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EventOverlay {
 
     private final CalendarMain main;
-    private final DayEvent event;
+    private final BasicEvent event;
 
 
     private RepeatTab currentRepeatMode;
@@ -67,7 +77,7 @@ public class EventOverlay {
 
     /*  ---------   */
 
-    public EventOverlay(final CalendarMain main, final DayEvent event) {
+    public EventOverlay(final CalendarMain main, final BasicEvent event) {
         this.main = main;
         this.event = event;
 
@@ -84,8 +94,8 @@ public class EventOverlay {
     }
 
     private void startup() {
-        eventTitleInput.setText(event.getEventTitle());
-        eventDatePicker.setValue(event.getDate());
+        eventTitleInput.setText(event.getTitle());
+        eventDatePicker.setValue(event.getStartDate());
         eventDescInput.setText(event.getDescription());
         eventHourFrom.setTime(event.getStartTime());
         eventHourTo.setTime(event.getEndTime());
@@ -195,7 +205,7 @@ public class EventOverlay {
         closeButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.CALENDAR));
 
         saveEventButton.setOnAction(e -> {
-            main.getRightPanel().getMonthView().saveEvent(event.getEvent(), getEventInputFields());
+            main.getRightPanel().getMonthView().saveEvent(event, getEventInputFields());
             main.swapOverlay(CalendarMain.Overlays.CALENDAR);
         });
 

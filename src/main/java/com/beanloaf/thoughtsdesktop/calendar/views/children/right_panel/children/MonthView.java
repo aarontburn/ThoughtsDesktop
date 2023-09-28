@@ -266,7 +266,7 @@ public class MonthView {
                 dayEvent.setDescription(scheduleEvent.getDescription());
                 dayEvent.setStartTime(scheduleEvent.getStartTime());
                 dayEvent.setEndTime(scheduleEvent.getEndTime());
-                dayEvent.setDisplayColor(scheduleEvent.getDisplayColor());
+                dayEvent.setDisplayColor(schedule.getDisplayColor());
 
                 final LocalDate finalStartDate = startDate;
                 Platform.runLater(() -> addEventToCalendarDay(finalStartDate, dayEvent));
