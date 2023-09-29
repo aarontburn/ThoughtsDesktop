@@ -4,7 +4,6 @@ import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
-import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.left_panel.LeftPanel;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.right_panel.RightPanel;
@@ -17,6 +16,7 @@ import javafx.scene.layout.GridPane;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -26,14 +26,10 @@ import java.util.Map;
 
 public class MonthView {
 
+    public final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
     private final RightPanel rightPanel;
     private final CalendarMain main;
-
     private DayEvent lastPressedDayEvent;
-
-
-    public final List<Runnable> queuedTasks = Collections.synchronizedList(new ArrayList<>());
-
     private GridPane calendarFrame; // (7 x 5)
 
 
@@ -247,32 +243,26 @@ public class MonthView {
         final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
         for (int i = 0; i < daysBetween; i++) {
-            for (final ScheduleEvent scheduleEvent : schedule.getScheduleEventList()) {
-                boolean isCorrectDay = false;
+            final Map<Weekday, Map<String, BasicEvent>> map = schedule.getScheduleEventList();
 
-                for (final Weekday weekday : scheduleEvent.getWeekdays()) {
-                    if (weekday.getDayOfWeek() == startDate.getDayOfWeek().getValue() || (weekday.getDayOfWeek() == 0 && startDate.getDayOfWeek().getValue() == 7)) {
-                        isCorrectDay = true;
-                        break;
+            for (final Weekday weekday : map.keySet()) {
+                final Map<String, BasicEvent> uidEventMap = map.get(weekday);
+
+                if (weekday.getDayOfWeek() == startDate.getDayOfWeek().getValue()
+                        || (weekday.getDayOfWeek() == 0 && startDate.getDayOfWeek().getValue() == 7)) {
+
+                    for (final String uid : uidEventMap.keySet()) {
+                        final BasicEvent event = uidEventMap.get(uid);
+                        final LocalDate date = startDate;
+                        Platform.runLater(() -> addEventToCalendarDay(date, new DayEvent(event, main)));
                     }
                 }
 
-                if (!isCorrectDay) {
-                    continue;
-                }
-
-
-                final DayEvent dayEvent = new DayEvent(startDate, scheduleEvent.getScheduleEventName(), schedule.getId(), main, TypedEvent.Types.SCHEDULE, schedule.getScheduleName());
-                dayEvent.setDescription(scheduleEvent.getDescription());
-                dayEvent.setStartTime(scheduleEvent.getStartTime());
-                dayEvent.setEndTime(scheduleEvent.getEndTime());
-                dayEvent.setDisplayColor(schedule.getDisplayColor());
-
-                final LocalDate finalStartDate = startDate;
-                Platform.runLater(() -> addEventToCalendarDay(finalStartDate, dayEvent));
+                startDate = startDate.plusDays(1);
 
             }
-            startDate = startDate.plusDays(1);
+
+
         }
 
 
@@ -305,7 +295,7 @@ public class MonthView {
     public DayEvent addNewEventToCalendarDay(final LocalDate date) {
         final DayEvent event = new DayEvent(date, "New Event", main, TypedEvent.Types.DAY);
         event.setDescription("");
-        event.setStartTime(null);
+        event.setStartTime((LocalTime) null);
         this.main.getJsonHandler().addEventToJson(event.getEvent());
         this.main.getCalendarHandler().getDay(date).addEvent(event);
 
@@ -369,12 +359,6 @@ public class MonthView {
     }
 
 
-
-
-
-
-
-
     public void saveEvent(final BasicEvent event, final BasicEvent inputFields) {
         event.setTitle(inputFields.getTitle());
         event.setDescription(inputFields.getDescription());
@@ -395,7 +379,7 @@ public class MonthView {
             try {
                 event.setEndTime(inputFields.getStartTime().isBefore(inputFields.getEndTime()) ? inputFields.getEndTime() : null);
             } catch (Exception e) {
-                event.setEndTime(null);
+                event.setEndTime((LocalTime) null);
             }
         } else {
             event.setEndTime(inputFields.getEndTime());

@@ -5,9 +5,9 @@ import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
-import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleListItem;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -28,20 +28,14 @@ public class ScheduleOverlay {
     private final CalendarMain main;
 
     private final ScheduleData data;
-    private ScheduleListItem selectedScheduleListItem;
-
-
     private final List<Runnable> queuedTasks = new ArrayList<>();
-
     private final Map<Weekday, ScheduleCalendarDay> weekdayMap = new HashMap<>();
-    private final List<ScheduleListItem> eventList = new ArrayList<>();
-
-
+    private final Map<String, ScheduleListItem> eventMap = new HashMap<>(); //uid, scheduleListItem
+    private ScheduleListItem selectedScheduleListItem;
     /*  Header  */
     private TextField scheduleNameInput;
     private DatePicker scheduleStartDate, scheduleEndDate;
     private Label closeButton;
-
 
 
     /*  ------  */
@@ -143,14 +137,16 @@ public class ScheduleOverlay {
         scheduleSaveEventButton.setOnAction(e -> saveScheduleEvent());
 
         scheduleDeleteEventButton.setOnAction(e -> {
-            if (selectedScheduleListItem == null) return;
+            if (selectedScheduleListItem == null) {
+                return;
+            }
 
             for (final Weekday weekday : weekdayMap.keySet()) {
                 final ScheduleCalendarDay day = weekdayMap.get(weekday);
                 day.removeScheduleEventFromDay(selectedScheduleListItem);
             }
 
-            eventList.remove(selectedScheduleListItem);
+            eventMap.remove(selectedScheduleListItem.getEvent().getId());
             scheduleEventList.getChildren().remove(selectedScheduleListItem);
         });
 
@@ -224,22 +220,30 @@ public class ScheduleOverlay {
 
         final Map<Weekday, Map<String, BasicEvent>> scheduleMap = data.getScheduleEventList();
         for (final Weekday weekday : data.getScheduleEventList().keySet()) {
+            final Map<String, BasicEvent> uidEventMap = scheduleMap.get(weekday);
+            for (final String uid : uidEventMap.keySet()) {
+                final BasicEvent event = uidEventMap.get(uid);
 
 
+                ScheduleListItem listItem = eventMap.get(uid);
+                if (listItem == null) {
+                    listItem = new ScheduleListItem(this, event);
+                    eventMap.put(uid, listItem);
+                    addScheduleEventToListView(listItem);
+                }
 
-
-            final ScheduleListItem listItem = new ScheduleListItem(this, event);
-
-            for (final Weekday weekday : event.getWeekdays()) {
                 listItem.setChecked(weekday, true);
-            }
 
-            addScheduleEventToListView(listItem);
+            }
         }
+
+
     }
 
     public void setInputFields(final ScheduleListItem scheduleListItem) {
-        if (scheduleListItem == null) throw new IllegalArgumentException("ScheduleListItem cannot be null.");
+        if (scheduleListItem == null) {
+            throw new IllegalArgumentException("ScheduleListItem cannot be null.");
+        }
 
 
         scheduleEventTitleInput.setDisable(false);
@@ -247,16 +251,11 @@ public class ScheduleOverlay {
         scheduleTimeFrom.setDisabled(false);
         scheduleTimeTo.setDisabled(false);
 
-
         this.selectedScheduleListItem = scheduleListItem;
 
-
         scheduleEventTitleInput.setText(scheduleListItem.getScheduleEventName());
-
-
         scheduleTimeFrom.setTime(scheduleListItem.getStartTime());
         scheduleTimeTo.setTime(scheduleListItem.getEndTime());
-
         scheduleEventDescriptionInput.setText(scheduleListItem.getDescription());
 
     }
@@ -267,7 +266,7 @@ public class ScheduleOverlay {
             return;
         }
 
-        eventList.add(scheduleListItem);
+        eventMap.put(scheduleListItem.getEvent().getId(), scheduleListItem);
         scheduleEventList.getChildren().add(scheduleListItem);
     }
 
@@ -299,26 +298,7 @@ public class ScheduleOverlay {
         data.setStartDate(scheduleStartDate.getValue());
         data.setEndDate(scheduleEndDate.getValue());
 
-        data.setEvents(eventList);
-
-        for (final ScheduleListItem scheduleListItem : eventList) {
-            data.addEvent(scheduleListItem.getEvent());
-            scheduleListItem.getEvent().removeAllWeekdays();
-
-        }
-
-        for (final Weekday weekday : weekdayMap.keySet()) {
-            final ScheduleCalendarDay day = weekdayMap.get(weekday);
-
-            for (final ScheduleEvent event : day.getScheduleEventList()) {
-
-                if (data.getScheduleEventList().contains(event)) {
-                    data.getEvent(event.getId()).addWeekday(weekday);
-                }
-
-            }
-        }
-
+        data.setEvents(new ArrayList<>(eventMap.values()));
 
         main.getJsonHandler().writeScheduleData(data);
         main.swapOverlay(CalendarMain.Overlays.CALENDAR);

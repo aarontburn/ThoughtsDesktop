@@ -1,11 +1,10 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
-import javafx.beans.property.StringProperty;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class BasicEvent implements TypedEvent {
@@ -19,13 +18,12 @@ public class BasicEvent implements TypedEvent {
     private LocalDate endDate;
     private Weekday weekday;
     private boolean isComplete;
-    private DayEvent linkedDayEvent;
     private Types eventType = Types.BASIC;
     private String color;
     private String altText;
 
 
-    private List<EventLabel> referenceList = new ArrayList<>();
+    private final List<EventLabel> referenceList = new ArrayList<>();
 
 
     public BasicEvent() {
@@ -95,7 +93,14 @@ public class BasicEvent implements TypedEvent {
             ref.updateStartTime(startTime);
         }
         return this;
+    }
 
+    public BasicEvent setStartTime(final String stringTime) {
+        try {
+            return setStartTime(stringTime == null ? null : LocalTime.parse(stringTime));
+        } catch (DateTimeParseException e) {
+            return setStartTime((LocalTime) null);
+        }
     }
 
     public LocalTime getEndTime() {
@@ -109,7 +114,14 @@ public class BasicEvent implements TypedEvent {
             ref.updateEndTime(endTime);
         }
         return this;
+    }
 
+    public BasicEvent setEndTime(final String stringTime) {
+        try {
+            return setEndTime(stringTime == null ? null : LocalTime.parse(stringTime));
+        } catch (DateTimeParseException e) {
+            return setEndTime((LocalTime) null);
+        }
     }
 
     public LocalDate getStartDate() {
@@ -125,6 +137,14 @@ public class BasicEvent implements TypedEvent {
         return this;
     }
 
+    public BasicEvent setStartDate(final String stringDate) {
+        try {
+            return setStartDate(stringDate == null ? null : LocalDate.parse(stringDate));
+        } catch (DateTimeParseException e) {
+            return setStartDate((LocalDate) null);
+        }
+    }
+
     public LocalDate getEndDate() {
         return endDate;
     }
@@ -136,7 +156,14 @@ public class BasicEvent implements TypedEvent {
             ref.updateEndDate(endDate);
         }
         return this;
+    }
 
+    public BasicEvent setEndDate(final String stringDate) {
+        try {
+            return setEndDate(stringDate == null ? null : LocalDate.parse(stringDate));
+        } catch (DateTimeParseException e) {
+            return setEndDate((LocalDate) null);
+        }
     }
 
     public Weekday getWeekday() {
@@ -149,16 +176,12 @@ public class BasicEvent implements TypedEvent {
         return this;
     }
 
-    public BasicEvent setLinkedDayEvent(final DayEvent dayEvent) {
-        this.linkedDayEvent = dayEvent;
-        return this;
-    }
 
-    public DayEvent getLinkedDayEvent() {
-        return this.linkedDayEvent;
-    }
+    public BasicEvent setDisplayColor(String color) {
+        if (color == null) {
+            color = CH.getRandomColor();
+        }
 
-    public BasicEvent setDisplayColor(final String color) {
         this.color = color;
         for (final EventLabel ref : referenceList) {
             ref.updateDisplayColor(color);
@@ -167,6 +190,9 @@ public class BasicEvent implements TypedEvent {
     }
 
     public String getDisplayColor() {
+        if (this.color == null) {
+            setDisplayColor(CH.getRandomColor());
+        }
         return this.color;
     }
 

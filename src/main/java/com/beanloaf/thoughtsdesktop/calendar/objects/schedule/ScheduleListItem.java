@@ -123,6 +123,10 @@ public class ScheduleListItem extends GridPane {
         return this.event;
     }
 
+    public List<Weekday> getWeekdays() {
+        return this.weekdays;
+    }
+
 
     public void setChecked(final Weekday weekday, final boolean isChecked) {
         this.checkBoxMap.get(weekday).setSelected(isChecked);

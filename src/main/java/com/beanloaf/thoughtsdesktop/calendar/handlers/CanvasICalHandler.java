@@ -61,6 +61,26 @@ public class CanvasICalHandler {
 
     }
 
+    public static boolean checkICalUrl(final String url) {
+        if (url == null || url.equals("")) return false;
+        try {
+            final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+
+            final int responseCode = connection.getResponseCode();
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                Logger.log("Could not access Canvas ICal, with response code: " + responseCode);
+                return false;
+            }
+            connection.disconnect();
+            return true;
+
+
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
     private Map<String, CanvasClass> readCanvasEventsFromJson() {
 
         final Map<String, CanvasClass> cachedCanvasEvents = new HashMap<>();
@@ -97,23 +117,9 @@ public class CanvasICalHandler {
                     event.setCompleted(isCompleted != null && isCompleted);
                     event.setDisplayColor(classColor == null ? CH.getRandomColor() : classColor);
 
-                    try {
-                        event.setStartTime(startTime == null ? null : LocalTime.parse(startTime));
-                    } catch (DateTimeParseException parseException) {
-                        event.setStartTime(null);
-                    }
-
-                    try {
-                        event.setEndTime(endTime == null ? null : LocalTime.parse(endTime));
-                    } catch (DateTimeParseException parseException) {
-                        event.setEndTime(null);
-                    }
-
-                    try {
-                        event.setStartDate(startDate == null ? null : LocalDate.parse(startDate));
-                    } catch (DateTimeParseException parseException) {
-                        event.setStartDate(null);
-                    }
+                    event.setStartDate(startDate);
+                    event.setStartTime(startTime);
+                    event.setEndTime(endTime);
 
                     cachedCanvasEvents.computeIfAbsent(className, k -> new CanvasClass(className, classColor)).addEvent(event);
                 }
@@ -314,7 +320,6 @@ public class CanvasICalHandler {
         }).start();
     }
 
-
     public void setAutoRefresh() {
         if (scheduledTask != null) {
             scheduler.shutdownNow();
@@ -341,26 +346,6 @@ public class CanvasICalHandler {
 
     public void stopRefresh() {
         if (scheduler != null) scheduler.shutdownNow();
-    }
-
-    public static boolean checkICalUrl(final String url) {
-        if (url == null || url.equals("")) return false;
-        try {
-            final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-
-            final int responseCode = connection.getResponseCode();
-            if (responseCode != HttpURLConnection.HTTP_OK) {
-                Logger.log("Could not access Canvas ICal, with response code: " + responseCode);
-                return false;
-            }
-            connection.disconnect();
-            return true;
-
-
-        } catch (Exception e) {
-            return false;
-        }
-
     }
 
 

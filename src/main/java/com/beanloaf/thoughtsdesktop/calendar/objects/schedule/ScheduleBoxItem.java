@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
@@ -12,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class ScheduleBoxItem extends AnchorPane {
     public static final int PREF_WIDTH = 400;
@@ -70,21 +72,22 @@ public class ScheduleBoxItem extends AnchorPane {
         randomizeColorButton.getStyleClass().add("calendarButton");
         randomizeColorButton.setOnAction(e -> {
             final String newColor = CH.getRandomColor();
-
             data.setDisplayColor(newColor);
-
             colorLabel.setStyle(
                     "-fx-border-color: black; " +
                             "-fx-border-radius: 5; " +
                             "-fx-background-radius: 5; " +
                             "-fx-background-color: " + newColor);
 
-            for (final String uid : canvasClass.getUidList()) {
-                final BasicEvent event = canvasClass.getEvent(uid);
-                event.setDisplayColor(newColor);
-            }
 
-            main.getCanvasICalHandler().cacheCanvasEventsToJson();
+            final Map<Weekday, Map<String, BasicEvent>> map = data.getScheduleEventList();
+            for (final Map<String, BasicEvent> uidEventMap : map.values()) {
+                for (final String uid : uidEventMap.keySet()) {
+                    final BasicEvent event = uidEventMap.get(uid);
+                    event.setDisplayColor(newColor);
+                }
+            }
+            main.getJsonHandler().writeScheduleData(data);
 
         });
         colorHBox.getChildren().add(randomizeColorButton);

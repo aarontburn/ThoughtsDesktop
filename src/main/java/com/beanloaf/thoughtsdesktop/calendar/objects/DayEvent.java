@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -112,12 +113,27 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     public void setStartTime(final LocalTime startTime) {
         this.event.setStartTime(startTime);
         this.updateStartTime(startTime);
+    }
 
+    public void setStartTime(final String stringTime) {
+        try {
+            setStartTime(LocalTime.parse(stringTime));
+        } catch (DateTimeParseException e) {
+            setStartTime((LocalTime) null);
+        }
     }
 
     public void setEndTime(final LocalTime endTime) {
         this.event.setEndTime(endTime);
         this.updateEndTime(endTime);
+    }
+
+    public void setEndTime(final String stringTime) {
+        try {
+            setEndTime(LocalTime.parse(stringTime));
+        } catch (DateTimeParseException e) {
+            setEndTime((LocalTime) null);
+        }
     }
 
 

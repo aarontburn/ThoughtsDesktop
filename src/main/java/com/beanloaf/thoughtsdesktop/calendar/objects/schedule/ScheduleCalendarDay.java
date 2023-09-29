@@ -1,5 +1,6 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
+import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
@@ -7,22 +8,22 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ScheduleCalendarDay extends AnchorPane {
 
     private final VBox scheduleContainer;
-    private final List<ScheduleEvent> scheduleEventList = new ArrayList<>();
+    private final Map<String, BasicEvent> scheduleEventList = new HashMap<>();
 
 
 
     public ScheduleCalendarDay() {
         super();
 
-
         ThoughtsHelper.setAnchor(this, 0.0, 0.0, 0.0, 0.0);
         this.getStyleClass().add("calendar-day");
-
 
         final ScrollPane scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("calendar-day");
@@ -45,7 +46,7 @@ public class ScheduleCalendarDay extends AnchorPane {
     }
 
     public void addScheduleEventToDay(final ScheduleListItem scheduleListItem) {
-        scheduleEventList.add(scheduleListItem.getEvent());
+        scheduleEventList.put(scheduleListItem.getEvent().getId(), scheduleListItem.getEvent());
 
         final ScheduleListItem.ScheduleLabel label = scheduleListItem.getLabel();
 
@@ -55,7 +56,7 @@ public class ScheduleCalendarDay extends AnchorPane {
     }
 
     public void removeScheduleEventFromDay(final ScheduleListItem scheduleListItem) {
-        scheduleEventList.remove(scheduleListItem.getEvent());
+        scheduleEventList.remove(scheduleListItem.getEvent().getId());
 
         final ScheduleListItem.ScheduleLabel label = scheduleListItem.getLabel();
 
@@ -64,12 +65,5 @@ public class ScheduleCalendarDay extends AnchorPane {
 
 
     }
-
-    public List<ScheduleEvent> getScheduleEventList() {
-        return this.scheduleEventList;
-    }
-
-
-
 
 }

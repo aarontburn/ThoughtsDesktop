@@ -6,6 +6,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class ScheduleData implements TypedEvent {
@@ -39,11 +40,11 @@ public class ScheduleData implements TypedEvent {
     public void setEvents(final List<ScheduleListItem> listItems) {
         scheduleEventMap.clear();
 
-
         for (final ScheduleListItem l : listItems) {
-            scheduleEventMap.put(l.getEvent().getId(), l.getEvent());
+            for (final Weekday weekday : l.getWeekdays()) {
+                addEvent(weekday, l.getEvent());
+            }
         }
-
     }
 
     public BasicEvent getEvent(final String eventId) {
@@ -99,10 +100,26 @@ public class ScheduleData implements TypedEvent {
         }
     }
 
+    public void setStartDate(final String stringDate) {
+        try {
+            setStartDate(LocalDate.parse(stringDate));
+        } catch (DateTimeParseException e) {
+            setStartDate((LocalDate) null);
+        }
+    }
+
     public void setEndDate(final LocalDate date) {
         this.endDate = date;
         for (final ScheduleBoxItem reference : references) {
             reference.updateEndDateLabelText();
+        }
+    }
+
+    public void setEndDate(final String stringDate) {
+        try {
+            setEndDate(LocalDate.parse(stringDate));
+        } catch (DateTimeParseException e) {
+            setEndDate((LocalDate) null);
         }
     }
 

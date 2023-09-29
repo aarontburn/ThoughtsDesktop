@@ -1,12 +1,12 @@
 package com.beanloaf.thoughtsdesktop.calendar.handlers;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Keys;
+import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
-import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
@@ -21,12 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -102,37 +97,10 @@ public class CalendarJsonHandler {
                             event.setDescription(description);
                             event.setCompleted(isCompleted != null ? isCompleted : false, false);
                             event.setDisplayColor(displayColor);
+                            event.setStartTime(startTime);
+                            event.setEndTime(endTime);
 
-                            if (startTime == null) {
-                                event.setStartTime(null);
-                            } else {
-                                try {
-                                    final LocalTime parsedStartTime = LocalTime.parse(startTime);
-                                    event.setStartTime(parsedStartTime);
-                                } catch (DateTimeParseException parseException) {
-                                    event.setStartTime(null);
-                                }
-                            }
-
-
-                            if (endTime == null) {
-                                event.setEndTime(null);
-                            } else {
-                                try {
-                                    final LocalTime parsedEndTime = LocalTime.parse(endTime);
-                                    event.setEndTime(parsedEndTime);
-                                } catch (DateTimeParseException parseException) {
-                                    event.setEndTime(null);
-                                }
-                            }
-
-
-                            List<DayEvent> dayEventList = eventMap.get(eventDate);
-                            if (dayEventList == null) {
-                                dayEventList = new ArrayList<>();
-                                this.eventMap.put(eventDate, dayEventList);
-                            }
-                            dayEventList.add(event);
+                            eventMap.computeIfAbsent(eventDate, k -> new ArrayList<>()).add(event);
 
                         }
                     }
@@ -264,7 +232,6 @@ public class CalendarJsonHandler {
             throw new RuntimeException("scheduledFiles is null");
         }
 
-
         for (final File file : scheduleFiles) {
             try {
                 final JSONHelper scheduleRoot = new JSONHelper((JSONObject) JSONValue.parse(new String(Files.readAllBytes(file.toPath()))));
@@ -283,19 +250,8 @@ public class CalendarJsonHandler {
                 final ScheduleData scheduleData = new ScheduleData(scheduleId);
                 scheduleData.setScheduleName(scheduleName);
                 scheduleData.setDisplayColor(displayColor == null ? CH.getRandomColor() : displayColor);
-
-
-                try {
-                    scheduleData.setStartDate(startDate == null ? null : LocalDate.parse(startDate));
-                } catch (DateTimeParseException parseException) {
-                    scheduleData.setStartDate(null);
-                }
-
-                try {
-                    scheduleData.setEndDate(endDate == null ? null : LocalDate.parse(endDate));
-                } catch (DateTimeParseException parseException) {
-                    scheduleData.setEndDate(null);
-                }
+                scheduleData.setStartDate(startDate);
+                scheduleData.setEndDate(endDate);
 
 
                 for (final Object idObject : schedules.getKeys()) {
@@ -307,7 +263,6 @@ public class CalendarJsonHandler {
                     final String scheduleEventDescription = eventJson.getString(Keys.DESCRIPTION);
                     final String scheduleEventStartTime = eventJson.getString(Keys.START_TIME);
                     final String scheduleEventEndTime = eventJson.getString(Keys.END_TIME);
-                    final String scheduleColor = eventJson.getString(Keys.DISPLAY_COLOR);
 
                     final Object[] a = ((JSONArray) JSONValue.parse(eventJson.getString(Keys.DAYS))).toArray();
                     final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
@@ -315,19 +270,11 @@ public class CalendarJsonHandler {
                     final BasicEvent event = new BasicEvent(scheduleEventName);
                     event.setId(scheduleEventID);
                     event.setDescription(scheduleEventDescription);
-                    event.setDisplayColor(scheduleColor == null ? CH.getRandomColor() : scheduleColor);
+                    event.setDisplayColor(displayColor);
 
-                    try {
-                        event.setStartTime(scheduleEventStartTime == null ? null : LocalTime.parse(scheduleEventStartTime));
-                    } catch (DateTimeParseException parseException) {
-                        event.setStartTime(null);
-                    }
-
-                    try {
-                        event.setEndTime(scheduleEventEndTime == null ? null : LocalTime.parse(scheduleEventEndTime));
-                    } catch (DateTimeParseException parseException) {
-                        event.setEndTime(null);
-                    }
+                    event.setStartDate(startDate);
+                    event.setStartTime(scheduleEventStartTime);
+                    event.setEndTime(scheduleEventEndTime);
 
 
                     for (final String weekday : scheduleEventWeekdayStrings) {
@@ -351,46 +298,62 @@ public class CalendarJsonHandler {
     }
 
     public void writeScheduleData(final ScheduleData data) {
-        Logger.log("Saving: " + data.getScheduleName());
+        Logger.log("Saving schedule: " + data.getScheduleName());
 
         TC.Directories.CALENDAR_SCHEDULES_PATH.mkdir();
         final File scheduleFile = new File(TC.Directories.CALENDAR_SCHEDULES_PATH, data.getId() + ".json");
+        new Thread(() -> {
+            try {
+                scheduleFile.createNewFile();
 
-        try {
-            scheduleFile.createNewFile();
+                final JSONObject json = new JSONObject();
 
-            final JSONObject json = new JSONObject();
+                json.put(Keys.SCHEDULE_NAME, data.getScheduleName());
+                json.put(Keys.START_DATE, data.getStartDate() != null ? data.getStartDate().toString() : "");
+                json.put(Keys.END_DATE, data.getEndDate() != null ? data.getEndDate().toString() : "");
+                json.put(Keys.ID, data.getId());
+                json.put(Keys.DISPLAY_COLOR, data.getDisplayColor());
 
-            json.put(Keys.SCHEDULE_NAME, data.getScheduleName());
-            json.put(Keys.START_DATE, data.getStartDate() != null ? data.getStartDate().toString() : "");
-            json.put(Keys.END_DATE, data.getEndDate() != null ? data.getEndDate().toString() : "");
-            json.put(Keys.ID, data.getId());
-            json.put(Keys.DISPLAY_COLOR, data.getDisplayColor());
+                final JSONObject scheduleEventBranch = new JSONObject();
+                json.put(Keys.SCHEDULE_EVENTS, scheduleEventBranch);
 
-            final JSONObject scheduleEventBranch = new JSONObject();
-            json.put(Keys.SCHEDULE_EVENTS, scheduleEventBranch);
+                final Map<Weekday, Map<String, BasicEvent>> map = data.getScheduleEventList();
+                final List<Weekday> weekdays = new ArrayList<>(data.getScheduleEventList().keySet());
 
-            for (final ScheduleEvent schedule : data.getScheduleEventList()) {
-                final JSONObject eventBranch = new JSONObject();
-                scheduleEventBranch.put(schedule.getId(), eventBranch);
+                final List<String> weekdayStringList = new ArrayList<>();
+                Collections.sort(weekdays);
+                for (final Weekday weekday : weekdays) {
+                    weekdayStringList.add(weekday.name());
+                }
 
-                final LocalTime startTime = schedule.getStartTime();
-                final LocalTime endTime = schedule.getEndTime();
+                for (final Map<String, BasicEvent> uidEventMap : map.values()) {
+                    for (final String uid : uidEventMap.keySet()) {
+                        final BasicEvent event = uidEventMap.get(uid);
 
-                eventBranch.put(Keys.EVENT_NAME, schedule.getScheduleEventName());
-                eventBranch.put(Keys.DAYS, JSONArray.toJSONString(schedule.getWeekdayStrings()));
-                eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
-                eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
-                eventBranch.put(Keys.DESCRIPTION, schedule.getDescription());
-                eventBranch.put(Keys.DISPLAY_COLOR, schedule.getDisplayColor() == null ? CH.getRandomColor() : schedule.getDisplayColor());
+                        final JSONObject eventBranch = new JSONObject();
+                        scheduleEventBranch.put(uid, eventBranch);
+
+                        final LocalTime startTime = event.getStartTime();
+                        final LocalTime endTime = event.getEndTime();
+
+                        eventBranch.put(Keys.EVENT_NAME, event.getTitle());
+                        eventBranch.put(Keys.DAYS, JSONArray.toJSONString(weekdayStringList));
+                        eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
+                        eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
+                        eventBranch.put(Keys.DESCRIPTION, event.getDescription());
+                        eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? CH.getRandomColor() : event.getDisplayColor());
+                    }
+                }
+
+                try (FileOutputStream fWriter = new FileOutputStream(scheduleFile)) {
+                    fWriter.write(json.toString().getBytes());
+                }
+
+            } catch (Exception e) {
+                Logger.log(e);
             }
+        }).start();
 
-            try (FileOutputStream fWriter = new FileOutputStream(scheduleFile)) {
-                fWriter.write(json.toString().getBytes());
-            }
-        } catch (Exception e) {
-            Logger.log(e);
-        }
 
     }
 
