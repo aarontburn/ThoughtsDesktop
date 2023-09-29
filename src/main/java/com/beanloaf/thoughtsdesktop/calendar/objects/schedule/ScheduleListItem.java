@@ -4,6 +4,7 @@ import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.EventBoxLabel;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.geometry.Pos;
@@ -36,7 +37,7 @@ public class ScheduleListItem extends GridPane {
     }
 
     public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName, final String id) {
-        this(tab, new BasicEvent(scheduleName).setId(id));
+        this(tab, new BasicEvent(scheduleName).setId(id).setEventType(TypedEvent.Types.SCHEDULE));
     }
 
 
@@ -73,13 +74,16 @@ public class ScheduleListItem extends GridPane {
             checkBox.maxWidthProperty().setValue(10000);
 
             checkBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
-
                 if (isChecked) {
                     tab.addScheduleEventToDay(weekday, this);
-                    if (!weekdays.contains(weekday)) weekdays.add(weekday);
+                    if (!weekdays.contains(weekday)) {
+                        weekdays.add(weekday);
+                    }
                 } else {
                     tab.removeScheduleFromDay(weekday, this);
-                    while (weekdays.contains(weekday)) weekdays.remove(weekday);
+                    while (weekdays.contains(weekday)) {
+                        weekdays.remove(weekday);
+                    }
                 }
 
             });
@@ -242,8 +246,12 @@ public class ScheduleListItem extends GridPane {
 
         @Override
         public boolean equals(final Object other) {
-            if (this == other) return true;
-            if (other == null || getClass() != other.getClass()) return false;
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
             final ScheduleLabel that = (ScheduleLabel) other;
             return getScheduleId().equals(that.getScheduleId());
         }

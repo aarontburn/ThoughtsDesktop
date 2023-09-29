@@ -72,7 +72,7 @@ public class WeekBlock extends VBox implements EventLabel {
     }
 
     private String getCss() {
-        final String color = event.isComplete() ? "rgb(75, 75, 75)" : this.event.getDisplayColor();
+        final String color = event.isCompleted() ? "rgb(75, 75, 75)" : this.event.getDisplayColor();
 
         return "-fx-background-color: " + (event.getEndTime() != null ? color + "" : String.format("linear-gradient(%s, %s)", color, "rgb(60, 63 , 65)")) + ";"
                 + " -fx-border-color: derive(" + color + ", +50%); -fx-border-insets: 4; -fx-border-radius: 5;"

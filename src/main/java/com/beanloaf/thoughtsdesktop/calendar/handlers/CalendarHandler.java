@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,8 @@ public class CalendarHandler {
     private BasicEvent selectedEvent;
 
     private final List<BasicEvent> canvasEvents = new ArrayList<>();
+
+    private final Map<String, List<BasicEvent>> scheduleUIDMap = new HashMap<>();
 
 
 
@@ -90,13 +93,7 @@ public class CalendarHandler {
     }
 
 
-    public List<BasicEvent> getCanvasEvents() {
-        return canvasEvents;
-    }
 
-    public void addCanvasEvent(final BasicEvent event) {
-        this.canvasEvents.add(event);
-    }
 
     public void setSelectedEvent(final BasicEvent event) {
         this.selectedEvent = event;
@@ -105,4 +102,25 @@ public class CalendarHandler {
     public BasicEvent getSelectedEvent() {
         return this.selectedEvent;
     }
+
+
+
+
+    public List<BasicEvent> getCanvasEvents() {
+        return canvasEvents;
+    }
+
+    public void addCanvasEvent(final BasicEvent event) {
+        this.canvasEvents.add(event);
+    }
+
+    public List<BasicEvent> getScheduleEventsByUID(final String uid) {
+        return this.scheduleUIDMap.get(uid);
+    }
+
+    public void addScheduleEvent(final String scheduleUID, final BasicEvent event) {
+        this.scheduleUIDMap.computeIfAbsent(scheduleUID, k -> new ArrayList<>()).add(event);
+    }
+
+
 }

@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
-public class BasicEvent implements TypedEvent {
+public class BasicEvent implements TypedEvent, EventLabel {
 
     private String title;
     private String description;
@@ -34,6 +34,24 @@ public class BasicEvent implements TypedEvent {
         this.title = title;
     }
 
+    // sets a one way reference from the parent basic event to this. used for schedules.
+    public BasicEvent(final BasicEvent event) {
+        event.addReference(this);
+
+        this.title = event.getTitle();
+        this.id = event.getId();
+        this.description = event.getDescription();
+        this.startDate = event.getStartDate();
+        this.endDate = event.getEndDate();
+        this.startTime = event.getStartTime();
+        this.endTime = event.getEndTime();
+        this.isComplete = event.isCompleted();
+        this.color = event.getDisplayColor();
+        this.eventType = event.getEventType();
+        this.altText = event.getAltText();
+
+    }
+
 
     public String getId() {
         return id;
@@ -54,7 +72,7 @@ public class BasicEvent implements TypedEvent {
     }
 
 
-    public boolean isComplete() {
+    public boolean isCompleted() {
         return isComplete;
     }
 
@@ -224,9 +242,6 @@ public class BasicEvent implements TypedEvent {
         return this;
     }
 
-    public List<EventLabel> getReferences() {
-        return this.referenceList;
-    }
 
     @Override
     public String toString() {
@@ -246,8 +261,12 @@ public class BasicEvent implements TypedEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         BasicEvent event = (BasicEvent) o;
         return isComplete == event.isComplete && Objects.equals(title, event.title) && Objects.equals(description, event.description) && Objects.equals(startTime, event.startTime) && Objects.equals(endTime, event.endTime) && Objects.equals(startDate, event.startDate) && Objects.equals(endDate, event.endDate) && weekday == event.weekday && eventType == event.eventType && Objects.equals(id, event.id);
     }
@@ -258,4 +277,43 @@ public class BasicEvent implements TypedEvent {
     }
 
 
+    @Override
+    public void updateEventTitle(String title) {
+        setTitle(title);
+    }
+
+    @Override
+    public void updateDescription(String description) {
+        setDescription(description);
+    }
+
+    @Override
+    public void updateStartDate(LocalDate date) {
+        setStartDate(date);
+    }
+
+    @Override
+    public void updateEndDate(LocalDate date) {
+        setEndDate(date);
+    }
+
+    @Override
+    public void updateStartTime(LocalTime time) {
+        setStartTime(time);
+    }
+
+    @Override
+    public void updateEndTime(LocalTime time) {
+        setEndTime(time);
+    }
+
+    @Override
+    public void updateCompletion(boolean isComplete) {
+        setCompleted(isComplete);
+    }
+
+    @Override
+    public void updateDisplayColor(String color) {
+        setDisplayColor(color);
+    }
 }

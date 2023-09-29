@@ -130,7 +130,7 @@ public class CalendarJsonHandler {
             final String year = String.valueOf(event.getStartDate().getYear());
             final String month = event.getStartDate().getMonth().toString();
             final String day = String.valueOf(event.getStartDate().getDayOfMonth());
-            final boolean completed = event.isComplete();
+            final boolean completed = event.isCompleted();
 
 
             JSONObject yearBranch = (JSONObject) root.get(year);
@@ -268,6 +268,7 @@ public class CalendarJsonHandler {
                     final String[] scheduleEventWeekdayStrings = Arrays.copyOf(a, a.length, String[].class);
 
                     final BasicEvent event = new BasicEvent(scheduleEventName);
+                    event.setEventType(TypedEvent.Types.SCHEDULE);
                     event.setId(scheduleEventID);
                     event.setDescription(scheduleEventDescription);
                     event.setDisplayColor(displayColor);
@@ -275,6 +276,7 @@ public class CalendarJsonHandler {
                     event.setStartDate(startDate);
                     event.setStartTime(scheduleEventStartTime);
                     event.setEndTime(scheduleEventEndTime);
+                    event.setAltText(scheduleName);
 
 
                     for (final String weekday : scheduleEventWeekdayStrings) {
@@ -319,15 +321,19 @@ public class CalendarJsonHandler {
 
                 final Map<Weekday, Map<String, BasicEvent>> map = data.getScheduleEventList();
                 final List<Weekday> weekdays = new ArrayList<>(data.getScheduleEventList().keySet());
-
-                final List<String> weekdayStringList = new ArrayList<>();
                 Collections.sort(weekdays);
-                for (final Weekday weekday : weekdays) {
-                    weekdayStringList.add(weekday.name());
-                }
 
                 for (final Map<String, BasicEvent> uidEventMap : map.values()) {
+
                     for (final String uid : uidEventMap.keySet()) {
+                        final List<String> weekdayStringList = new ArrayList<>();
+
+                        for (final Weekday weekday : weekdays) {
+                            if (map.get(weekday).containsKey(uid)) {
+                                weekdayStringList.add(weekday.name());
+                            }
+                        }
+
                         final BasicEvent event = uidEventMap.get(uid);
 
                         final JSONObject eventBranch = new JSONObject();
@@ -341,7 +347,6 @@ public class CalendarJsonHandler {
                         eventBranch.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                         eventBranch.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                         eventBranch.put(Keys.DESCRIPTION, event.getDescription());
-                        eventBranch.put(Keys.DISPLAY_COLOR, event.getDisplayColor() == null ? CH.getRandomColor() : event.getDisplayColor());
                     }
                 }
 

@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -256,7 +255,7 @@ public class CanvasICalHandler {
                         if (className.equals(Keys.EVENTS.name())) {
                             Logger.log(cachedEvent);
                         }
-                        event.setCompleted(cachedEvent.isComplete());
+                        event.setCompleted(cachedEvent.isCompleted());
                     }
                 }
                 event.setDisplayColor(color);
@@ -302,7 +301,7 @@ public class CanvasICalHandler {
                     classEvent.put(Keys.START_TIME, startTime != null ? startTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                     classEvent.put(Keys.END_TIME, endTime != null ? endTime.format(DateTimeFormatter.ofPattern("HH:mm")) : "");
                     classEvent.put(Keys.DESCRIPTION, e.getDescription());
-                    classEvent.put(Keys.COMPLETED, e.isComplete());
+                    classEvent.put(Keys.COMPLETED, e.isCompleted());
                 }
 
             }

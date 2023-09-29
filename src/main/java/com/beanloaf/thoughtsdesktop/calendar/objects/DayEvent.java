@@ -14,9 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.UUID;
 
 public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, Comparable<DayEvent> {
@@ -68,11 +66,10 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
             for (final Node node : getChildren()) {
                 node.setId(DAY_EVENT_ID);
                 if (node.getClass().getSimpleName().equals("LabeledText")) {
-                    ((Text) node).setStrikethrough(this.event.isComplete());
+                    ((Text) node).setStrikethrough(this.event.isCompleted());
                 }
             }
         });
-
 
         this.setOnMouseClicked(e -> onClick());
 
@@ -178,7 +175,7 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
     public boolean isCompleted() {
-        return this.event.isComplete();
+        return this.event.isCompleted();
     }
 
     public static String getDisplayTime(final LocalTime time) {

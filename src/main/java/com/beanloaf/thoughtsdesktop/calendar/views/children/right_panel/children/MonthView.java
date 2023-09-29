@@ -19,10 +19,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.time.temporal.WeekFields;
+import java.util.*;
 
 public class MonthView {
 
@@ -158,14 +156,22 @@ public class MonthView {
 
     public void hideSchedule(final ScheduleData data, final boolean isHidden) {
         if (isHidden) {
+
+            final Set<String> scheduleEventIds = new HashSet<>();
+
+            for (final BasicEvent e : data.getWeekdaysByEventMap().keySet()) {
+                scheduleEventIds.add(e.getId());
+            }
+
             if (data.getStartDate() != null && data.getEndDate() != null) {
                 final long daysBetween = ChronoUnit.DAYS.between(data.getStartDate(), data.getEndDate()) + 1;
 
                 LocalDate date = data.getStartDate();
                 for (int i = 0; i < daysBetween; i++) {
                     final CalendarDay day = this.main.getCalendarHandler().getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
+
                     for (final DayEvent event : day.getEvents()) {
-                        if (data.getId() != null && data.getId().equals(event.getEventID())) {
+                        if (data.getId() != null && scheduleEventIds.contains(event.getEventID())) {
                             Platform.runLater(() -> day.removeEvent(event.getEvent()));
                         }
 
@@ -185,6 +191,13 @@ public class MonthView {
 
 
     public void updateSchedule(final ScheduleData data, final LocalDate oldStartDate, final LocalDate oldEndDate) {
+        final Set<String> scheduleEventIds = new HashSet<>();
+
+        for (final BasicEvent e : data.getWeekdaysByEventMap().keySet()) {
+            scheduleEventIds.add(e.getId());
+        }
+
+
         if (oldStartDate != null && oldEndDate != null) {
             final long daysBetween = ChronoUnit.DAYS.between(oldStartDate, oldEndDate) + 1;
 
@@ -192,7 +205,7 @@ public class MonthView {
             for (int i = 0; i < daysBetween; i++) {
                 final CalendarDay day = this.main.getCalendarHandler().getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
                 for (final DayEvent event : day.getEvents()) {
-                    if (data.getId() != null && data.getId().equals(event.getEventID())) {
+                    if (data.getId() != null && scheduleEventIds.contains(event.getEventID())) {
                         Platform.runLater(() -> day.removeEvent(event.getEvent()));
                     }
 
@@ -215,7 +228,9 @@ public class MonthView {
 
         }
 
-        if (!boxExists) main.getLeftPanel().addScheduleBoxItem(new ScheduleBoxItem(this.main, data));
+        if (!boxExists) {
+            main.getLeftPanel().addScheduleBoxItem(new ScheduleBoxItem(this.main, data));
+        }
 
 
         addScheduleToCalendarDay(data);
@@ -231,7 +246,7 @@ public class MonthView {
     }
 
     public void addScheduleToCalendarDay(final ScheduleData schedule) {
-        LocalDate startDate = schedule.getStartDate();
+        final LocalDate startDate = schedule.getStartDate();
         final LocalDate endDate = schedule.getEndDate();
 
 
@@ -240,31 +255,37 @@ public class MonthView {
             return;
         }
 
-        final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
-        for (int i = 0; i < daysBetween; i++) {
-            final Map<Weekday, Map<String, BasicEvent>> map = schedule.getScheduleEventList();
+        final List<Runnable> runnables = new ArrayList<>();
+        // Get event, get first weekday it starts on, add 7 until it exceeds the enddate using endDate.isBefore()
+        final Map<BasicEvent, Set<Weekday>> eventWeekdayMap = schedule.getWeekdaysByEventMap();
+        for (final BasicEvent event : eventWeekdayMap.keySet()) {
+            event.setDisplayColor(schedule.getDisplayColor());
+            for (final Weekday weekday : eventWeekdayMap.get(event)) {
+                final int eventStartingWeekday = event.getStartDate().getDayOfWeek().getValue();
 
-            for (final Weekday weekday : map.keySet()) {
-                final Map<String, BasicEvent> uidEventMap = map.get(weekday);
-
-                if (weekday.getDayOfWeek() == startDate.getDayOfWeek().getValue()
-                        || (weekday.getDayOfWeek() == 0 && startDate.getDayOfWeek().getValue() == 7)) {
-
-                    for (final String uid : uidEventMap.keySet()) {
-                        final BasicEvent event = uidEventMap.get(uid);
-                        final LocalDate date = startDate;
-                        Platform.runLater(() -> addEventToCalendarDay(date, new DayEvent(event, main)));
-                    }
+                int startDateOffset = weekday.getDayOfWeek() - (eventStartingWeekday == 7 ? 0 : eventStartingWeekday);
+                if (startDateOffset < 0) {
+                    startDateOffset += 7;
                 }
-
-                startDate = startDate.plusDays(1);
-
+                LocalDate date = startDate.plusDays(startDateOffset);
+                while (date.isBefore(endDate) || date.isEqual(endDate)) {
+                    final LocalDate tempDate = date;
+                    runnables.add(() -> {
+                        final BasicEvent e = new BasicEvent(event);
+                        main.getCalendarHandler().addScheduleEvent(schedule.getId(), e);
+                        addEventToCalendarDay(tempDate, new DayEvent(e, main));
+                    });
+                    date = date.plusDays(7);
+                }
             }
-
-
         }
 
+        Platform.runLater(() -> {
+            for (final Runnable runnable : runnables) {
+                runnable.run();
+            }
+        });
 
     }
 
@@ -324,6 +345,8 @@ public class MonthView {
             }
 
             main.getLeftPanel().addEventToEventBox(cloneList.toArray(new DayEvent[0]));
+            main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS);
+
         });
 
 
@@ -350,7 +373,6 @@ public class MonthView {
         selectDay(event.getStartDate(), false);
 
         selectDay(event.getStartDate(), false);
-        main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS);
         main.getLeftPanel().onSelectEvent(event, editable);
 
         main.getCalendarHandler().setSelectedEvent(event);

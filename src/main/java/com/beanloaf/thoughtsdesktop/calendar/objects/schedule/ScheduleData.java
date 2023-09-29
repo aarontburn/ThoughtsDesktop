@@ -2,6 +2,8 @@ package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
+import com.beanloaf.thoughtsdesktop.calendar.objects.EventLabel;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 
@@ -18,7 +20,8 @@ public class ScheduleData implements TypedEvent {
     private final String id;
 
     private final Map<Weekday, Map<String, BasicEvent>> scheduleEventMap = new HashMap<>();
-    private final List<ScheduleBoxItem> references = new ArrayList<>();
+    private final Map<BasicEvent, Set<Weekday>> weekdaysByEventMap = new HashMap<>();
+    private final List<EventLabel> references = new ArrayList<>();
 
 
     public ScheduleData() {
@@ -31,6 +34,7 @@ public class ScheduleData implements TypedEvent {
 
     public void addEvent(final Weekday weekday, final BasicEvent event) {
         scheduleEventMap.computeIfAbsent(weekday, k -> new HashMap<>()).put(event.getId(), event);
+        weekdaysByEventMap.computeIfAbsent(event, k -> new HashSet<>()).add(weekday);
     }
 
     public void addEvent(final String weekdayString, final BasicEvent event) {
@@ -39,28 +43,22 @@ public class ScheduleData implements TypedEvent {
 
     public void setEvents(final List<ScheduleListItem> listItems) {
         scheduleEventMap.clear();
-
+        weekdaysByEventMap.clear();
         for (final ScheduleListItem l : listItems) {
             for (final Weekday weekday : l.getWeekdays()) {
+                l.getEvent().setStartDate(getStartDate());
                 addEvent(weekday, l.getEvent());
             }
         }
     }
 
-    public BasicEvent getEvent(final String eventId) {
-        for (final Map<String, BasicEvent> uidEventMap : scheduleEventMap.values()) {
-            if (uidEventMap.get(eventId) != null) {
-                return uidEventMap.get(eventId);
-            }
-        }
-
-        Logger.log("Error: Could not find event with uid: " + eventId + " from ScheduleData: " + scheduleName);
-        return null;
-    }
-
 
     public Map<Weekday, Map<String, BasicEvent>> getScheduleEventList() {
         return this.scheduleEventMap;
+    }
+
+    public Map<BasicEvent, Set<Weekday>> getWeekdaysByEventMap() {
+        return this.weekdaysByEventMap;
     }
 
 
@@ -88,15 +86,15 @@ public class ScheduleData implements TypedEvent {
     public void setScheduleName(final String name) {
         this.scheduleName = name;
 
-        for (final ScheduleBoxItem reference : references) {
-            reference.updateScheduleNameLabel();
+        for (final EventLabel reference : references) {
+            reference.updateEventTitle(name);
         }
     }
 
     public void setStartDate(final LocalDate date) {
         this.startDate = date;
-        for (final ScheduleBoxItem reference : references) {
-            reference.updateStartDateLabelText();
+        for (final EventLabel reference : references) {
+            reference.updateStartDate(date);
         }
     }
 
@@ -110,8 +108,8 @@ public class ScheduleData implements TypedEvent {
 
     public void setEndDate(final LocalDate date) {
         this.endDate = date;
-        for (final ScheduleBoxItem reference : references) {
-            reference.updateEndDateLabelText();
+        for (final EventLabel reference : references) {
+            reference.updateEndDate(date);
         }
     }
 
@@ -129,6 +127,9 @@ public class ScheduleData implements TypedEvent {
     }
 
     public String getDisplayColor() {
+        if (this.displayColor == null) {
+            this.displayColor = CH.getRandomColor();
+        }
         return this.displayColor;
     }
 

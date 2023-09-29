@@ -4,7 +4,6 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
@@ -374,7 +373,7 @@ public class LeftPanel {
         calendarEventTitleInput.setText(event.getTitle());
         calendarDescriptionInput.setText(event.getDescription());
         calendarDatePicker.setValue(LocalDate.of(event.getStartDate().getYear(), event.getStartDate().getMonth(), event.getStartDate().getDayOfMonth()));
-        calendarProgressCheckBox.setSelected(event.isComplete());
+        calendarProgressCheckBox.setSelected(event.isCompleted());
         final LocalTime startTime = event.getStartTime();
         final LocalTime endTime = event.getEndTime();
         calendarTimeStart.setTime(startTime);

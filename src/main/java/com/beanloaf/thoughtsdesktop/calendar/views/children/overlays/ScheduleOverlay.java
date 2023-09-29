@@ -219,12 +219,12 @@ public class ScheduleOverlay {
 
 
         final Map<Weekday, Map<String, BasicEvent>> scheduleMap = data.getScheduleEventList();
-        for (final Weekday weekday : data.getScheduleEventList().keySet()) {
+        for (final Weekday weekday : scheduleMap.keySet()) {
+
             final Map<String, BasicEvent> uidEventMap = scheduleMap.get(weekday);
             for (final String uid : uidEventMap.keySet()) {
+
                 final BasicEvent event = uidEventMap.get(uid);
-
-
                 ScheduleListItem listItem = eventMap.get(uid);
                 if (listItem == null) {
                     listItem = new ScheduleListItem(this, event);
@@ -293,11 +293,9 @@ public class ScheduleOverlay {
         final LocalDate oldStartDate = data.getStartDate();
         final LocalDate oldEndDate = data.getEndDate();
 
-
         data.setScheduleName(scheduleNameInput.getText());
         data.setStartDate(scheduleStartDate.getValue());
         data.setEndDate(scheduleEndDate.getValue());
-
         data.setEvents(new ArrayList<>(eventMap.values()));
 
         main.getJsonHandler().writeScheduleData(data);
