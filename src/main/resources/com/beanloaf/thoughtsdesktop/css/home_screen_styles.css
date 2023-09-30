@@ -1,6 +1,6 @@
 * {
-    -fx-background: rgb(60, 63 ,65);
-    -fx-text-fill: rgb(209, 209 ,209);
+    -fx-background: -fx-dark-background;
+    -fx-text-fill: -fx-default-text-color;
 }
 
 
@@ -9,7 +9,7 @@
 }
 
 .button {
-    -fx-background-color: rgb(106, 112, 116);
+    -fx-background-color: -fx-button-color;
 }
 
 
@@ -22,7 +22,7 @@
 
 
 .context-menu {
-    -fx-background-color: rgb(60,63,65);
+    -fx-background-color: -fx-dark-background;
 }
 
 .menu-item {
@@ -30,6 +30,6 @@
 }
 
 .menu-bar {
-    -fx-background-color: rgb(60,63,65);
+    -fx-background-color: -fx-dark-background;
 
 }

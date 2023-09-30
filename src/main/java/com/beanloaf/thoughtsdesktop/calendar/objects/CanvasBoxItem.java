@@ -39,7 +39,7 @@ public class CanvasBoxItem extends AnchorPane {
 
         final HBox colorHBox = new HBox(16);
         colorHBox.setAlignment(Pos.CENTER_LEFT);
-        this.getChildren().add(ThoughtsHelper.setAnchor(colorHBox, 48, null, 32, null));
+        this.getChildren().add(ThoughtsHelper.setAnchor(colorHBox, 40, null, 32, null));
 
         final Label colorTextLabel = new Label("Color: ");
         colorTextLabel.setStyle("-fx-font-size: 16;");
@@ -60,7 +60,7 @@ public class CanvasBoxItem extends AnchorPane {
 
 
         final HBox hideHBox = new HBox(8);
-        this.getChildren().add(ThoughtsHelper.setAnchor(hideHBox, 80, 16, 32, null));
+        this.getChildren().add(ThoughtsHelper.setAnchor(hideHBox, 76    , 16, 32, null));
         hideCheckBox = new CheckBox();
         hideHBox.getChildren().add(hideCheckBox);
 
@@ -89,7 +89,8 @@ public class CanvasBoxItem extends AnchorPane {
 
     private void attachEvents() {
         hideCheckBox.setOnAction(e -> {
-
+            canvasClass.setHidden(hideCheckBox.isSelected());
+            main.getRightPanel().getMonthView().hideCanvasEventsByClass(canvasClass, hideCheckBox.isSelected());
         });
 
         randomizeColorButton.setOnAction(e -> {
@@ -113,10 +114,27 @@ public class CanvasBoxItem extends AnchorPane {
         });
     }
 
+
+    public void hideCanvasEvents(final boolean isHidden) {
+        hideCheckBox.setSelected(isHidden);
+        canvasClass.setHidden(isHidden);
+        main.getRightPanel().getMonthView().hideCanvasEventsByClass(canvasClass, isHidden);
+
+    }
+
+
+    public CheckBox getHideCheckBox() {
+        return this.hideCheckBox;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CanvasBoxItem that = (CanvasBoxItem) o;
         return Objects.equals(canvasClass.getClassName(), that.canvasClass.getClassName());
     }

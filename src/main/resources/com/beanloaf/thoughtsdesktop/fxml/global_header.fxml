@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox stylesheets="@../css/global_header_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController">
+<VBox style="-fx-border-color: transparent;" stylesheets="@../css/global_header_styles.css" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController">
    <children>
       <AnchorPane prefHeight="42.0" prefWidth="1080.0" styleClass="bar" stylesheets="@../css/global_header_styles.css">
          <children>

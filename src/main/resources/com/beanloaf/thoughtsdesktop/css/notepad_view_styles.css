@@ -1,7 +1,9 @@
-* {
-    -fx-background: rgb(60, 63 ,65);
-    -fx-text-fill: rgb(209, 209 ,209);
+@import url("colors.css");
 
+
+* {
+    -fx-background: -fx-dark-background;
+    -fx-text-fill: -fx-default-text-color;
 }
 
 root {
@@ -10,21 +12,20 @@ root {
 
 
 .text {
-    -fx-fill: rgb(209, 209 ,209);
+    -fx-fill: -fx-default-text-color;
 }
 
 
 .text-field {
-
     -fx-text-box-border: transparent;
-    -fx-control-inner-background: rgb(60,63,65);
-    -fx-prompt-text-fill: #989898;
+    -fx-control-inner-background: -fx-dark-background;
+    -fx-prompt-text-fill: -fx-gray-4;
 
 }
 
 .enlarged-body-label {
     -fx-font-family: "Lato";
-    -fx-background-color: rgb(60, 63 ,65);
+    -fx-background-color: -fx-dark-background;
     -fx-font-size: 20;
 
 
@@ -37,25 +38,20 @@ root {
 }
 
 .main-split-pane:horizontal > .split-pane-divider {
-   -fx-background-color: rgb(132, 132, 132);
+   -fx-background-color: -fx-gray-0;
+   -fx-padding: 0 2 0 2;
 }
 
 
-
-
-
 .split-pane {
-    -fx-border-color: rgb(60,63,65);
+    -fx-border-color: -fx-dark-background;
+    -fx-background-color: -fx-dark-background;
 }
 
 
 .text-area .scroll-bar:vertical {
-    -fx-background-color: rgb(60, 63 ,65);
+    -fx-background-color: -fx-dark-background;
 
-}
-
-.scroll-bar:vertical .thumb{
-    -fx-background-color: rgb(145, 145, 145);
 }
 
 .text-area .scroll-bar:vertical .increment-button {
@@ -65,7 +61,11 @@ root {
 .scroll-bar {
     -fx-focus-color: transparent;
     -fx-pref-width: 8;
+    -fx-background-color: -fx-gray-1;
+}
 
+.thumb {
+    -fx-background-color: -fx-gray-0;
 }
 
 
@@ -76,21 +76,15 @@ root {
     -fx-padding: 0 0 0 0;
 }
 
-.thumb {
-    -fx-background-color: rgb(60, 63 ,65);
-}
-
-
-
-
 
 .menu-bar {
-    -fx-background-color: rgb(60,63,65);
+    -fx-background-color: -fx-dark-background;
+    -fx-border-color: -fx-dark-background;
 }
 
 
 .context-menu {
-    -fx-background-color: rgb(60,63,65);
+    -fx-background-color: -fx-dark-background;
 }
 
 .menu-item {
@@ -101,22 +95,18 @@ root {
 
 .main-buttons {
     -fx-font-size: 20;
-    -fx-background-color: rgb(78, 80, 82);
+    -fx-background-color: -fx-button-color;
 }
 
 .main-buttons:hover {
-    -fx-border-color: rgb(41, 163, 211);
+    -fx-border-color: -fx-hover-color;
 }
 
 
 .small-main-buttons {
     -fx-font-size: 15;
-    -fx-background-color: rgb(78, 80, 82);
+    -fx-background-color: -fx-button-color;
 }
-
-
-
-
 
 
 
@@ -126,23 +116,18 @@ root {
 }
 
 .tagList > .button {
-    -fx-border-color: rgb(95, 95, 95);
-    -fx-background-color: rgb(78, 80, 82);
+    -fx-border-color: -fx-gray-2;
+    -fx-background-color: -fx-button-color;
 }
 
 .tagList > .button:hover {
-    -fx-border-color: rgb(41, 163, 211);
+    -fx-border-color: -fx-hover-color;
 }
 
 
 .tagListSelected > .button {
-    -fx-background-color: rgb(101, 101, 101);
+    -fx-background-color: -fx-gray-2;
 }
-
-
-
-
-
 
 
 .itemList {
@@ -151,17 +136,17 @@ root {
 }
 
 .itemList > .button {
-    -fx-border-color: rgb(95, 95, 95);
-    -fx-background-color: rgb(78, 80, 82);
+    -fx-border-color: -fx-gray-2;
+    -fx-background-color: -fx-button-color;
 
 }
 
 .itemList > .button:hover {
-    -fx-border-color: rgb(41, 163, 211);
+    -fx-border-color: -fx-hover-color;
 }
 
 .itemListSelected > .button {
-    -fx-background-color: rgb(101, 101, 101);
+    -fx-background-color: -fx-gray-2;
 
 }
 

@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.WeekFields;
 import java.util.*;
 
 public class MonthView {
@@ -171,7 +170,7 @@ public class MonthView {
                     final CalendarDay day = this.main.getCalendarHandler().getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
 
                     for (final DayEvent event : day.getEvents()) {
-                        if (data.getId() != null && scheduleEventIds.contains(event.getEventID())) {
+                        if (scheduleEventIds.contains(event.getEventID())) {
                             Platform.runLater(() -> day.removeEvent(event.getEvent()));
                         }
 
@@ -205,7 +204,7 @@ public class MonthView {
             for (int i = 0; i < daysBetween; i++) {
                 final CalendarDay day = this.main.getCalendarHandler().getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
                 for (final DayEvent event : day.getEvents()) {
-                    if (data.getId() != null && scheduleEventIds.contains(event.getEventID())) {
+                    if (scheduleEventIds.contains(event.getEventID())) {
                         Platform.runLater(() -> day.removeEvent(event.getEvent()));
                     }
 
@@ -271,11 +270,7 @@ public class MonthView {
                 LocalDate date = startDate.plusDays(startDateOffset);
                 while (date.isBefore(endDate) || date.isEqual(endDate)) {
                     final LocalDate tempDate = date;
-                    runnables.add(() -> {
-                        final BasicEvent e = new BasicEvent(event);
-                        main.getCalendarHandler().addScheduleEvent(schedule.getId(), e);
-                        addEventToCalendarDay(tempDate, new DayEvent(e, main));
-                    });
+                    runnables.add(() -> addEventToCalendarDay(tempDate, new DayEvent(new BasicEvent(event), main)));
                     date = date.plusDays(7);
                 }
             }
@@ -289,22 +284,65 @@ public class MonthView {
 
     }
 
+    public void hideCanvasEventsByClass(final CanvasClass canvasClass, final boolean isHidden) {
+        if (isHidden) {
+            final Set<String> canvasEventIdList = new HashSet<>();
+
+            for (final BasicEvent e : canvasClass.getEvents()) {
+                canvasEventIdList.add(e.getId());
+            }
+
+            final LocalDate startDate = canvasClass.getStartDate();
+            final LocalDate endDate = canvasClass.getEndDate();
+
+            final long daysBetween = ChronoUnit.DAYS.between(startDate, endDate) + 1;
+
+            LocalDate date = startDate;
+            for (int i = 0; i < daysBetween; i++) {
+                final CalendarDay day = this.main.getCalendarHandler().getDay(LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth()));
+
+                for (final DayEvent event : day.getEvents()) {
+                    if (canvasEventIdList.contains(event.getEventID())) {
+                        Platform.runLater(() -> day.removeEvent(event.getEvent()));
+                    }
+
+                }
+                date = date.plusDays(1);
+            }
+
+        } else {
+            addCanvasClassToCalendar(canvasClass);
+        }
+
+
+    }
+
     public void addCanvasEventsToCalendar(final Map<String, CanvasClass> newCanvasEvents) {
-        for (final BasicEvent storedCanvasEvent : main.getCalendarHandler().getCanvasEvents()) {
+        for (final BasicEvent storedCanvasEvent : main.getCalendarHandler().getAllCanvasEvents()) {
             main.getCalendarHandler().getDay(storedCanvasEvent.getStartDate()).removeEvent(storedCanvasEvent);
         }
 
-        main.getCalendarHandler().getCanvasEvents().clear();
+        main.getCalendarHandler().getAllCanvasEvents().clear();
 
         for (final CanvasClass canvasClass : newCanvasEvents.values()) {
+            Logger.log(canvasClass.getClassName() + " is " + canvasClass.isHidden());
+            if (!canvasClass.isHidden()) {
+                addCanvasClassToCalendar(canvasClass);
+
+            }
+        }
+    }
+
+    public void addCanvasClassToCalendar(final CanvasClass canvasClass) {
+        new Thread(() -> {
             for (final BasicEvent event : canvasClass.getEvents()) {
                 final DayEvent e = new DayEvent(event, main);
 
                 addEventToCalendarDay(event.getStartDate(), e);
-                main.getCalendarHandler().addCanvasEvent(event);
+                main.getCalendarHandler().addCanvasEvent(canvasClass.getClassName(), event);
             }
+        }).start();
 
-        }
     }
 
 

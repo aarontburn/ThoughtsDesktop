@@ -5,8 +5,10 @@ import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,6 +63,13 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
         this.updateDisplayColor(event.getDisplayColor());
         super.getToolTip().textProperty().bindBidirectional(this.textProperty());
+
+
+//        final VBox testBox = new VBox();
+//        testBox.setMinSize(100, 100);
+//        testBox.setStyle("-fx-background-color: red;");
+//        testBox.getChildren().add(new Label("hi"));
+//        super.getToolTip().setGraphic(testBox);
 
         this.getChildren().addListener((ListChangeListener<Node>) change -> {
             for (final Node node : getChildren()) {

@@ -3,7 +3,6 @@ package com.beanloaf.thoughtsdesktop.calendar.handlers;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CalendarMonth;
-import com.beanloaf.thoughtsdesktop.calendar.objects.DayEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import javafx.util.Pair;
 
@@ -20,14 +19,10 @@ public class CalendarHandler {
 
     private final CalendarMain main;
     private final Map<Pair<Month, Year>, CalendarMonth> activeMonths = new ConcurrentHashMap<>();
+    private final Map<String, List<BasicEvent>> canvasEventsMap = new ConcurrentHashMap<>();
     private CalendarMonth currentMonth;
     private CalendarDay selectedDay;
     private BasicEvent selectedEvent;
-
-    private final List<BasicEvent> canvasEvents = new ArrayList<>();
-
-    private final Map<String, List<BasicEvent>> scheduleUIDMap = new HashMap<>();
-
 
 
     public CalendarHandler(final CalendarMain main) {
@@ -92,34 +87,29 @@ public class CalendarHandler {
         this.selectedDay = day;
     }
 
-
-
+    public BasicEvent getSelectedEvent() {
+        return this.selectedEvent;
+    }
 
     public void setSelectedEvent(final BasicEvent event) {
         this.selectedEvent = event;
     }
 
-    public BasicEvent getSelectedEvent() {
-        return this.selectedEvent;
+    public List<BasicEvent> getAllCanvasEvents() {
+        final List<BasicEvent> canvasEventList = new ArrayList<>();
+        for (final List<BasicEvent> l : canvasEventsMap.values()) {
+            canvasEventList.addAll(l);
+        }
+
+        return canvasEventList;
     }
 
-
-
-
-    public List<BasicEvent> getCanvasEvents() {
-        return canvasEvents;
+    public void addCanvasEvent(final String className, final BasicEvent event) {
+        this.canvasEventsMap.computeIfAbsent(className, k -> new ArrayList<>()).add(event);
     }
 
-    public void addCanvasEvent(final BasicEvent event) {
-        this.canvasEvents.add(event);
-    }
-
-    public List<BasicEvent> getScheduleEventsByUID(final String uid) {
-        return this.scheduleUIDMap.get(uid);
-    }
-
-    public void addScheduleEvent(final String scheduleUID, final BasicEvent event) {
-        this.scheduleUIDMap.computeIfAbsent(scheduleUID, k -> new ArrayList<>()).add(event);
+    public List<BasicEvent> getCanvasEventsByClass(final String className) {
+        return canvasEventsMap.get(className);
     }
 
 

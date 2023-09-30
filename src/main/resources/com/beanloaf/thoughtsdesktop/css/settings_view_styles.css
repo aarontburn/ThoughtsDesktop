@@ -1,6 +1,9 @@
+@import url("colors.css");
+
+
 * {
-    -fx-background: rgb(60, 63 ,65);
-    -fx-text-fill: rgb(209, 209 ,209);
+    -fx-background: -fx-dark-background;
+    -fx-text-fill: -fx-default-text-color;
     -fx-opacity: 1;
 
 }
@@ -30,34 +33,32 @@ root {
 
 
 .button {
-    -fx-background-color: rgb(97, 97, 97);
-    -fx-text-fill: rgb(209, 209 ,209);
+    -fx-background-color: -fx-gray-2;
+    -fx-text-fill: -fx-default-text-color;
     -fx-font-size: 17;
 
 }
 
 
 .tab-label {
-    -fx-background-color: rgb(78, 80, 82);
+    -fx-background-color: -fx-gray-1;
     -fx-font-size: 15;
 
 }
 
 .tab-header-area .tab-header-background {
- 	-fx-background-color: rgb(78, 80, 82);
+ 	-fx-background-color: -fx-gray-1;
 }
 
 .tab-pane .tab {
-	-fx-background-color: rgb(78, 80, 82);
+	-fx-background-color: -fx-gray-1;
 }
 
 .text-field {
     -fx-font-size: 18;
     -fx-text-box-border: transparent;
-    -fx-control-inner-background: rgb(206, 206, 206);
-    -fx-prompt-text-fill: rgb(102, 102, 102);
-    -fx-text-fill: rgb(0, 0, 0);
-
+    -fx-control-inner-background: -fx-gray-2;
+    -fx-text-fill: -fx-default-text-color;
 
 }
 

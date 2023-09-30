@@ -240,7 +240,6 @@ public class WeekView {
             for (final DayEvent dayEvent : day.getEvents()) {
                 final Weekday weekday = Weekday.getWeekdayByDayOfWeek(day.getDate().getDayOfWeek().getValue());
 
-
                 this.weekEventList.add(dayEvent.getEvent().setWeekday(weekday));
 
                 if (dayEvent.getStartTime() == null) {

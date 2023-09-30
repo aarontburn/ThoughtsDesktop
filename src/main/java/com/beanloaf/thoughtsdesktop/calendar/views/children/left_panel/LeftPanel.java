@@ -8,6 +8,10 @@ import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import javafx.application.Platform;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -28,36 +32,24 @@ import java.util.*;
 public class LeftPanel {
 
     private final CalendarMain main;
-
-
-    private LeftLayouts currentLayout;
-
-    public enum LeftLayouts {
-        EVENTS, SCHEDULES, CANVAS
-    }
-
     private final Map<LeftLayouts, AnchorPane> layoutMap = new HashMap<>();
-
-
+    public VBox calendarScheduleBox;
+    private LeftLayouts currentLayout;
     /*  Components */
     private Button calendarEventsButton, calendarScheduleButton, calendarCanvasButton;
 
     /*  Canvas  */
     private Label canvasRefreshButton;
     private VBox canvasBox;
+    private CheckBox canvasHideAllCheckBox;
 
 
     /*  Schedule Box    */
     private Button calendarNewScheduleButton;
-    public VBox calendarScheduleBox;
-
-
     /*  Event Box   */
     private VBox calendarEventBox;
     private Label calendarDayLabel;
     private Button calendarNewEventButton;
-
-
     /*  Small Event Input */
     private Node calendarEventFields;
     private TextField calendarEventTitleInput;
@@ -70,8 +62,6 @@ public class LeftPanel {
             calendarDescriptionLabel, calendarTimeLabel, calendarSourceLabel;
     private CheckBox calendarProgressCheckBox;
     private Label expandEventButton;
-
-
     public LeftPanel(final CalendarMain main) {
         this.main = main;
 
@@ -101,6 +91,7 @@ public class LeftPanel {
         /*  Canvas  */
         canvasRefreshButton = (Label) findNodeById("canvasRefreshButton");
         canvasBox = (VBox) findNodeById("canvasBox");
+        canvasHideAllCheckBox = (CheckBox) findNodeById("canvasHideAllCheckBox");
 
         /*  Schedule Box    */
         calendarScheduleBox = (VBox) findNodeById("calendarScheduleBox");
@@ -144,7 +135,6 @@ public class LeftPanel {
         calendarFinalEndTimeLabel = (Label) findNodeById("calendarFinalEndTimeLabel");
         calendarProgressCheckBox = (CheckBox) findNodeById("calendarProgressCheckBox");
     }
-
 
     private void resizeDescriptionBox(final boolean isWrapping, final boolean toTop) {
         if (isWrapping) {
@@ -231,6 +221,36 @@ public class LeftPanel {
             main.getCanvasICalHandler().refresh();
         });
 
+        canvasHideAllCheckBox.setOnAction(e -> {
+            canvasHideAllCheckBox.selectedProperty().unbind();
+
+            final List<BooleanProperty> bindingList = new ArrayList<>();
+            for (final Node node : canvasBox.getChildren()) {
+                if (node.getClass() != CanvasBoxItem.class) {
+                    continue;
+                }
+                final CanvasBoxItem canvasBoxItem = (CanvasBoxItem) node;
+                canvasBoxItem.hideCanvasEvents(canvasHideAllCheckBox.isSelected());
+
+
+                bindingList.add(canvasBoxItem.getHideCheckBox().selectedProperty());
+            }
+
+
+//            // This throws a runtime error when unchecking.
+//            BooleanProperty binding = null;
+//            for (final BooleanProperty b : bindingList) {
+//                if (binding == null) {
+//                    binding = b;
+//                    continue;
+//                }
+//                binding.and(b);
+//            }
+//
+//            canvasHideAllCheckBox.selectedProperty().bind(binding);
+        });
+
+
 
         /*  Small New Event*/
         expandEventButton.setOnMouseClicked(e -> main.swapOverlay(CalendarMain.Overlays.EVENT, main.getCalendarHandler().getSelectedEvent()));
@@ -301,7 +321,6 @@ public class LeftPanel {
 
     }
 
-
     public CalendarMain getMain() {
         return this.main;
     }
@@ -309,7 +328,6 @@ public class LeftPanel {
     public Node findNodeById(final String nodeId) {
         return main.findNodeById(nodeId);
     }
-
 
     public void swapLeftPanel(final LeftLayouts swapToLayout) {
         if (swapToLayout == null) {
@@ -339,7 +357,6 @@ public class LeftPanel {
     public void sortEventBox() {
         FXCollections.sort(calendarEventBox.getChildren(), DayEvent.getDayEventComparator());
     }
-
 
     public BasicEvent getEventInputFields() {
         final BasicEvent event = new BasicEvent();
@@ -413,7 +430,6 @@ public class LeftPanel {
         this.calendarScheduleBox.getChildren().remove(item);
     }
 
-
     public void addCanvasBoxes(final Map<String, CanvasClass> classMap) {
         final List<CanvasBoxItem> canvasBoxItemList = new ArrayList<>();
         final ObservableList<Node> existingBoxes = this.canvasBox.getChildren();
@@ -451,6 +467,10 @@ public class LeftPanel {
 
     public LeftLayouts getCurrentLayout() {
         return this.currentLayout;
+    }
+
+    public enum LeftLayouts {
+        EVENTS, SCHEDULES, CANVAS
     }
 
 

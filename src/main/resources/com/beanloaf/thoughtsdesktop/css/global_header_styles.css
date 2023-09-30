@@ -1,13 +1,13 @@
+@import url("colors.css");
+
 * {
-    -fx-background: rgb(60, 63 ,65);
-    -fx-text-fill: rgb(209, 209 ,209);
+    -fx-background: -fx-dark-background;
+    -fx-text-fill: -fx-default-text-color;
 
 }
 
-
-
 .bar {
-    -fx-background: rgb(60, 63 ,65);
+    -fx-background: -fx-dark-background;
 
 }
 
@@ -17,5 +17,5 @@
 }
 
 .selected-label {
-    -fx-text-fill: rgb(92, 146, 197);
+    -fx-text-fill: -fx-color-7;
 }
