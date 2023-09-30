@@ -130,12 +130,22 @@ public class CanvasICalHandler {
         }
 
         return cachedCanvasEvents;
-
-
     }
 
     public void refresh() {
+        new Thread(() -> refresh(null)).start();
+
+    }
+
+    private void refresh(final Object o) {
         Logger.log("Refreshing Canvas iCal...");
+
+
+        if (main.getLeftPanel() != null) {
+            main.getLeftPanel().spinCanvasRefresh(true);
+        }
+
+
 
         classMap.clear();
         try {
@@ -276,6 +286,12 @@ public class CanvasICalHandler {
         } else {
             main.getLeftPanel().addCanvasBoxes(classMap);
         }
+
+        if (main.getLeftPanel() != null) {
+            main.getLeftPanel().spinCanvasRefresh(false);
+        }
+
+
     }
 
     public void cacheCanvasEventsToJson() {
@@ -333,7 +349,7 @@ public class CanvasICalHandler {
         scheduledTask = scheduler.scheduleAtFixedRate(
                 () -> {
                     try {
-                        new Thread(this::refresh).start();
+                        refresh();
                     } catch (Exception e) {
                         Logger.log(e);
                     }

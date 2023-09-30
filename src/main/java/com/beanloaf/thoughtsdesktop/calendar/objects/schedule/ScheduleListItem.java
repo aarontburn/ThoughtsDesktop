@@ -2,7 +2,6 @@ package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
-import com.beanloaf.thoughtsdesktop.calendar.objects.EventBoxLabel;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
@@ -10,12 +9,14 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
+import javafx.util.Duration;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -197,9 +198,10 @@ public class ScheduleListItem extends GridPane {
                 '}';
     }
 
-    public static class ScheduleLabel extends EventBoxLabel {
+    public static class ScheduleLabel extends Label {
 
         private final ScheduleListItem scheduleListItem;
+        private final Tooltip tooltip;
 
 
         public ScheduleLabel(final ScheduleListItem scheduleListItem) {
@@ -207,12 +209,21 @@ public class ScheduleListItem extends GridPane {
             setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/schedule-icon.png")), 17.5, 17.5, true, true)));
             this.scheduleListItem = scheduleListItem;
 
+            this.getStyleClass().add("day-event");
+            this.setStyle("-fx-border-color: -fx-gray-0;");
+            this.setMaxWidth(Double.MAX_VALUE);
 
-            getToolTip().setText(scheduleListItem.getScheduleEventName());
+
+            tooltip = new Tooltip();
+            tooltip.setShowDelay(Duration.seconds(0.5));
+            tooltip.setText(scheduleListItem.getScheduleEventName());
+            this.setTooltip(tooltip);
+
             updateText();
+            this.setOnMouseClicked(e -> onClick());
+
         }
 
-        @Override
         public void onClick() {
             Logger.log("Schedule \"" + this.scheduleListItem.getScheduleEventName() + "\" was pressed.");
             scheduleListItem.doClick();
@@ -222,7 +233,7 @@ public class ScheduleListItem extends GridPane {
             final String displayText = getDisplayTime(scheduleListItem.getStartTime()) + scheduleListItem.getScheduleEventName();
 
             this.setText(displayText);
-            getToolTip().setText(displayText);
+            tooltip.setText(displayText);
         }
 
 

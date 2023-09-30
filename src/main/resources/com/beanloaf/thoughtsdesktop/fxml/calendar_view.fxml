@@ -474,7 +474,7 @@
                                     </VBox>
                                  </children>
                               </AnchorPane>
-                              <Button fx:id="saveEventButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" styleClass="calendarButton" text="Save" AnchorPane.bottomAnchor="32.0" AnchorPane.rightAnchor="16.0">
+                              <Button fx:id="saveEventButton" mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" styleClass="calendar-button" text="Save" AnchorPane.bottomAnchor="32.0" AnchorPane.rightAnchor="16.0">
                                  <font>
                                     <Font size="18.0" />
                                  </font>
@@ -611,8 +611,8 @@
                                           </VBox>
                                        </content>
                                     </ScrollPane>
-                                    <Button fx:id="scheduleNewEventButton" mnemonicParsing="false" styleClass="calendarButton" text="New Event" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <Button fx:id="scheduleSaveScheduleButton" layoutX="412.0" layoutY="277.0" mnemonicParsing="false" styleClass="calendarButton" text="Save Schedule" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                    <Button fx:id="scheduleNewEventButton" mnemonicParsing="false" styleClass="calendar-button" text="New Event" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <Button fx:id="scheduleSaveScheduleButton" layoutX="412.0" layoutY="277.0" mnemonicParsing="false" styleClass="calendar-button" text="Save Schedule" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -634,7 +634,7 @@
                                           <Font size="16.0" />
                                        </font>
                                     </Label>
-                                    <Button fx:id="scheduleSaveEventButton" layoutX="477.0" layoutY="287.0" mnemonicParsing="false" styleClass="calendarButton" text="Save Event" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                    <Button fx:id="scheduleSaveEventButton" layoutX="477.0" layoutY="287.0" mnemonicParsing="false" styleClass="calendar-button" text="Save Event" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -747,7 +747,7 @@
                                           </HBox>
                                        </children>
                                     </FlowPane>
-                                    <Button fx:id="scheduleDeleteEventButton" layoutX="16.0" layoutY="297.0" mnemonicParsing="false" styleClass="calendarButton" text="Delete Event" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+                                    <Button fx:id="scheduleDeleteEventButton" layoutX="16.0" layoutY="297.0" mnemonicParsing="false" styleClass="calendar-button" text="Delete Event" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -792,7 +792,7 @@
                                                 <VBox fx:id="calendarEventBox" prefHeight="34.0" prefWidth="339.0" spacing="3.0" styleClass="event-box" />
                                              </content>
                                           </ScrollPane>
-                                          <Button fx:id="calendarNewEventButton" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendarButton" text="New Event" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="48.0">
+                                          <Button fx:id="calendarNewEventButton" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendar-button" text="New Event" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="48.0">
                                              <font>
                                                 <Font name="Lato Regular" size="15.0" />
                                              </font>
@@ -969,19 +969,19 @@
                                           <TextArea fx:id="calendarDescriptionInput" layoutX="60.0" layoutY="329.0" prefHeight="381.0" prefWidth="537.0" styleClass="text-field" wrapText="true" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="276.0" />
                                           <HBox alignment="CENTER" layoutX="16.0" layoutY="593.0" spacing="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
                                              <children>
-                                                <Button fx:id="calendarDeleteButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Delete" textOverrun="CLIP">
+                                                <Button fx:id="calendarDeleteButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendar-button" text="Delete" textOverrun="CLIP">
                                                    <font>
                                                       <Font size="18.0" />
                                                    </font>
                                                 </Button>
                                                 <AnchorPane>
                                                    <children>
-                                                      <Button fx:id="calendarEditButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Edit" textOverrun="CLIP">
+                                                      <Button fx:id="calendarEditButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendar-button" text="Edit" textOverrun="CLIP">
                                                          <font>
                                                             <Font size="18.0" />
                                                          </font>
                                                       </Button>
-                                                      <Button fx:id="calendarSaveEventButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendarButton" text="Save" textOverrun="CLIP">
+                                                      <Button fx:id="calendarSaveEventButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendar-button" text="Save" textOverrun="CLIP">
                                                          <font>
                                                             <Font size="18.0" />
                                                          </font>
@@ -1008,7 +1008,7 @@
                                     <Font size="23.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="calendarNewScheduleButton" layoutX="249.0" layoutY="45.0" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendarButton" text="New Schedule" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="51.0">
+                              <Button fx:id="calendarNewScheduleButton" layoutX="249.0" layoutY="45.0" mnemonicParsing="false" style="-fx-background-radius: 10;" styleClass="calendar-button" text="New Schedule" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="51.0">
                                  <font>
                                     <Font name="Lato Regular" size="15.0" />
                                  </font>
@@ -1034,12 +1034,12 @@
                                                       <Font size="16.0" />
                                                    </font>
                                                 </Label>
-                                                <Button layoutX="245.0" layoutY="85.0" mnemonicParsing="false" styleClass="calendarButton" text="Edit/View" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                                <Button layoutX="245.0" layoutY="85.0" mnemonicParsing="false" styleClass="calendar-button" text="Edit/View" AnchorPane.bottomAnchor="16.0" AnchorPane.rightAnchor="16.0">
                                                    <font>
                                                       <Font size="16.0" />
                                                    </font>
                                                 </Button>
-                                                <Button layoutX="18.0" layoutY="96.0" mnemonicParsing="false" styleClass="calendarButton" text="Delete" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0">
+                                                <Button layoutX="18.0" layoutY="96.0" mnemonicParsing="false" styleClass="calendar-button" text="Delete" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0">
                                                    <font>
                                                       <Font size="16.0" />
                                                    </font>
@@ -1079,7 +1079,7 @@
                                                          </font>
                                                       </Label>
                                                       <Label prefHeight="24.0" prefWidth="24.0" style="-fx-background-color: red; -fx-background-radius: 5;" />
-                                                      <Button mnemonicParsing="false" styleClass="calendarButton" text="Randomize Color" />
+                                                      <Button mnemonicParsing="false" styleClass="calendar-button" text="Randomize Color" />
                                                    </children>
                                                 </HBox>
                                                 <HBox alignment="CENTER_LEFT" layoutX="33.0" layoutY="83.0" spacing="8.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="32.0" AnchorPane.topAnchor="80.0">
@@ -1109,11 +1109,20 @@
                                           <Font size="23.0" />
                                        </font>
                                     </Label>
-                                    <Label fx:id="canvasRefreshButton" alignment="CENTER" contentDisplay="CENTER" text="⟳">
-                                       <font>
-                                          <Font size="23.0" />
-                                       </font>
-                                    </Label>
+                                    <AnchorPane>
+                                       <children>
+                                          <ProgressIndicator fx:id="canvasRefreshIndicator" layoutX="32.0" prefHeight="23.0" prefWidth="18.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <padding>
+                                                <Insets right="2.0" top="-2.0" />
+                                             </padding>
+                                          </ProgressIndicator>
+                                          <Label fx:id="canvasRefreshButton" alignment="CENTER" contentDisplay="CENTER" graphicTextGap="0.0" text="⟳">
+                                             <font>
+                                                <Font size="23.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </AnchorPane>
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT" layoutX="42.0" layoutY="50.0" spacing="8.0">
@@ -1136,17 +1145,17 @@
                            <children>
                               <HBox alignment="CENTER" layoutX="99.0" layoutY="-18.0" prefHeight="100.0" prefWidth="200.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Button fx:id="calendarEventsButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendarButton" text="Events">
+                                    <Button fx:id="calendarEventsButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendar-button" text="Events">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="calendarScheduleButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendarButton" text="Schedules">
+                                    <Button fx:id="calendarScheduleButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendar-button" text="Schedules">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
                                     </Button>
-                                    <Button fx:id="calendarCanvasButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendarButton" text="Canvas">
+                                    <Button fx:id="calendarCanvasButton" mnemonicParsing="false" prefWidth="100.0" styleClass="calendar-button" text="Canvas">
                                        <font>
                                           <Font size="16.0" />
                                        </font>
@@ -1418,17 +1427,17 @@
                                     <Font size="36.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="weekViewButton" layoutX="1358.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Week" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="106.0" AnchorPane.topAnchor="4.0">
+                              <Button fx:id="weekViewButton" layoutX="1358.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendar-button" text="Week" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="106.0" AnchorPane.topAnchor="4.0">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="monthViewButton" layoutX="1444.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendarButton" text="Month" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="4.0">
+                              <Button fx:id="monthViewButton" layoutX="1444.0" layoutY="4.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="72.0" styleClass="calendar-button" text="Month" AnchorPane.bottomAnchor="4.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="4.0">
                                  <font>
                                     <Font size="15.0" />
                                  </font>
                               </Button>
-                              <Button fx:id="currentButton" layoutX="1240.0" layoutY="4.0" mnemonicParsing="false" styleClass="calendarButton" text="Current" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="218.0" AnchorPane.topAnchor="4.0">
+                              <Button fx:id="currentButton" layoutX="1240.0" layoutY="4.0" mnemonicParsing="false" styleClass="calendar-button" text="Current" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="218.0" AnchorPane.topAnchor="4.0">
                                  <font>
                                     <Font size="15.0" />
                                  </font>

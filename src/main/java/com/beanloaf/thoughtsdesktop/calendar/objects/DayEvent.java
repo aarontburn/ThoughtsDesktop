@@ -3,13 +3,17 @@ package com.beanloaf.thoughtsdesktop.calendar.objects;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDate;
@@ -19,11 +23,13 @@ import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.UUID;
 
-public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, Comparable<DayEvent> {
+public class DayEvent extends Label implements EventLabel, TypedEvent, Comparable<DayEvent> {
 
     public final static String DAY_EVENT_ID = "dayEvent";
     private final CalendarMain main;
     private final BasicEvent event;
+    private final Tooltip tooltip;
+
 
     // Cloning constructor, used to tie the event-box object to the one in the grid
     public DayEvent(@NotNull final DayEvent reference, final CalendarMain main) {
@@ -48,10 +54,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
                 main);
     }
 
-    public DayEvent(final LocalDate day, final String eventTitle, final String eventID, final CalendarMain main, final Types eventType, final String altText) {
-        this(day, eventTitle, eventID, main, eventType);
-        this.event.setAltText(altText);
-    }
 
     public DayEvent(final BasicEvent event, final CalendarMain main) {
         super(getDisplayTime(event.getStartTime()) + event.getTitle());
@@ -62,14 +64,14 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         setGraphic(getEventIcon(getEventType()));
 
         this.updateDisplayColor(event.getDisplayColor());
-        super.getToolTip().textProperty().bindBidirectional(this.textProperty());
+        this.getStyleClass().add("day-event");
+        this.setMaxWidth(Double.MAX_VALUE);
 
+        tooltip = new Tooltip();
+        tooltip.setShowDelay(Duration.seconds(0.5));
+        tooltip.textProperty().bindBidirectional(this.textProperty());
+        this.setTooltip(tooltip);
 
-//        final VBox testBox = new VBox();
-//        testBox.setMinSize(100, 100);
-//        testBox.setStyle("-fx-background-color: red;");
-//        testBox.getChildren().add(new Label("hi"));
-//        super.getToolTip().setGraphic(testBox);
 
         this.getChildren().addListener((ListChangeListener<Node>) change -> {
             for (final Node node : getChildren()) {
@@ -91,8 +93,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         return this.event.getEventType();
     }
 
-
-    @Override
     public void onClick() {
         this.main.getRightPanel().getMonthView().selectEvent(this, false);
         Logger.log("Event \"" + this.event.getTitle() + "\" was pressed. Color: " + event.getDisplayColor());
@@ -158,7 +158,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
     }
 
 
-    @Override
     public String getEventTitle() {
         return this.event.getTitle();
     }
@@ -251,7 +250,8 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
 
     @Override
     public void updateDisplayColor(String color) {
-        this.setStyle("-fx-border-color: derive(" + event.getDisplayColor() + ", -25%); -fx-background-color: " + event.getDisplayColor() + ";");
+        this.setStyle("-fx-border-color: derive(" + event.getDisplayColor() + ", -25%); " +
+                "-fx-background-color: " + event.getDisplayColor() + ";");
     }
 
 
@@ -259,9 +259,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         return this.event;
     }
 
-    public String getAltText() {
-        return this.event.getAltText();
-    }
 
     @Override
     public int compareTo(@NotNull DayEvent other) {
@@ -276,7 +273,6 @@ public class DayEvent extends EventBoxLabel implements EventLabel, TypedEvent, C
         } else {
             return -1;
         }
-
 
 
     }

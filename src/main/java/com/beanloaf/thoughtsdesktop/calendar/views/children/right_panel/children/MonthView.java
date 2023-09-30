@@ -270,7 +270,7 @@ public class MonthView {
                 LocalDate date = startDate.plusDays(startDateOffset);
                 while (date.isBefore(endDate) || date.isEqual(endDate)) {
                     final LocalDate tempDate = date;
-                    runnables.add(() -> addEventToCalendarDay(tempDate, new DayEvent(new BasicEvent(event), main)));
+                    runnables.add(() -> addEventToCalendarDay(tempDate, new DayEvent(new BasicEvent(event).setStartDate(tempDate), main)));
                     date = date.plusDays(7);
                 }
             }
@@ -325,7 +325,6 @@ public class MonthView {
         main.getCalendarHandler().getAllCanvasEvents().clear();
 
         for (final CanvasClass canvasClass : newCanvasEvents.values()) {
-            Logger.log(canvasClass.getClassName() + " is " + canvasClass.isHidden());
             if (!canvasClass.isHidden()) {
                 addCanvasClassToCalendar(canvasClass);
 

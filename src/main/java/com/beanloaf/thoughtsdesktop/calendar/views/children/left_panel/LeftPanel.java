@@ -4,13 +4,11 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.*;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleBoxItem;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.SettingsHandler;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.Properties;
 import javafx.application.Platform;
-import javafx.beans.binding.Binding;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,9 +18,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,14 +43,19 @@ public class LeftPanel {
     private Label canvasRefreshButton;
     private VBox canvasBox;
     private CheckBox canvasHideAllCheckBox;
+    private ProgressIndicator canvasRefreshIndicator;
 
 
     /*  Schedule Box    */
     private Button calendarNewScheduleButton;
+
+
     /*  Event Box   */
     private VBox calendarEventBox;
     private Label calendarDayLabel;
     private Button calendarNewEventButton;
+
+
     /*  Small Event Input */
     private Node calendarEventFields;
     private TextField calendarEventTitleInput;
@@ -62,6 +68,7 @@ public class LeftPanel {
             calendarDescriptionLabel, calendarTimeLabel, calendarSourceLabel;
     private CheckBox calendarProgressCheckBox;
     private Label expandEventButton;
+
     public LeftPanel(final CalendarMain main) {
         this.main = main;
 
@@ -92,6 +99,7 @@ public class LeftPanel {
         canvasRefreshButton = (Label) findNodeById("canvasRefreshButton");
         canvasBox = (VBox) findNodeById("canvasBox");
         canvasHideAllCheckBox = (CheckBox) findNodeById("canvasHideAllCheckBox");
+        canvasRefreshIndicator = (ProgressIndicator) findNodeById("canvasRefreshIndicator");
 
         /*  Schedule Box    */
         calendarScheduleBox = (VBox) findNodeById("calendarScheduleBox");
@@ -261,8 +269,24 @@ public class LeftPanel {
                 calendarProgressCheckBox.setText(isChecked ? "Completed" : "In-progress"));
 
         calendarProgressCheckBox.setOnAction(e -> {
-            main.getCalendarHandler().getSelectedEvent().setCompleted(calendarProgressCheckBox.isSelected());
-            main.getCanvasICalHandler().cacheCanvasEventsToJson();
+
+
+
+            final BasicEvent event = main.getCalendarHandler().getSelectedEvent();
+
+
+            Logger.log(event.getEventType());
+            event.setCompleted(calendarProgressCheckBox.isSelected());
+
+            if (event.getEventType() == TypedEvent.Types.CANVAS) {
+                main.getCanvasICalHandler().cacheCanvasEventsToJson();
+            } else if (event.getEventType() == TypedEvent.Types.SCHEDULE) {
+
+                event.getScheduleSource().setCompletedDay(event, calendarProgressCheckBox.isSelected());
+
+                Logger.log(event.getScheduleSource().getCompletedDates());
+//                main.getJsonHandler().writeScheduleData(event.getScheduleSource());
+            }
         });
 
 
@@ -288,6 +312,12 @@ public class LeftPanel {
             calendarSaveEventButton.setVisible(true);
         });
 
+    }
+
+
+    public void spinCanvasRefresh(final boolean isSpinning) {
+        canvasRefreshIndicator.setVisible(isSpinning);
+        canvasRefreshButton.setVisible(!isSpinning);
     }
 
     public void toggleSmallEventFields(final boolean isEnabled) {

@@ -59,8 +59,6 @@
 }
 
 .day-event {
-    -fx-background-color: rgb(94, 94, 94);
-    -fx-border-color: rgb(120, 120, 120);
     -fx-border-width: 1;
     -fx-border-radius: 3;
     -fx-background-radius: 3;
@@ -69,17 +67,17 @@
 
 
 .selected-day-event {
-    -fx-border-color: rgb(41, 163, 211);
+    -fx-border-color: -fx-hover-color;
 }
 
-.calendarButton {
-    -fx-background-color: rgb(78, 80, 82);
+.calendar-button {
+    -fx-background-color: -fx-gray-1;
     -fx-background-radius: 5;
     -fx-border-color: transparent;
 }
 
-.calendarButton:hover {
-    -fx-border-color: rgb(41, 163, 211);
+.calendar-button:hover {
+    -fx-border-color: -fx-hover-color;
     -fx-border-radius: 5;
 }
 
@@ -89,7 +87,7 @@
 
 .tooltip {
     -fx-font-family: Lato;
-    -fx-background-color: rgb(84, 88, 91);
+    -fx-background-color: -fx-gray-1;
 }
 
 
@@ -217,7 +215,7 @@
 }
 
 .schedule-box-item:hover {
-    -fx-border-color: fx-hover-color;
+    -fx-border-color: -fx-hover-color;
 }
 
 

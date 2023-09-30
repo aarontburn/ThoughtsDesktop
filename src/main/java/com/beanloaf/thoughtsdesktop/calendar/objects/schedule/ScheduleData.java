@@ -22,6 +22,7 @@ public class ScheduleData implements TypedEvent {
     private final Map<Weekday, Map<String, BasicEvent>> scheduleEventMap = new HashMap<>();
     private final Map<BasicEvent, Set<Weekday>> weekdaysByEventMap = new HashMap<>();
     private final List<EventLabel> references = new ArrayList<>();
+    private final Map<BasicEvent, Set<LocalDate>> completedDates = new HashMap<>();
 
 
     public ScheduleData() {
@@ -131,6 +132,20 @@ public class ScheduleData implements TypedEvent {
             this.displayColor = CH.getRandomColor();
         }
         return this.displayColor;
+    }
+
+
+    public void setCompletedDay(final BasicEvent event, final boolean isComplete) {
+        if (isComplete) {
+            completedDates.computeIfAbsent(event, k -> new HashSet<>()).add(event.getStartDate());
+        } else {
+            completedDates.computeIfAbsent(event, k -> new HashSet<>()).remove(event.getStartDate());
+
+        }
+    }
+
+    public Map<BasicEvent, Set<LocalDate>> getCompletedDates() {
+        return this.completedDates;
     }
 
 

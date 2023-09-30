@@ -1,6 +1,7 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,6 +22,7 @@ public class BasicEvent implements TypedEvent, EventLabel {
     private Types eventType = Types.BASIC;
     private String color;
     private String altText;
+    private ScheduleData scheduleSource;
 
 
     private final List<EventLabel> referenceList = new ArrayList<>();
@@ -34,7 +36,12 @@ public class BasicEvent implements TypedEvent, EventLabel {
         this.title = title;
     }
 
-    // sets a one way reference from the parent basic event to this. used for schedules.
+    public BasicEvent(final ScheduleData data) {
+        this.scheduleSource = data;
+        this.eventType = Types.SCHEDULE;
+    }
+
+    // sets a one way reference from the parent basic event to this. used from schedules.
     public BasicEvent(final BasicEvent event) {
         event.addReference(this);
 
@@ -47,8 +54,10 @@ public class BasicEvent implements TypedEvent, EventLabel {
         this.endTime = event.getEndTime();
         this.isComplete = event.isCompleted();
         this.color = event.getDisplayColor();
-        this.eventType = event.getEventType();
         this.altText = event.getAltText();
+
+        this.eventType = event.getEventType();
+        this.scheduleSource = event.scheduleSource;
 
     }
 
@@ -242,6 +251,10 @@ public class BasicEvent implements TypedEvent, EventLabel {
         return this;
     }
 
+    public ScheduleData getScheduleSource() {
+        return this.scheduleSource;
+    }
+
 
     @Override
     public String toString() {
@@ -268,7 +281,13 @@ public class BasicEvent implements TypedEvent, EventLabel {
             return false;
         }
         BasicEvent event = (BasicEvent) o;
-        return isComplete == event.isComplete && Objects.equals(title, event.title) && Objects.equals(description, event.description) && Objects.equals(startTime, event.startTime) && Objects.equals(endTime, event.endTime) && Objects.equals(startDate, event.startDate) && Objects.equals(endDate, event.endDate) && weekday == event.weekday && eventType == event.eventType && Objects.equals(id, event.id);
+        return Objects.equals(title, event.title)
+                && Objects.equals(description, event.description)
+                && Objects.equals(startTime, event.startTime)
+                && Objects.equals(endTime, event.endTime)
+                && Objects.equals(startDate, event.startDate)
+                && Objects.equals(endDate, event.endDate)
+                && weekday == event.weekday && eventType == event.eventType;
     }
 
     @Override

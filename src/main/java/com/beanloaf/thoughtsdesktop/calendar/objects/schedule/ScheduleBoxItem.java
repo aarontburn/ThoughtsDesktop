@@ -72,7 +72,7 @@ public class ScheduleBoxItem extends AnchorPane implements EventLabel {
         colorHBox.getChildren().add(colorLabel);
 
         randomizeColorButton = new Button("Randomize Color");
-        randomizeColorButton.getStyleClass().add("calendarButton");
+        randomizeColorButton.getStyleClass().add("calendar-button");
         randomizeColorButton.setOnAction(e -> {
             final String newColor = CH.getRandomColor();
             data.setDisplayColor(newColor);
@@ -98,14 +98,14 @@ public class ScheduleBoxItem extends AnchorPane implements EventLabel {
 
 
         final Button editButton = new Button("Edit/View");
-        editButton.getStyleClass().add("calendarButton");
+        editButton.getStyleClass().add("calendar-button");
         editButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(editButton, 135, 16, null, 16));
         editButton.setOnAction(e -> main.swapOverlay(CalendarMain.Overlays.SCHEDULE, data));
 
 
         final Button deleteButton = new Button("Delete");
-        deleteButton.getStyleClass().add("calendarButton");
+        deleteButton.getStyleClass().add("calendar-button");
         deleteButton.setStyle("-fx-font-size: 16");
         this.getChildren().add(ThoughtsHelper.setAnchor(deleteButton, 135, 16, 16, null));
         deleteButton.setOnAction(e -> main.getRightPanel().getMonthView().deleteSchedule(this));

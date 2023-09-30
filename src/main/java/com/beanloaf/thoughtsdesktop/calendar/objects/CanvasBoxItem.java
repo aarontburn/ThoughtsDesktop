@@ -55,7 +55,7 @@ public class CanvasBoxItem extends AnchorPane {
         colorHBox.getChildren().add(colorLabel);
 
         randomizeColorButton = new Button("Randomize Color");
-        randomizeColorButton.getStyleClass().add("calendarButton");
+        randomizeColorButton.getStyleClass().add("calendar-button");
         colorHBox.getChildren().add(randomizeColorButton);
 
 

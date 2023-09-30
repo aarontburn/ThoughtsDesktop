@@ -18,6 +18,7 @@ public enum Keys {
     DISPLAY_COLOR,
     CLASSES,
     EVENTS,
+    COMPLETED_DATES,
     ;
 
 
