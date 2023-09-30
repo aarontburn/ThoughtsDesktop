@@ -270,12 +270,8 @@ public class LeftPanel {
 
         calendarProgressCheckBox.setOnAction(e -> {
 
-
-
             final BasicEvent event = main.getCalendarHandler().getSelectedEvent();
 
-
-            Logger.log(event.getEventType());
             event.setCompleted(calendarProgressCheckBox.isSelected());
 
             if (event.getEventType() == TypedEvent.Types.CANVAS) {
@@ -284,8 +280,7 @@ public class LeftPanel {
 
                 event.getScheduleSource().setCompletedDay(event, calendarProgressCheckBox.isSelected());
 
-                Logger.log(event.getScheduleSource().getCompletedDates());
-//                main.getJsonHandler().writeScheduleData(event.getScheduleSource());
+                main.getJsonHandler().writeScheduleData(event.getScheduleSource());
             }
         });
 

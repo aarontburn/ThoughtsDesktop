@@ -23,8 +23,7 @@ public class BasicEvent implements TypedEvent, EventLabel {
     private String color;
     private String altText;
     private ScheduleData scheduleSource;
-
-
+    private BasicEvent eventSource;
     private final List<EventLabel> referenceList = new ArrayList<>();
 
 
@@ -41,10 +40,11 @@ public class BasicEvent implements TypedEvent, EventLabel {
         this.eventType = Types.SCHEDULE;
     }
 
-    // sets a one way reference from the parent basic event to this. used from schedules.
+    // sets a one-way reference from the parent basic event to this. used from schedules.
     public BasicEvent(final BasicEvent event) {
         event.addReference(this);
 
+        this.eventSource = event;
         this.title = event.getTitle();
         this.id = event.getId();
         this.description = event.getDescription();
@@ -55,7 +55,7 @@ public class BasicEvent implements TypedEvent, EventLabel {
         this.isComplete = event.isCompleted();
         this.color = event.getDisplayColor();
         this.altText = event.getAltText();
-
+        this.weekday = event.getWeekday();
         this.eventType = event.getEventType();
         this.scheduleSource = event.scheduleSource;
 
@@ -253,6 +253,10 @@ public class BasicEvent implements TypedEvent, EventLabel {
 
     public ScheduleData getScheduleSource() {
         return this.scheduleSource;
+    }
+
+    public BasicEvent getEventSource() {
+        return this.eventSource;
     }
 
 

@@ -14,15 +14,14 @@ import java.util.*;
 public class ScheduleData implements TypedEvent {
 
 
-    private String scheduleName = "";
-    private String displayColor;
-    private LocalDate startDate, endDate;
     private final String id;
-
     private final Map<Weekday, Map<String, BasicEvent>> scheduleEventMap = new HashMap<>();
     private final Map<BasicEvent, Set<Weekday>> weekdaysByEventMap = new HashMap<>();
     private final List<EventLabel> references = new ArrayList<>();
-    private final Map<BasicEvent, Set<LocalDate>> completedDates = new HashMap<>();
+    private final Map<String, Set<LocalDate>> completedDatesByUid = new HashMap<>();
+    private String scheduleName = "";
+    private String displayColor;
+    private LocalDate startDate, endDate;
 
 
     public ScheduleData() {
@@ -71,25 +70,16 @@ public class ScheduleData implements TypedEvent {
         return this.scheduleName;
     }
 
-    public LocalDate getStartDate() {
-        return this.startDate;
-    }
-
-    public LocalDate getEndDate() {
-        return this.endDate;
-    }
-
-
-    public void addReference(final ScheduleBoxItem reference) {
-        this.references.add(reference);
-    }
-
     public void setScheduleName(final String name) {
         this.scheduleName = name;
 
         for (final EventLabel reference : references) {
             reference.updateEventTitle(name);
         }
+    }
+
+    public LocalDate getStartDate() {
+        return this.startDate;
     }
 
     public void setStartDate(final LocalDate date) {
@@ -107,6 +97,10 @@ public class ScheduleData implements TypedEvent {
         }
     }
 
+    public LocalDate getEndDate() {
+        return this.endDate;
+    }
+
     public void setEndDate(final LocalDate date) {
         this.endDate = date;
         for (final EventLabel reference : references) {
@@ -122,9 +116,8 @@ public class ScheduleData implements TypedEvent {
         }
     }
 
-
-    public void setDisplayColor(final String color) {
-        this.displayColor = color;
+    public void addReference(final ScheduleBoxItem reference) {
+        this.references.add(reference);
     }
 
     public String getDisplayColor() {
@@ -134,18 +127,25 @@ public class ScheduleData implements TypedEvent {
         return this.displayColor;
     }
 
-
-    public void setCompletedDay(final BasicEvent event, final boolean isComplete) {
-        if (isComplete) {
-            completedDates.computeIfAbsent(event, k -> new HashSet<>()).add(event.getStartDate());
-        } else {
-            completedDates.computeIfAbsent(event, k -> new HashSet<>()).remove(event.getStartDate());
-
-        }
+    public void setDisplayColor(final String color) {
+        this.displayColor = color;
     }
 
-    public Map<BasicEvent, Set<LocalDate>> getCompletedDates() {
-        return this.completedDates;
+    public void setCompletedDay(final BasicEvent event, final boolean isComplete) {
+        setCompletedDay(event.getEventSource().getId(), event.getStartDate(), isComplete);
+    }
+
+    public void setCompletedDay(final String eventUid, final LocalDate date, final boolean isComplete) {
+        if (isComplete) {
+            completedDatesByUid.computeIfAbsent(eventUid, k -> new HashSet<>()).add(date);
+        } else {
+            completedDatesByUid.computeIfAbsent(eventUid, k -> new HashSet<>()).remove(date);
+        }
+        Logger.log(scheduleName + ": " +  completedDatesByUid.get(eventUid));
+    }
+
+    public Set<LocalDate> getCompletedDatesByUid(final String uid) {
+        return this.completedDatesByUid.get(uid);
     }
 
 

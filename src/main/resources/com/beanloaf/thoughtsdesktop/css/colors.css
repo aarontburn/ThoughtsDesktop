@@ -15,6 +15,8 @@
 
     /*  Dark Gray to Light Gray*/
     -fx-gray-0: rgba(51, 51, 51, 1);
+
+    /*  Gradient starts here*/
     -fx-gray-1: rgba(84, 86, 88, 1);
     -fx-gray-2: rgba(108, 110, 111, 1);
     -fx-gray-3: rgba(132, 133, 134, 1);

@@ -259,6 +259,8 @@ public class MonthView {
         // Get event, get first weekday it starts on, add 7 until it exceeds the enddate using endDate.isBefore()
         final Map<BasicEvent, Set<Weekday>> eventWeekdayMap = schedule.getWeekdaysByEventMap();
         for (final BasicEvent event : eventWeekdayMap.keySet()) {
+            final Set<LocalDate> completedDates = schedule.getCompletedDatesByUid(event.getId());
+
             event.setDisplayColor(schedule.getDisplayColor());
             for (final Weekday weekday : eventWeekdayMap.get(event)) {
                 final int eventStartingWeekday = event.getStartDate().getDayOfWeek().getValue();
@@ -270,7 +272,13 @@ public class MonthView {
                 LocalDate date = startDate.plusDays(startDateOffset);
                 while (date.isBefore(endDate) || date.isEqual(endDate)) {
                     final LocalDate tempDate = date;
-                    runnables.add(() -> addEventToCalendarDay(tempDate, new DayEvent(new BasicEvent(event).setStartDate(tempDate), main)));
+
+                    final BasicEvent basicEvent = new BasicEvent(event)
+                            .setStartDate(tempDate)
+                            .setCompleted(completedDates != null && completedDates.contains(tempDate))
+                            ;
+
+                    runnables.add(() -> addEventToCalendarDay(tempDate, new DayEvent(basicEvent, main)));
                     date = date.plusDays(7);
                 }
             }
