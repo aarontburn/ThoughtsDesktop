@@ -141,7 +141,6 @@ public class ScheduleData implements TypedEvent {
         } else {
             completedDatesByUid.computeIfAbsent(eventUid, k -> new HashSet<>()).remove(date);
         }
-        Logger.log(scheduleName + ": " +  completedDatesByUid.get(eventUid));
     }
 
     public Set<LocalDate> getCompletedDatesByUid(final String uid) {

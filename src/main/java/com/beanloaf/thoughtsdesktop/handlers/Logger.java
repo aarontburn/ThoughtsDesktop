@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Logger {
+    // https://stackoverflow.com/questions/1994255/how-to-write-console-output-to-a-txt-file
+    // Make this class extend PrintStream to dump log to file
 
 
     // TODO: dump log output to a visual console or file

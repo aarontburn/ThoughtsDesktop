@@ -6,7 +6,9 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class BasicEvent implements TypedEvent, EventLabel {
 

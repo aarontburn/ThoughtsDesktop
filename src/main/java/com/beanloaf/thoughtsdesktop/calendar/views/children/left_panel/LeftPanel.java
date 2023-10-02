@@ -25,6 +25,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -174,8 +179,12 @@ public class LeftPanel {
 
     }
 
+    private final FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
+    private final Font finalLabelFont = new Font("Lato", Font.PLAIN, 25);
+
     private void setDescriptionBoxHeight() {
-//        Logger.log(layoutMap.get(LeftLayouts.EVENTS).getWidth());
+
+
         if (!calendarEndTimeFields.isVisible()
                 && calendarFinalEndTimeLabel.getText().isEmpty()
                 && calendarFinalStartTimeLabel.getText().isEmpty()) {
@@ -183,17 +192,18 @@ public class LeftPanel {
             calendarTimeLabel.setVisible(false);
             resizeDescriptionBox(false, true);
 
-
         } else {
+            final int startLabelWidth = (int) (finalLabelFont.getStringBounds(calendarFinalStartTimeLabel.getText(), frc).getWidth());
+            final int endLabelWidth = (int) (finalLabelFont.getStringBounds(calendarFinalEndTimeLabel.getText(), frc).getWidth());
+
             calendarTimeLabel.setVisible(true);
             if (!calendarEndTimeFields.isVisible()) {  // 448 is when wrapping occurs when editing, 320 when not editing
-                resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 320, false); // wrapping for final label
+                resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < (startLabelWidth + endLabelWidth) + 30, false); // wrapping for final label
             } else {
                 resizeDescriptionBox(layoutMap.get(LeftLayouts.EVENTS).getWidth() < 448, false); // wrapping for input fields
             }
-
-
         }
+
     }
 
     private void attachEvents() {
@@ -306,6 +316,11 @@ public class LeftPanel {
             toggleSmallEventFields(true);
             calendarSaveEventButton.setVisible(true);
         });
+
+    }
+
+    public void test() {
+        Logger.log(calendarFinalStartTimeLabel.getWidth());
 
     }
 

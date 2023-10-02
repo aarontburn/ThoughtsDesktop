@@ -112,8 +112,6 @@ public class DayEvent extends Label implements EventLabel, TypedEvent, Comparabl
     public void setStartDate(final LocalDate date) {
         this.event.setStartDate(date);
         this.updateStartDate(date);
-
-
     }
 
     public void setStartTime(final LocalTime startTime) {

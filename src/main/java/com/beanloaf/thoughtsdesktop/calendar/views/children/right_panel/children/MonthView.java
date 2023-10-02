@@ -12,6 +12,7 @@ import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 
 import java.io.File;
@@ -38,7 +39,11 @@ public class MonthView {
         attachEvents();
 
 
-        changeMonth(this.main.getCalendarHandler().getCurrentMonth());
+        if (main.getCalendarHandler() == null) {
+            main.queuedTasks.add(() -> changeMonth(this.main.getCalendarHandler().getCurrentMonth()));
+        } else {
+            changeMonth(this.main.getCalendarHandler().getCurrentMonth());
+        }
         main.getLeftPanel().swapLeftPanel(LeftPanel.LeftLayouts.EVENTS);
 
     }
@@ -49,6 +54,8 @@ public class MonthView {
 
     private void locateNodes() {
         calendarFrame = (GridPane) findNodeById("calendarFrame");
+
+
 
     }
 
@@ -61,6 +68,7 @@ public class MonthView {
     }
 
     private void attachEvents() {
+
 
     }
 

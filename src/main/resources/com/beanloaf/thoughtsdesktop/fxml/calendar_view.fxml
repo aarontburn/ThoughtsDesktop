@@ -7,7 +7,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
@@ -777,11 +776,11 @@
                   </Label>
                </children>
             </AnchorPane>
-            <SplitPane fx:id="calendarOverlay" dividerPositions="0.225" focusTraversable="false" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="calendarOverlay" dividerPositions="0.30825496342737724" focusTraversable="false" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane fx:id="left" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
-                        <AnchorPane fx:id="calendarLeftEventPanel" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftEventPanel" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <SplitPane dividerPositions="0.45" orientation="VERTICAL" prefHeight="993.0" prefWidth="343.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <items>
@@ -841,14 +840,14 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <FlowPane alignment="CENTER" vgap="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="210.0">
+                                          <FlowPane alignment="CENTER" hgap="8.0" vgap="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="210.0">
                                              <children>
-                                                <Label fx:id="calendarFinalStartTimeLabel" alignment="CENTER" prefHeight="32.0" prefWidth="150.0" text="\@ 1:00 AM" textAlignment="CENTER">
+                                                <Label fx:id="calendarFinalStartTimeLabel" text="\@ 1:00 AM" textAlignment="CENTER">
                                                    <font>
                                                       <Font name="Lato Regular" size="25.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="calendarFinalEndTimeLabel" alignment="CENTER" prefHeight="32.0" prefWidth="150.0" text="till 2:15 PM" textAlignment="CENTER">
+                                                <Label fx:id="calendarFinalEndTimeLabel" text="till 2:15 PM" textAlignment="CENTER">
                                                    <font>
                                                       <Font name="Lato Regular" size="25.0" />
                                                    </font>
@@ -966,8 +965,8 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <TextArea fx:id="calendarDescriptionInput" layoutX="60.0" layoutY="329.0" prefHeight="381.0" prefWidth="537.0" styleClass="text-field" wrapText="true" AnchorPane.bottomAnchor="66.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="276.0" />
-                                          <HBox alignment="CENTER" layoutX="16.0" layoutY="593.0" spacing="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
+                                          <TextArea fx:id="calendarDescriptionInput" layoutX="60.0" layoutY="329.0" prefHeight="381.0" prefWidth="537.0" styleClass="text-field" wrapText="true" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="276.0" />
+                                          <HBox alignment="CENTER" layoutX="16.0" layoutY="593.0" spacing="16.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
                                              <children>
                                                 <Button fx:id="calendarDeleteButton" minHeight="0.0" minWidth="0.0" mnemonicParsing="false" prefWidth="82.0" styleClass="calendar-button" text="Delete" textOverrun="CLIP">
                                                    <font>
@@ -1055,7 +1054,7 @@
                               </ScrollPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane fx:id="calendarLeftCanvasPanel" layoutX="10.0" layoutY="10.0" prefHeight="986.0" prefWidth="380.0" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane fx:id="calendarLeftCanvasPanel" layoutX="10.0" layoutY="10.0" prefHeight="986.0" prefWidth="380.0" visible="false" AnchorPane.bottomAnchor="64.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <ScrollPane fitToWidth="true" hbarPolicy="NEVER" layoutX="90.0" layoutY="51.0" prefHeight="962.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="86.0">
                                  <content>
@@ -1459,6 +1458,5 @@
             </AnchorPane>
          </children>
       </AnchorPane>
-      <MenuBar prefWidth="1920.0" />
    </children>
 </VBox>

@@ -49,11 +49,14 @@ public class CalendarMain extends ThoughtsView {
         this.overlayMap.put(Overlays.LOADING, findNodeById("loadingOverlay"));
         this.overlayMap.put(Overlays.EVENT, findNodeById("eventOverlay"));
 
+        this.leftPanel = new LeftPanel(this);
+        this.rightPanel = new RightPanel(this);
+
+
         this.calendarHandler = new CalendarHandler(this);
         this.canvasICalHandler = new CanvasICalHandler(this);
         this.calendarJson = new CalendarJsonHandler(this);
-        this.leftPanel = new LeftPanel(this);
-        this.rightPanel = new RightPanel(this);
+
 
 
         Platform.runLater(() -> {
