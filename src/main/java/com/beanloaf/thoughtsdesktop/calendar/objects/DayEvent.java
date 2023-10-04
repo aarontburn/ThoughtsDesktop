@@ -82,7 +82,12 @@ public class DayEvent extends Label implements EventLabel, TypedEvent, Comparabl
             }
         });
 
-        this.setOnMouseClicked(e -> onClick());
+        this.setOnMouseClicked(e -> {
+            if (e.isControlDown()) {
+                main.getLeftPanel().markEventComplete(event, !event.isCompleted());
+            }
+            onClick();
+            });
 
 
     }

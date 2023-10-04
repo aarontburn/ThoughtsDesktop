@@ -279,19 +279,7 @@ public class LeftPanel {
                 calendarProgressCheckBox.setText(isChecked ? "Completed" : "In-progress"));
 
         calendarProgressCheckBox.setOnAction(e -> {
-
-            final BasicEvent event = main.getCalendarHandler().getSelectedEvent();
-
-            event.setCompleted(calendarProgressCheckBox.isSelected());
-
-            if (event.getEventType() == TypedEvent.Types.CANVAS) {
-                main.getCanvasICalHandler().cacheCanvasEventsToJson();
-            } else if (event.getEventType() == TypedEvent.Types.SCHEDULE) {
-
-                event.getScheduleSource().setCompletedDay(event, calendarProgressCheckBox.isSelected());
-
-                main.getJsonHandler().writeScheduleData(event.getScheduleSource());
-            }
+            markEventComplete(main.getCalendarHandler().getSelectedEvent(), calendarProgressCheckBox.isSelected());
         });
 
 
@@ -317,6 +305,17 @@ public class LeftPanel {
             calendarSaveEventButton.setVisible(true);
         });
 
+    }
+
+    public void markEventComplete(final BasicEvent event, final boolean isCompleted) {
+        event.setCompleted(isCompleted);
+
+        if (event.getEventType() == TypedEvent.Types.CANVAS) {
+            main.getCanvasICalHandler().cacheCanvasEventsToJson();
+        } else if (event.getEventType() == TypedEvent.Types.SCHEDULE) {
+            event.getScheduleSource().setCompletedDay(event, calendarProgressCheckBox.isSelected());
+            main.getJsonHandler().writeScheduleData(event.getScheduleSource());
+        }
     }
 
     public void test() {

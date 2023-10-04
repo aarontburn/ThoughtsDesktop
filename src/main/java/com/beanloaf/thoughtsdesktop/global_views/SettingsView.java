@@ -25,8 +25,6 @@ import javafx.stage.Stage;
 public class SettingsView extends ThoughtsView implements ThoughtsChangeListener {
 
 
-    private Stage settingsWindow;
-
     private TabPane settingsTabbedPane;
     /*      General Settings Layout         */
     private CheckBox pullOnStartupCheckBox, pushOnExitCheckBox, matchBraceCheckBox;

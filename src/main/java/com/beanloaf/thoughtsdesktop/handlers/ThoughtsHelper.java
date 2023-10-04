@@ -102,25 +102,21 @@ public class ThoughtsHelper {
     }
 
     public void addListener(final ThoughtsChangeListener listener) {
-        if (listener == null) throw new IllegalArgumentException("Listener cannot be null");
+        if (listener == null) {
+            throw new IllegalArgumentException("Listener cannot be null");
+        }
 
         listeners.put(listener.getClass(), listener);
     }
 
-    public void removeListener(final ThoughtsChangeListener listener) {
-        if (listener == null) throw new IllegalArgumentException("Listener cannot be null");
-
-        listeners.remove(listener.getClass());
-
-    }
-
     public void fireEvent(final String eventName) {
         fireEvent(eventName, null);
-
     }
 
     public void fireEvent(final String eventName, final Object eventValue) {
-        if (eventName == null) throw new IllegalArgumentException("eventName cannot be null");
+        if (eventName == null) {
+            throw new IllegalArgumentException("eventName cannot be null");
+        }
 
         properArguments(eventName, eventValue);
 
