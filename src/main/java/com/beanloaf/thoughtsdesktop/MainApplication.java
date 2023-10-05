@@ -16,16 +16,16 @@ import com.beanloaf.thoughtsdesktop.notes.views.TextView;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCharacterCombination;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.input.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
 
@@ -183,19 +183,19 @@ public class MainApplication extends Application implements ThoughtsChangeListen
             case HOME -> {
                 headerController.setSelectedTab(headerController.headerHomeButton);
                 toggleLayoutVisibility(homeRoot);
-
             }
 
             case CALENDAR -> {
                 headerController.setSelectedTab(headerController.headerCalendarButton);
                 toggleLayoutVisibility(calendarFXML);
-                if (calendarMain != null) calendarMain.onOpen();
+                if (calendarMain != null) {
+                    calendarMain.onOpen();
+                }
 
             }
             case SETTINGS -> {
-                headerController.setSelectedTab(headerController.headerSettingsButton);
-                toggleLayoutVisibility(settingsFXML);
-
+//                headerController.setSelectedTab(headerController.headerSettingsButton);
+//                toggleLayoutVisibility(settingsFXML);
 
             }
 
@@ -212,34 +212,62 @@ public class MainApplication extends Application implements ThoughtsChangeListen
     }
 
     private void setKeybindings() {
-        final ObservableMap<KeyCombination, Runnable> keybindings = scene.getAccelerators();
 
-        keybindings.put(new KeyCharacterCombination(KeyCode.Q.getChar(), KeyCombination.CONTROL_DOWN),
-                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.SORT,
-                        ThoughtsHelper.getInstance().getSelectedFile()));
 
-        keybindings.put(new KeyCharacterCombination(KeyCode.D.getChar(), KeyCombination.CONTROL_DOWN),
-                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE,
-                        ThoughtsHelper.getInstance().getSelectedFile()));
 
-        keybindings.put(new KeyCharacterCombination(KeyCode.N.getChar(), KeyCombination.CONTROL_DOWN),
-                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.NEW_FILE_BUTTON_PRESS));
 
-        keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
-                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<>() {
+            final KeyCombination keyComb = new KeyCodeCombination(KeyCode.TAB, KeyCombination.CONTROL_DOWN);
 
-        keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN),
-                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
+            public void handle(final KeyEvent ke) {
+                Logger.log(ke);
 
-        keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN),
-                this::swapToNextLayout);
 
-        keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
-                this::swapToPreviousLayout);
+                Logger.log(ke.isShiftDown());
 
-        // TODO: this doesn't trigger
-        keybindings.put(new KeyCharacterCombination(KeyCode.F5.getChar()),
-                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH));
+//                if (keyComb.match(ke)) {
+//
+//
+//                    Logger.log("here");
+//
+//
+//
+//                    ke.consume(); // <-- stops passing the event to next node
+//                }
+            }
+        });
+
+
+//        keybindings.put(new KeyCharacterCombination(KeyCode.Q.getChar(), KeyCombination.CONTROL_DOWN),
+//                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.SORT,
+//                        ThoughtsHelper.getInstance().getSelectedFile()));
+//
+//        keybindings.put(new KeyCharacterCombination(KeyCode.D.getChar(), KeyCombination.CONTROL_DOWN),
+//                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Data.DELETE,
+//                        ThoughtsHelper.getInstance().getSelectedFile()));
+//
+//        keybindings.put(new KeyCharacterCombination(KeyCode.N.getChar(), KeyCombination.CONTROL_DOWN),
+//                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.NEW_FILE_BUTTON_PRESS));
+//
+//        keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
+//                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PULL));
+//
+//        keybindings.put(new KeyCharacterCombination(KeyCode.P.getChar(), KeyCombination.CONTROL_DOWN),
+//                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.PUSH_ALL));
+//
+//        keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN),
+//                this::swapToNextLayout);
+//
+//        keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN),
+//                () -> Logger.log("here"));
+//
+//
+//        keybindings.put(new KeyCharacterCombination(KeyCode.TAB.getChar(), KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN),
+//                this::swapToPreviousLayout);
+//
+//        // TODO: this doesn't trigger
+//        keybindings.put(new KeyCharacterCombination(KeyCode.F5.getChar()),
+//                () -> ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH));
     }
 
 
@@ -252,6 +280,7 @@ public class MainApplication extends Application implements ThoughtsChangeListen
 
     @Override
     public void eventFired(final String eventName, final Object eventValue) {
+
         switch (eventName) {
             case OPEN_HOME_SETTINGS -> {
                 swapLayouts(Layouts.SETTINGS);

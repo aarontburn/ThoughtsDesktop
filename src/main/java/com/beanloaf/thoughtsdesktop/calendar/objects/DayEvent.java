@@ -86,8 +86,8 @@ public class DayEvent extends Label implements EventLabel, TypedEvent, Comparabl
             if (e.isControlDown()) {
                 main.getLeftPanel().markEventComplete(event, !event.isCompleted());
             }
-            onClick();
-            });
+                    onClick();
+        });
 
 
     }

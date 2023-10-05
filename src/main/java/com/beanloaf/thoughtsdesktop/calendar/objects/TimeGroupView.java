@@ -15,6 +15,7 @@ public class TimeGroupView {
     private final TextField hourInput, minuteInput;
     private final ComboBox<String> periodSelector;
 
+    private boolean ready;
 
     public TimeGroupView(final TextField hourInput, final TextField minuteInput, final ComboBox<String> periodSelector) {
 
@@ -23,13 +24,14 @@ public class TimeGroupView {
         this.periodSelector = CH.setAMPMComboBox(periodSelector);
 
 
-
         attachEvents();
     }
 
     private void attachEvents() {
         hourInput.textProperty().addListener((observableValue, s, value) -> {
-            if (value.isEmpty()) return;
+            if (value.isEmpty()) {
+                return;
+            }
 
             try {
                 final int hour = Integer.parseInt(value);
@@ -39,18 +41,19 @@ public class TimeGroupView {
                 Logger.log("Failed to convert " + value + " to an integer.");
             }
 
-            if (value.length() >= 2) minuteInput.requestFocus();
+            if (value.length() >= 2) {
+                minuteInput.requestFocus();
+            }
         });
 
         minuteInput.textProperty().addListener((observableValue, s, value) -> {
-            if (value.length() >= 2) {
+            if (value.length() >= 2 && ready) {
                 final Robot robot = new Robot();
 
                 robot.keyPress(KeyCode.TAB);
                 robot.keyPress(KeyCode.TAB);
             }
         });
-
 
     }
 
@@ -63,7 +66,11 @@ public class TimeGroupView {
         }
 
         hourInput.setText(time.format(DateTimeFormatter.ofPattern("hh")));
+
+        ready = false;
         minuteInput.setText(time.format(DateTimeFormatter.ofPattern("mm")));
+        ready = true;
+
         periodSelector.getSelectionModel().select(time.format(DateTimeFormatter.ofPattern("a")));
     }
 
@@ -77,9 +84,6 @@ public class TimeGroupView {
     public LocalTime getTime() {
         return CH.validateStringIntoTime(hourInput.getText(), minuteInput.getText(), periodSelector.getSelectionModel().getSelectedItem());
     }
-
-
-
 
 
 }

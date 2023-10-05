@@ -21,7 +21,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-@SuppressWarnings("unchecked")
+//@SuppressWarnings("unchecked")
 public class SettingsView extends ThoughtsView implements ThoughtsChangeListener {
 
 

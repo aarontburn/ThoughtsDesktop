@@ -242,7 +242,7 @@ public class LeftPanel {
         canvasHideAllCheckBox.setOnAction(e -> {
             canvasHideAllCheckBox.selectedProperty().unbind();
 
-            final List<BooleanProperty> bindingList = new ArrayList<>();
+//            final List<BooleanProperty> bindingList = new ArrayList<>();
             for (final Node node : canvasBox.getChildren()) {
                 if (node.getClass() != CanvasBoxItem.class) {
                     continue;
@@ -251,7 +251,7 @@ public class LeftPanel {
                 canvasBoxItem.hideCanvasEvents(canvasHideAllCheckBox.isSelected());
 
 
-                bindingList.add(canvasBoxItem.getHideCheckBox().selectedProperty());
+//                bindingList.add(canvasBoxItem.getHideCheckBox().selectedProperty());
             }
 
 
