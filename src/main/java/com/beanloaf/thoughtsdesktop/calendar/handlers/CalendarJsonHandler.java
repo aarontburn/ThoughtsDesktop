@@ -10,6 +10,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.res.TC;
+import javafx.scene.control.ToggleButton;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -369,6 +370,7 @@ public class CalendarJsonHandler {
                             }
 
                         }
+
 
                         final JSONObject eventBranch = new JSONObject();
                         scheduleEventBranch.put(uid, eventBranch);

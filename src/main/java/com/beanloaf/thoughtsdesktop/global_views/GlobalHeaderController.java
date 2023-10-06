@@ -39,6 +39,7 @@ public class GlobalHeaderController implements ThoughtsChangeListener {
         this.main = ThoughtsHelper.getInstance().getMain();
         ThoughtsHelper.getInstance().addController(this);
         ThoughtsHelper.getInstance().addListener(this);
+
     }
 
 
