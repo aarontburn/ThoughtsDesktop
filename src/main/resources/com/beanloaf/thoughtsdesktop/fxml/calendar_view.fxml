@@ -484,7 +484,7 @@
                   </GridPane>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="scheduleOverlay" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="scheduleOverlay" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <GridPane hgap="8.0" layoutX="257.0" layoutY="5.0" prefHeight="54.0" prefWidth="839.0" AnchorPane.leftAnchor="257.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="4.0">
                      <columnConstraints>
@@ -607,6 +607,25 @@
                                              <padding>
                                                 <Insets top="5.0" />
                                              </padding>
+                                             <children>
+                                                <GridPane>
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label text="Name">
+                                                         <font>
+                                                            <Font size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Weekday Selector Placeholder" GridPane.columnIndex="1" />
+                                                   </children>
+                                                </GridPane>
+                                             </children>
                                           </VBox>
                                        </content>
                                     </ScrollPane>
@@ -645,7 +664,10 @@
                                                 <Font size="16.0" />
                                              </font>
                                           </Label>
-                                          <TextArea fx:id="scheduleEventDescriptionInput" prefHeight="203.0" prefWidth="540.0" style="-fx-background-insets: 2;" styleClass="text-field" text="test" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                          <TextArea fx:id="scheduleEventDescriptionInput" prefHeight="203.0" prefWidth="540.0" style="-fx-background-insets: 2;" styleClass="text-field" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font></TextArea>
                                        </children>
                                     </AnchorPane>
                                     <FlowPane alignment="CENTER" columnHalignment="CENTER" layoutY="70.0" vgap="8.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
@@ -751,7 +773,10 @@
                                           <Font size="16.0" />
                                        </font>
                                     </Button>
-                                    <TextField fx:id="scheduleEventTitleInput" layoutX="3.0" layoutY="20.0" minWidth="0.0" prefHeight="31.0" prefWidth="342.0" text="test" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                    <TextField fx:id="scheduleEventTitleInput" layoutX="3.0" layoutY="20.0" minWidth="0.0" prefHeight="31.0" prefWidth="342.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font></TextField>
                                  </children>
                                  <GridPane.margin>
                                     <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
@@ -776,7 +801,7 @@
                   </Label>
                </children>
             </AnchorPane>
-            <SplitPane fx:id="calendarOverlay" dividerPositions="0.30825496342737724" focusTraversable="false" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane fx:id="calendarOverlay" dividerPositions="0.30825496342737724" focusTraversable="false" prefHeight="160.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane fx:id="left" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="412.0">
                      <children>
@@ -900,7 +925,7 @@
                                                                         <Insets top="-2.0" />
                                                                      </padding>
                                                                   </Label>
-                                                                  <ComboBox fx:id="calendarAMPMSelectorFrom" layoutX="142.0" minHeight="0.0" minWidth="0.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
+                                                                  <ComboBox fx:id="calendarAMPMSelectorFrom" layoutX="142.0" minHeight="0.0" minWidth="0.0" prefHeight="32.0" prefWidth="76.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
                                                                </children>
                                                             </AnchorPane>
                                                          </children>
@@ -951,7 +976,7 @@
                                                                         <Insets left="4.0" top="2.0" />
                                                                      </padding>
                                                                   </Label>
-                                                                  <ComboBox fx:id="calendarAMPMSelectorTo" layoutX="142.0" minHeight="0.0" minWidth="0.0" prefHeight="32.0" prefWidth="72.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
+                                                                  <ComboBox fx:id="calendarAMPMSelectorTo" layoutX="142.0" minHeight="0.0" minWidth="0.0" prefHeight="32.0" prefWidth="76.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="142.0" AnchorPane.topAnchor="0.0" />
                                                                </children>
                                                             </AnchorPane>
                                                          </children>

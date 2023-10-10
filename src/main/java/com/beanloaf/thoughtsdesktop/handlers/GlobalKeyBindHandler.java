@@ -60,6 +60,8 @@ public class GlobalKeyBindHandler {
         keybindMap.put(KeyCode.F5, () -> {
             if (main.getCurrentLayout() == MainApplication.Layouts.NOTES) {
                 ThoughtsHelper.getInstance().fireEvent(Properties.Actions.REFRESH);
+            } else if (main.getCurrentLayout() == MainApplication.Layouts.CALENDAR) {
+                main.calendarMain.getCanvasICalHandler().refresh();
             }
         });
 

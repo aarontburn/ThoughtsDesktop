@@ -48,6 +48,8 @@ public class CanvasICalHandler {
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> scheduledTask;
 
+    private boolean isRefreshing;
+
 
     public CanvasICalHandler(final CalendarMain main) {
         this.main = main;
@@ -138,18 +140,29 @@ public class CanvasICalHandler {
     }
 
     private void refresh(final Object o) {
+        if (isRefreshing) {
+            Logger.log("Already refreshing.");
+            return;
+        }
+
+        isRefreshing = true;
+
         Logger.log("Refreshing Canvas iCal...");
 
+        final String url = (String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL);
+
+        if (url == null || url.isEmpty()) {
+            Logger.log("Cannot access Canvas ICal URL: " + url);
+            return;
+        }
 
         if (main.getLeftPanel() != null) {
             main.getLeftPanel().spinCanvasRefresh(true);
         }
 
-
-
         classMap.clear();
         try {
-            final HttpURLConnection connection = (HttpURLConnection) new URL((String) SettingsHandler.getInstance().getSetting(SettingsHandler.Settings.CANVAS_ICAL_URL)).openConnection();
+            final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 
             final int responseCode = connection.getResponseCode();
             if (responseCode != HttpURLConnection.HTTP_OK) {
@@ -167,7 +180,6 @@ public class CanvasICalHandler {
             connection.disconnect();
 
             final ICalendar iCal = Biweekly.parse(responseBuilder.toString()).first();
-
 
             for (final VEvent event : iCal.getEvents()) {
                 LocalDate startDate = null;
@@ -288,6 +300,8 @@ public class CanvasICalHandler {
             main.getLeftPanel().spinCanvasRefresh(false);
         }
 
+        isRefreshing = false;
+//        System.gc(); // TODO: This should be changed to not need this!
 
     }
 
