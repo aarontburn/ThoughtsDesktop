@@ -347,7 +347,6 @@ public class MonthView {
             }
         }
 
-
     }
 
     public void addCanvasClassToCalendar(final CanvasClass canvasClass) {

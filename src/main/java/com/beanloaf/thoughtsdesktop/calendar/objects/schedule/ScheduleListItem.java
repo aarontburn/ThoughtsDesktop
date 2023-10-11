@@ -3,19 +3,16 @@ package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
+import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
+import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.EventOverlay;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import javafx.geometry.Pos;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.util.Duration;
 
 import java.time.LocalTime;
@@ -32,6 +29,11 @@ public class ScheduleListItem extends GridPane {
     private final Label displayText;
     private final List<ScheduleLabel> references = new ArrayList<>();
 
+    private RepeatTab currentRepeatMode;
+    public enum RepeatTab {
+        DAILY, WEEKLY, MONTHLY, YEARLY
+    }
+
     public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName) {
         this(tab, scheduleName, UUID.randomUUID().toString());
 
@@ -47,6 +49,8 @@ public class ScheduleListItem extends GridPane {
         this.tab = tab;
         this.event = event;
 
+        this.setGridLinesVisible(true);
+
         this.getStyleClass().add("schedule");
 
 
@@ -54,6 +58,58 @@ public class ScheduleListItem extends GridPane {
         displayText.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
         this.add(displayText, 0, 0);
 
+
+
+        final HBox repeatTypeHBox = new HBox(8);
+        repeatTypeHBox.setAlignment(Pos.CENTER_LEFT);
+        this.add(repeatTypeHBox, 1, 0);
+
+
+
+        final Label repeatTypeLabel = new Label("Repeat");
+        repeatTypeLabel.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
+        repeatTypeHBox.getChildren().add(repeatTypeLabel);
+
+
+        final ComboBox<String> repeatTypeComboBox = CH.setStringComboBoxValues(new ComboBox<>(), "Weekly", "Monthly", "Yearly");
+        repeatTypeHBox.getChildren().add(repeatTypeComboBox);
+
+        final Label repeatSpacingLabel = new Label("every");
+        repeatSpacingLabel.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
+        repeatTypeHBox.getChildren().add(repeatSpacingLabel);
+
+        final TextField repeatSpacingTextField = new TextField("1");
+        repeatTypeHBox.getChildren().add(repeatSpacingTextField);
+
+        final Label _label = new Label("weeks.");
+        repeatSpacingLabel.setStyle("-fx-font-family: Lato; -fx-font-size: 18;");
+        repeatTypeHBox.getChildren().add(_label);
+
+
+
+
+        final ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(50);
+        columnConstraints.setMinWidth(10);
+        columnConstraints.setHgrow(Priority.SOMETIMES);
+
+        getColumnConstraints().add(columnConstraints);
+        getColumnConstraints().add(columnConstraints);
+
+        createTabs();
+
+
+        this.setOnMouseClicked(e -> doClick());
+
+    }
+
+    private void createTabs() {
+
+
+
+
+
+        /* Week Tab */
         final ColumnConstraints weekendColumnConstraints = new ColumnConstraints();
         weekendColumnConstraints.setPrefWidth(100);
         weekendColumnConstraints.setMinWidth(10);
@@ -62,7 +118,6 @@ public class ScheduleListItem extends GridPane {
         final GridPane weekdayPane = new GridPane();
         for (int i = 0; i < Weekday.values().length; i++) {
             final Weekday weekday = Weekday.values()[i];
-
 
             final Label eventLabel = new Label(weekday.getShortAbbreviation());
             eventLabel.setAlignment(Pos.CENTER);
@@ -95,7 +150,7 @@ public class ScheduleListItem extends GridPane {
             weekdayPane.add(checkBox, i, 1);
             weekdayPane.getColumnConstraints().add(weekendColumnConstraints);
         }
-        this.add(weekdayPane, 1, 0);
+        this.add(weekdayPane, 1, 1);
 
         final RowConstraints firstRow = new RowConstraints();
         firstRow.percentHeightProperty().setValue(40);
@@ -106,16 +161,6 @@ public class ScheduleListItem extends GridPane {
         weekdayPane.getRowConstraints().add(secondRow);
 
 
-        final ColumnConstraints columnConstraints = new ColumnConstraints();
-        columnConstraints.setPercentWidth(50);
-        columnConstraints.setMinWidth(10);
-        columnConstraints.setHgrow(Priority.SOMETIMES);
-
-        getColumnConstraints().add(columnConstraints);
-        getColumnConstraints().add(columnConstraints);
-
-
-        this.setOnMouseClicked(e -> doClick());
 
     }
 

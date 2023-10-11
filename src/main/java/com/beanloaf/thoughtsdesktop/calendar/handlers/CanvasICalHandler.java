@@ -27,10 +27,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 @SuppressWarnings("unchecked")
@@ -42,7 +39,7 @@ public class CanvasICalHandler {
 
     private final CalendarMain main;
 
-    private final Map<String, CanvasClass> classMap = new HashMap<>();
+    private final Map<String, CanvasClass> classMap = new ConcurrentHashMap<>();
 
 
     private ScheduledExecutorService scheduler;
@@ -235,7 +232,6 @@ public class CanvasICalHandler {
             }
         } catch (MalformedURLException ignored) {
 
-
         } catch (Exception e) {
             Logger.log(e);
         }
@@ -281,6 +277,10 @@ public class CanvasICalHandler {
             }
         }
 
+        cachedCanvasEvents.clear();
+
+
+
         cacheCanvasEventsToJson();
 
         if (main.getRightPanel() == null) {
@@ -296,18 +296,20 @@ public class CanvasICalHandler {
             main.getLeftPanel().addCanvasBoxes(classMap);
         }
 
+
+        isRefreshing = false;
+
         if (main.getLeftPanel() != null) {
             main.getLeftPanel().spinCanvasRefresh(false);
         }
 
-        isRefreshing = false;
-//        System.gc(); // TODO: This should be changed to not need this!
 
     }
 
     public void cacheCanvasEventsToJson() {
         new Thread(() -> {
             final JSONObject root = new JSONObject();
+
 
             for (final String className : classMap.keySet()) {  // CLASS NAME
                 final JSONObject classJson = new JSONObject();
