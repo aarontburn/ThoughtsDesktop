@@ -27,7 +27,7 @@
    <children>
       <AnchorPane VBox.vgrow="ALWAYS">
          <children>
-            <AnchorPane fx:id="eventOverlay" prefHeight="200.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="eventOverlay" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label maxWidth="1.7976931348623157E308" minWidth="0.0" text="Event" textOverrun="CLIP" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="8.0">
                      <font>
@@ -484,7 +484,7 @@
                   </GridPane>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="scheduleOverlay" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="scheduleOverlay" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <GridPane hgap="8.0" layoutX="257.0" layoutY="5.0" prefHeight="54.0" prefWidth="839.0" AnchorPane.leftAnchor="257.0" AnchorPane.rightAnchor="56.0" AnchorPane.topAnchor="4.0">
                      <columnConstraints>

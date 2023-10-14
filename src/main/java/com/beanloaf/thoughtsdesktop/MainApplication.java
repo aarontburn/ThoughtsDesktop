@@ -2,6 +2,7 @@ package com.beanloaf.thoughtsdesktop;
 
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
 import com.beanloaf.thoughtsdesktop.handlers.GlobalKeyBindHandler;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.notes.changeListener.ThoughtsChangeListener;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import com.beanloaf.thoughtsdesktop.global_views.GlobalHeaderController;
@@ -14,14 +15,31 @@ import com.beanloaf.thoughtsdesktop.global_views.SettingsView;
 import com.beanloaf.thoughtsdesktop.notes.views.TextView;
 import com.beanloaf.thoughtsdesktop.res.TC;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.cef.CefApp;
+import org.cef.CefClient;
+import org.cef.CefSettings;
+import org.cef.OS;
+import org.cef.browser.CefBrowser;
+import org.cef.browser.CefMessageRouter;
+import org.cef.handler.CefRequestContextHandler;
+import org.cef.handler.CefResourceRequestHandler;
+import org.cef.network.CefCookieManager;
 
+
+import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.IOException;
+import java.util.TimerTask;
 
 import static com.beanloaf.thoughtsdesktop.notes.changeListener.Properties.Actions.*;
 
@@ -127,7 +145,57 @@ public class MainApplication extends Application implements ThoughtsChangeListen
         }).start();
 
 
+        final String URL = "https://google.com/";
+        final boolean OFFSCREEN = false;
+        final boolean TRANSPARENT = false;
+
+        try {
+            SwingUtilities.invokeLater(() -> {
+                if (!CefApp.startup(new String[]{})) {
+                    System.out.println("Startup initialization failed!");
+                    return;
+                }
+
+                final SwingNode swingNode = new SwingNode();
+
+                CefSettings settings = new CefSettings();
+                settings.windowless_rendering_enabled = OFFSCREEN;
+                CefApp cefApp = CefApp.getInstance(settings);
+                CefClient client = cefApp.createClient();
+                client.addMessageRouter(CefMessageRouter.create());
+                CefBrowser browser = client.createBrowser(URL, OFFSCREEN, TRANSPARENT);
+
+                JTextField address = new JTextField(URL);
+                address.addActionListener(e -> {
+                    browser.loadURL(address.getText());
+                    swingNode.getContent().repaint();
+                });
+
+                final JPanel panel = new JPanel();
+                panel.setLayout(new BorderLayout());
+                panel.add(browser.getUIComponent(), BorderLayout.CENTER);
+                panel.add(address, BorderLayout.NORTH);
+                panel.setVisible(true);
+
+                swingNode.setContent(panel);
+
+
+
+
+
+                Platform.runLater(() -> {
+                    ((AnchorPane) homeRoot).getChildren().add(ThoughtsHelper.setAnchor(swingNode, 50, 50, 50, 50));
+                });
+                browser.loadURL("https://google.com/");
+
+            });
+        } catch (Exception e) {
+            Logger.log(e);
+        }
+
+
     }
+
 
     public void swapToNextLayout() {
         swapLayouts(Layouts.getNextLayout(currentLayout));

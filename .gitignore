@@ -39,7 +39,7 @@ build/
 
 
 
-
+jcef-bundle/
 storage/
 storage/user.json
 test.json

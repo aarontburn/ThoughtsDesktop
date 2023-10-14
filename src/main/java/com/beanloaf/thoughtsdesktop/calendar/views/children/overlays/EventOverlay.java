@@ -5,6 +5,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TimeGroupView;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
+import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -18,7 +19,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +32,7 @@ public class EventOverlay {
 
 
     private RepeatTab currentRepeatMode;
+
     public enum RepeatTab {
         DAILY, WEEKLY, MONTHLY, YEARLY
     }
@@ -77,6 +78,8 @@ public class EventOverlay {
 
     /*  ---------   */
 
+    private static final String URL = "https://google.com";
+
     public EventOverlay(final CalendarMain main, final BasicEvent event) {
         this.main = main;
         this.event = event;
@@ -87,8 +90,10 @@ public class EventOverlay {
         repeatPane.setDisable(true);
         swapRepeatTab(RepeatTab.DAILY);
 
-
         startup();
+
+
+
 
 
     }
@@ -99,7 +104,6 @@ public class EventOverlay {
         eventDescInput.setText(event.getDescription());
         eventHourFrom.setTime(event.getStartTime());
         eventHourTo.setTime(event.getEndTime());
-
 
 
     }
@@ -243,7 +247,6 @@ public class EventOverlay {
         /*  ---------   */
 
 
-
     }
 
     public void swapRepeatTab(final RepeatTab visibleTab) {
@@ -264,7 +267,6 @@ public class EventOverlay {
         event.setDescription(eventDescInput.getText());
 
         return event;
-
 
 
     }

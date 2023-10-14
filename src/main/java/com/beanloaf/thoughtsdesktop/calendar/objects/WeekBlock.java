@@ -57,7 +57,9 @@ public class WeekBlock extends VBox implements EventLabel {
         final int span = getSpan();
 
         if (span > 1) {
-            timeLabel = new Label(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) + (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
+            timeLabel = new Label(event.getStartTime().format(DateTimeFormatter.ofPattern("h:mm a")) +
+                    (event.getEndTime() == null ? "" : " - " + event.getEndTime().format(DateTimeFormatter.ofPattern("h:mm a"))));
+
             timeLabel.setMinHeight(0);
             timeLabel.setStyle("-fx-font-size: 14; -fx-padding: 0 0 0 4; -fx-background-color: transparent;");
             this.getChildren().add(timeLabel);

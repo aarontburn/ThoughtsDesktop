@@ -1,12 +1,13 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects;
 
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.time.DateTimeException;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Random;
 
 public class CH {
@@ -82,5 +83,11 @@ public class CH {
      * */
     public static String getRandomColor() {
         return String.format("rgb(%s, %s, %s)", rand.nextInt(MAX_RGB), rand.nextInt(MAX_RGB), rand.nextInt(MAX_RGB));
+    }
+
+
+    public static Node setNodeStyle(final Node node, final String style) {
+        node.setStyle(style);
+        return node;
     }
 }

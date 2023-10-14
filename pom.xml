@@ -19,10 +19,33 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+
+
+        <repository>
+            <id>Equo-Chromium</id>
+            <url>https://dl.equo.dev/chromium-swt-ce/oss/mvn</url>
+        </repository>
     </repositories>
 
 
+
+
+
     <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+            <version>19</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>me.friwi</groupId>
+            <artifactId>jcefmaven</artifactId>
+            <version>116.0.19</version>
+        </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -40,12 +63,13 @@
 
 
 
+
+
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-
 
 
         <dependency>
@@ -121,6 +145,7 @@
             <artifactId>biweekly</artifactId>
             <version>0.6.7</version>
         </dependency>
+
 
 
     </dependencies>
