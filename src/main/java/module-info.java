@@ -1,7 +1,6 @@
 module com.beanloaf.thoughtsdesktop {
     requires javafx.controls;
     requires javafx.fxml;
-    requires javafx.swing;
 
     requires json.simple;
     requires java.desktop;
@@ -9,7 +8,6 @@ module com.beanloaf.thoughtsdesktop {
     requires org.apache.commons.codec;
     requires annotations;
     requires net.sf.biweekly;
-    requires jcef;
 
 
     opens com.beanloaf.thoughtsdesktop to javafx.fxml;

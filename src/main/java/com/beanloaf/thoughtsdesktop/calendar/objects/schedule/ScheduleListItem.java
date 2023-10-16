@@ -8,6 +8,7 @@ import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
 import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -17,37 +18,25 @@ import javafx.scene.layout.*;
 import javafx.util.Duration;
 
 import java.time.LocalTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ScheduleListItem extends GridPane {
+    private final static String TEXT_STYLE = "-fx-font-family: Lato; -fx-font-size: 18;";
 
 
     private final ScheduleOverlay tab;
     private final Map<Weekday, CheckBox> checkBoxMap = new HashMap<>();
     private final List<Weekday> weekdays = new ArrayList<>();
     private final BasicEvent event;
-    private final Label displayText;
+    private final Label displayText, displayRepeatMode;
     private final AnchorPane repeatSettingsPane;
     private final List<ScheduleLabel> references = new ArrayList<>();
 
 
     private final Map<RepeatTab, Node> repeatTabMap = new HashMap<>();
     private RepeatTab currentRepeatMode;
-
-    public enum RepeatTab {
-        WEEKLY("Weekly"),
-        MONTHLY("Monthly"),
-        YEARLY("Yearly");
-
-        private final String name;
-
-        RepeatTab(final String stringName) {
-            this.name = stringName;
-        }
-
-
-    }
 
     public ScheduleListItem(final ScheduleOverlay tab, final String scheduleName) {
         this(tab, scheduleName, UUID.randomUUID().toString());
@@ -58,18 +47,17 @@ public class ScheduleListItem extends GridPane {
         this(tab, new BasicEvent(scheduleName).setId(id).setEventType(TypedEvent.Types.SCHEDULE));
     }
 
-
     public ScheduleListItem(final ScheduleOverlay tab, final BasicEvent event) {
         super();
         this.tab = tab;
         this.event = event;
 
-        this.setGridLinesVisible(true);
         this.getStyleClass().add("schedule");
+        this.setVgap(5);
 
 
         displayText = new Label(event.getTitle());
-        displayText.setStyle("-fx-font-family: Lato; -fx-font-size: 18; -fx-padding: 0 5 0 2");
+        displayText.setStyle(TEXT_STYLE + " -fx-padding: 0 5 0 2");
         displayText.setAlignment(Pos.TOP_LEFT);
         displayText.setWrapText(true);
         displayText.setMaxHeight(10000);
@@ -78,26 +66,28 @@ public class ScheduleListItem extends GridPane {
 
 
         final HBox repeatTypeHBox = new HBox(8);
+        repeatTypeHBox.setStyle("-fx-padding: 5 0 0 0");
         repeatTypeHBox.setAlignment(Pos.CENTER_LEFT);
         this.add(repeatTypeHBox, 1, 0);
+        repeatTypeHBox.getChildren().add(CH.setNodeStyle(new Label("Repeat"), TEXT_STYLE));
 
-
-        repeatTypeHBox.getChildren().add(CH.setNodeStyle(new Label("Repeat"), "-fx-font-family: Lato; -fx-font-size: 18;"));
         final ComboBox<String> repeatTypeComboBox = CH.setStringComboBoxValues(new ComboBox<>(), RepeatTab.WEEKLY.name, RepeatTab.MONTHLY.name, RepeatTab.YEARLY.name);
         repeatTypeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, swappedTo) -> {
             if (swappedTo != null) {
                 swapRepeatTab(RepeatTab.valueOf(swappedTo.toUpperCase()));
             }
         });
+        repeatTypeComboBox.setPrefHeight(32);
         repeatTypeHBox.getChildren().add(repeatTypeComboBox);
-        repeatTypeHBox.getChildren().add(CH.setNodeStyle(new Label("every"), "-fx-font-family: Lato; -fx-font-size: 18;"));
+        repeatTypeHBox.getChildren().add(CH.setNodeStyle(new Label("every"), TEXT_STYLE));
 
 
         final TextField repeatSpacingTextField = new TextField("1");
         repeatSpacingTextField.setPrefWidth(45);
         repeatTypeHBox.getChildren().add(repeatSpacingTextField);
 
-        repeatTypeHBox.getChildren().add(CH.setNodeStyle(new Label("week(s)."), "-fx-font-family: Lato; -fx-font-size: 18;"));
+        displayRepeatMode = (Label) CH.setNodeStyle(new Label("week(s)."), TEXT_STYLE);
+        repeatTypeHBox.getChildren().add(displayRepeatMode);
 
 
         final ColumnConstraints leftCol = new ColumnConstraints();
@@ -135,13 +125,22 @@ public class ScheduleListItem extends GridPane {
         repeatTabMap.get(tab).setVisible(true);
         repeatTabMap.get(tab).setManaged(true);
 
-    }
 
+        switch (tab) {
+            case WEEKLY ->  displayRepeatMode.setText("week(s).");
+            case MONTHLY ->  displayRepeatMode.setText("month(s).");
+            case YEARLY ->  displayRepeatMode.setText("year(s).");
+            default -> throw new IllegalArgumentException("Invalid tab passed: " + tab);
+
+        }
+
+
+
+    }
 
     private void createTabs() {
         /* Week Tab */
         final AnchorPane weekPane = new AnchorPane();
-        weekPane.setStyle("-fx-border-color: blue;");
         repeatTabMap.put(RepeatTab.WEEKLY, weekPane);
         repeatSettingsPane.getChildren().add(ThoughtsHelper.setAnchor(weekPane, 0, 0, 0, 0));
 
@@ -197,14 +196,10 @@ public class ScheduleListItem extends GridPane {
 
         /* Monthly */
         final AnchorPane monthPane = new AnchorPane();
-        monthPane.setStyle("-fx-border-color: green;");
         repeatTabMap.put(RepeatTab.MONTHLY, monthPane);
         repeatSettingsPane.getChildren().add(ThoughtsHelper.setAnchor(monthPane, 0, 0, 0, 0));
 
         final ToggleGroup monthlyToggleGroup = new ToggleGroup();
-
-
-
         final HBox monthlyDayHBox = new HBox(8);
         monthlyDayHBox.setAlignment(Pos.CENTER_LEFT);
         monthPane.getChildren().add(ThoughtsHelper.setAnchor(monthlyDayHBox, 4, null, 8, null));
@@ -215,12 +210,10 @@ public class ScheduleListItem extends GridPane {
 
         monthlyDayHBox.getChildren().add(monthlyDayRadioButton);
 
-        monthlyDayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), "-fx-font-family: Lato; -fx-font-size: 18;"));
+        monthlyDayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), TEXT_STYLE));
         final TextField monthlyDayTextField = new TextField("1");
         monthlyDayTextField.setPrefWidth(45);
         monthlyDayHBox.getChildren().add(monthlyDayTextField);
-
-
 
 
         final HBox monthlyWeekdayHBox = new HBox(8);
@@ -232,28 +225,91 @@ public class ScheduleListItem extends GridPane {
         monthlyWeekdayRadioButton.setStyle("-fx-font-size: 10;");
         monthlyWeekdayHBox.getChildren().add(monthlyWeekdayRadioButton);
 
-        monthlyWeekdayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), "-fx-font-family: Lato; -fx-font-size: 18;"));
+        monthlyWeekdayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), TEXT_STYLE));
 
-        final ComboBox<String> weekNumSelector = CH.setStringComboBoxValues(new ComboBox<>(),
+        final ComboBox<String> monthWeekNumSelector = CH.setStringComboBoxValues(new ComboBox<>(),
                 "first", "second", "third", "fourth", "last");
-        weekNumSelector.setPrefWidth(100);
-        monthlyWeekdayHBox.getChildren().add(weekNumSelector);
+        monthWeekNumSelector.setPrefWidth(100);
+        monthWeekNumSelector.setPrefHeight(32);
 
-        final ComboBox<String> weekDaySelector = CH.setStringComboBoxValues(new ComboBox<>(),
+        monthlyWeekdayHBox.getChildren().add(monthWeekNumSelector);
+
+        final ComboBox<String> monthWeekDaySelector = CH.setStringComboBoxValues(new ComboBox<>(),
                 Weekday.getFullWeekdayNames().toArray(new String[0]));
-        weekDaySelector.setPrefWidth(100);
-        monthlyWeekdayHBox.getChildren().add(weekDaySelector);
+        monthWeekDaySelector.setPrefHeight(32);
+
+        monthWeekDaySelector.setPrefWidth(100);
+        monthlyWeekdayHBox.getChildren().add(monthWeekDaySelector);
 
 
 
         /*  Yearly  */
         final AnchorPane yearPane = new AnchorPane();
-        yearPane.setStyle("-fx-border-color: red;");
         repeatTabMap.put(RepeatTab.YEARLY, yearPane);
         repeatSettingsPane.getChildren().add(ThoughtsHelper.setAnchor(yearPane, 0, 0, 0, 0));
 
-    }
+        final HBox yearlyMonthHBox = new HBox(8);
+        yearlyMonthHBox.setAlignment(Pos.CENTER_LEFT);
+        yearPane.getChildren().add(ThoughtsHelper.setAnchor(yearlyMonthHBox, 4, null, 8, null));
+        yearlyMonthHBox.getChildren().add(CH.setNodeStyle(new Label("In"), TEXT_STYLE));
 
+
+        final List<String> monthList = new ArrayList<>();
+        for (final Month month : Month.values()) {
+            monthList.add(ThoughtsHelper.toCamelCase(month.toString()));
+        }
+        final ComboBox<String> yearMonthSelector = CH.setStringComboBoxValues(new ComboBox<>(),
+                monthList.toArray(new String[0]));
+        yearMonthSelector.setPrefWidth(150);
+        yearMonthSelector.setPrefHeight(32);
+
+        yearlyMonthHBox.getChildren().add(yearMonthSelector);
+
+
+        final ToggleGroup yearlyToggleGroup = new ToggleGroup();
+        final HBox yearlyDayHBox = new HBox(8);
+        yearlyDayHBox.setAlignment(Pos.CENTER_LEFT);
+        yearPane.getChildren().add(ThoughtsHelper.setAnchor(yearlyDayHBox, 40, null, 8, null));
+
+        final RadioButton yearlyDayRadioButton = new RadioButton();
+        yearlyDayRadioButton.setToggleGroup(monthlyToggleGroup);
+        yearlyDayRadioButton.setStyle("-fx-font-size: 10;");
+
+        yearlyDayHBox.getChildren().add(yearlyDayRadioButton);
+
+        yearlyDayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), TEXT_STYLE));
+        final TextField yearlyDayTextField = new TextField("1");
+        yearlyDayTextField.setPrefWidth(45);
+        yearlyDayHBox.getChildren().add(yearlyDayTextField);
+
+
+        final HBox yearlyWeekdayHBox = new HBox(8);
+        yearlyWeekdayHBox.setAlignment(Pos.CENTER_LEFT);
+        yearPane.getChildren().add(ThoughtsHelper.setAnchor(yearlyWeekdayHBox, 76, 4, 8, null));
+
+        final RadioButton yearlyWeekdayRadioButton = new RadioButton();
+        yearlyWeekdayRadioButton.setToggleGroup(yearlyToggleGroup);
+        yearlyWeekdayRadioButton.setStyle("-fx-font-size: 10;");
+        yearlyWeekdayHBox.getChildren().add(yearlyWeekdayRadioButton);
+
+        yearlyWeekdayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), TEXT_STYLE));
+
+        final ComboBox<String> yearWeekNumSelector = CH.setStringComboBoxValues(new ComboBox<>(),
+                "first", "second", "third", "fourth", "last");
+        yearWeekNumSelector.setPrefWidth(100);
+        yearWeekNumSelector.setPrefHeight(32);
+
+        yearlyWeekdayHBox.getChildren().add(yearWeekNumSelector);
+
+        final ComboBox<String> yearWeekDaySelector = CH.setStringComboBoxValues(new ComboBox<>(),
+                Weekday.getFullWeekdayNames().toArray(new String[0]));
+        yearWeekDaySelector.setPrefWidth(100);
+        yearWeekDaySelector.setPrefHeight(32);
+
+        yearlyWeekdayHBox.getChildren().add(yearWeekDaySelector);
+
+
+    }
 
     public void doClick() {
         tab.setInputFields(this);
@@ -267,9 +323,12 @@ public class ScheduleListItem extends GridPane {
         return this.weekdays;
     }
 
-
     public void setChecked(final Weekday weekday, final boolean isChecked) {
         this.checkBoxMap.get(weekday).setSelected(isChecked);
+    }
+
+    public String getScheduleEventName() {
+        return event.getTitle();
     }
 
     public void setScheduleEventName(final String newName) {
@@ -281,36 +340,29 @@ public class ScheduleListItem extends GridPane {
         }
     }
 
-    public String getScheduleEventName() {
-        return event.getTitle();
+    public String getDescription() {
+        return event.getDescription();
     }
 
     public void setDescription(final String newDescription) {
         event.setDescription(newDescription);
     }
 
-    public String getDescription() {
-        return event.getDescription();
+    public LocalTime getStartTime() {
+        return event.getStartTime();
     }
-
 
     public void setStartTime(final LocalTime startTime) {
         this.event.setStartTime(startTime);
-    }
-
-    public void setEndTime(final LocalTime endTime) {
-        this.event.setEndTime(endTime);
-    }
-
-
-    public LocalTime getStartTime() {
-        return event.getStartTime();
     }
 
     public LocalTime getEndTime() {
         return event.getEndTime();
     }
 
+    public void setEndTime(final LocalTime endTime) {
+        this.event.setEndTime(endTime);
+    }
 
     public void addReference(final ScheduleLabel event) {
         this.references.add(event);
@@ -324,13 +376,27 @@ public class ScheduleListItem extends GridPane {
         return new ScheduleLabel(this);
     }
 
-
     @Override
     public String toString() {
         return "ScheduleListItem {" +
                 "weekdays=" + weekdays +
                 ", event=" + event +
                 '}';
+    }
+
+
+    public enum RepeatTab {
+        WEEKLY("weekly"),
+        MONTHLY("monthly"),
+        YEARLY("yearly");
+
+        private final String name;
+
+        RepeatTab(final String stringName) {
+            this.name = stringName;
+        }
+
+
     }
 
     public static class ScheduleLabel extends Label {
