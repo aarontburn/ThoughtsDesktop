@@ -1,29 +1,23 @@
 package com.beanloaf.thoughtsdesktop.calendar.objects.schedule;
 
-import com.beanloaf.thoughtsdesktop.MainApplication;
 import com.beanloaf.thoughtsdesktop.calendar.objects.BasicEvent;
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.CH;
 import com.beanloaf.thoughtsdesktop.calendar.objects.TypedEvent;
 import com.beanloaf.thoughtsdesktop.calendar.views.children.overlays.ScheduleOverlay;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
 
 import java.time.LocalTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ScheduleListItem extends GridPane {
     private final static String TEXT_STYLE = "-fx-font-family: Lato; -fx-font-size: 18;";
+    private final static String RADIO_BUTTON_STYLE = "-fx-font-size: 10;";
 
 
     private final ScheduleOverlay tab;
@@ -32,7 +26,6 @@ public class ScheduleListItem extends GridPane {
     private final BasicEvent event;
     private final Label displayText, displayRepeatMode;
     private final AnchorPane repeatSettingsPane;
-    private final List<ScheduleLabel> references = new ArrayList<>();
 
 
     private final Map<RepeatTab, Node> repeatTabMap = new HashMap<>();
@@ -165,12 +158,10 @@ public class ScheduleListItem extends GridPane {
 
             checkBox.selectedProperty().addListener((observableValue, aBoolean, isChecked) -> {
                 if (isChecked) {
-                    tab.addScheduleEventToDay(weekday, this);
                     if (!weekdays.contains(weekday)) {
                         weekdays.add(weekday);
                     }
                 } else {
-                    tab.removeScheduleFromDay(weekday, this);
                     while (weekdays.contains(weekday)) {
                         weekdays.remove(weekday);
                     }
@@ -205,8 +196,9 @@ public class ScheduleListItem extends GridPane {
         monthPane.getChildren().add(ThoughtsHelper.setAnchor(monthlyDayHBox, 4, null, 8, null));
 
         final RadioButton monthlyDayRadioButton = new RadioButton();
+        monthlyDayRadioButton.setSelected(true);
         monthlyDayRadioButton.setToggleGroup(monthlyToggleGroup);
-        monthlyDayRadioButton.setStyle("-fx-font-size: 10;");
+        monthlyDayRadioButton.setStyle(RADIO_BUTTON_STYLE);
 
         monthlyDayHBox.getChildren().add(monthlyDayRadioButton);
 
@@ -222,7 +214,7 @@ public class ScheduleListItem extends GridPane {
 
         final RadioButton monthlyWeekdayRadioButton = new RadioButton();
         monthlyWeekdayRadioButton.setToggleGroup(monthlyToggleGroup);
-        monthlyWeekdayRadioButton.setStyle("-fx-font-size: 10;");
+        monthlyWeekdayRadioButton.setStyle(RADIO_BUTTON_STYLE);
         monthlyWeekdayHBox.getChildren().add(monthlyWeekdayRadioButton);
 
         monthlyWeekdayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), TEXT_STYLE));
@@ -272,9 +264,9 @@ public class ScheduleListItem extends GridPane {
         yearPane.getChildren().add(ThoughtsHelper.setAnchor(yearlyDayHBox, 40, null, 8, null));
 
         final RadioButton yearlyDayRadioButton = new RadioButton();
-        yearlyDayRadioButton.setToggleGroup(monthlyToggleGroup);
-        yearlyDayRadioButton.setStyle("-fx-font-size: 10;");
-
+        yearlyDayRadioButton.setSelected(true);
+        yearlyDayRadioButton.setToggleGroup(yearlyToggleGroup);
+        yearlyDayRadioButton.setStyle(RADIO_BUTTON_STYLE);
         yearlyDayHBox.getChildren().add(yearlyDayRadioButton);
 
         yearlyDayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), TEXT_STYLE));
@@ -289,7 +281,7 @@ public class ScheduleListItem extends GridPane {
 
         final RadioButton yearlyWeekdayRadioButton = new RadioButton();
         yearlyWeekdayRadioButton.setToggleGroup(yearlyToggleGroup);
-        yearlyWeekdayRadioButton.setStyle("-fx-font-size: 10;");
+        yearlyWeekdayRadioButton.setStyle(RADIO_BUTTON_STYLE);
         yearlyWeekdayHBox.getChildren().add(yearlyWeekdayRadioButton);
 
         yearlyWeekdayHBox.getChildren().add(CH.setNodeStyle(new Label("On the"), TEXT_STYLE));
@@ -335,9 +327,6 @@ public class ScheduleListItem extends GridPane {
         event.setTitle(newName);
         displayText.setText(newName);
 
-        for (final ScheduleLabel scheduleLabel : references) {
-            scheduleLabel.updateText();
-        }
     }
 
     public String getDescription() {
@@ -364,18 +353,6 @@ public class ScheduleListItem extends GridPane {
         this.event.setEndTime(endTime);
     }
 
-    public void addReference(final ScheduleLabel event) {
-        this.references.add(event);
-    }
-
-    public void removeReference(final ScheduleLabel event) {
-        this.references.remove(event);
-    }
-
-    public ScheduleLabel getLabel() {
-        return new ScheduleLabel(this);
-    }
-
     @Override
     public String toString() {
         return "ScheduleListItem {" +
@@ -399,82 +376,6 @@ public class ScheduleListItem extends GridPane {
 
     }
 
-    public static class ScheduleLabel extends Label {
-
-        private final ScheduleListItem scheduleListItem;
-        private final Tooltip tooltip;
-
-
-        public ScheduleLabel(final ScheduleListItem scheduleListItem) {
-            super("");
-            setGraphic(new ImageView(new Image(String.valueOf(MainApplication.class.getResource("icons/schedule-icon.png")), 17.5, 17.5, true, true)));
-            this.scheduleListItem = scheduleListItem;
-
-            this.getStyleClass().add("day-event");
-            this.setStyle("-fx-border-color: -fx-gray-0;");
-            this.setMaxWidth(Double.MAX_VALUE);
-
-
-            tooltip = new Tooltip();
-            tooltip.setShowDelay(Duration.seconds(0.5));
-            tooltip.setText(scheduleListItem.getScheduleEventName());
-            this.setTooltip(tooltip);
-
-            updateText();
-            this.setOnMouseClicked(e -> onClick());
-
-        }
-
-        public void onClick() {
-            Logger.log("Schedule \"" + this.scheduleListItem.getScheduleEventName() + "\" was pressed.");
-            scheduleListItem.doClick();
-        }
-
-        public void updateText() {
-            final String displayText = getDisplayTime(scheduleListItem.getStartTime()) + scheduleListItem.getScheduleEventName();
-
-            this.setText(displayText);
-            tooltip.setText(displayText);
-        }
-
-
-        public String getDisplayTime(final LocalTime time) {
-            String formattedTime = "";
-            if (time != null) {
-                formattedTime = time.format(DateTimeFormatter.ofPattern("h:mm a")) + " | ";
-                if (formattedTime.contains("AM")) {
-                    formattedTime = formattedTime.replace(" AM", "a");
-                } else {
-                    formattedTime = formattedTime.replace(" PM", "p");
-
-                }
-            }
-            return formattedTime;
-        }
-
-        public String getScheduleId() {
-            return scheduleListItem.getEvent().getId();
-        }
-
-        @Override
-        public boolean equals(final Object other) {
-            if (this == other) {
-                return true;
-            }
-            if (other == null || this.getClass() != other.getClass()) {
-                return false;
-            }
-            final ScheduleLabel that = (ScheduleLabel) other;
-            return getScheduleId().equals(that.getScheduleId());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(scheduleListItem);
-        }
-
-
-    }
 
 
 }

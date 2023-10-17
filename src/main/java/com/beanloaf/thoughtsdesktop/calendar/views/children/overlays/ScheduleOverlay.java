@@ -3,16 +3,13 @@ package com.beanloaf.thoughtsdesktop.calendar.views.children.overlays;
 
 import com.beanloaf.thoughtsdesktop.calendar.enums.Weekday;
 import com.beanloaf.thoughtsdesktop.calendar.objects.*;
-import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleCalendarDay;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleData;
 import com.beanloaf.thoughtsdesktop.calendar.objects.schedule.ScheduleListItem;
 import com.beanloaf.thoughtsdesktop.calendar.views.CalendarMain;
-import com.beanloaf.thoughtsdesktop.handlers.Logger;
 import com.beanloaf.thoughtsdesktop.handlers.ThoughtsHelper;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -29,7 +26,6 @@ public class ScheduleOverlay {
 
     private final ScheduleData data;
     private final List<Runnable> queuedTasks = new ArrayList<>();
-    private final Map<Weekday, ScheduleCalendarDay> weekdayMap = new HashMap<>();
     private final Map<String, ScheduleListItem> eventMap = new HashMap<>(); //uid, scheduleListItem
     private ScheduleListItem selectedScheduleListItem;
     /*  Header  */
@@ -40,10 +36,6 @@ public class ScheduleOverlay {
 
     /*  ------  */
     /*  Week View   */
-    private GridPane scheduleWeekGrid;
-
-
-    /*  ------  */
     private TimeGroupView scheduleTimeFrom, scheduleTimeTo;
     private TextField scheduleEventTitleInput;
     private TextArea scheduleEventDescriptionInput;
@@ -92,9 +84,6 @@ public class ScheduleOverlay {
 
 
 
-        /*  Week View   */
-        scheduleWeekGrid = (GridPane) findNodeById("scheduleWeekGrid");
-
 
         /*  Input Fields    */
         scheduleEventTitleInput = (TextField) findNodeById("scheduleEventTitleInput");
@@ -140,12 +129,6 @@ public class ScheduleOverlay {
             if (selectedScheduleListItem == null) {
                 return;
             }
-
-            for (final Weekday weekday : weekdayMap.keySet()) {
-                final ScheduleCalendarDay day = weekdayMap.get(weekday);
-                day.removeScheduleEventFromDay(selectedScheduleListItem);
-            }
-
             eventMap.remove(selectedScheduleListItem.getEvent().getId());
             scheduleEventList.getChildren().remove(selectedScheduleListItem);
         });
@@ -178,24 +161,6 @@ public class ScheduleOverlay {
         pane.setContent(scheduleEventList);
 
         scheduleEventBox.getChildren().add(pane);
-
-
-        final List<Node> nodesToRemove = new ArrayList<>();
-
-        for (final Node node : scheduleWeekGrid.getChildren()) {
-            if (node.getClass() != Label.class) nodesToRemove.add(node);
-        }
-
-        scheduleWeekGrid.getChildren().removeAll(nodesToRemove);
-
-        for (int i = 0; i < scheduleWeekGrid.getColumnCount(); i++) {
-            final Weekday weekday = Weekday.values()[i];
-
-            final ScheduleCalendarDay day = new ScheduleCalendarDay();
-            weekdayMap.put(weekday, day);
-            scheduleWeekGrid.add(day, i, 1);
-        }
-
 
     }
 
@@ -270,13 +235,9 @@ public class ScheduleOverlay {
         scheduleEventList.getChildren().add(scheduleListItem);
     }
 
-    public void addScheduleEventToDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
-        weekdayMap.get(weekday).addScheduleEventToDay(scheduleListItem);
-    }
 
-    public void removeScheduleFromDay(final Weekday weekday, final ScheduleListItem scheduleListItem) {
-        weekdayMap.get(weekday).removeScheduleEventFromDay(scheduleListItem);
-    }
+
+
 
     private void saveScheduleEvent() {
         if (selectedScheduleListItem == null) {

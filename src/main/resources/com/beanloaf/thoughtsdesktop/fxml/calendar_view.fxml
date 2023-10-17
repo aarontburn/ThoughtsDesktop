@@ -530,117 +530,9 @@
                   </GridPane>
                   <AnchorPane layoutY="64.0" minHeight="0.0" minWidth="0.0" prefHeight="677.0" prefWidth="1152.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="64.0">
                      <children>
-                        <GridPane layoutX="8.0" layoutY="15.5" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="0.0">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="10.0" percentHeight="50.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" percentHeight="50.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <GridPane fx:id="scheduleWeekGrid" gridLinesVisible="true" prefHeight="293.0" prefWidth="1120.0" GridPane.columnSpan="2">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                  <RowConstraints minHeight="10.0" percentHeight="90.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
-                                    <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                    <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                                    <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                                    <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                                    <ScrollPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Sunday" textAlignment="CENTER">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Monday" textAlignment="CENTER" GridPane.columnIndex="1">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Tuesday" textAlignment="CENTER" GridPane.columnIndex="2">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Wednesday" textAlignment="CENTER" GridPane.columnIndex="3">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Thursday" textAlignment="CENTER" GridPane.columnIndex="4">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Friday" textAlignment="CENTER" GridPane.columnIndex="5">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                    <Label alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Saturday" textAlignment="CENTER" GridPane.columnIndex="6">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font>
-                                    </Label>
-                                 </children>
-                              </GridPane>
-                              <AnchorPane fx:id="scheduleEventBox" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <children>
-                                    <ScrollPane fitToWidth="true" layoutX="112.0" layoutY="32.0" prefHeight="224.0" prefWidth="552.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
-                                       <content>
-                                          <VBox prefHeight="41.0" prefWidth="785.0" spacing="7.0">
-                                             <padding>
-                                                <Insets top="5.0" />
-                                             </padding>
-                                             <children>
-                                                <GridPane>
-                                                  <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                  </columnConstraints>
-                                                  <rowConstraints>
-                                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                  </rowConstraints>
-                                                   <children>
-                                                      <Label text="Name">
-                                                         <font>
-                                                            <Font size="18.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label text="Weekday Selector Placeholder" GridPane.columnIndex="1" />
-                                                   </children>
-                                                </GridPane>
-                                             </children>
-                                          </VBox>
-                                       </content>
-                                    </ScrollPane>
-                                    <Button fx:id="scheduleNewEventButton" mnemonicParsing="false" styleClass="calendar-button" text="New Event" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <Button fx:id="scheduleSaveScheduleButton" layoutX="412.0" layoutY="277.0" mnemonicParsing="false" styleClass="calendar-button" text="Save Schedule" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                       <font>
-                                          <Font size="16.0" />
-                                       </font>
-                                    </Button>
-                                 </children>
-                                 <GridPane.margin>
-                                    <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                 </GridPane.margin>
-                              </AnchorPane>
-                              <AnchorPane fx:id="scheduleInputBox" minHeight="0.0" minWidth="0.0" prefHeight="327.0" GridPane.rowIndex="1">
+                        <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="0.0">
+                          <items>
+                              <AnchorPane fx:id="scheduleInputBox" minHeight="0.0" minWidth="0.0" prefHeight="327.0">
                                  <children>
                                     <Label text="Title" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <font>
@@ -778,12 +670,28 @@
                                           <Font size="14.0" />
                                        </font></TextField>
                                  </children>
-                                 <GridPane.margin>
-                                    <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                                 </GridPane.margin>
                               </AnchorPane>
-                           </children>
-                        </GridPane>
+                              <AnchorPane fx:id="scheduleEventBox">
+                                 <children>
+                                    <ScrollPane fitToWidth="true" layoutX="112.0" layoutY="32.0" prefHeight="224.0" prefWidth="552.0" AnchorPane.bottomAnchor="48.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                       <content>
+                                          <VBox prefHeight="41.0" prefWidth="785.0" spacing="7.0">
+                                             <padding>
+                                                <Insets top="5.0" />
+                                             </padding>
+                                          </VBox>
+                                       </content>
+                                    </ScrollPane>
+                                    <Button fx:id="scheduleNewEventButton" mnemonicParsing="false" styleClass="calendar-button" text="New Event" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <Button fx:id="scheduleSaveScheduleButton" layoutX="412.0" layoutY="277.0" mnemonicParsing="false" styleClass="calendar-button" text="Save Schedule" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                       <font>
+                                          <Font size="16.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
                      </children>
                   </AnchorPane>
                   <Label layoutX="3.0" layoutY="6.0" maxWidth="1.7976931348623157E308" minWidth="0.0" text="New Schedule" textOverrun="CLIP" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="8.0">
